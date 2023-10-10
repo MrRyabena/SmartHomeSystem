@@ -26,33 +26,9 @@
 
 
 
-class ByteCollector {
-public:
-    uint8_t* buf;
-    ByteCollector(uint8_t size): buf(new uint8_t[size]) {
-
-    }
 
 
-    template <typename T>
-    void add(T& value);
-    template <typename T>
-    void add(T& value, uint8_t bytes);
-
-    template <typename T>
-    void addVal(T value);
-    template <typename T>
-    void addVal(T value, uint8_t bytes);
-
-
-    uint16_t size();
-    uint8_t* ptr;
-
-
-};
-
-
-float getAnalogAverage(uint8_t pin, uint8_t samples = 20);
+float getAnalogAverage(uint8_t pin, const uint8_t samples = 20);
 // CRC
 template <typename T>
 uint8_t getCRC(T& data);

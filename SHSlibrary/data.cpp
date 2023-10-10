@@ -20,45 +20,6 @@
 // }
 
 
-template <typename T> 
-void ByteCollector::add(T& value) {
-    packBytes(ptr, value);
-    ptr += sizeof(T);
-}
-
-
-template <typename T>
-void ByteCollector::add(T& value, uint8_t bytes) {
-    uint8_t* _ptr = &(value);
-    _ptr += sizeof(T) - bytes;
-
-    for (uint8_t i = 0; i < bytes; i++) ptr++ = _ptr++;
-
-}
-
-
-template <typename T>
-void ByteCollector::addVal(T value) {
-    packBytes(ptr, value);
-    ptr += sizeof(T);
-}
-
-
-template <typename T>
-void ByteCollector::addVal(T value, uint8_t bytes) {
-    uint8_t* _ptr = &(value);
-    _ptr += sizeof(T) - bytes;
-
-    for (uint8_t i = 0; i < bytes; i++) ptr++ = _ptr++;
-
-}
-
-
-
-uint16_t ByteCollector::size() {
-    return static_cast<uint16_t>(ptr - buf);
-}
-
 
 
 

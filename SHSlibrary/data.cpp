@@ -1,4 +1,3 @@
-#pragma once
 #include "data.h"
 
 // SHSDataTransfer::SHSDataTransfer(Stream* stream, uint8_t ID) {
@@ -111,8 +110,8 @@ uint8_t crc_bytes(uint8_t* buffer, uint8_t size) {
 }
 
 
-float getAnalogAverage(uint8_t pin, uint8_t samples = 20) {
+float getAnalogAverage(uint8_t pin, const uint8_t samples) {
     uint16_t aver = 0;
     for (uint8_t i = 0; i < samples; i++) aver += analogRead(pin);
-    return (float)aver / samples;
+    return ((float)aver / samples);
 }

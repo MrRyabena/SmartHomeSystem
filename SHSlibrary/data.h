@@ -29,7 +29,7 @@
 class ByteCollector {
 public:
     uint8_t* buf;
-    ByteCollector(uint8_t size) : buf(new uint8_t[size]) {
+    ByteCollector(uint8_t size): buf(new uint8_t[size]) {
 
     }
 
@@ -43,18 +43,16 @@ public:
     void addVal(T value);
     template <typename T>
     void addVal(T value, uint8_t bytes);
-    
-    
+
 
     uint16_t size();
     uint8_t* ptr;
 
-    
+
 };
 
 
 float getAnalogAverage(uint8_t pin, uint8_t samples = 20);
-
 // CRC
 template <typename T>
 uint8_t getCRC(T& data);
@@ -65,22 +63,22 @@ uint8_t crc_bytes(uint8_t* buffer, uint8_t size);
 
 
 
-// // Pack/unpack bytes
-// template <typename T>
-// void packBytes(uint8_t* buffer, T& data) {
-//     uint8_t* ptr = (uint8_t*)&data;
-//     for (uint16_t i = 0; i < sizeof(T); i++) {
-//         buffer[i] = *ptr++;
-//     }
-// }
+//  Pack/unpack bytes
+template <typename T>
+void packBytes(uint8_t* buffer, T& data) {
+    uint8_t* ptr = (uint8_t*)&data;
+    for (uint16_t i = 0; i < sizeof(T); i++) {
+        buffer[i] = *ptr++;
+    }
+}
 
-// template <typename T>
-// void unpackBytes(uint8_t* buffer, T& data) {
-//     uint8_t* ptr = (uint8_t*)&data;
-//     for (uint16_t i = 0; i < sizeof(T); i++) {
-//         *ptr++ = buffer[i];
-//     }
-// }
+template <typename T>
+void unpackBytes(uint8_t* buffer, T& data) {
+    uint8_t* ptr = (uint8_t*)&data;
+    for (uint16_t i = 0; i < sizeof(T); i++) {
+        *ptr++ = buffer[i];
+    }
+}
 
 
 

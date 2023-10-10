@@ -21,7 +21,9 @@ void handleBus() {
       case digitalSetPin: digitalWrite(buf[1], buf[2]); break;
       case getAnalogAverageVal:
         {
-          // ByteCollector col(10);
+          ByteCollector col(BUSbufsize);
+          float f = 1.2;
+          col.add(f);
           // col.addVal(outAnalogAverage);
           // col.addVal(getAnalogAverage(A0));
           uint8_t buf[BUSbufsize];

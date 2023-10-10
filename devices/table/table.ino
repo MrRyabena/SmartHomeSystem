@@ -1,5 +1,6 @@
 #include "settings.h"
-#include <SHSlibrary>
+#include "lighterAPI.h"
+#include <SHSlibrary.h>
 
 
 #include <GBUS.h>
@@ -11,14 +12,17 @@ Button btn(BTNpin, INPUT, HIGH);
 #include <GyverNTP.h>
 GyverNTP ntp(3);
 
+BotDebbuger bot{};
+
 
 void setup() {
-  Serial.begin(TABLE_BUSspeed);
+  Serial.begin(BUSspeed);
   connectWiFi();
+  bot.send("I am started");
 }
 
 void loop() {
-  ntp.tick();
+  //ntp.tick();
   handleBus();
   handleButton();
 }

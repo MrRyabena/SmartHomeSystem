@@ -9,18 +9,16 @@ GBUS bus(&Serial, LIGHTER_ID, BUSbufsize);
 enum Mode : uint8_t {
   off,
   on,
-  night,
-  standBy,
+  
 };
 
 struct Settings {
 
   Mode mode = off;
-  uint8_t flags = 0b00000000;
-  uint8_t braRvalue = 0;
-  uint8_t braLvalue = 0;
-  uint8_t bulb0value = 0;
-  float k = Kdefault;
+  uint8_t braRval{};
+  uint8_t braLval{};
+  uint8_t bulbval{};
+  bool flag{};
 
 } settings;
 
@@ -28,7 +26,7 @@ struct Settings {
 
 
 void setup() {
-  Serial.begin(TABLE_BUSspeed);
+  Serial.begin(BUSspeed);
 
   PWM_prescaler(3, 1);
   PWM_prescaler(9, 1);
@@ -48,17 +46,7 @@ void setup() {
 }
 
 void loop() {
-  bus.tick();
+  handleBus();
+  
+  fancontrol();
 }
-
-
-
-
-
-
-
-// void changeMode(Mode mode) {
-//   switch (settings.mode) {
-//     break;
-//   }
-// }

@@ -6,4 +6,5 @@
 #include <development/bot_debbuger.h>
 #endif
 #include "data.h"
+#include "ByteCollector.h"
 

@@ -1,11 +1,16 @@
 #pragma once
 
+namespace LighterAPI {
 enum API : uint8_t {
   started,
+  request,
+  answer,
+  
   setMode,
 
   analogSetPin,
   digitalSetPin,
+
   getAnalogVal,
   getAnalogAverageVal,
   getDigitalVal,
@@ -15,8 +20,10 @@ enum API : uint8_t {
   getSettigns,
 
   getValue,
+  outAnalogVal,
   outAnalogAverage,
 
+};
 };
 
 /*

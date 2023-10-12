@@ -1,4 +1,6 @@
 void handleBus() {
+
+  using lapi = LighterAPI::API;
   bus.tick();
 
 
@@ -7,39 +9,95 @@ void handleBus() {
     bus.readData(buf);
 
 
+    /*
++  started,
++  request,
+  answer,
+  
++  setMode,
+
++  analogSetPin,
++  digitalSetPin,
+  
++  getAnalogVal,
++  getAnalogAverageVal,
+  getDigitalVal,
+  setK,
+
+  setSettings,
+  getSettigns,
+
+  getValue,
+  outAnalogAverage,
+  */
+
     switch (buf[0]) {
-      case started: settings.flag = true; break;
-      case setMode: settings.mode = buf[1]; break;
-      case analogSetPin:
-        analogWrite(buf[1], buf[2]);
-        switch (buf[1]) {
-          case BRARpin: settings.braRval = buf[2]; break;
-          case BRALpin: settings.braLval = buf[2]; break;
-          case BULBpin: settings.bulbval = buf[2]; break;
+      case lapi::started: settings.flag = true; break;
+      case lapi::request:
+        {
+          uint8_t answ = static_cast<uint8_t>(lapi::answer);
+          bus.sendData(TABLE_ID, answ);
         }
         break;
-      case digitalSetPin: digitalWrite(buf[1], buf[2]); break;
-      case getAnalogAverageVal:
+
+      case lapi::setMode: settings.mode = buf[1]; break;
+
+      case lapi::analogSetPin:
         {
-          ByteCollector col(BUSbufsize);
-          float f = 1.2;
-          col.add(f);
-          // col.addVal(outAnalogAverage);
-          // col.addVal(getAnalogAverage(A0));
-          uint8_t buf[BUSbufsize];
-          float a = 25.6;
-          buf[0] = outAnalogAverage;
-          packBytes(&(buf[1]), a);
-          bus.sendData(TABLE_ID, buf);
+          for (uint8_t i = 0; i < buf[1] << 1; i += 2) {
+
+            analogWrite(buf[2 + i], buf[3 + i]);
+            switch (buf[2 + i]) {
+              case BRARpin: settings.braRval = buf[3 + i]; break;
+              case BRALpin: settings.braLval = buf[3 + i]; break;
+              case BULBpin: settings.bulbval = buf[3 + i]; break;
+            }
+          }
+        }
+        break;
+
+      case lapi::digitalSetPin:
+        {
+          for (uint8_t i = 0; i < buf[1] << 1; i += 2)
+            digitalWrite(buf[2 + i], buf[3 + i]);
+        }
+        break;
+
+
+      case lapi::getAnalogVal:
+        {
+          ByteCollector col(1 + 1 + buf[1] * (1 + 2));
+          col.addVal(lapi::outAnalogVal);
+          col.add(buf[1]);
+
+          for (uint8_t i = 0; i < buf[1]; i++) {
+            col.add(buf[2 + i]);
+            col.addVal<uint16_t>(analogRead(buf[2 + i]), 2);
+          }
+          dtp.sendBuf(TABLE_ID, col.buf, col.size());
+        }
+        break;
+      case lapi::getAnalogAverageVal:
+        {
+          ByteCollector col(1 + 1 + buf[1] * (1 + sizeof(float)));
+          col.addVal(lapi::outAnalogAverage);
+          col.add(buf[1]);
+
+          for (uint8_t i = 0; i < buf[1]; i++) {
+            col.add(buf[2 + i]);
+            col.addVal<float>(getAnalogAverage(buf[2 + i]));
+          }
+          dtp.sendBuf(TABLE_ID, col.buf, col.size());
         }
         break;
     }
+    
   }
 
   static uint32_t tmr{};
   if (!settings.flag && millis() - tmr >= 1000) {
     uint8_t buf[BUSbufsize]{};
-    buf[0] = static_cast<uint8_t>(started);
+    buf[0] = static_cast<uint8_t>(lapi::started);
     bus.sendData(TABLE_ID, buf);
     tmr = millis();
   }

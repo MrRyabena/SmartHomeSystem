@@ -11,6 +11,8 @@ public:
 
     ~ByteCollector() {
         delete[] buf;
+        // buf = nullptr;
+        // ptr = nullptr;
     }
 
 
@@ -21,9 +23,9 @@ public:
 
 
     template <typename T>
-    void add(T& value, uint8_t bytes = sizeof(T)) {
+    void add(const T& value, uint8_t bytes = sizeof(T)) {
         uint8_t* _ptr = (uint8_t*)&(value);
-        _ptr += sizeof(T) - bytes;
+        //_ptr += sizeof(T) - bytes;
 
         for (uint8_t i = 0; i < bytes; i++) *ptr++ = *_ptr++;
 
@@ -31,9 +33,9 @@ public:
 
 
     template <typename T>
-    void addVal(T value, uint8_t bytes = sizeof(T)) {
+    void addVal(const T value, uint8_t bytes = sizeof(T)) {
         uint8_t* _ptr = (uint8_t*)&(value);
-        _ptr += sizeof(T) - bytes;
+        //_ptr += sizeof(T) - bytes;
 
         for (uint8_t i = 0; i < bytes; i++) *ptr++ = *_ptr++;
 

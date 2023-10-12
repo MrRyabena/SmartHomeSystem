@@ -20,8 +20,8 @@ public:
 
 
     template <typename T>
-    void add(T& value, uint8_t bytes = sizeof(T));
+    void add(const T& value, uint8_t bytes = sizeof(T));
 
     template <typename T>
-    void addVal(T value, uint8_t bytes = sizeof(T));
+    void addVal(const T value, uint8_t bytes = sizeof(T));
 };

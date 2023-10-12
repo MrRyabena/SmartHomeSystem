@@ -16,3 +16,8 @@ void fancontrol() {
     tmr = millis();
   }
 }
+
+
+void isr() {
+  tach.tick();
+}

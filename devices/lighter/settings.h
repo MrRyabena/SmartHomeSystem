@@ -13,6 +13,7 @@
 #define BRALpin 9
 #define BULBpin 6
 #define FANpin 11
+#define FANpwm 12
 #define FANth A0
 
 #define TEMPnormal 40

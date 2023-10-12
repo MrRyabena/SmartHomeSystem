@@ -1,17 +1,16 @@
 #pragma once
 
-
 class ByteCollector {
 public:
     uint8_t* buf{};
     uint8_t* ptr{};
 
     ByteCollector(uint8_t size): buf(new uint8_t[size]) {
-      ptr = buf;
+        ptr = buf;
     }
 
     ~ByteCollector() {
-        delete [] buf;
+        delete[] buf;
     }
 
 

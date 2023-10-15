@@ -1,24 +1,64 @@
 #pragma once
 
+#define BRARpin 10
+#define BRALpin 9
+#define BULBpin 6
+#define FANpin 11
+#define FANpwm 12
+#define FANth A0
+
+
+
+namespace LighterAPI {
+  
 enum API : uint8_t {
   started,
+  request,
+  answer,
+  
   setMode,
 
   analogSetPin,
   digitalSetPin,
+
   getAnalogVal,
   getAnalogAverageVal,
   getDigitalVal,
   setK,
 
   setSettings,
-  getSettigns,
+  getSettings,
 
   getValue,
+  getRPM,
+  outRPM,
+  outAnalogVal,
   outAnalogAverage,
+  outSettings,
+
+};
+};
+
+namespace LighterAPI {
+enum Mode : uint8_t {
+  off,
+  on,
 
 };
 
+struct Settings {
+
+  Mode mode = off;
+  uint8_t braRval{};
+  uint8_t braLval{};
+  uint8_t bulbval{};
+  bool flag{};
+  uint8_t pwm{};
+
+};
+
+
+};
 /*
 // values
 braRvalue

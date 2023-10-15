@@ -46,9 +46,9 @@ int main() {
     std::cout << static_cast<unsigned int>(col.buf[2]) << std::endl;
     std::cout << static_cast<unsigned int>(col.buf[3]) << std::endl;
     std::cout << static_cast<unsigned int>(col.buf[4]) << std::endl;
-    
+
     func(col.buf);
-    
+
 
 
     return 0;

@@ -1,4 +1,9 @@
+#define lapi LighterAPI::API
+
+
+
 void handleBus() {
+
   bus.tick();
 
 
@@ -10,49 +15,40 @@ void handleBus() {
 
 
     switch (buf[0]) {
-      case started:
+      case lapi::started:
         {
-          uint8_t buf[BUSbufsize]{};
-          buf[0] = static_cast<uint8_t>(started);
-          bus.sendData(LIGHTER_ID, buf);
-          bot.send("started!");
+          ByteCollector col(1);
+          col.add(lapi::started);
+          dtp.sendBuf(LIGHTER_ID, col.buf, col.size());
         }
         break;
-      case outAnalogAverage:
+      case lapi::outAnalogAverage:
         {
-          float val{};
-          unpackBytes(&(buf[1]), val);
-          bot.send(val);
         }
         break;
     }
-    String str = "[0]";
-    str += buf[0];
-    str += "\n";
-
-    str += "[1]";
-    str += buf[1];
-    str += "\n";
-    str += "[2]";
-    str += buf[2];
-    str += "\n";
-    str += "[3]";
-    str += buf[3];
-    str += "\n";
-    str += "[4]";
-    str += buf[4];
-    str += "\n";
-    str += "[5]";
-    str += buf[5];
-    str += "\n";
-    bot.send(str);
   }
-  static uint32_t tmr{};
-  if (millis() - tmr >= 5000) {
-    uint8_t buf[BUSbufsize]{};
-    buf[0] = static_cast<uint8_t>(getAnalogAverageVal);
-    bus.sendData(LIGHTER_ID, buf);
+}
 
-    tmr = millis();
-  }
+
+void setBraR(uint8_t value) {
+  ByteCollector col(4);
+
+  col.addVal(lapi::analogSetPin, 1);
+  col.addVal<uint8_t>(1, 1);
+  col.addVal(BRARpin, 1);
+  col.add(value, 1);
+
+  dtp.sendBuf(LIGHTER_ID, col.buf, col.size());
+}
+
+void setBraL(uint8_t value) {
+  ByteCollector col(4);
+
+  col.addVal(lapi::analogSetPin, 1);
+  col.addVal<uint8_t>(1, 1);
+  col.addVal(BRALpin, 1);
+  col.add(value, 1);
+
+  dtp.sendBuf(LIGHTER_ID, col.buf, col.size());
 }

@@ -6,9 +6,9 @@ ByteCollector::ByteCollector(uint8_t size): buf(new uint8_t[size]) {
 }
 
 ByteCollector::~ByteCollector() {
-
     delete[] buf;
-
+    // buf = nullptr;
+    // ptr = nullptr;
 }
 
 uint16_t ByteCollector::size() {
@@ -17,9 +17,9 @@ uint16_t ByteCollector::size() {
 
 
 template <typename T>
-void ByteCollector::add(T& value, uint8_t bytes = sizeof(T)) {
+void ByteCollector::add(const T& value, uint8_t bytes = sizeof(T)) {
     uint8_t* _ptr = (uint8_t*)&(value);
-    _ptr += sizeof(T) - bytes;
+    // _ptr += sizeof(T) - bytes;
 
     for (uint8_t i = 0; i < bytes; i++) *ptr++ = *_ptr++;
 
@@ -27,9 +27,9 @@ void ByteCollector::add(T& value, uint8_t bytes = sizeof(T)) {
 
 
 template <typename T>
-void ByteCollector::addVal(T value, uint8_t bytes = sizeof(T)) {
+void ByteCollector::addVal(const T value, uint8_t bytes = sizeof(T)) {
     uint8_t* _ptr = (uint8_t*)&(value);
-    _ptr += sizeof(T) - bytes;
+    // _ptr += sizeof(T) - bytes;
 
     for (uint8_t i = 0; i < bytes; i++) *ptr++ = *_ptr++;
 

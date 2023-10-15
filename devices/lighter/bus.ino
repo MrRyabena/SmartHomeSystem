@@ -90,8 +90,33 @@ void handleBus() {
           dtp.sendBuf(TABLE_ID, col.buf, col.size());
         }
         break;
+
+      case lapi::getRPM:
+        {
+          ByteCollector col(1 + 2);
+          col.addVal(lapi::outRPM);
+          col.addVal(tach.getRPM(), 2);
+
+          dtp.sendBuf(TABLE_ID, col.buf, col.size());
+        }
+        break;
+
+      case lapi::getSettings:
+        {
+          ByteCollector col(1 + sizeof(LighterAPI::Settings));
+          col.addVal(lapi::outSettings);
+          col.add(settings);
+
+          dtp.sendBuf(TABLE_ID, col.buf, col.size());
+        }
+        break;
+
+      case lapi::setSettings:
+        {
+          unpackBytes(&buf[1], settings);
+        }
+        break;
     }
-    
   }
 
   static uint32_t tmr{};

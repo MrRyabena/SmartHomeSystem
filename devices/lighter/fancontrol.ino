@@ -11,7 +11,9 @@ void fancontrol() {
       pwm *= 7;
       pwm += (settings.braRval + settings.braLval) * 0.2;
 
-      analogWrite(FANpin, map(pwm, 0, 350, 0, 255));
+      settings.pwm = map(pwm, 0, 350, 0, 255);
+      analogWrite(FANpin, pwm);
+
     }
     tmr = millis();
   }

@@ -11,24 +11,7 @@ DTP dtp(&bus, LIGHTER_ID, BUSbufsize);
 #include <Tachometer.h>
 Tachometer tach;
 
-
-enum Mode : uint8_t {
-  off,
-  on,
-
-};
-
-struct Settings {
-
-  Mode mode = off;
-  uint8_t braRval{};
-  uint8_t braLval{};
-  uint8_t bulbval{};
-  bool flag{};
-
-} settings;
-
-
+LighterAPI::Settings settings;
 
 
 void setup() {
@@ -52,6 +35,8 @@ void setup() {
   pinMode(FANpwm, INPUT_PULLUP);
 
   attachInterrupt(0, isr, FALLING);
+
+  
 }
 
 void loop() {

@@ -17,15 +17,38 @@ enum API : uint8_t {
   setK,
 
   setSettings,
-  getSettigns,
+  getSettings,
 
   getValue,
+  getRPM,
+  outRPM,
   outAnalogVal,
   outAnalogAverage,
+  outSettings,
 
 };
 };
 
+namespace LighterAPI {
+enum Mode : uint8_t {
+  off,
+  on,
+
+};
+
+struct Settings {
+
+  Mode mode = off;
+  uint8_t braRval{};
+  uint8_t braLval{};
+  uint8_t bulbval{};
+  bool flag{};
+  uint8_t pwm{};
+
+};
+
+
+};
 /*
 // values
 braRvalue

@@ -38,7 +38,7 @@ enum Mode : uint8_t {
 
 struct Settings {
 
-  Mode mode = off;
+  Mode mode = on;
   uint8_t braRval{};
   uint8_t braLval{};
   uint8_t bulbval{};

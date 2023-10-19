@@ -64,4 +64,14 @@ void handleBot(FB_msg& message) {
     m += val;
     bot.sendMessage(m, message.chatID);
   }
+
+  if (message.text.startsWith(F("getT"))) {
+    getT();
+  }
+  if (message.text.startsWith(F("getPWM"))) {
+    getPWM();
+  }
+  if (message.text.startsWith(F("getRPM"))) {
+    getRPM();
+  }
 }

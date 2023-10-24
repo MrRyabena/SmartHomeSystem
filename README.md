@@ -2,7 +2,8 @@
 
 
 <center>
-<pre><span style="font-size=3px">
+<span style="font-size=3px">
+<pre>
 
 <b>   _____                              _       _    _                                 _____                 _                       </b>
 <b>  / ____|                            | |     | |  | |                               / ____|               | |                      </b>
@@ -13,5 +14,6 @@
 <b>                                                                                              __/ |                                </b>
 <b>                                                                                             |___/                                 </b>
 
-</span></pre>
+</pre>
+</span>
 </center>

@@ -16,6 +16,11 @@ GyverNTP ntp(3);
 #include <FastBot.h>
 FastBot bot(BOT_TOKEN);
 
+#include <FastLed.h>
+
+
+
+uint8_t dur{};
 
 void setup() {
   Serial.begin(BUSspeed);
@@ -28,6 +33,6 @@ void setup() {
 void loop() {
   //ntp.tick();
   bot.tick();
-
+  sunrise(dur);
   handleBus();
 }

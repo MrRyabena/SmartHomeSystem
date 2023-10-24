@@ -3,6 +3,8 @@
 
 #include <SHSlibrary.h>
 #include <GyverPWM.h>
+#include <GyverNTC.h>
+
 
 #include <GBUS.h>
 GBUS bus(&Serial, LIGHTER_ID, BUSbufsize);
@@ -29,14 +31,17 @@ void setup() {
   pinMode(A0, INPUT);
   pinMode(A1, INPUT);
   pinMode(A2, INPUT);
-  pinMode(A3, INPUT);
-  pinMode(A4, INPUT);
-  pinMode(A5, INPUT);
-  pinMode(FANpwm, INPUT_PULLUP);
+  //pinMode(A3, INPUT);
+  //pinMode(A4, INPUT);
+  //pinMode(A5, INPUT);
+  pinMode(FANrpm, INPUT_PULLUP);
 
-  attachInterrupt(0, isr, FALLING);
+  // attachInterrupt(0, isr, FALLING);
+  // пример использования PCINT - прерывания на любом пине
+  // прерывание вызывается при переключении состояния любого пина из группы
+  // наши обработчики прерываний
 
-  
+  //attachPCINT(FANrpm);
 }
 
 void loop() {

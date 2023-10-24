@@ -74,4 +74,12 @@ void handleBot(FB_msg& message) {
   if (message.text.startsWith(F("getRPM"))) {
     getRPM();
   }
+  if (message.text.startsWith(F("sunrise"))) {
+    String str = message.text.substring(message.text.indexOf(' '));
+    dur = static_cast<uint8_t>(str.toInt());
+    sunrise(dur);
+    String m = "Sunrise! ";
+    m += dur;
+    bot.sendMessage(m, CHAT_ID);
+  }
 }

@@ -121,9 +121,9 @@ void handleBus() {
 
   static uint32_t tmr{};
   if (!settings.flag && millis() - tmr >= 1000) {
-    uint8_t buf[BUSbufsize]{};
-    buf[0] = static_cast<uint8_t>(lapi::started);
-    bus.sendData(TABLE_ID, buf);
+    ByteCollector col(1);
+    col.add(lapi::started);
+    dtp.sendBuf(TABLE_ID, col.buf, col.size());
     tmr = millis();
   }
 }

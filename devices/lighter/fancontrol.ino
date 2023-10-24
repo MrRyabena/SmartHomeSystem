@@ -1,19 +1,29 @@
+
+GyverNTC th0(A0, 10000, 3450, 25, 22000);
+GyverNTC th1(A1, 10000, 3950, 25, 20000);
+
 void fancontrol() {
   static uint32_t tmr = millis();
 
   if (millis() - tmr >= 5000) {
     // if (settings.mode) analogWrite(FANpin, 0);
     //else {
-      // float temp = getThermTemp(getAnalogAverage(FANth));
-      // // 𝑦=(7𝑡+1,4𝑎)  t [0;30] a[0;100]
-      uint16_t pwm{}; //= static_cast<uint16_t>(temp);
-      // pwm = map(pwm, 30, 50, 0, 30);
-      // pwm *= 7;
-      pwm =settings.braRval + settings.braLval;
-      pwm >> 1;
+    // float temp = getThermTemp(getAnalogAverage(FANth));
+    // Serial.println(th0.getTempAverage(A0));
+    // Serial.println(th1.getTempAverage(A1));
 
-      settings.pwm = (uint8_t)pwm; //map(pwm, 0, 255, 0, 255);
-      analogWrite(FANpin, settings.pwm);
+    // Serial.println(analogRead(FANth));
+    // Serial.println(analogRead(A1));
+    // Serial.println();
+    // // 𝑦=(7𝑡+1,4𝑎)  t [0;30] a[0;100]
+    uint16_t pwm{};  //= static_cast<uint16_t>(temp);
+    // pwm = map(pwm, 30, 50, 0, 30);
+    // pwm *= 7;
+    // pwm =settings.braRval + settings.braLval;
+    // pwm >> 1;
+    pwm = settings.braRval || settings.braLval;
+    settings.pwm = (uint8_t)pwm;  //map(pwm, 0, 255, 0, 255);
+    digitalWrite(FANpin, settings.pwm);
 
     //}
     tmr = millis();
@@ -21,21 +31,30 @@ void fancontrol() {
 }
 
 
+// ISR(PCINT0_vect) {  // пины 8-13
+//   tach.tick();
+// }
+
+
 void isr() {
   tach.tick();
 }
-#define RESIST_BASE 10000   // сопротивление при TEMP_BASE градусах по Цельсию (Ом)
-#define TEMP_BASE 25        // температура, при которой измерено RESIST_BASE (градусов Цельсия)
-#define B_COEF 3435  
-#define RESIST_10K 9700    // точное сопротивление 10к резистора (Ом)
 
-float getThermTemp(int resistance) {
-  float thermistor{};
-  thermistor = RESIST_10K / ((float)1023 / resistance - 1);
-  thermistor /= RESIST_BASE;                        // (R/Ro)
-  thermistor = log(thermistor) / B_COEF;            // 1/B * ln(R/Ro)
-  thermistor += (float)1.0 / (TEMP_BASE + 273.15);  // + (1/To)
-  thermistor = (float)1.0 / thermistor - 273.15;    // инвертируем и конвертируем в градусы по Цельсию
-  return thermistor;
-}
 
+
+// // функция для настройки PCINT
+// uint8_t attachPCINT(uint8_t pin) {
+//   if (pin < 8) {  // D0-D7 (PCINT2)
+//     PCICR |= (1 << PCIE2);
+//     PCMSK2 |= (1 << pin);
+//     return 2;
+//   } else if (pin > 13) {  //A0-A5 (PCINT1)
+//     PCICR |= (1 << PCIE1);
+//     PCMSK1 |= (1 << pin - 14);
+//     return 1;
+//   } else {  // D8-D13 (PCINT0)
+//     PCICR |= (1 << PCIE0);
+//     PCMSK0 |= (1 << pin - 8);
+//     return 0;
+//   }
+// }

@@ -11,6 +11,10 @@
 #define PSONpin 16  // (D0)
 #define BTNpin 15 // (D8)
 
+// strip
+#define LED_PIN 5
+#define LED_NUM 50
+
 
 #define BOT_ACTIVE
 #define BOT_TOKEN "5159841213:AAHIGT0TSv-nZzh7Ve2i3CsUQ7wsHi0r1xg" // https://api.telegram.org/bot5159841213:AAHIGT0TSv-nZzh7Ve2i3CsUQ7wsHi0r1xg/getUpdates

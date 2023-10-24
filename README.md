@@ -1,15 +1,8 @@
 # SmartHomeSystem
 
-<head>
-<style>
-   p {
-    font-size: 5px;
-    }
-</style>    
-</head>
 
 <center>
-<pre><p>
+<pre><span style="font-size=3px">
 
 <b>   _____                              _       _    _                                 _____                 _                       </b>
 <b>  / ____|                            | |     | |  | |                               / ____|               | |                      </b>
@@ -20,5 +13,5 @@
 <b>                                                                                              __/ |                                </b>
 <b>                                                                                             |___/                                 </b>
 
-</p></pre>
+</span></pre>
 </center>

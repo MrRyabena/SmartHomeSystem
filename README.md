@@ -1,7 +1,13 @@
 # SmartHomeSystem
 
+<style>
+    p {
+    font-size: 5px;
+    }
+</style>    
+
 <center>
-<pre style="font-size: 5px">
+<pre><p>
 
 <b>   _____                              _       _    _                                 _____                 _                       </b>
 <b>  / ____|                            | |     | |  | |                               / ____|               | |                      </b>
@@ -12,5 +18,5 @@
 <b>                                                                                              __/ |                                </b>
 <b>                                                                                             |___/                                 </b>
 
-</pre>
+</p></pre>
 </center>

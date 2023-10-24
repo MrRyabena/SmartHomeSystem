@@ -1,10 +1,12 @@
 # SmartHomeSystem
 
+<head>
 <style>
-    p {
+   p {
     font-size: 5px;
     }
 </style>    
+</head>
 
 <center>
 <pre><p>

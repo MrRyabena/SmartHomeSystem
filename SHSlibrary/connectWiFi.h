@@ -1,33 +1,89 @@
+/*
+   _____                      _     _    _                         _____           _
+  / ____|                    | |   | |  | |                       / ____|         | |
+ | (___  _ __ ___   __ _ _ __| |_  | |__| | ___  _ __ ___   ___  | (___  _   _ ___| |_ ___ _ __ ___
+  \___ \| '_ ` _ \ / _` | '__| __| |  __  |/ _ \| '_ ` _ \ / _ \  \___ \| | | / __| __/ _ \ '_ ` _ \
+  ____) | | | | | | (_| | |  | |_  | |  | | (_) | | | | | |  __/  ____) | |_| \__ \ ||  __/ | | | | |
+ |_____/|_| |_| |_|\__,_|_|   \__| |_|  |_|\___/|_| |_| |_|\___| |_____/ \__, |___/\__\___|_| |_| |_|
+                                                                          __/ |
+                                                                         |___/
+*/
+
+/*
+  Simple functions for fast wifi connection for esp8266/esp32
+*/
+
+
+
 #pragma once
-#include <Arduino.h>
+
+#ifdef ESP8266
 #include <ESP8266WiFi.h>
-//#include <WiFi.h>
-#include "settings.h"
-
-
-
-
-void connectWiFi() {
-    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-#ifdef DEBUG
-        Serial.print(".");
+#else
+#include <WiFi.h>
 #endif
-        if (millis() > 15000) {
-            #ifndef connectWiFi_NORESTART
-            ESP.restart();
-            #else
-            break;
-            #endif
+
+#ifndef WIFI_SSID
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+#endif
+
+void connectWiFi(const char *ssid, const char *pass); // wi-fi connection, called 1 time
+String getWiFiInfo();                                 // return ip and mac
+void checkReconnection();                             // call constantly, will cause a reboot if the board is disconnected from WiFi for a long time
+
+void connectWiFi(const char *ssid = WIFI_SSID, const char *pass = WIFI_PASSWORD)
+{
+        WiFi.begin(ssid, pass);
+        while (WiFi.status() != WL_CONNECTED)
+        {
+                delay(500);
+#ifdef DEBUG
+                Serial.print(".");
+#endif
+                if (millis() > 15000)
+                {
+#ifndef connectWiFi_NORESTART
+                        ESP.restart();
+#else
+                        break;
+#endif
+                }
+
+#ifdef DEBUG
+                Serial.println("Connected");
+                Serial.print("IP: ");
+                Serial.println(WiFi.localIP());
+                Serial.print("Mac: ");
+                Serial.println(WiFi.macAddress());
+#endif
         }
+}
 
-#ifdef DEBUG
-        Serial.println("Connected");
-        Serial.print("IP: ");
-        Serial.println(WiFi.localIP());
-        Serial.print("Mac: ");
-        Serial.println(WiFi.macAddress());
-#endif
-    }
+String getWiFiInfo()
+{
+        String str{};
+        str.reserve(50);
+        str += F("IP: ");
+        str += WiFi.localIP();
+        str += F("Mac: ");
+        str += WiFi.macAddress();
+
+        return str;
+}
+
+void checkReconnection()
+{
+        static uint32_t tmr{};
+        if (WiFi.status() == WL_CONNECTED && !tmr)
+                return;
+        if (WiFi.status() == WL_CONNECTED)
+        {
+                tmr = 0;
+                return;
+        }
+        if (WiFi.status() != WL_CONNECTED && !tmr)
+                tmr = millis();
+        if (tmr && millis() - tmr >= 30000)
+                ESP.restart();
 }

@@ -2,9 +2,12 @@
 
 
 // WiFi
-#define WIFI_SSID "lady"
+#ifndef __AVR__
+//const char* WIFI_SSID = "SHS_WiFi";
+#define WIFI_SSID "SHS_WiFi"
+//const char* WIFI_PASSWORD = "19711970";
 #define WIFI_PASSWORD "19711970"
-
+#endif
 
 
 // debug

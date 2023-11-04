@@ -13,8 +13,6 @@
   Simple functions for fast wifi connection for esp8266/esp32
 */
 
-
-
 #pragma once
 
 #ifdef ESP8266
@@ -24,13 +22,16 @@
 #endif
 
 #ifndef WIFI_SSID
-#define WIFI_SSID ""
-#define WIFI_PASSWORD ""
+#define WIFI_SSID{};
+#define WIFI_PASSWORD{};
+#pragma message "Attention, wifi ssid and password not defined!"
 #endif
 
+
+
 void connectWiFi(const char *ssid, const char *pass); // wi-fi connection, called 1 time
-String getWiFiInfo();                                 // return ip and mac
-void checkReconnection();                             // call constantly, will cause a reboot if the board is disconnected from WiFi for a long time
+// String getWiFiInfo();                                 // return information
+void checkReconnection(); // call constantly, will cause a reboot if the board is disconnected from WiFi for a long time
 
 void connectWiFi(const char *ssid = WIFI_SSID, const char *pass = WIFI_PASSWORD)
 {
@@ -60,17 +61,28 @@ void connectWiFi(const char *ssid = WIFI_SSID, const char *pass = WIFI_PASSWORD)
         }
 }
 
-String getWiFiInfo()
-{
-        String str{};
-        str.reserve(50);
-        str += F("IP: ");
-        str += WiFi.localIP();
-        str += F("Mac: ");
-        str += WiFi.macAddress();
+// String getWiFiInfo()
+//  {
+//          String str = "";
+//          str.reserve(50);
 
-        return str;
-}
+//         str += F("IP address: ");
+//         str += WiFi.localIP();
+//         str += '\n';
+//         str += F("ESP Mac Address: ");
+//         str += (WiFi.macAddress());
+//         str += '\n';
+//         str += F("Subnet Mask: ");
+//         str += (WiFi.subnetMask());
+//         str += '\n';
+//         str += F("Gateway IP: ");
+//         str += (WiFi.gatewayIP());
+//         str += '\n';
+//         str += F("DNS: ");
+//         str += (WiFi.dnsIP());
+
+//         return str;
+// }
 
 void checkReconnection()
 {

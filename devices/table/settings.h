@@ -12,8 +12,8 @@
 #define BTNpin 15 // (D8)
 
 // strip
-#define LED_PIN 5
-#define LED_NUM 50
+//#define LED_PIN 5
+//#define LED_NUM 50
 
 
 #define BOT_ACTIVE
@@ -21,3 +21,5 @@
 #define BOT_NAME "@SHsystemBot"
 #define CHAT_ID "438901860"        // commander's chat
 #define GROUP_ID "-1001977013443"  // smart home test
+
+

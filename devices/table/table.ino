@@ -2,7 +2,6 @@
 #include "lighterAPI.h"
 #include <SHSlibrary.h>
 
-
 #include <GBUS.h>
 GBUS bus(&Serial, TABLE_ID, 25);
 DTP dtp(&bus, TABLE_ID, BUSbufsize);
@@ -16,23 +15,25 @@ GyverNTP ntp(3);
 #include <FastBot.h>
 FastBot bot(BOT_TOKEN);
 
-#include <FastLed.h>
-
+//#include <FastLed.h>
 
 
 uint8_t dur{};
 
-void setup() {
+void setup()
+{
   Serial.begin(BUSspeed);
   connectWiFi();
   botSetup();
-
+  
   bot.sendMessage("I am started", CHAT_ID);
 }
 
-void loop() {
-  //ntp.tick();
+void loop()
+{
+  // ntp.tick();
   bot.tick();
   sunrise(dur);
   handleBus();
+  
 }

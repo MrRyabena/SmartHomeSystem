@@ -11,11 +11,11 @@ uint8_t sunrise(uint8_t duration) {
     
       ByteCollector col(8);
 
-      col.addVal(lapi::analogSetPin, 1);
-      col.addVal<uint8_t>(2, 1);
-      col.addVal(BRARpin, 1);
+      col.add(lapi::analogSetPin, 1);
+      col.add<uint8_t>(2, 1);
+      col.add(BRARpin, 1);
       col.add(++sunVal, 1);
-      col.addVal(BRALpin, 1);
+      col.add(BRALpin, 1);
       col.add(sunVal, 1);
 
 

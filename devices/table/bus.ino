@@ -58,9 +58,9 @@ void handleBus() {
 void setBraR(uint8_t value) {
   ByteCollector col(4);
 
-  col.addVal(lapi::analogSetPin, 1);
-  col.addVal<uint8_t>(1, 1);
-  col.addVal(BRARpin, 1);
+  col.add(lapi::analogSetPin, 1);
+  col.add<uint8_t>(1, 1);
+  col.add(BRARpin, 1);
   col.add(value, 1);
 
   dtp.sendBuf(LIGHTER_ID, col.buf, col.size());
@@ -69,9 +69,9 @@ void setBraR(uint8_t value) {
 void setBraL(uint8_t value) {
   ByteCollector col(4);
 
-  col.addVal(lapi::analogSetPin, 1);
-  col.addVal<uint8_t>(1, 1);
-  col.addVal(BRALpin, 1);
+  col.add(lapi::analogSetPin, 1);
+  col.add<uint8_t>(1, 1);
+  col.add(BRALpin, 1);
   col.add(value, 1);
 
   dtp.sendBuf(LIGHTER_ID, col.buf, col.size());
@@ -80,9 +80,9 @@ void setBraL(uint8_t value) {
 void getT() {
   ByteCollector col(3);
 
-  col.addVal(lapi::getAnalogAverageVal, 1);
-  col.addVal<uint8_t>(1, 1);
-  col.addVal(0, 1);
+  col.add(lapi::getAnalogAverageVal, 1);
+  col.add<uint8_t>(1, 1);
+  col.add(0, 1);
   dtp.sendBuf(LIGHTER_ID, col.buf, col.size());
 }
 
@@ -90,7 +90,7 @@ void getT() {
 void getPWM() {
   ByteCollector col(1);
 
-  col.addVal(lapi::getSettings, 1);
+  col.add(lapi::getSettings, 1);
   dtp.sendBuf(LIGHTER_ID, col.buf, col.size());
 }
 
@@ -98,6 +98,6 @@ void getPWM() {
 void getRPM() {
   ByteCollector col(1);
 
-  col.addVal(lapi::getRPM, 1);
+  col.add(lapi::getRPM, 1);
   dtp.sendBuf(LIGHTER_ID, col.buf, col.size());
 }

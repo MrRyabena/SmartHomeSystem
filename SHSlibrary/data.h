@@ -1,5 +1,6 @@
 #pragma once
-#include <Arduino.h>
+#include <stdint.h>
+//#include <Arduino.h>
 //#include <File.h>
 
 

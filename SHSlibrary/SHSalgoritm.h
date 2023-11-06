@@ -11,18 +11,22 @@
 
 #pragma once
 
-
 // CRC
-namespace shs {
-uint8_t crc_8(const uint8_t *ptr, uint16_t size);
-void crc_8_update(uint8_t &crc, uint8_t data);
-uint16_t crc_16(const uint8_t *ptr, uint16_t size);
-uint32_t crc_32(const uint8_t *ptr, uint16_t size);
+namespace shs
+{
+    uint8_t crc_8(const uint8_t *ptr, uint16_t size);
+    void crc_8_update(uint8_t &crc, uint8_t data);
+
+    uint16_t crc_16(const uint8_t *ptr, uint16_t size);
+    void crc_16_update(uint16_t &crc, uint8_t data);
+    
+    uint32_t crc_32(const uint8_t *ptr, uint16_t size);
+    void crc_32_update(uint32_t &crc, uint8_t data);
 };
 
 /*
  __ _  __
-/  |_)/  
+/  |_)/
 \__| \\__
 
 */
@@ -66,60 +70,44 @@ void shs::crc_8_update(uint8_t &crc, uint8_t data)
 
 uint16_t shs::crc_16(const uint8_t *ptr, uint16_t size)
 {
-    const uint16_t CRC16 = 0x8005;
-    uint16_t out = 0;
-    uint16_t bit_flag{};
-    uint8_t bits_read{};
 
-    while (size > 0)
+    uint16_t crc = 0xFFFF;
+
+    while (size--)
     {
-        bit_flag = out >> 15;
-        out <<= 1;
-        out |= (*ptr >> bits_read) & 1;
-        bits_read++;
-        if (bits_read > 7)
-        {
-            bits_read = 0;
-            ptr++;
-            size--;
-        }
-
-        if (bit_flag)
-            out ^= CRC16;
-        uint16_t i;
-        for (i = 0; i < 16; i++)
-        {
-            bit_flag = out >> 15;
-            out <<= 1;
-            if (bit_flag)
-                out ^= CRC16;
-        }
-
-        uint16_t crc = 0;
-        i = 0x8000;
-        uint16_t j = 0x0001;
-        for (; i != 0; i >>= 1, j <<= 1)
-        {
-            if (i & out)
-                crc |= j;
-        }
-        return crc;
+        crc_16_update(crc, *ptr++);
     }
+    return crc;
+}
+
+void shs::crc_16_update(uint16_t &crc, uint8_t data)
+{
+    uint16_t x;
+    x = crc >> 8 ^ data++;
+    x ^= x >> 4;
+    crc = (crc << 8) ^ ((uint16_t)(x << 12) ^ ((uint16_t)(x << 5)) ^ x);
 }
 
 uint32_t shs::crc_32(const uint8_t *ptr, uint16_t size)
 {
-    uint32_t crc = 0xFFFFFFFF;
+    uint32_t crc = 0; // 0xFFFFFFFF;
     while (size--)
     {
-        crc ^= *ptr++;
-        for (uint8_t bit = 0; bit < 8; bit++)
-        {
-            if (crc & 1)
-                crc = (crc >> 1) ^ 0xEDB88320;
-            else
-                crc = (crc >> 1);
-        }
+        crc_32_update(crc, *ptr++);
     }
-    return crc ^ 0xFFFFFFFF;
+    return crc; // ^ 0xFFFFFFFF;
+}
+
+void shs::crc_32_update(uint32_t &crc, uint8_t data)
+{
+    crc ^= 0xFFFFFFFF;
+    crc ^= data;
+    for (uint8_t bit = 0; bit < 8; bit++)
+    {
+        if (crc & 1)
+            crc = (crc >> 1) ^ 0xEDB88320;
+        else
+            crc = (crc >> 1);
+    }
+    crc ^= 0xFFFFFFFF;
 }

@@ -22,18 +22,19 @@
 #endif
 
 #ifndef WIFI_SSID
-#define WIFI_SSID{};
-#define WIFI_PASSWORD{};
+#define WIFI_SSID {};
+#define WIFI_PASSWORD {};
 #pragma message "Attention, wifi ssid and password not defined!"
 #endif
 
+namespace shs
+{
+        void connectWiFi(const char *ssid, const char *pass); // wi-fi connection, called 1 time
+        // String getWiFiInfo();                                 // return information
+        void checkReconnection(); // call constantly, will cause a reboot if the board is disconnected from WiFi for a long time
+};
 
-
-void connectWiFi(const char *ssid, const char *pass); // wi-fi connection, called 1 time
-// String getWiFiInfo();                                 // return information
-void checkReconnection(); // call constantly, will cause a reboot if the board is disconnected from WiFi for a long time
-
-void connectWiFi(const char *ssid = WIFI_SSID, const char *pass = WIFI_PASSWORD)
+void shs::connectWiFi(const char *ssid = WIFI_SSID, const char *pass = WIFI_PASSWORD)
 {
         WiFi.begin(ssid, pass);
         while (WiFi.status() != WL_CONNECTED)
@@ -61,7 +62,7 @@ void connectWiFi(const char *ssid = WIFI_SSID, const char *pass = WIFI_PASSWORD)
         }
 }
 
-// String getWiFiInfo()
+// String shs::getWiFiInfo()
 //  {
 //          String str = "";
 //          str.reserve(50);
@@ -84,7 +85,7 @@ void connectWiFi(const char *ssid = WIFI_SSID, const char *pass = WIFI_PASSWORD)
 //         return str;
 // }
 
-void checkReconnection()
+void shs::checkReconnection()
 {
         static uint32_t tmr{};
         if (WiFi.status() == WL_CONNECTED && !tmr)

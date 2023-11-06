@@ -14,12 +14,16 @@
 // CRC
 namespace shs
 {
+#define CRC8_beg 0x00;
+#define CRC16_beg 0xffff;
+#define CRC32_beg 0x00000000;
+
     uint8_t crc_8(const uint8_t *ptr, uint16_t size);
     void crc_8_update(uint8_t &crc, uint8_t data);
 
     uint16_t crc_16(const uint8_t *ptr, uint16_t size);
     void crc_16_update(uint16_t &crc, uint8_t data);
-    
+
     uint32_t crc_32(const uint8_t *ptr, uint16_t size);
     void crc_32_update(uint32_t &crc, uint8_t data);
 };
@@ -82,7 +86,7 @@ uint16_t shs::crc_16(const uint8_t *ptr, uint16_t size)
 
 void shs::crc_16_update(uint16_t &crc, uint8_t data)
 {
-    uint16_t x;
+    uint16_t x{};
     x = crc >> 8 ^ data++;
     x ^= x >> 4;
     crc = (crc << 8) ^ ((uint16_t)(x << 12) ^ ((uint16_t)(x << 5)) ^ x);

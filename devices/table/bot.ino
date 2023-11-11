@@ -65,6 +65,16 @@ void handleBot(FB_msg& message) {
     bot.sendMessage(m, message.chatID);
   }
 
+  if (message.text.startsWith(F("/bra"))) {
+    String str = message.text.substring(message.text.indexOf(' '));
+    uint8_t val = static_cast<uint8_t>(str.toInt());
+    setBra(val);
+    String m = "bra: ";
+    m += val;
+    bot.sendMessage(m, message.chatID);
+  }
+
+
   if (message.text.startsWith(F("getT"))) {
     getT();
   }
@@ -82,5 +92,5 @@ void handleBot(FB_msg& message) {
     m += dur;
     bot.sendMessage(m, CHAT_ID);
   }
-
+  
 }

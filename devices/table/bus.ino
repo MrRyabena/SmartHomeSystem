@@ -77,6 +77,16 @@ void setBraL(uint8_t value) {
   dtp.sendBuf(LIGHTER_ID, col.buf, col.size());
 }
 
+void setBra(uint8_t value) {
+  ByteCollector col(6);
+  col.add(lapi::analogSetPin, 1);
+  col.add<uint8_t>(2, 1);
+  col.add(BRALpin, 1);
+  col.add(value, 1);
+  col.add(BRARpin, 1);
+  col.add(value, 1);
+}
+
 void getT() {
   ByteCollector col(3);
 

@@ -18,14 +18,16 @@ namespace shs
 #define CRC16_beg 0xffff;
 #define CRC32_beg 0x00000000;
 
-    uint8_t crc_8(const uint8_t *ptr, uint16_t size);
-    void crc_8_update(uint8_t &crc, uint8_t data);
+   inline uint8_t crc_8(const uint8_t *ptr, uint16_t size);
+   inline void crc_8_update(uint8_t &crc, uint8_t data);
 
-    uint16_t crc_16(const uint8_t *ptr, uint16_t size);
-    void crc_16_update(uint16_t &crc, uint8_t data);
+   inline uint16_t crc_16(const uint8_t *ptr, uint16_t size);
+   inline void crc_16_update(uint16_t &crc, uint8_t data);
 
-    uint32_t crc_32(const uint8_t *ptr, uint16_t size);
-    void crc_32_update(uint32_t &crc, uint8_t data);
+   inline uint32_t crc_32(const uint8_t *ptr, uint16_t size);
+   inline void crc_32_update(uint32_t &crc, uint8_t data);
+
+    
 };
 
 /*
@@ -34,15 +36,8 @@ namespace shs
 \__| \\__
 
 */
-uint8_t shs::crc_8(const uint8_t *ptr, uint16_t size)
-{
-    uint8_t crc = 0;
-    for (uint16_t i = 0; i < size; i++)
-        crc_8_update(crc, *ptr);
-    return crc;
-}
 
-void shs::crc_8_update(uint8_t &crc, uint8_t data)
+ inline void shs::crc_8_update(uint8_t &crc, uint8_t data)
 {
 #if defined(__AVR__)
     // резкий алгоритм для AVR
@@ -72,19 +67,18 @@ void shs::crc_8_update(uint8_t &crc, uint8_t data)
 #endif
 }
 
-uint16_t shs::crc_16(const uint8_t *ptr, uint16_t size)
+inline uint8_t shs::crc_8(const uint8_t *ptr, uint16_t size)
 {
-
-    uint16_t crc = 0xFFFF;
-
-    while (size--)
-    {
-        crc_16_update(crc, *ptr++);
-    }
+    uint8_t crc = 0;
+    for (uint16_t i = 0; i < size; i++)
+        shs::crc_8_update(crc, *ptr);
     return crc;
 }
 
-void shs::crc_16_update(uint16_t &crc, uint8_t data)
+
+
+
+ inline void shs::crc_16_update(uint16_t &crc, uint8_t data)
 {
     uint16_t x{};
     x = crc >> 8 ^ data++;
@@ -92,17 +86,22 @@ void shs::crc_16_update(uint16_t &crc, uint8_t data)
     crc = (crc << 8) ^ ((uint16_t)(x << 12) ^ ((uint16_t)(x << 5)) ^ x);
 }
 
-uint32_t shs::crc_32(const uint8_t *ptr, uint16_t size)
+inline uint16_t shs::crc_16(const uint8_t *ptr, uint16_t size)
 {
-    uint32_t crc = 0; // 0xFFFFFFFF;
+
+    uint16_t crc = 0xFFFF;
+
     while (size--)
     {
-        crc_32_update(crc, *ptr++);
+        shs::crc_16_update(crc, *ptr++);
     }
-    return crc; // ^ 0xFFFFFFFF;
+    return crc;
 }
 
-void shs::crc_32_update(uint32_t &crc, uint8_t data)
+
+
+
+inline void shs::crc_32_update(uint32_t &crc, uint8_t data)
 {
     crc ^= 0xFFFFFFFF;
     crc ^= data;
@@ -115,3 +114,17 @@ void shs::crc_32_update(uint32_t &crc, uint8_t data)
     }
     crc ^= 0xFFFFFFFF;
 }
+
+
+inline uint32_t shs::crc_32(const uint8_t *ptr, uint16_t size)
+{
+    uint32_t crc = 0; // 0xFFFFFFFF;
+    while (size--)
+    {
+        shs::crc_32_update(crc, *ptr++);
+    }
+    return crc; // ^ 0xFFFFFFFF;
+}
+
+
+

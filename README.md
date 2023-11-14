@@ -139,15 +139,10 @@
 |CPU type|8-bit AVR|
 |:-:|:-:|
 |CPU speed|20 MHz|
-|--|--|
 |Flash memory|32 KB|
-|--|--|
 |SRAM|2 KB|
-|--|--|
 |EEPROM|1 KB|
-|--|--|
 |I/O pins|23|
-|--|--|
 
 
 ![ATmega328P pinout](schemes/Atmega328P-pinout.png)

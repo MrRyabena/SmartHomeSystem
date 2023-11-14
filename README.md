@@ -136,7 +136,7 @@
 ### ATmega328P
 Этот микроконтроллер удобен в использовании, крайне неприхотлив в эксплуатации, имеет много аналоговых пинов, аппаратную поддержку ШИМ.
 
-|||
+|Parametr|Value|
 |:-:|:-:|
 |CPU type|8-bit AVR|
 |CPU speed|20 MHz|
@@ -144,6 +144,7 @@
 |SRAM|2 KB|
 |EEPROM|1 KB|
 |I/O pins|23|
+|Operating Voltage Range|1.8 — 5.5 V|
 
 
 ![ATmega328P pinout](schemes/Atmega328P-pinout.png)

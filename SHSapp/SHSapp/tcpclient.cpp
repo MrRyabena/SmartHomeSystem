@@ -47,18 +47,25 @@ void TCPclient::checkData() {
     unsigned long long time = QDateTime::currentDateTime().toTime_t();
 
     socket->waitForReadyRead(3000);
-    if (socket->bytesAvailable()) {
-        lastPacketTime = time;
-        shs::ByteCollector col(1);
-        socket->read((char*)col.buf, 1);
-        col.reserve(col.buf[0]);
-        socket->read((char*)col.buf, col.buf[0]);
-        col.ptr += col.buf[0];
 
-        dtp->parceDTP(col, )
+    for (;;) {
+        if (socket->bytesAvailable()) {
+            lastPacketTime = time;
+            if (!meslen) meslen = socket->read((char*)&meslen, 1);
+            if (socket->bytesAvailable() < meslen) break;
+
+            shs::ByteCollector col(meslen);
+
+            col.add(meslen);
+            socket->read((char*)&col.buf[1], col.buf[0]);
+            col.ptr += col.buf[0];
+            meslen = 0;
 
 
-                return;
+            dtp->parseDTP(&col, parseData);
+
+        }
+        return;
     }
     if (lastPacketTime - time >= 60) {
         checkConnection();
@@ -82,7 +89,7 @@ void TCPclient::checkConnection() {
 }
 
 
-void TCPclient::parseData(shs::DTPdata &stc, shs::ByteCollector *data) {
+void parseData(shs::DTPdata &stc, shs::ByteCollector *data) {
     switch (data->readPtr[0]) {
 
     default:

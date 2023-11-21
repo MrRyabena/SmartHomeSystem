@@ -16,7 +16,7 @@ namespace shs
         {
         }
 
-        File open(const char *name, const char *mode = "r")
+        void open(const char *name, const char *mode = "r")
         {
             if (!o_file)
                 o_file.close();
@@ -27,6 +27,7 @@ namespace shs
         void close()
         {
             _file->close();
+            _file = nullptr;
         }
 
         template <typename T>
@@ -59,6 +60,11 @@ namespace shs
             uint8_t *ptr = (uint8_t *)&data;
             for (uint16_t i; i < sizeof(data); i++)
                 file->write(*ptr++);
+        }
+
+        String readBefore(char symbe)
+        {
+            return readBefore(symb, o_file);
         }
 
         String readBefore(char symb, File *file)

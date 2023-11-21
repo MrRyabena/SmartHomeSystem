@@ -4,7 +4,28 @@
 
 #pragma once
 #include "SHSalgoritm.h"
+#include "ByteCollector.h"
 #define DTP_OFFSETbeg 3
+
+
+namespace shs
+{
+    struct DTPdata
+    {
+        uint8_t from{};
+        uint8_t to{};
+        uint8_t datasize{};
+    };
+};
+
+
+namespace shs {
+    enum DTPcommands : uint8_t {
+        answer = 253,
+        request,
+    };
+};
+
 
 namespace shs
 {
@@ -58,7 +79,7 @@ namespace shs
             return 0;
         }
 
-        uint8_t parseDTP(shs::ByteCollector *bc, void (*callback)(shs::DTPdata&, shs::ByteCollector*))
+         uint8_t parseDTP(shs::ByteCollector *bc, void (*callback)(shs::DTPdata&, shs::ByteCollector*))
         {
             uint8_t status = checkDTP(bc);
             if (status)
@@ -68,7 +89,7 @@ namespace shs
             data.from = bc->buf[2];
             data.to = bc->buf[1];
             data.datasize = bc->size() - DTP_OFFSETbeg - 1;
-            bc->readPtr = buf + DTP_OFFSETbeg;
+            bc->readPtr = bc->buf + DTP_OFFSETbeg;
             callback(data, bc);
             return 0;
         }
@@ -78,20 +99,3 @@ namespace shs
     };
 };
 
-namespace shs
-{
-    struct DTPdata
-    {
-        uint8_t from{};
-        uint8_t to{};
-        uint8_t datasize{};
-    }
-}
-
-
-namespace shs {
-    enum DTPcommands : uint8_t {
-        answer = 253,
-        request,
-    }
-}

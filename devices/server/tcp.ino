@@ -11,6 +11,7 @@ void setupTCP() {
 void handleTCP() {
 
   uint8_t i{};
+  static uint8_t lens[MAX_WIFICLIENTS]{};
 
   if (server.hasClient()) {
     for (i = 0; i < MAX_WIFICLIENTS; i++) {
@@ -28,11 +29,27 @@ void handleTCP() {
   for (i = 0; i < MAX_WIFICLIENTS; i++) {
     if (clients[i] && clients[i].connected()) {
       if (clients[i].available()) {
-        while (clients[i].available()) {
-          // parsing client
-          clients[i].read();
-        }
+        if (lens[i]) {
+          if (clients[i].available() < lens[i]) continue;
+          shs::ByteCollector col(lens[i]);
+          col.buf[0] = lens[i];
+          clients[i].read(&col.buf[1], col.buf[0] - 1);
+          lens[i] = 0;
+        }        
       }
+    }
+  }
+}
+
+
+
+void sendTCP(shs::ByteCollector* col, uint8_t id) {
+  String str = F("192.168.1.");
+  str += id;
+  for (i  = 0; i < MAX_WIFICLIENTS; i++) {
+    if (clients[i].remoteIP().equal(str)) {
+      dtp.packDTP(col, id);
+      clients[i].write(col.buf, col.buf[0]);
     }
   }
 }

@@ -9,6 +9,8 @@
 #include "../../SHSlibrary/SHSalgoritm.h"
 
 
+extern void parseData(shs::DTPdata &stc, shs::ByteCollector *data);
+
 
 class TCPclient : public QObject
 {
@@ -21,17 +23,22 @@ public:
     void begin(uint8_t ID, const char *ip, int port);
     void connect(const char *ip, int port);
     void sendPacket(shs::ByteCollector *packet, uint8_t to);
+
+
     void checkData();
     void checkConnection();
-    void parseData(shs::DTPdata &stc, shs::ByteCollector* data);
 
     uint8_t ID{};
     const char * IP{};
     int Port{};
+public slots:
+    void process();
+
 private:
     QTcpSocket *socket;
     shs::DTP *dtp;
     unsigned long long lastPacketTime{};
+    uint8_t meslen{};
 };
 
 #endif // TCPCLIENT_H

@@ -4,9 +4,8 @@
 
 #pragma once
 #include "SHSalgoritm.h"
-#include "ByteCollector.h"
+#include "SHSByteCollector.h"
 #define DTP_OFFSETbeg 3
-
 
 namespace shs
 {
@@ -18,14 +17,14 @@ namespace shs
     };
 };
 
-
-namespace shs {
-    enum DTPcommands : uint8_t {
+namespace shs
+{
+    enum DTPcommands : uint8_t
+    {
         answer = 253,
         request,
     };
 };
-
 
 namespace shs
 {
@@ -56,30 +55,34 @@ namespace shs
 
         uint8_t packDTP(shs::ByteCollector *bc, uint8_t to)
         {
-            packDTP(bc, to, _myID);
+            return packDTP(bc, to, _myID);
         }
 
         uint8_t packDTP(shs::ByteCollector *bc, uint8_t to, uint8_t from)
         {
-            bc->reserveBefore(DTP_OFFSETbeg);
+            bc->reserveBefore(3);
             bc->buf[1] = to;
             bc->buf[2] = from;
-            bc->add(shs::crc_16(bc->buf, bc->size()));
-            bc->buf[0] = bc->size();
+            bc->buf[0] = bc->size() + 1;
+            bc->add(shs::crc_8(bc->buf, bc->size()), 1);
+            
+            return bc->buf[0];
         }
 
         uint8_t checkDTP(shs::ByteCollector *bc)
         {
-            if (bc->size() < bc->buf[0])
+            if (bc->size() < bc->buf[0] - 1)
                 return 1;
-
-            uint16_t crc = shs::crc_16(bc->buf, bc->size());
-            if (bc->buf[bc->buf[0] - 1] != crc)
+            if (bc->size() > bc->buf[0])
                 return 2;
+
+            uint16_t crc = shs::crc_8(bc->buf, bc->buf[0] - 1);
+            if (bc->buf[bc->buf[0] - 1] != crc)
+                return 3;
             return 0;
         }
 
-         uint8_t parseDTP(shs::ByteCollector *bc, void (*callback)(shs::DTPdata&, shs::ByteCollector*))
+        uint8_t parseDTP(shs::ByteCollector *bc, void (*callback)(shs::DTPdata &, shs::ByteCollector *))
         {
             uint8_t status = checkDTP(bc);
             if (status)
@@ -98,4 +101,3 @@ namespace shs
         uint8_t _myID{};
     };
 };
-

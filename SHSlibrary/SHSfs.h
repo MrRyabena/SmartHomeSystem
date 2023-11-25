@@ -1,6 +1,7 @@
 #pragma once
 #include <Arduino.h>
 #include <FS.h>
+#include <SHSalgoritm.h>
 
 namespace shs
 {
@@ -62,9 +63,9 @@ namespace shs
                 file->write(*ptr++);
         }
 
-        String readBefore(char symbe)
+        String readBefore(char symb)
         {
-            return readBefore(symb, o_file);
+            return readBefore(symb, _file);
         }
 
         String readBefore(char symb, File *file)
@@ -111,24 +112,26 @@ namespace shs
         }
 
 
-        uint8_t getFileCRC_16(fs::File *file)
+        uint16_t getFileCRC_16(fs::File *file)
         {
             file->seek(0);
-            uint8_t crc = shs::CRC16_beg;
+            uint16_t crc = shs::CRC16_beg;
             while (file->position() != file->size() - 1)
             {
                 shs::crc_16_update(crc, file->read());
             }
+            return crc;
         }
 
-        uint8_t getFileCRC_32(fs::File *file)
+        uint32_t getFileCRC_32(fs::File *file)
         {
             file->seek(0);
-            uint8_t crc = shs::CRC32_beg;
+            uint32_t crc = shs::CRC32_beg;
             while (file->position() != file->size() - 1)
             {
-                shs::crc_8_update(crc, file->read());
+                shs::crc_32_update(crc, file->read());
             }
+            return crc;
         }
 
         fs::File *_file = nullptr;

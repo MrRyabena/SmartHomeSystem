@@ -1,7 +1,6 @@
-#define MAX_WIFICLIENTS 4
 
-WiFiServer server(80);
-WiFiClient clients[MAX_WIFICLIENTS];
+
+shs::DTP dtp(0);
 
 void setupTCP() {
   server.begin();
@@ -10,12 +9,12 @@ void setupTCP() {
 
 void handleTCP() {
 
+  //static uint8_t clients[MAX_WIFICLIENTS]{};
   uint8_t i{};
-  static uint8_t lens[MAX_WIFICLIENTS]{};
 
   if (server.hasClient()) {
     for (i = 0; i < MAX_WIFICLIENTS; i++) {
-      if (!clients[i] || !clients[i].connected()) {
+      if (!clients[i] || (clients[i] && clients[i].connected())) {
         if (clients[i])
           clients[i].stop();
         clients[i] = server.available();
@@ -26,6 +25,7 @@ void handleTCP() {
     client.stop();
   }
 
+
   for (i = 0; i < MAX_WIFICLIENTS; i++) {
     if (clients[i] && clients[i].connected()) {
       if (clients[i].available()) {
@@ -35,7 +35,7 @@ void handleTCP() {
           col.buf[0] = lens[i];
           clients[i].read(&col.buf[1], col.buf[0] - 1);
           lens[i] = 0;
-        }        
+        }
       }
     }
   }
@@ -43,13 +43,13 @@ void handleTCP() {
 
 
 
-void sendTCP(shs::ByteCollector* col, uint8_t id) {
-  String str = F("192.168.1.");
-  str += id;
-  for (i  = 0; i < MAX_WIFICLIENTS; i++) {
-    if (clients[i].remoteIP().equal(str)) {
+uint8_t sendTCP(shs::ByteCollector* col, uint8_t id) {
+  for (uint8_t i = 0; i < MAX_WIFICLIENTS; i++) {
+    if (clients[i].remoteIP()[3] == id) {
       dtp.packDTP(col, id);
-      clients[i].write(col.buf, col.buf[0]);
+      clients[i].write(col->buf, col->buf[0]);
+      return 0;
     }
   }
+  return 1;
 }

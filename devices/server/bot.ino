@@ -64,15 +64,16 @@ void parseBot(FB_msg &message)
       message.text.remove(0, strlen(BOT_NAME));
   if (message.text.startsWith("/"))
     message.text.remove(0, 1);
-
-  shsFS.open(F("/data/bot/commands.txt"));
+  
+  //char name[] = F("/data/bot/commands.txt");
+  shsFS.open("/data/bot/commands.txt");
   TBotCommands command{};
   uint8_t counter{};
-  while (shsFS._file->position < shsFS._file->size())
+  while (shsFS._file->position() < shsFS._file->size())
   {
     String str = shsFS.readBefore('\n');
     while (str.indexOf('|') > 1)
-      if (message.text.startsWhith(str.substring(0, shsFS.indexOf('|'))))
+      if (message.text.startsWith(str.substring(0, str.indexOf('|'))))
       {
         command = static_cast<TBotCommands>(counter);
         goto out;
@@ -89,7 +90,8 @@ out:
     break;
   case tbc::start:
   {
-    shsFS.open(F("/data/bot/start.txt"));
+    //char name[] = F("/data/bot/start.txt");
+    shsFS.open("/data/bot/start.txt");
   }
   break;
   default:

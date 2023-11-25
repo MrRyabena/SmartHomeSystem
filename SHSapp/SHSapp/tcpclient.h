@@ -4,7 +4,7 @@
 #include <QTcpSocket>
 #include <QDateTime>
 #include <stdint.h>
-#include "../../SHSlibrary/ByteCollector.h"
+#include "../../SHSlibrary/SHSByteCollector.h"
 #include "../../SHSlibrary/SHSdtp.h"
 #include "../../SHSlibrary/SHSalgoritm.h"
 
@@ -31,8 +31,7 @@ public:
     uint8_t ID{};
     const char * IP{};
     int Port{};
-public slots:
-    void process();
+
 
 private:
     QTcpSocket *socket;

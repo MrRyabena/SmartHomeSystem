@@ -13,10 +13,14 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
     TCPclient tcp;
-    QThread *thread = new QThread();
 
-    //tcp.begin();
-    tcp.moveToThread(thread);
+    tcp.begin(108, "192.168.1.4", 80);
+    tcp.connect("192.168.1.4", 80);
+    for(;;) {
+        tcp.checkData();
+    }
+
+
 
 
     w.show();

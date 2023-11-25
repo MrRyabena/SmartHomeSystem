@@ -50,19 +50,26 @@ void TCPclient::checkData() {
 
     for (;;) {
         if (socket->bytesAvailable()) {
+            qDebug() << "available!";
             lastPacketTime = time;
-            if (!meslen) meslen = socket->read((char*)&meslen, 1);
-            if (socket->bytesAvailable() < meslen) break;
+            if (!meslen) socket->read((char*)&meslen, 1);
+            qDebug() << (int)meslen;
+            if (socket->bytesAvailable() < (int)meslen - 1) break;
 
             shs::ByteCollector col(meslen);
 
             col.add(meslen);
             socket->read((char*)&col.buf[1], col.buf[0]);
-            col.ptr += col.buf[0];
+            col.ptr += col.buf[0] - 1;
             meslen = 0;
+            qDebug() << "Message";
+            for (auto i = 0; i < col.size(); i++) qDebug() << col.buf[i];
+            uint16_t crc = shs::crc_8(col.buf, col.buf[0] - 1);
+            qDebug() << "crc: " << crc << "==" << col.buf[col.buf[0] - 1];
+            qDebug() << "dtp";
 
 
-            dtp->parseDTP(&col, parseData);
+            qDebug() << dtp->parseDTP(&col, parseData);
 
         }
         return;
@@ -90,12 +97,15 @@ void TCPclient::checkConnection() {
 
 
 void parseData(shs::DTPdata &stc, shs::ByteCollector *data) {
+    qDebug() << "parse...";
     switch (data->readPtr[0]) {
 
     default:
         shs::ByteCollector col(1);
         col.add(shs::DTPcommands::answer, 1);
-        sendPacket(&col, 104);
+        qDebug() << "from: " << stc.from << "\nto: " << stc.to << "\ndatasize: " << stc.datasize;
+        for (auto i = 0; i < data->size(); i++) qDebug() << static_cast<char>(data->buf[i]);
+        //sendPacket(&col, 104);
         break;
     }
 }

@@ -14,20 +14,19 @@
 // CRC
 namespace shs
 {
-#define CRC8_beg 0x00;
-#define CRC16_beg 0xffff;
-#define CRC32_beg 0x00000000;
+    const uint8_t CRC8_beg = 0x00;
+    const uint16_t CRC16_beg = 0xFFFF;
+    const uint32_t CRC32_beg = 0x00000000;
 
-   inline uint8_t crc_8(const uint8_t *ptr, uint16_t size);
-   inline void crc_8_update(uint8_t &crc, uint8_t data);
+    inline uint8_t crc_8(const uint8_t *ptr, uint16_t size);
+    inline void crc_8_update(uint8_t &crc, uint8_t data);
 
-   inline uint16_t crc_16(const uint8_t *ptr, uint16_t size);
-   inline void crc_16_update(uint16_t &crc, uint8_t data);
+    inline uint16_t crc_16(const uint8_t *ptr, uint16_t size);
+    inline void crc_16_update(uint16_t &crc, uint8_t data);
 
-   inline uint32_t crc_32(const uint8_t *ptr, uint16_t size);
-   inline void crc_32_update(uint32_t &crc, uint8_t data);
+    inline uint32_t crc_32(const uint8_t *ptr, uint16_t size);
+    inline void crc_32_update(uint32_t &crc, uint8_t data);
 
-    
 };
 
 /*
@@ -37,7 +36,7 @@ namespace shs
 
 */
 
- inline void shs::crc_8_update(uint8_t &crc, uint8_t data)
+inline void shs::crc_8_update(uint8_t &crc, uint8_t data)
 {
 #if defined(__AVR__)
     // резкий алгоритм для AVR
@@ -75,10 +74,7 @@ inline uint8_t shs::crc_8(const uint8_t *ptr, uint16_t size)
     return crc;
 }
 
-
-
-
- inline void shs::crc_16_update(uint16_t &crc, uint8_t data)
+inline void shs::crc_16_update(uint16_t &crc, uint8_t data)
 {
     uint16_t x{};
     x = crc >> 8 ^ data++;
@@ -98,9 +94,6 @@ inline uint16_t shs::crc_16(const uint8_t *ptr, uint16_t size)
     return crc;
 }
 
-
-
-
 inline void shs::crc_32_update(uint32_t &crc, uint8_t data)
 {
     crc ^= 0xFFFFFFFF;
@@ -115,7 +108,6 @@ inline void shs::crc_32_update(uint32_t &crc, uint8_t data)
     crc ^= 0xFFFFFFFF;
 }
 
-
 inline uint32_t shs::crc_32(const uint8_t *ptr, uint16_t size)
 {
     uint32_t crc = 0; // 0xFFFFFFFF;
@@ -125,6 +117,3 @@ inline uint32_t shs::crc_32(const uint8_t *ptr, uint16_t size)
     }
     return crc; // ^ 0xFFFFFFFF;
 }
-
-
-

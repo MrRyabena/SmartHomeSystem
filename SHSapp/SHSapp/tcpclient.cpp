@@ -96,15 +96,15 @@ void TCPclient::checkConnection() {
 }
 
 
-void parseData(shs::DTPdata &stc, shs::ByteCollector *data) {
+void parseData(shs::DTPdata &stc) {
     qDebug() << "parse...";
-    switch (data->readPtr[0]) {
+    switch (stc.data->readPtr[0]) {
 
     default:
         shs::ByteCollector col(1);
         col.add(shs::DTPcommands::answer, 1);
         qDebug() << "from: " << stc.from << "\nto: " << stc.to << "\ndatasize: " << stc.datasize;
-        for (auto i = 0; i < data->size(); i++) qDebug() << static_cast<char>(data->buf[i]);
+        for (auto i = 0; i < stc.data->size(); i++) qDebug() << static_cast<char>(stc.data->buf[i]);
         //sendPacket(&col, 104);
         break;
     }

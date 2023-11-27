@@ -9,7 +9,7 @@
 #include "../../SHSlibrary/SHSalgoritm.h"
 
 
-extern void parseData(shs::DTPdata &stc, shs::ByteCollector *data);
+extern void parseData(shs::DTPdata &stc);
 
 
 class TCPclient : public QObject

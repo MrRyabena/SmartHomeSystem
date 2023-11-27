@@ -44,7 +44,7 @@ void handleBot(FB_msg& message) {
   if (message.text.indexOf('@') != -1)
     if (message.text.indexOf(BOT_NAME) != -1) message.text.remove(0, strlen(BOT_NAME));
   if (message.text.startsWith("/")) message.text.remove(0, 1);
-
+/*
 
 
   if (message.text.startsWith(F("braR"))) {
@@ -92,5 +92,6 @@ void handleBot(FB_msg& message) {
     m += dur;
     bot.sendMessage(m, CHAT_ID);
   }
+  */
   
 }

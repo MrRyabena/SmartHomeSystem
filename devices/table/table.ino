@@ -1,10 +1,13 @@
 #include "settings.h"
 #include "lighterAPI.h"
 #include <SHSlibrary.h>
+#include <TableAPI.h>
+
+uint8_t IP[] = { 192, 168, 1, 5 };
 
 #include <GBUS.h>
-GBUS bus(&Serial, TABLE_ID, 25);
-DTP dtp(&bus, TABLE_ID, BUSbufsize);
+GBUS bus(&Serial, IP[3], 25);
+//DTP dtp(&bus, IP[3], BUSbufsize);
 
 #include <EncButton.h>
 Button btn(BTNpin, INPUT, HIGH);
@@ -15,25 +18,29 @@ GyverNTP ntp(3);
 #include <FastBot.h>
 FastBot bot(BOT_TOKEN);
 
+void TCPhandle(shs::DTPdata &stc);
+
+shs::TcpClient client(IP, TCPhandle);
+
 //#include <FastLed.h>
 
 
 uint8_t dur{};
 
-void setup()
-{
+void setup() {
   Serial.begin(BUSspeed);
-  connectWiFi();
-  botSetup();
-  
-  bot.sendMessage("I am started", CHAT_ID);
+
+  WiFi.mode(WIFI_STA);
+  wifi_set_macaddr(0, const_cast<uint8 *>(MAC));
+
+  shs::connectWiFi();
+  //botSetup();
 }
 
-void loop()
-{
+void loop() {
   // ntp.tick();
-  bot.tick();
-  sunrise(dur);
-  handleBus();
-  
+  //bot.tick();
+  client.tick();
+  //sunrise(dur);
+  //handleBus();
 }

@@ -23,3 +23,5 @@
 #define GROUP_ID "-1001977013443"  // smart home test
 
 
+const uint8_t MAC[] = {0x58, 0xBF, 0x25, 0xDC, 0x40, 0x05};
+

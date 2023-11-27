@@ -10,6 +10,5 @@
 #define aBOT_NAME "@SHSalarm_bot"
 
 
-#define MAX_WIFICLIENTS 5
-#define SERVER_ID 104
-const uint8_t SERVER_MAC[] = {0x58, 0xBF, 0x25, 0xDC, 0x40, 0x68};
+#define MAX_WIFICLIENTS 6
+const uint8_t SERVER_MAC[] = {0x58, 0xBF, 0x25, 0xDC, 0x40, 0x04};

@@ -1,17 +1,12 @@
-enum TBotCommands : uint8_t
-{
-  nocommand,
-  start,
-  help,
-};
-using tbc = TBotCommands;
+using tbc = shs::TBotCommands;
 
 void botSetup()
 {
   bot.attach(parseBot);
-
   bot.setTextMode(FB_HTML);
   botSendNotification("I am started!");
+
+  
 }
 
 void telegramBot(void *p)
@@ -64,10 +59,12 @@ void parseBot(FB_msg &message)
       message.text.remove(0, strlen(BOT_NAME));
   if (message.text.startsWith("/"))
     message.text.remove(0, 1);
+
+  bot.sendMessage(message.toString(), message.chatID);
   
   //char name[] = F("/data/bot/commands.txt");
   shsFS.open("/data/bot/commands.txt");
-  TBotCommands command{};
+  shs::TBotCommands command{};
   uint8_t counter{};
   while (shsFS._file->position() < shsFS._file->size())
   {
@@ -75,7 +72,7 @@ void parseBot(FB_msg &message)
     while (str.indexOf('|') > 1)
       if (message.text.startsWith(str.substring(0, str.indexOf('|'))))
       {
-        command = static_cast<TBotCommands>(counter);
+        command = static_cast<shs::TBotCommands>(counter);
         goto out;
       }
 

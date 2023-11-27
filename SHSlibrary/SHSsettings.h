@@ -7,6 +7,7 @@
 #define WIFI_SSID "SHS_WiFi"
 //const char* WIFI_PASSWORD = "19711970";
 #define WIFI_PASSWORD "19711970"
+#define UPBOT_TOKEN "6956102480:AAGIKbBz_C_Z4Iluz6fZgo2LAfCGVoTYGQg"
 #endif
 
 

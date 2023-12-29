@@ -5,7 +5,7 @@
 #define LIB 0
 
 #if (LIB == 0)
-#include "..\ByteCollector.h"
+#include "..\SHSByteCollector.h"
 #else
 #include "BC.h"
 #endif

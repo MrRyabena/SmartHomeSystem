@@ -14,8 +14,6 @@ public:
 
     ~ByteCollector(); 
 
-
-
     uint16_t size();
 
 

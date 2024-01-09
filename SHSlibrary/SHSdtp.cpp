@@ -1,6 +1,6 @@
 #include "SHSdtp.h"
 
-shs::DTP::DTP(uint8_t ID, Stream *bus, void (*callback)(shs::DTPdata &))
+shs::DTP::DTP(Stream *bus, void (*callback)(shs::DTPdata &), uint8_t ID = shs::module.ID)
 {
     _ID = ID;
     _bus = bus;

@@ -18,7 +18,8 @@ namespace shs
 
 enum shs::DTPcommands : uint8_t
 {
-    answer = 253,
+    answer = 252,
+    error,
     request,
 };
 
@@ -33,7 +34,7 @@ struct shs::DTPdata
 class shs::DTP
 {
 public:
-    DTP(uint8_t ID, Stream *bus, void (*callback)(shs::DTPdata &));
+    DTP(Stream *bus, void (*callback)(shs::DTPdata &), uint8_t ID = shs::module.ID);
 
     ~DTP();
 

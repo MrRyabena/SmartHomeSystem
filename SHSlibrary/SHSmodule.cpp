@@ -1,35 +1,23 @@
 #include "SHSmodule.h"
 
+shs::Module shs::module = Module();
+
 shs::Module shs::Module(uint8_t modID)
 {
     ID = modID;
 }
 
-shs::Module shs::Module(uint8_t modID, (*DTPhandler)((shs::DTPdata &)))
+shs::Module::Module(uint8_t modID, void (*errorsHandler)(const shs::Errors e))
 {
     ID = modID;
-    uint8_t ip[]{192, 168, 1, modID};
-    tcp = new tcp(ip, DTPhandler);
+    _errorsHandler = errorsHandler;
 }
 
-shs::Module shs::~Module()
+shs::Module::~Module()
 {
-    if (tcp != nullptr)
-        delete tcp;
 }
 
-void shs::Module::setup()
-{
-    shs::connectWiFi();
-    tcp->begin();
-}
-
-void shs::Module::tick()
-{
-    tcp->tick();
-}
-
-void shs::Module::error(shs::Errors e)
+void shs::Module::error(const shs::Errors e)
 {
     switch (e)
     {
@@ -39,4 +27,29 @@ void shs::Module::error(shs::Errors e)
     default:
         break;
     }
+    if (_errorsHandler != nullptr)
+        _errorsHandler(e);
+}
+
+shs::Processes::Processes(void (*handler)(shs::DTPdata &))
+    : tcp(new shs::TcpClient), dtp(new shs::DTP(tcp, handler))
+{
+}
+
+shs::Processes::~Processes()
+{
+    delete dtp;
+    delete tcp;
+}
+
+void shs::Processes::setup()
+{
+    shs::connectWiFi();
+    tcp->connect(serverID, PORT);
+}
+
+void shs::Processes::tick()
+{
+    dtp->tick();
+    shs::module.ntp.tick();
 }

@@ -1,38 +1,55 @@
 #include "SHSdtp.h"
 
-shs::DTP::DTP(Stream *bus, void (*callback)(shs::DTPdata &), uint8_t ID = shs::module.ID)
+shs::DTP::DTP(Stream *bus, void (*handler)(shs::DTPdata &))
 {
-    _ID = ID;
     _bus = bus;
-    _callback = callback;
+    _handler = handler;
 };
 
 shs::DTP::~DTP()
 {
 }
 
-uint8_t shs::DTP::checkBus(uint8_t *len)
+uint8_t shs::DTP::tick()
 {
-    if (_bus->available())
-        if (!*len)
-            *len = _bus->read();
-    if (_bus->available() < *len - 1)
-        return 1;
-    shs::ByteCollector col(*len);
-    *(++col.ptr) = *len;
-    for (uint8_t i = 0; i < *len - 1; i++)
-        *(++col.ptr) = _bus->read();
-    *len = 0;
-
-    return (parseDTP(&col, _callback));
+    checkBus();
+    return 0;
 }
 
-uint8_t shs::DTP::packDTP(shs::ByteCollector *bc, uint8_t to)
+uint8_t shs::DTP::checkBus()
+{
+    if (_bus->available())
+        if (!_len)
+            _len = _bus->read();
+    if (_bus->available() < _len - 1)
+        return 1;
+
+    shs::ByteCollector col(_len);
+    *(col.ptr++) = (uint8_t *)&_len;
+    for (uint8_t i = 0; i < _len - 1; i++)
+        *(col.ptr++) = _bus->read();
+    _len = 0;
+
+    return parseDTP(&col);
+}
+
+uint8_t shs::DTP::sendPacket(shs::ByteCollector *bc, const uint8_t to)
+{
+    return shs::DTP::sendPacket(bc, to, 0);
+}
+
+uint8_t shs::DTP::sendPacket(shs::ByteCollector *bc, const uint8_t to, const uint8_t from)
+{
+    packDTP(bc, to);
+    return : _bus->write(bc->buf, bc.buf[0]);
+}
+
+uint8_t shs::DTP::packDTP(shs::ByteCollector *bc, const uint8_t to)
 {
     return packDTP(bc, to, _ID);
 }
 
-uint8_t shs::DTP::packDTP(shs::ByteCollector *bc, uint8_t to, uint8_t from)
+uint8_t shs::DTP::packDTP(shs::ByteCollector *bc, const uint8_t to, const uint8_t from)
 {
     bc->reserveBefore(3);
     bc->buf[1] = to;
@@ -56,7 +73,7 @@ uint8_t shs::DTP::checkDTP(shs::ByteCollector *bc)
     return 0;
 }
 
-uint8_t shs::DTP::parseDTP(shs::ByteCollector *bc, void (*callback)(shs::DTPdata &))
+uint8_t shs::DTP::parseDTP(shs::ByteCollector *bc)
 {
     uint8_t status = checkDTP(bc);
     if (status)
@@ -69,6 +86,7 @@ uint8_t shs::DTP::parseDTP(shs::ByteCollector *bc, void (*callback)(shs::DTPdata
     bc->readPtr = bc->buf + DTP_OFFSETbeg;
     data.data = bc;
 
-    callback(data);
+    if (_handler != nullptr)
+        _handler(data);
     return 0;
 }

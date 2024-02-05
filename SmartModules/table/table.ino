@@ -31,7 +31,7 @@ void setup() {
   Serial.begin(BUSspeed);
 
   WiFi.mode(WIFI_STA);
-  wifi_set_macaddr(0, const_cast<uint8 *>(MAC));
+  wifi_set_macaddr(0, const_cast<uint8_t *>(MAC));
 
   shs::connectWiFi();
   //botSetup();

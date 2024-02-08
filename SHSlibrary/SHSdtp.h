@@ -4,7 +4,7 @@
   Warning! It is necessary to include Stream-class befor this file:
   #include <Arduino.h>
   or write your class:
-  size_t Stream:: write(const uint8_t* buf, size_t size);
+  size_t Stream::write(const uint8_t* buf, size_t size);
   uint8_t Stream::read();
   size_t Stream::available();
 
@@ -43,7 +43,7 @@ struct shs::DTPdata
 class shs::DTP
 {
 public:
-    DTP(Stream *bus, void (*handler)(shs::DTPdata &));
+    explicit DTP(Stream *bus, void (*handler)(shs::DTPdata &));
     ~DTP();
 
     uint8_t tick();

@@ -5,19 +5,17 @@ namespace shs
     class ByteCollector;
 };
 
-
 class shs::ByteCollector
 {
 public:
-    uint8_t *buf{};
-    uint8_t *ptr{};
-    uint8_t *readPtr{};
+    uint8_t *buf{};     // array
+    uint8_t *ptr{};     // current position
+    uint8_t *readPtr{}; // read position
 
-    explicit ByteCollector(uint8_t size) : buf(new uint8_t[size]{})
+    explicit ByteCollector(uint8_t size) : buf(new uint8_t[size]{}),
+                                           ptr(buf), readPtr(buf),
+                                           _size(size)
     {
-        ptr = buf;
-        readPtr = buf;
-        _size = size;
     }
 
     ~ByteCollector()
@@ -25,11 +23,7 @@ public:
         delete[] buf;
     }
 
-    uint16_t size()
-    {
-        return static_cast<uint16_t>(ptr - buf);
-    }
-
+    // add to the end
     template <typename T>
     void add(const T &value, uint8_t bytes = sizeof(T))
     {
@@ -41,6 +35,7 @@ public:
             *ptr++ = *_ptr++;
     }
 
+    // add to the beginning
     template <typename T>
     void addBefore(const T &value, uint8_t bytes = sizeof(T))
     {
@@ -53,6 +48,16 @@ public:
             *_ptrBefore++ = *_ptr++;
     }
 
+    // unpack data
+    template <typename T>
+    void get(T &var, uint8_t bytes = sizeof(T))
+    {
+        uint8_t *_ptr = (uint8_t *)&var;
+        for (uint8_t i = 0; i < bytes; i++)
+            *_ptr++ = *readPtr++;
+    }
+
+    // reserve bytes for more size
     void reserve(uint8_t size)
     {
         if (!size)
@@ -86,12 +91,9 @@ public:
         readPtr = buf;
     }
 
-    template <typename T>
-    void get(T &var, uint8_t bytes = sizeof(T))
+    uint16_t size()
     {
-        uint8_t *_ptr = (uint8_t *)&var;
-        for (uint8_t i = 0; i < bytes; i++)
-            *_ptr++ = *readPtr++;
+        return static_cast<uint16_t>(ptr - buf);
     }
 
 private:

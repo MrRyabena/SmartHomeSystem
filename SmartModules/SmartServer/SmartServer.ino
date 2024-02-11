@@ -3,6 +3,8 @@
 #include <SHSlibrary.h>
 #include <esp_wifi.h>
 
+#include <VoiceRecognitionV3.h>
+
 #include <FastBot.h>
 FastBot bot(BOT_TOKEN);
 FastBot abot(aBOT_TOKEN);

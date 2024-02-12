@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include "ByteCollector.h"
+#include "SHSByteCollector.h"
 
 namespace shs
 {
@@ -18,12 +18,21 @@ namespace shs::shsVR
 #define CMD_CHECK_BSR 0x01
 
 #define CMD_SIG_TRAIN 0x21
+#define CMD_LOAD_CMDS 0x30
 
+#define CMD_ANSW_HINT 0x0A
 
-#define ST_CANNT_MATCHED                                                                  \
-    {                                                                                     \
-        0x43, 0x61, 0x6E, 0x6E, 0x27, 0x74, 0x20, 0x6D, 0x61, 0x74, 0x63, 0x68, 0x65, 0x6 \
-    }
+#ifndef ESP_H
+#define ST_SPEAK_NOW "Speak now"
+#define ST_SPEAK_AGAIN "Speak again"
+#define ST_CANNT_MATCHED "Cann't matched"
+#define ST_SUCCESS "Success"
+#else
+#define ST_SPEAK_NOW F("Speak now")
+#define ST_SPEAK_AGAIN F("Speak again")
+#define ST_CANNT_MATCHED F("Cann't matched")
+#define ST_SUCCESS F("Success")
+#endif
 
     enum Status;
 
@@ -32,7 +41,10 @@ namespace shs::shsVR
 enum shs::shsVR::Status : uint8_t
 {
     off,
-    speak,
+    speak_now,
+    speak_again,
+    cannt_matched,
+    success,
 
 };
 
@@ -42,11 +54,13 @@ public:
     VR(Stream *bus, void (*handler)(shs::ByteCollector &bc) = nullptr);
     ~VR();
     void recordWithNote(const uint8_t cell, const char *note);
+    void loadCmds(shs::ByteCollector &cmds);
+    shs::shsVR::Status getStatus() { return _status }
 
 private:
-    uint8_t _status{};
+    shs::shsVR::Status _status{};
     uint8_t _sendData(shs::ByteCollector &bc);
-    uint8_t _unpackData(shs::ByteCollector &bc);
+    void _unpackData(shs::ByteCollector &bc);
     Stream *_bus{};
     void (*_handler)(shs::ByteCollector &bc);
 

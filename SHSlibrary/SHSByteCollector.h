@@ -23,6 +23,18 @@ public:
         delete[] buf;
     }
 
+    /*
+      The bytes argument specifies how many bytes 
+      to write from the passed type.
+      
+      int value = 1000;
+      bc.add(value, 2);  // will add 2 bytes
+      bc.size();         // will return 2, not 4!
+
+      bc.add(value);     // will add sizeof(value)
+      bc.size();         // will return 6
+
+    */
     // add to the end
     template <typename T>
     void add(const T &value, uint8_t bytes = sizeof(T))

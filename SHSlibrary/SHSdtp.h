@@ -1,12 +1,14 @@
 /*
   Smart Home System Data Transmission Protocol
 
+  The idea is taken from https://github.com/GyverLibs/GyverBus
+
   Warning! It is necessary to include Stream-class befor this file:
   #include <Arduino.h>
   or write your class:
-  size_t Stream::write(const uint8_t* buf, size_t size);
+  uint8_t Stream::write(const uint8_t* buf, size_t size);
   uint8_t Stream::read();
-  size_t Stream::available();
+  uint8_t Stream::available();
 
 */
 

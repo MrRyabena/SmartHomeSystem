@@ -2,54 +2,22 @@
 
 shs::Module shs::module = Module();
 
-shs::Module shs::Module(uint8_t modID)
-{
-    ID = modID;
-}
-
-shs::Module::Module(uint8_t modID, void (*errorsHandler)(const shs::Errors e))
-{
-    ID = modID;
-    _errorsHandler = errorsHandler;
-}
+shs::Module::Module() {}
 
 shs::Module::~Module()
 {
+    if (m_processes)
+        delete m_processes;
 }
 
-void shs::Module::error(const shs::Errors e)
+void shs::Module::attachProcesses(shs::Process *ptr)
 {
-    switch (e)
-    {
-    case shs::Errors::OK:
-        break;
-
-    default:
-        break;
-    }
-    if (_errorsHandler != nullptr)
-        _errorsHandler(e);
+    m_processes = ptr;
 }
 
-shs::Processes::Processes(void (*handler)(shs::DTPdata &))
-    : tcp(new shs::TcpClient), dtp(new shs::DTP(tcp, handler))
+void shs::Module::detachProcesses(bool stopProcesses)
 {
-}
-
-shs::Processes::~Processes()
-{
-    delete dtp;
-    delete tcp;
-}
-
-void shs::Processes::setup()
-{
-    shs::connectWiFi();
-    tcp->connect(serverID, PORT);
-}
-
-void shs::Processes::tick()
-{
-    dtp->tick();
-    shs::module.ntp.tick();
+    if (stopProcesses)
+        m_processes->stop();
+    m_processes = nullptr;
 }

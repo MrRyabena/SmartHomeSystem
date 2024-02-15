@@ -1,55 +1,50 @@
 #pragma once
-#include "SHSconnectWiFi.h"
-#include "SHSTcpClient.h"
+
+#include "SHSErrorsHandler.h"
+#include "SHSProcesses.h"
 #include <GyverNTP.h>
 
-#define PORT 50000
 namespace shs
 {
+    namespace settings;
+
     class Module;
     extern Module module;
 
-    class Processes;
+    struct Config;
 
-    enum Errors;
-}
+    enum Mode;
 
-enum shs::Errors : uint8_t
+};
+
+struct shs::Config
 {
-    OK,
-    DTPtimeout,
-    DTPcrc,
+    uint8_t ID{};
+    uint8_t serverID{};
+    shs::Mode mode{};
+};
+
+enum shs::Mode : uint8_t
+{
+    off,
+    standby,
+    sleep,
 };
 
 class shs::Module
 {
 public:
-    uint8_t ID{};
-    void generateMac(uint8_t *mac);
-    uint8_t serverID{};
     GyverNTP ntp(3, 1800);
+    shs::Config config;
+    shs::ErrorsHandler errorsHandler;
 
-
-    Module(uint8_t modID, void (*errorsHandler)(const shs::Errors e) = nullptr);
+public:
+    explicit Module();
     ~Module();
 
-    void error(const shs::Errors e);
+    void attachProcesses(shs::Process *ptr);
+    void detachProcesses(bool stopProcesses = true);
 
 private:
-    void (*_errorsHandler)(const hs::Errors e)
-};
-
-class shs::Processes
-{
-public:
-    shs::TcpClient *tcp;
-    shs::DTP *dtp;
-
-    Processes(void (*handler)(shs::DTPdata &));
-    ~Processes();
-
-    void setup();
-    void tick();
-
-private:
+    shs::Process *m_processes{};
 };

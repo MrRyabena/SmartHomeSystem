@@ -20,9 +20,9 @@
 
 # Versions
 
-- v1.0.0 — private beta-version.
+- v1.0.0 — **[current]** private beta-version.
 
-## Announcements
+### Announcements
 - v1.1.0 — release. 
 
 ---

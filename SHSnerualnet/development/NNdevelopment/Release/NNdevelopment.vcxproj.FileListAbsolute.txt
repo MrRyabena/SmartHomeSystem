@@ -1,2 +1,0 @@
-C:\SmartHomeSystem\SHSnerualnet\development\NNdevelopment\Release\NNdevelopment.exe
-B:\SmartHomeSystem\SHSnerualnet\development\NNdevelopment\Release\NNdevelopment.exe

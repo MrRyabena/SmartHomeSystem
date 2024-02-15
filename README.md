@@ -15,6 +15,19 @@
 ```
 <!-- </pre> -->
 
+---
+<a id="versions"></a>
+
+# Versions
+
+- v1.0.0 — private beta-version.
+
+## Announcements
+- v1.1.0 — release. 
+
+---
+
+
 # Содержание
 
 - [1. Введение](#1_introduction)
@@ -981,11 +994,6 @@ private:
 
 Выбранным микроконтроллером стал ESP32, его двухъядерный процессор и достаточно большой объем RAM идеально подходят для работы с TCP/IP и обработкой данных.</br>
 
-<a id="versions"></a>
-
-# Версии
-
-- v1.0.0 — release.
 
 <a id="sources"></a>
 

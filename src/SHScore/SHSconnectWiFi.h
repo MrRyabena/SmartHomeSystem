@@ -22,23 +22,19 @@
 #include <esp_wifi.h>
 #endif
 
-#ifndef WIFI_SSID
-#define WIFI_SSID {};
-#define WIFI_PASSWORD {};
-#pragma message "Attention, wifi ssid and password not defined!"
-#endif
+#include "settings.h"
 
 namespace shs
 {
-        void setMac(const uint8_t id);                        // set mac-address SHSma + id (53:48:53:6D:61:xx xx = 0x(id))
-        void setMac(const uint8_t *mac);                      // set mac-address
+        void setMac(const uint8_t id);   // set mac-address SHSma + id (53:48:53:6D:61:xx xx = 0x(id))
+        void setMac(const uint8_t *mac); // set mac-address
 
         void connectWiFi(const char *ssid, const char *pass); // wi-fi connection, called 1 time
         // String getWiFiInfo();                                 // return information
         void checkReconnection(); // call constantly, will cause a reboot if the board is disconnected from WiFi for a long time
 };
 
-void shs::connectWiFi(const char *ssid = WIFI_SSID, const char *pass = WIFI_PASSWORD)
+void shs::connectWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *pass = shs::settigns::WIFI_PASSWORD)
 {
         WiFi.begin(ssid, pass);
         while (WiFi.status() != WL_CONNECTED)
@@ -68,7 +64,7 @@ void shs::connectWiFi(const char *ssid = WIFI_SSID, const char *pass = WIFI_PASS
 
 void shs::setMac(const uint8_t id)
 {
-        uint8_t *mac[6] = F("SHSma"); // 53:48:53:6D:61:xx xx = 0x(id)
+        uint8_t *mac[6] = shs::settings::MACconstant; // 53:48:53:6D:61:xx xx = 0x(id)
         mac[5] = id;
 
         WiFi.mode(WIFI_STA);

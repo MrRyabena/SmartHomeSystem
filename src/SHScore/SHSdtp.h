@@ -13,6 +13,8 @@
 */
 
 #pragma once
+#include <Arduino.h>
+#include <vector>
 #include "SHSalgorithm.h"
 #include "SHSByteCollector.h"
 
@@ -24,6 +26,8 @@ namespace shs
     enum DTPcommands : uint8_t;
     struct DTPdata;
     class DTP;
+    class DTPpacker;
+    typedef void (*DTPhandler_t)(shs::DTPdata &){};
 
 };
 
@@ -42,22 +46,29 @@ struct shs::DTPdata
     shs::ByteCollector *data{};
 };
 
-class shs::DTP
+class shs::DTPpacker
+{
+
+public:
+    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to);
+    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const uint8_t from);
+    uint8_t checkDTP(shs::ByteCollector *bc);
+    uint8_t parseDTP(shs::ByteCollector *bc);
+};
+
+class shs::DTP : public DTPpacker
 {
 public:
-    explicit DTP(Stream *bus, void (*handler)(shs::DTPdata &));
+    explicit DTP(Stream *bus);
     ~DTP();
+
+    void attachHandler(const shs::DTPhandler_t func);
 
     uint8_t tick();
     uint8_t checkBus();
 
     uint8_t sendPacket(shs::ByteCollector *bc, const uint8_t to);
     uint8_t sendPacket(shs::ByteCollector *bc, uint8_t to, uint8_t from);
-
-    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to);
-    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const uint8_t from);
-    uint8_t checkDTP(shs::ByteCollector *bc);
-    uint8_t parseDTP(shs::ByteCollector *bc);
 
     template <typename T>
     uint8_t sendRAW(const T &data, const uint8_t to)
@@ -84,7 +95,7 @@ public:
 
 private:
     Stream *_bus{};
-    void (*_handler)(shs::DTPdata &){};
+    std::vector<DTPhandler_t> m_handler;
     uint8_t _len{};
     uint32_t tmr = millis();
 };

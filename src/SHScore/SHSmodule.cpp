@@ -1,4 +1,4 @@
-#include "SHSmodule.h"
+#include "SHSModule.h"
 
 shs::Module shs::module = Module();
 
@@ -10,14 +10,18 @@ shs::Module::~Module()
         delete m_processes;
 }
 
-void shs::Module::attachProcesses(shs::Process *ptr)
+void shs::Module::begin()
 {
-    m_processes = ptr;
+    processes.begin();
 }
 
-void shs::Module::detachProcesses(bool stopProcesses)
+void shs::Module::tick()
 {
-    if (stopProcesses)
-        m_processes->stop();
-    m_processes = nullptr;
+    ntp.tick();
+    processes.tick();
+}
+
+void shs::Module::end()
+{
+    processes.end();
 }

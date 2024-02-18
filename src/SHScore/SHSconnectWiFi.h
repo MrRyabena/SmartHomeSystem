@@ -13,6 +13,10 @@
   Simple functions for fast wifi connection for esp8266/esp32
 */
 
+/*
+
+*/
+
 #pragma once
 
 #ifdef ESP8266

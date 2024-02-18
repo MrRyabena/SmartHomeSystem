@@ -1,5 +1,12 @@
 #pragma once
 
+/*
+  Last update: v1.1.0
+  Versions:
+    v1.0.0 — created.
+    v1.1.0 — edited and optimized.
+*/
+
 namespace shs
 {
     class ByteCollector;
@@ -24,9 +31,9 @@ public:
     }
 
     /*
-      The bytes argument specifies how many bytes 
+      The bytes argument specifies how many bytes
       to write from the passed type.
-      
+
       int value = 1000;
       bc.add(value, 2);  // will add 2 bytes
       bc.size();         // will return 2, not 4!

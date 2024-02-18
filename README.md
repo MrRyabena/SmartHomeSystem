@@ -163,6 +163,8 @@ Neil Cameron. Electronics Projects with the ESP8266 and ESP32: Building WebPages
 
 Проект выложен в репозитории на GitHub и доступен по ссылке: <https://github.com/MrRyabena/SmartHomeSystem>.</br>
 
+### Структура изменена, сдесь будет поправлекна чуть позже!
+
 - [debugging_sketches](debugging_sketches/) — наброски отладочных прошивок.
 - [libraries](libraries/) — сторонние библиотеки, используемые в проекте.
 - [schemes](schemes/) — схемы, чертежи и документация.

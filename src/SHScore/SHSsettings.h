@@ -5,9 +5,9 @@ namespace shs::settings
 {
 // WiFi
 #ifndef __AVR__
-#define WIFI_SSID "SHS_WiFi"
-#define WIFI_PASSWORD "19711970"
-#define UPBOT_TOKEN "6956102480:AAGIKbBz_C_Z4Iluz6fZgo2LAfCGVoTYGQg"
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+#define UPBOT_TOKEN ""
 #define TCP_PORT 50000
 #define MACconstant F("SHSma")
 #endif

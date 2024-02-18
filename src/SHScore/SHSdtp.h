@@ -12,14 +12,33 @@
 
 */
 
+/*
+  Last update: v1.1.0
+  Versions:
+    v1.0.0 — created.
+    v1.1.0
+      - Divided into two classes.
+      - A new type of handlers.
+      - Added inheritance from class shs::CallbacksKeeper.
+      - Using a new class for CRC.
+*/
+
 #pragma once
 #include <Arduino.h>
-#include <vector>
-#include "SHSalgorithm.h"
+#include "SHSModule.h"
+#include <stdint.h>
+#include "SHSCallbacksKeeper.h"
+#include "SHSCRC.h"
 #include "SHSByteCollector.h"
 
+namespace settings
+{
+#ifndef SILENCE_TIMEOUT
 #define SILENCE_TIMEOUT 120000
-#define DTP_OFFSETbeg 3
+#endif
+
+#define DTP_OFFSETbeg 5
+};
 
 namespace shs
 {
@@ -40,10 +59,11 @@ enum shs::DTPcommands : uint8_t
 
 struct shs::DTPdata
 {
-    uint8_t from{};
     uint8_t to{};
+    uint8_t from{};
+    int16_t apiID{};
     uint8_t datasize{};
-    shs::ByteCollector *data{};
+    shs::ByteCollector &data{};
 };
 
 class shs::DTPpacker
@@ -53,21 +73,22 @@ public:
     uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to);
     uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const uint8_t from);
     uint8_t checkDTP(shs::ByteCollector *bc);
-    uint8_t parseDTP(shs::ByteCollector *bc);
+    uint8_t parseDTP(shs::ByteCollector *bc, shs::DTPdata &data);
+
+private:
+    shs::CRC8 _crc;
 };
 
-class shs::DTP : public DTPpacker
+class shs::DTP : public shs::DTPpacker, public shs::CallbacksKeeper
 {
 public:
     explicit DTP(Stream *bus);
     ~DTP();
 
-    void attachHandler(const shs::DTPhandler_t func);
-
-    uint8_t tick();
+    inline uint8_t tick();
     uint8_t checkBus();
 
-    uint8_t sendPacket(shs::ByteCollector *bc, const uint8_t to);
+    inline uint8_t sendPacket(shs::ByteCollector *bc, const uint8_t to);
     uint8_t sendPacket(shs::ByteCollector *bc, uint8_t to, uint8_t from);
 
     template <typename T>
@@ -95,7 +116,6 @@ public:
 
 private:
     Stream *_bus{};
-    std::vector<DTPhandler_t> m_handler;
     uint8_t _len{};
     uint32_t tmr = millis();
 };

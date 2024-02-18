@@ -27,11 +27,16 @@ _Ожидаемая дата релиза:_ 05.03.2024
 # Versions
 
 - v1.0.0 — private beta-version.
-- v1.1.0 — current version
+- **v1.1.0 — [current version] development.**
 
 ### Announcements
 
-- v1.1.0 — release.
+- v1.2.0 — release.
+  - New core architecture.
+  - New library.
+  - Documentation will be updated.
+
+![SHScore scheme](schemes/SHScore.png)
 
 ---
 

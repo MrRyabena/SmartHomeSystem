@@ -170,7 +170,7 @@ Neil Cameron. Electronics Projects with the ESP8266 and ESP32: Building WebPages
 - [schemes](schemes/) — картинки, схемы, чертежи...
 - [SHSlogos](SHSlogos/) — логотипы и символика проекта.
 - [src](src/) — ПО проекта.
-  - [debugging_sketches](debugging_sketches/) — наброски отладочных прошивок.
+  - [debugging_sketches](src/debugging_sketches/) — наброски отладочных прошивок.
   - [SHSapp](src/SHSapp/) — приложение под windows.
   - [SHScore](src/SHScore/) — ядро (бизнес-логика), основная разработка.
   - [SHSlibrary](src/SHSlibrary/) — библиотека с удобными инструментами, основанная на ядре.

@@ -36,7 +36,7 @@ _Ожидаемая дата релиза:_ 05.03.2024
   - New library.
   - Documentation will be updated.
 
-![SHScore scheme](schemes/SHScore.png)
+![SHScore scheme](schemes/SHScore-scheme.png)
 
 ---
 
@@ -84,15 +84,20 @@ _Ожидаемая дата релиза:_ 05.03.2024
   - [6.1 Module](#6-1_module)
   - [6.2 Управление нагрузкой]()
   - [6.3 Датчики]()
-
-- [7. Этап II](#stageII)
-  - [7.1 Организация соединения](#connection-organization)
-    - [7.1.1 Покрытие сети](#network-coverage)
-    - [7.1.2 Подключение модулей](#connecting-modules)
-    - [7.1.3 TCP/IP](#623-tcpip)
-- [8. Этап III](#stageIII)
-- [9. Этап IV](#stageIV)
-- [10. Этап V](#stageV)
+- [7. Этап II](#7_stage2)
+  - [7.1 Containers](#7-1_containers)
+    - [7.1.1 ByteCollector](#7-1-1_ByteCollector)
+    - [7.1.2 Handlers](#7-1-2_Handlers)
+  - [7.]
+development
+- [~~7. Этап II~~](#stageII)
+  - [~~7.1 Организация соединения~~](#connection-organization)
+    - [~~7.1.1 Покрытие сети~~](#network-coverage)
+    - [~~7.1.2 Подключение модулей~~](#connecting-modules)
+    - [~~7.1.3 TCP/IP~~](#623-tcpip)
+- [~~8. Этап III~~](#stageIII)
+- [~~9. Этап IV]~~(#stageIV)
+- [~~10. Этап V~~](#stageV)
 - [Версии](#versions)
 - [Источники информации](#sources)
 
@@ -163,7 +168,13 @@ Neil Cameron. Electronics Projects with the ESP8266 and ESP32: Building WebPages
 
 Проект выложен в репозитории на GitHub и доступен по ссылке: <https://github.com/MrRyabena/SmartHomeSystem>.</br>
 
+---
+
 ### ~~Структура изменена, здесь будет поправлекна чуть позже!~~
+
+### Структура может изменяться
+
+---
 
 - [libraries](libraries/) — сторонние библиотеки, используемые в проекте.
 - [presentation](presentation/) — презентации проекта и вспомогательные файлы.
@@ -175,7 +186,7 @@ Neil Cameron. Electronics Projects with the ESP8266 and ESP32: Building WebPages
   - [SHScore](src/SHScore/) — ядро (бизнес-логика), основная разработка.
   - [SHSlibrary](src/SHSlibrary/) — библиотека с удобными инструментами, основанная на ядре.
     - [SHSnerualnet](src/SHSlibrary/SHSnerualnet/) — разработка нейросети и алгоритмов работы с ней.
-  - [SmartModules](src/SmartModules/) — [beta] устройства и модули. 
+  - [SmartModules](src/SmartModules/) — [beta] устройства и модули.
   - [SmartModulesAPI](src/SmartModulesAPI/) — [beta] команды устройств и модулей.
 - [synchronizer](synchronizer/) — быстро перекидывает файлы из SHSlibrary в папку с библиотеками (для удобства разработки).
 
@@ -617,7 +628,7 @@ Module — самостоятельный компонент Smart Home System, 
   - Издает звуки при работе, в отличии от других компонентов.
   - Имеет короткий срок эксплуатации (за счет физическго износа контаквтов при переключении).</br>
 
-   _При большом токе рекомендуется использовать искрогасящие цепи._
+_При большом токе рекомендуется использовать искрогасящие цепи._
 
   ![relay-scheme](schemes/relay-scheme.png)
 
@@ -737,66 +748,25 @@ value = map(value, 0, 1023, 0, 100);
 
 Библиотека: [GyverHX711](https://github.com/GyverLibs/GyverHX711).
 
-<a id="stageII"></a>
+<a id="7_stage2"></a>
 
 # 7. Этап II
 
-<a id="connection-organization"></a>
+[SHScore](src/SHScore/) — логика работы системы, основанная на парадигме **ООП** и принципах **SOLID**. В ядре описаны классы-шаблоны для оперируемых системой объектов и процессов, а так же обработчки для них, протоколы связи и передачи данных. Ядро дискритизирует и описывает все процессы и объекты в системе, что позволяет быстро и удобно создавать и изменять конфигурацию системы и последующие классы высокого уровня (библиотеки для конкретных задач).
 
-## 7.1 Организация соединения
+![SHScore-scheme](schemes/SHScore-scheme.png)
 
-<a id="network-coverage"></a>
+<a id="7-1_containers"></a>
 
-### 7.1.1 Покрытие сети
+## 7.1 Containers
 
-Все модули Smart Home System обмениватся между собой данными по WiFi. Для стабильной работы всех устройств необходимо обеспечить высокий уровень сигнала общей сети для каждого модуля.</br>
+<a id="7-1-1_ByteCollector"></a>
 
-Если помещение небольшое и установлен мощный маршрутизатор (WiFi-роутер), то скорее всего никаких дополнительных действий не потребуется. В противном слчае, проблему можно решить путем установки WiFi-repeater'ов. Они подключаются в сеть, увеливают ее радиус покрытия и уровень сигнала.</br>
+### 7.1.1 ByteCollector
 
-Вторым шагом небходимо научить все устройства находить друг друга в сети. Для этого им надо раздать статические IP-адреса. Такой адрес привязывается к MAC-адресу платы (он идет с завода, но при желании можно поменять). Делается все в настройках роутера, процедура не сложная. Теперь, зная IP устройства, можно будет посылать и принимать данные.</br>
+Для удобной упаковки данных в массив байтов и дальнейшей их обработки разработан легкий класс: [SHSByteCollector.h](SHSlibrary/SHSByteCollector.h).</br>
 
-Для удобства настройки в **_Smart Home System_** модули имеют схожие MAC-адреса. Подбробнее см. ниже.
-
-<a id="connecting-modules"></a>
-
-### 7.1.2 Подключение модулей
-
-После настройки маршрутизатора, остается подключить и настрить сами микроконтроллеры. Для этого в библиотеке [SHSlibrary](SHSlibrary/) есть набор функций, реализованных в файле [SHSconnectWiFi.h](SHSlibrary/SHSconnectWiFi.h). </br>
-
-```c++
-namespace shs
-{
-        // set mac-address SHSma + id:
-        // 53:48:53:6D:61:xx xx = 0x(id)
-        void setMac(const uint8_t id);    
-
-        // set mac-address                    
-        void setMac(const uint8_t *mac);  
-
-        // wi-fi connection, called 1 time
-        // default:
-        // ssid = WIFI_SSID
-        // pass = WIFI_PASSWORD
-        // from the SHSsettings.h
-        void connectWiFi(const char *ssid, const char *pass);
-        
-        // call constantly, will cause a reboot if the board is 
-        // disconnected from WiFi for a long time
-        void checkReconnection();
-};
-```
-
-Задать ```SSID``` и ```PASSWORD``` сети можно один раз для всех устройств в файле [SHSsettings.h](SHSlibrary/SHSsettings.h).</br>
-
-MAC-адрес для удобства зашифрован кодом ```SHSma``` (53:48:53:6D:61:) (т.е. сокращение от **Smart Home System MAC Adress**), а на последнее место указывается уникальный ```ID``` модуля, таким образом устройства удобно отслеживать и настраивать в маршрутизаторе — достаточно изменить только последнее число.
-
-## 7.2 Передача данных
-
-### 7.2.1 ByteCollector
-
-Все данные, которые требуется передать записываются в последовательность байтов, обрабатываются и отправляются. Такой подход наиболее быстрый и экономный по памяти.</br>
-
-Для удобной упаковки данных в массив байтов и дальнейшей их обработки разработан легкий класс: [SHSByteCollector.h](SHSlibrary/SHSByteCollector.h).
+Класс используется в протоколах передачи данных и API.</br>
 
 ```c++
 class shs::ByteCollector
@@ -842,11 +812,53 @@ public:
 
 ```
 
-### 7.2.2 SHSDTP
+<a id="7-1-2_Handlers"></a>
+
+### 7.1.2 Handlers
+
+Классы-контейнеры для обработчиков процессов. Они позволяют оперировать несколькими объектами как одним, что позволяет легко масштабировать систему, без вмешательства в логику обработки данных.</br>
+
+- [ProcessesKeeper](src/SHScore/SHSProcessesKeeper.h) — позволяет добавлять различные процессы, например, опросы датчиков, управление процессами, опрсосы сайтов.</br>
+
+  ```c++
+  class shs::ProcessesKeeper : public shs::Process
+  {
+  public:
+      explicit ProcessesKeeper();
+      void attach(shs::Process *object);
+      void detach(shs::Process *object);
+  
+      void begin();
+      void tick();
+      void end();
+  };
+  ```
+
+- [CallbacksKeeper](src/SHScore/SHSCallbacksKeeper.h) — в него добавляются API датчиков и модулей, которые вызываются при поступленни новых данных.
+
+  ```c++
+  class shs::CallbacksKeeper
+  {
+  public:
+      explicit CallbacksKeeper() {}
+      void attach(shs::API *object);
+      void detach(shs::API *object);
+  
+      uint8_t handler(shs::ByteCollector &data);
+  };
+  ```
+
+Аналогично будут разработаны классы для обработки датчиков и нагрузок.
+
+<a>
+
+## 7.2 Protocols
+
+### SHSDTP
 
 **Smart Home System Data Transmission Protocol** — единый протокол передачи данных, разработанный для передачи информации между всеми модулями. Идея взята из [GyverBus](https://github.com/GyverLibs/GyverBus)</br>
 
-Следующим этапом, данные нужно обработать и отправить, этим занимается ```DTP```: [SHSdtp.h](SHSlibrary/SHSdtp.h). Он добавляет к пакету данные об отправителе и получателе, общее количество байт и CRC. Затем данные отправляются любым способом, основанным на классе  ```Stream```. Если не используется стандартная библиотека ```<Arduino.h>```, то класс Stream необходимо реализовать, с тремя обязательными функциями-членами:
+Для отправки данные нужно обработать, а потом распаковать обратно, для этого создан: [SHSdtp.h](SHSlibrary/SHSdtp.h). Он добавляет к пакету данные об отправителе и получателе, общее количество байт и CRC. Затем данные отправляются любым способом, основанным на классе  ```Stream```. Если не используется стандартная библиотека ```<Arduino.h>```, то класс  ```Stream``` необходимо реализовать, с тремя обязательными функциями-членами:
 
 ```c++
 class Stream
@@ -873,20 +885,13 @@ class Stream
   uint8_t Stream::available();
 
 */
-
-#pragma once
-#include "SHSalgorithm.h"
-#include "SHSByteCollector.h"
-
-#define SILENCE_TIMEOUT 120000
-#define DTP_OFFSETbeg 3
-
-namespace shs
+namespace settings
 {
-    enum DTPcommands : uint8_t;  // reserved values for DTP only
-    struct DTPdata;
-    class DTP;
+#ifndef SILENCE_TIMEOUT
+#define SILENCE_TIMEOUT 120000
+#endif
 
+#define DTP_OFFSETbeg 5
 };
 
 enum shs::DTPcommands : uint8_t
@@ -898,37 +903,123 @@ enum shs::DTPcommands : uint8_t
 
 struct shs::DTPdata
 {
-    uint8_t from{};
     uint8_t to{};
+    uint8_t from{};
+    int16_t apiID{};
     uint8_t datasize{};
-    shs::ByteCollector *data{};
+    shs::ByteCollector &data{};
 };
 
-class shs::DTP
+class shs::DTPpacker
 {
+
 public:
-    explicit DTP(Stream *bus, void (*handler)(shs::DTPdata &));
-    ~DTP();
-
-    uint8_t tick();
-    uint8_t checkBus();
-
-    uint8_t sendPacket(shs::ByteCollector *bc, const uint8_t to);
-    uint8_t sendPacket(shs::ByteCollector *bc, uint8_t to, uint8_t from);
-
     uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to);
     uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const uint8_t from);
     uint8_t checkDTP(shs::ByteCollector *bc);
-    uint8_t parseDTP(shs::ByteCollector *bc);
+    uint8_t parseDTP(shs::ByteCollector *bc, shs::DTPdata &data);
+};
+
+class shs::DTP : public shs::DTPpacker, public shs::CallbacksKeeper
+{
+public:
+    explicit DTP(Stream *bus);
+    ~DTP();
+
+    inline uint8_t tick();
+    uint8_t checkBus();
+
+    inline uint8_t sendPacket(shs::ByteCollector *bc, const uint8_t to);
+    uint8_t sendPacket(shs::ByteCollector *bc, uint8_t to, uint8_t from);
 
     template <typename T>
     uint8_t sendRAW(const T &data, const uint8_t to);
 };
 ```
 
-<a id="623-tcpip"></a>
+### API
 
-### 7.2.3 TCP/IP
+В файле [API.h](src/SHScore/SHSAPI.h) описан шаблон класса для реализации ```API```. От него наследуются все остальные классы. В handler передается пакет данных, который нужно расшифровать и отправить (если требутся) ответ. Можно реализовать управление отдельным датчиком, нагрузкой или библиотекой. Таким образом в _**Smart Home System**_ всегда возможно интегрировать любое устройство, достаточно реализовать для него API и процессы его поведения.
+
+```c++
+class shs::API
+{
+public:
+    API(int16_t ID = 0);
+
+    void setID(int16_t ID);
+    int16_t getID();
+
+    virtual uint8_t handler(shs::ByteCollector &data);
+
+protected:
+    int16_t m_ID{};
+};
+```
+
+## Sysem
+
+
+<a id="stageIII"></a>
+
+# Этап III
+
+<a id="connection-organization"></a>
+
+## Организация соединения
+
+<a id="network-coverage"></a>
+
+### .1.1 Покрытие сети
+
+Все модули Smart Home System обмениватся между собой данными по WiFi. Для стабильной работы всех устройств необходимо обеспечить высокий уровень сигнала общей сети для каждого модуля.</br>
+
+Если помещение небольшое и установлен мощный маршрутизатор (WiFi-роутер), то скорее всего никаких дополнительных действий не потребуется. В противном слчае, проблему можно решить путем установки WiFi-repeater'ов. Они подключаются в сеть, увеливают ее радиус покрытия и уровень сигнала.</br>
+
+Вторым шагом небходимо научить все устройства находить друг друга в сети. Для этого им надо раздать статические IP-адреса. Такой адрес привязывается к MAC-адресу платы (он идет с завода, но при желании можно поменять). Делается все в настройках роутера, процедура не сложная. Теперь, зная IP устройства, можно будет посылать и принимать данные.</br>
+
+Для удобства настройки в **_Smart Home System_** модули имеют схожие MAC-адреса. Подбробнее см. ниже.
+
+<a id="connecting-modules"></a>
+
+### .1.2 Подключение модулей
+
+После настройки маршрутизатора, остается подключить и настрить сами микроконтроллеры. Для этого в библиотеке [SHSlibrary](SHSlibrary/) есть набор функций, реализованных в файле [SHSconnectWiFi.h](SHSlibrary/SHSconnectWiFi.h). </br>
+
+```c++
+namespace shs
+{
+        // set mac-address SHSma + id:
+        // 53:48:53:6D:61:xx xx = 0x(id)
+        void setMac(const uint8_t id);    
+
+        // set mac-address                    
+        void setMac(const uint8_t *mac);  
+
+        // wi-fi connection, called 1 time
+        // default:
+        // ssid = WIFI_SSID
+        // pass = WIFI_PASSWORD
+        // from the SHSsettings.h
+        void connectWiFi(const char *ssid, const char *pass);
+        
+        // call constantly, will cause a reboot if the board is 
+        // disconnected from WiFi for a long time
+        void checkReconnection();
+};
+```
+
+Задать ```SSID``` и ```PASSWORD``` сети можно один раз для всех устройств в файле [SHSsettings.h](SHSlibrary/SHSsettings.h).</br>
+
+MAC-адрес для удобства зашифрован кодом ```SHSma``` (53:48:53:6D:61:) (т.е. сокращение от **Smart Home System MAC Adress**), а на последнее место указывается уникальный ```ID``` модуля, таким образом устройства удобно отслеживать и настраивать в маршрутизаторе — достаточно изменить только последнее число.
+
+## .2 Передача данных
+
+### .2.1 ByteCollector
+
+
+
+### .2.3 TCP/IP
 
 **TCP/IP** — основной протокол передачи данных в Интернете. Через него организуется соединение между всеми модулями. Для этого в ядре ESP есть классы ```WiFiClient``` и ```WiFiServer```.</br>
 
@@ -962,13 +1053,13 @@ private:
 
 ```
 
-## 7.3 API
+## .3 API
 
 Все устройства связаны и имеют доступ друг к другу. Чтобы они могли запрашивать и принимать данные, нужно определить соотвествующие команды и обработчики для них. ```API``` каждого модуля состоит из перечисления(```enum```), где каждой команде соответсвует численный код. В пакет данных передается команда, а затем дополнительные параметры, если она их требует. В таком же порядке данные и будут расшифровываться на стороне приемника.</br>
 
 ```API``` всех устройств собраны в [SmartModulesAPI](SmartModulesAPI/).
 
-# 8. Этап III
+# . Этап IV
 
 В Smart Home System реализованы четыре метода взаимодействия с пользователем:</br>
 
@@ -979,7 +1070,7 @@ private:
 
 Каждый из них позволяет изменять набор параметров и регулировать систему.
 
-## 8.1 Кнопки и датчики
+## .1 Кнопки и датчики
 
 Датчики движения позволяют оценить нахождение пользователя в пространстве и скорректировать поведение системы. Таким образом, когда пользователь не дома, включается досвечивание растений, шумные приборы (например, вытяжки, фильтры, насосы).</br>
 

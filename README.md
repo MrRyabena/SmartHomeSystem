@@ -171,12 +171,12 @@ Neil Cameron. Electronics Projects with the ESP8266 and ESP32: Building WebPages
 - [SHSlogos](SHSlogos/) — логотипы и символика проекта.
 - [src](src/) — ПО проекта.
   - [debugging_sketches](debugging_sketches/) — наброски отладочных прошивок.
-  - [SHSapp](SHSapp/) — приложение под windows.
-  - [SHScore](SHScore/) — ядро (бизнес-логика), основная разработка.
-  - [SHSlibrary](SHSlibrary/) — библиотека с удобными инструментами, основанная на ядре.
-    - [SHSnerualnet](SHSnerualnet/) — разработка нейросети и алгоритмов работы с ней.
-  - [SmartModules](SmartModules/) — [beta] устройства и модули. 
-  - [SmartModulesAPI](SmartModulesAPI/) — [beta] команды устройств и модулей.
+  - [SHSapp](src/SHSapp/) — приложение под windows.
+  - [SHScore](src/SHScore/) — ядро (бизнес-логика), основная разработка.
+  - [SHSlibrary](src/SHSlibrary/) — библиотека с удобными инструментами, основанная на ядре.
+    - [SHSnerualnet](src/SHSlibrary/SHSnerualnet/) — разработка нейросети и алгоритмов работы с ней.
+  - [SmartModules](src/SmartModules/) — [beta] устройства и модули. 
+  - [SmartModulesAPI](src/SmartModulesAPI/) — [beta] команды устройств и модулей.
 - [synchronizer](synchronizer/) — быстро перекидывает файлы из SHSlibrary в папку с библиотеками (для удобства разработки).
 
 <a id="4_methods_stages"></a>

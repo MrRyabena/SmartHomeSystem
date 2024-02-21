@@ -16,10 +16,10 @@ namespace shs
 
 };
 
-class shs::TcpClient : WiFiClient
+class shs::TcpClient : public WiFiClient
 {
 public:
-    void tick();
+    inline void tick();
 
 private:
     uint32_t _tmr = millis();

@@ -88,7 +88,11 @@ _Ожидаемая дата релиза:_ 05.03.2024
   - [7.1 Containers](#7-1_containers)
     - [7.1.1 ByteCollector](#7-1-1_ByteCollector)
     - [7.1.2 Handlers](#7-1-2_Handlers)
-  - [7.]
+  - [7.2 Protocols](#7-2_protocols)
+    - [7.2.1 SHSDTP](#7-2-1_SHSDTP)
+    - [7.2.2 API](#7-2-2_API)
+    - [7.2.3 SHSF](#7-2-3_SHSF)
+    - 
 development
 - [~~7. Этап II~~](#stageII)
   - [~~7.1 Организация соединения~~](#connection-organization)
@@ -230,7 +234,7 @@ Neil Cameron. Electronics Projects with the ESP8266 and ESP32: Building WebPages
 
 Теперь, вдохновившись идеей и понимая принцип работы, можно попробовать создать свою систему. На одной теории дом не построишь, поэтому разработка требует постоянных экспериментов, которые подробно описаны в основной части документации.
 
-<a id="stages"></a>
+<a id="4-2_stages"></a>
 
 ## 4.2 Этапы разработки
 
@@ -816,9 +820,9 @@ public:
 
 ### 7.1.2 Handlers
 
-Классы-контейнеры для обработчиков процессов. Они позволяют оперировать несколькими объектами как одним, что позволяет легко масштабировать систему, без вмешательства в логику обработки данных.</br>
+Классы-контейнеры для обработчиков процессов. Они позволяют оперировать несколькими объектами как одним, что дает возможность легко масштабировать систему, без вмешательства в логику обработки данных.</br>
 
-- [ProcessesKeeper](src/SHScore/SHSProcessesKeeper.h) — позволяет добавлять различные процессы, например, опросы датчиков, управление процессами, опрсосы сайтов.</br>
+- [ProcessesKeeper](src/SHScore/SHSProcessesKeeper.h) — позволяет добавлять различные процессы, например, опросы датчиков, циклические вычисления, парсинг сайтов...</br>
 
   ```c++
   class shs::ProcessesKeeper : public shs::Process
@@ -850,15 +854,17 @@ public:
 
 Аналогично будут разработаны классы для обработки датчиков и нагрузок.
 
-<a>
+<a id="7-2_protocols"></a>
 
 ## 7.2 Protocols
 
-### SHSDTP
+<a id="7-2-1_SHSDTP"></a>
+
+### 7.2.1 SHSDTP
 
 **Smart Home System Data Transmission Protocol** — единый протокол передачи данных, разработанный для передачи информации между всеми модулями. Идея взята из [GyverBus](https://github.com/GyverLibs/GyverBus)</br>
 
-Для отправки данные нужно обработать, а потом распаковать обратно, для этого создан: [SHSdtp.h](SHSlibrary/SHSdtp.h). Он добавляет к пакету данные об отправителе и получателе, общее количество байт и CRC. Затем данные отправляются любым способом, основанным на классе  ```Stream```. Если не используется стандартная библиотека ```<Arduino.h>```, то класс  ```Stream``` необходимо реализовать, с тремя обязательными функциями-членами:
+Для отправки данные нужно обработать, а потом распаковать обратно, для этого создан [SHSdtp.h](SHSlibrary/SHSdtp.h). Он добавляет к пакету данные об отправителе и получателе, общее количество байт и CRC. Затем данные отправляются любым способом, основанным на классе  ```Stream```. Если не используется стандартная библиотека ```<Arduino.h>```, то класс  ```Stream``` необходимо реализовать, с тремя обязательными функциями-членами:
 
 ```c++
 class Stream
@@ -937,9 +943,11 @@ public:
 };
 ```
 
-### API
+<a id="7-2-2_API"></a>
 
-В файле [API.h](src/SHScore/SHSAPI.h) описан шаблон класса для реализации ```API```. От него наследуются все остальные классы. В handler передается пакет данных, который нужно расшифровать и отправить (если требутся) ответ. Можно реализовать управление отдельным датчиком, нагрузкой или библиотекой. Таким образом в _**Smart Home System**_ всегда возможно интегрировать любое устройство, достаточно реализовать для него API и процессы его поведения.
+### 7.2.2 API
+
+В файле [API.h](src/SHScore/SHSAPI.h) описан шаблон для классов реализации ```API```(является родителем для остальных классов). В ```handler``` передается пакет данных, который нужно расшифровать и отправить, если требутся, ответ. Можно реализовать управление отдельным датчиком, нагрузкой или библиотекой. Таким образом в _**Smart Home System**_ всегда возможно интегрировать любое устройство, достаточно реализовать для него API и процессы его поведения.
 
 ```c++
 class shs::API
@@ -947,8 +955,8 @@ class shs::API
 public:
     API(int16_t ID = 0);
 
-    void setID(int16_t ID);
-    int16_t getID();
+    inline void setID(int16_t ID);
+    inline int16_t getID();
 
     virtual uint8_t handler(shs::ByteCollector &data);
 
@@ -956,14 +964,186 @@ protected:
     int16_t m_ID{};
 };
 ```
+<a id=7-2-3_SHSF></a>
 
-## Sysem
+### 7.2.3 SHSF
 
+_**Smart Home System File**_ — протокол записи данных в файл. Содержит много инструментов для записи, сжатия, чтения данных, сохранения настроек и конфигураций.</br>
+
+_В данной версии проекта имеются наборски, но реализация еще не готова._
+
+<a id="7-2-4_tcpip"></a>
+
+### 7.2.4 TCP/IP
+
+Для передачи данных по WiFi используется протокол TCP/IP. Для системы хватает стандартной реализации протокола в ядрах esp, однако для удобства добавлены расширейния.</br>
+
+[SHSTcpClient.h](src/SHScore/SHSTcpClient.h) и [SHSTcpServer.h](src/SHScore/SHSTcpServer.h) упрощают процесы подключения и опрса входящих потоков.
+
+```c++
+// SHSTcpClient.h
+class shs::TcpClient : WiFiClient
+{
+public:
+    inline void tick();
+};
+
+
+// SHSTcpServer.h
+class shs::TcpServer
+{
+public:
+    WiFiServer *server;
+    WiFiClient *clients;
+    shs::DTP *dtp;
+
+    const uint8_t *IP{};
+    uint8_t maxClients{};
+
+    TcpServer(const uint8_t *IPaddress, void (*TCPhandle)(shs::DTPdata &), uint16_t port = 50000, uint8_t max_clients = 6);
+    ~TcpServer();
+
+    inline void begin();
+    inline void tick();
+
+    uint8_t sendPacket(shs::ByteCollector *col, uint8_t id);
+    void sendRAW(uint8_t *buf, uint8_t size);
+}
+```
+
+<a id="7-3_system"></a>
+
+## 7.3 System
+
+<a id="7-3-1_Process"></a>
+
+## 7.3.1 Process
+
+Класс описывает элементы всех процессов в системе:
+
+- ```begin()``` — вызывается один раз во время конфигурации процесса (инициализации).
+- ```tick()``` — постоянно вызывается в цикле программы.
+- ```end()``` — вызывается для завершения поцесса.
+
+```c++
+class shs::Process
+{
+public:
+    virtual void begin();
+    virtual void tick();
+    virtual void end();
+};
+```
+
+<a id="7-3-2_sensor"></a>
+
+### 7.3.2 Sensor
+
+- Класс ```shs::Sensor``` ([SHSSensor.h](src/SHScore/SHSSensor.h)) описывает основные методы для получения значений. В ```type``` хранится тип датчика, которых с развитием поддерживаемых системой устройств может быть несколько десятков.</br>
+
+- В классе ```shs::AnalogSensor``` ([SHSAnalogSensor.h](src/SHScore/SHSAnalogSensor.h)) реализованы методы считывания значений с аналоговых выводов микроконтроллера и простенькая фильтрация значений.</br>
+
+- Класс ```shs::DigitSensor``` ([SHSDeigitSensor.h](src/SHScore/SHSDigitSensor.h)) обеспечивает опрос цифровых датчиков.</br>
+
+На основе этих классов в SHSlibrary разрабатываются классы для конкретных моделей датчиков, расширяя набор поддерживаемых устройств.
+
+```c++
+class shs::Sensor
+{
+public:
+    shs::SensorType type{};
+    explicit Sensor(const int16_t ID = 0, const shs::SensorType stype);
+
+    inline void setID(int16_t ID);
+    inline int16_t getID();
+
+    inline virtual void begin();
+
+    virtual float getValue();
+    virtual double getValue();
+    virtual int16_t getValue();
+
+    virtual float getAverage();
+    virtual double getAverage();
+    virtual int16_t getAverage();
+
+protected:
+    int16_t _ID{};
+};
+
+class shs::AnalogSensor : public shs::Sensor
+{
+public:
+    AnalogSensor(const int16_t ID = 0, const shs::SensorType stype, const uint8_t pin = 0);
+    
+    void begin();
+    float getValue();
+    double getValue();
+    int16_t getValue();
+
+    float getAverage();
+    double getAverage();
+    int16_t getAverage();
+    
+
+protected:
+    uint8_t _pin{};
+};
+```
+
+<a id="7-3-3_load"></a>
+
+### 7.3.3 Load
+
+<a id="7-3-4_errorshandler"></a>
+
+### 7.3.4 ErrorsHandler
+
+В класс ```shs::ErrorsHandler``` ([SHSErrorsHandler](src/SHScore/SHSErrorsHandler.h)) передаются коды ошибок, которые обрабатываются подключенными обработчиками.</br>
+
+<a id="7-4_algorithmes"></a>
+
+## 7.4 Algorithmes
+
+<a id="7-4-1_CRC"></a>
+
+### 7.4.1 CRC
+
+Циклическая контрольная сумма — очень важный алгоритм для проверки целостности данных при передаче или хранении в файле.</br>
+
+Ядро предлагает реализацию самых удобных и востребованных для _**Smart Home System**_ типов на 8, 16 и 32-bit.</br>
+
+_Ниже приведен класс для CRC-32, остальные организованы полностью аналогично, см. [SHSCRC.h](src/SHScore/SHSCRC.h)._
+
+```c++
+namespace shs
+{
+    class CRC8;
+    class CRC16;
+    class CRC32;
+
+    const uint8_t CRC8_beg = 0x00;
+    const uint16_t CRC16_beg = 0xFFFF;
+    const uint32_t CRC32_beg = 0x00000000;
+};
+
+class shs::CRC32
+{
+public:
+    uint32_t crc{};
+    explicit CRC32() : crc(shs::CRC32_beg) {}
+
+    inline void add(const uint8_t value);
+    inline void clear();
+
+    void update(uint32_t &crc, uint8_t data);
+    uint32_t crcBuf(const uint8_t *ptr, uint16_t size);
+};
+```
 
 <a id="stageIII"></a>
 
 # Этап III
-
 <a id="connection-organization"></a>
 
 ## Организация соединения

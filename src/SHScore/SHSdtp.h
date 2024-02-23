@@ -25,7 +25,6 @@
 
 #pragma once
 #include <Arduino.h>
-#include "SHSModule.h"
 #include <stdint.h>
 #include "SHSCallbacksKeeper.h"
 #include "SHSCRC.h"
@@ -70,12 +69,12 @@ class shs::DTPpacker
 {
 
 public:
-    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to);
-    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const uint8_t from);
+    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID);
+    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID, const uint8_t from);
     uint8_t checkDTP(shs::ByteCollector *bc);
     uint8_t parseDTP(shs::ByteCollector *bc, shs::DTPdata &data);
 
-private:
+protected:
     shs::CRC8 _crc;
 };
 
@@ -90,29 +89,6 @@ public:
 
     inline uint8_t sendPacket(shs::ByteCollector *bc, const uint8_t to);
     uint8_t sendPacket(shs::ByteCollector *bc, uint8_t to, uint8_t from);
-
-    template <typename T>
-    uint8_t sendRAW(const T &data, const uint8_t to)
-    {
-        uint8_t crc = shs::CRC8_beg;
-        uint8_t size = sizeof(T) + DTP_OFFSETbeg + 1;
-
-        shs::crc_8_update(crc, size);
-        shs::crc_8_update(crc, to);
-        shs::crc_8_update(crc, _ID);
-
-        _bus.write(size);
-        _bus.write(to);
-        _bus.write(_ID);
-
-        uint8_t *ptr = (uint8_t *)&data;
-        for (uint8_t i = 0; i < sizeof(T), i++)
-        {
-            _bus.write(*ptr);
-            crc_8_update(crc, *ptr++);
-        }
-        _bus.write(crc);
-    }
 
 private:
     Stream *_bus{};

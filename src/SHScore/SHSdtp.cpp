@@ -2,7 +2,7 @@
 
 uint8_t shs::DTPpacker::packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID)
 {
-    return packDTP(bc, to, shs::module.config.ID);
+    return packDTP(bc, to, apiID, shs::module.config.ID);
 }
 
 uint8_t shs::DTPpacker::packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID, const uint8_t from)

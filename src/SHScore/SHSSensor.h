@@ -1,5 +1,17 @@
 #pragma once
+
+/*
+  Abstract class for the sensor interface.
+*/
+/*
+  Last update: v1.2.0
+  Versions:
+    v1.1.0 — created.
+    v1.2.0 — made purely virtual.
+*/
+
 #include <stdint.h>
+#include "SHSsettings_private.h"
 
 namespace shs
 {
@@ -7,25 +19,35 @@ namespace shs
     enum SensorType;
 };
 
+enum shs::SensorType : uint8_t
+{
+    unknown,
+    analogPin,
+    thermistor,
+    photoresistor,
+};
+
 class shs::Sensor
 {
 public:
     shs::SensorType type{};
-    explicit Sensor(const int16_t ID = 0, const shs::SensorType stype);
 
-    inline void setID(int16_t ID);
-    inline int16_t getID();
+public:
+    explicit Sensor(const shs::settings::shs_ID_t ID = 0, const shs::SensorType stype = shs::SensorType::unknown);
 
-    inline virtual void begin();
+    void setID(const shs::settings::shs_ID_t ID);
+    shs::settings::shs_ID_t getID() const;
 
-    virtual float getValue();
-    virtual double getValue();
-    virtual int16_t getValue();
+    virtual void setup() = 0;
 
-    virtual float getAverage();
-    virtual double getAverage();
-    virtual int16_t getAverage();
+    virtual int16_t getValueI() = 0;
+    virtual shs::settings::shs_float_t getValueF() = 0;
+    virtual shs::settings::shs_double_t getValueD() = 0;
+
+    virtual int16_t getAverageI() = 0;
+    virtual shs::settings::shs_float_t getAverageF() = 0;
+    virtual shs::settings::shs_double_t getAverageD() = 0;
 
 protected:
-    int16_t _ID{};
+    shs::settings::shs_ID_t m_ID{};
 };

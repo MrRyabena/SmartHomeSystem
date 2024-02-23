@@ -1,4 +1,4 @@
-#ifndef SHS_SETTINGS
+#ifndef SHS_SETTINGS  // note: don't use <#pragma once> in settings files!
 #define SHS_SETTINGS
 
 namespace shs::settings

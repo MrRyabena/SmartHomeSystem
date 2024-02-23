@@ -13,7 +13,7 @@ public:
     Update();
     ~Update();
 
-    void start(const uint32_t timeout = 120000, const bool resturt = true);
+    void start(const uint32_t timeout = 120000, const bool restart = true);
     void setHandler(void (*handler)(FB_msg &message));
 
 private:

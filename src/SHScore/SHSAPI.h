@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include "SHSByteCollector.h"
+#include "SHSsettings_private.h"
 
 namespace shs
 {
@@ -17,13 +18,13 @@ namespace shs
 class shs::API
 {
 public:
-    API(int16_t ID = 0) : m_ID(ID) {}
+    API(const shs::settings::shs_ID_t ID = 0) : m_ID(ID) {}
 
-    void setID(int16_t ID) { m_ID = ID; }
-    int16_t getID() { return m_ID; }
+    void setID(const shs::settings::shs_ID_t ID) { m_ID = ID; }
+    shs::settings::shs_ID_t getID() const { return m_ID; }
 
-    virtual uint8_t handler(shs::ByteCollector &data);
+    virtual uint8_t handler(shs::ByteCollector &data) = 0;
 
 protected:
-    int16_t m_ID{};
+    shs::settings::shs_ID_t m_ID{};
 };

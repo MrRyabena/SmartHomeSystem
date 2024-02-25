@@ -3,10 +3,9 @@
 
 namespace shs
 {
+    enum Errors : uint8_t;
     class ErrorsHandler;
     typedef void (*errorsCallback_t)(shs::Errors error);
-    
-    enum Errors;
 };
 
 enum shs::Errors : uint8_t

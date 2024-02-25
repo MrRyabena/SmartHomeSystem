@@ -1,6 +1,6 @@
 #include "SHSErrorsHandler.h"
 
-shs::ErrorsHandler::ErrorsHandler(shs::errorsCallback_t system_callback = nullptr, shs::errorsCallback_t user_callback = nullptr)
+shs::ErrorsHandler::ErrorsHandler(shs::errorsCallback_t system_callback, shs::errorsCallback_t user_callback)
     : m_firstHandler(system_callback), m_secondHandler(user_callback) {}
 
 shs::ErrorsHandler::~ErrorsHandler() {}

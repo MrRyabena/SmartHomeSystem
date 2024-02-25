@@ -1,11 +1,12 @@
 #include "SHSdtp.h"
 
-uint8_t shs::DTPpacker::packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID)
-{
-    return packDTP(bc, to, apiID, shs::module.config.ID);
-}
+// uint8_t shs::DTPpacker::packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID)
+// {
+//     return packDTP(bc, to, apiID, m_ID);
+// }
 
-uint8_t shs::DTPpacker::packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID, const uint8_t from)
+uint8_t shs::DTPpacker::packDTP(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
+                                const shs::settings::shs_ID_t apiID, const shs::settings::shs_ModuleID_t from)
 {
     bc->reserveBefore(5);
     bc->buf[1] = to;
@@ -41,13 +42,13 @@ uint8_t shs::DTPpacker::parseDTP(shs::ByteCollector *bc, shs::DTPdata &data)
     data.to = bc->buf[1];
     data.from = bc->buf[3] | ((int16_t)bc->buf[4] << 8);
     data.datasize = bc->size() - shs::settings::DTP_OFFSETbeg - 1;
-    bc->readPtr = bc->buf + shs::settigns::DTP_OFFSETbeg;
+    bc->readPtr = bc->buf + shs::settings::DTP_OFFSETbeg;
     data.data = bc;
 
     return 0;
 }
 
-shs::DTP::DTP(Stream *bus) : _bus(bus) {}
+shs::DTP::DTP(Stream *bus, const shs::settings::shs_ModuleID_t ID) : _bus(bus), m_ID(ID) {}
 
 shs::DTP::~DTP() {}
 
@@ -57,8 +58,10 @@ uint8_t shs::DTP::tick()
     return 0;
 }
 
-uint8_t shs::DTP::checkBus()
+uint8_t shs::DTP::checkBus(uint8_t len)
 {
+    if (len != UINT8_MAX)
+        _len = len;
     if (_bus->available())
         if (!_len)
             _len = _bus->read();
@@ -79,13 +82,14 @@ uint8_t shs::DTP::checkBus()
     return size;
 }
 
-uint8_t shs::DTP::sendPacket(shs::ByteCollector *bc, const uint8_t to)
+uint8_t shs::DTP::sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to)
 {
-    return shs::DTP::sendPacket(bc, to, 0);
+    return shs::DTP::sendPacket(bc, to, m_ID, m_ID);
 }
 
-uint8_t shs::DTP::sendPacket(shs::ByteCollector *bc, const uint8_t to, const uint8_t from)
+uint8_t shs::DTP::sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
+                             const shs::settings::shs_ID_t api_ID, const shs::settings::shs_ModuleID_t from)
 {
-    packDTP(bc, to);
+    packDTP(bc, to, api_ID, from);
     return _bus->write(bc->buf, bc->buf[0]);
 }

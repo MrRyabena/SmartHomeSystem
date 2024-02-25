@@ -30,13 +30,13 @@
 #include "SHSCRC.h"
 #include "SHSByteCollector.h"
 
-namespace settings
+namespace shs::settings
 {
 #ifndef SILENCE_TIMEOUT
 #define SILENCE_TIMEOUT 120000
 #endif
 
-#define DTP_OFFSETbeg 5
+    inline const uint8_t DTP_OFFSETbeg = 5;
 };
 
 namespace shs
@@ -45,7 +45,7 @@ namespace shs
     struct DTPdata;
     class DTP;
     class DTPpacker;
-    typedef void (*DTPhandler_t)(shs::DTPdata &){};
+    typedef void (*DTPhandler_t)(shs::DTPdata &);
 
 };
 
@@ -62,15 +62,15 @@ struct shs::DTPdata
     uint8_t from{};
     int16_t apiID{};
     uint8_t datasize{};
-    shs::ByteCollector &data{};
+    shs::ByteCollector *data{};
 };
 
 class shs::DTPpacker
 {
 
 public:
-    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID);
-    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID, const uint8_t from);
+    // uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID);
+    uint8_t packDTP(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t apiID, const shs::settings::shs_ModuleID_t from);
     uint8_t checkDTP(shs::ByteCollector *bc);
     uint8_t parseDTP(shs::ByteCollector *bc, shs::DTPdata &data);
 
@@ -81,17 +81,18 @@ protected:
 class shs::DTP : public shs::DTPpacker, public shs::CallbacksKeeper
 {
 public:
-    explicit DTP(Stream *bus);
+    explicit DTP(Stream *bus, const shs::settings::shs_ModuleID_t ID);
     ~DTP();
 
-    inline uint8_t tick();
-    uint8_t checkBus();
+    uint8_t tick();
+    uint8_t checkBus(uint8_t len = UINT8_MAX);
 
-    inline uint8_t sendPacket(shs::ByteCollector *bc, const uint8_t to);
-    uint8_t sendPacket(shs::ByteCollector *bc, uint8_t to, uint8_t from);
+    uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to);
+    uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t api_ID, const shs::settings::shs_ModuleID_t from);
 
 private:
     Stream *_bus{};
     uint8_t _len{};
     uint32_t tmr = millis();
+    shs::settings::shs_ModuleID_t m_ID{};
 };

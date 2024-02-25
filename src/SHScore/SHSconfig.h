@@ -10,8 +10,8 @@
 
 namespace shs
 {
+    enum Mode : uint8_t;
     struct Config;
-    enum Mode;
 };
 
 struct shs::Config
@@ -24,6 +24,7 @@ struct shs::Config
 enum shs::Mode : uint8_t
 {
     off,
+    on,
     standby,
     sleep,
 };

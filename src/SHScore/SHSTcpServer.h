@@ -7,8 +7,12 @@
 #include <WiFi.h>
 #endif
 
+#include <WiFiServer.h>
+#include <WiFiClient.h>
+
 #include "SHSByteCollector.h"
 #include "SHSdtp.h"
+#include "SHSsettings_private.h"
 
 namespace shs
 {
@@ -18,24 +22,26 @@ namespace shs
 class shs::TcpServer
 {
 public:
-    WiFiServer *server;
+    WiFiServer server;
     WiFiClient *clients;
-    shs::DTP *dtp;
+    shs::DTP *dtp{};
 
     const uint8_t *IP{};
     uint8_t maxClients{};
 
-    TcpServer(const uint8_t *IPaddress, void (*TCPhandle)(shs::DTPdata &), uint16_t port = 50000, uint8_t max_clients = 6);
+    TcpServer(const uint8_t *IPaddress, uint16_t port = 50000, uint8_t max_clients = 6);
     ~TcpServer();
 
     void begin();
     void tick();
 
-    uint8_t sendPacket(shs::ByteCollector *col, uint8_t id);
-    void sendRAW(uint8_t *buf, uint8_t size);
+    uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
+                             const shs::settings::shs_ID_t api_ID);
+    //void sendRAW(uint8_t *buf, uint8_t size);
 
 private:
     void (*_TCPhandle)(shs::DTPdata &){};
     uint8_t *lens{};
     uint8_t i{};
+    void *m_dtp_beg{};
 };

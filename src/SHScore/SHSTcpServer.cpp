@@ -1,35 +1,33 @@
 #include "SHSTcpServer.h"
 
-shs::TcpServer::TcpServer(const uint8_t *IPaddress, void (*TCPhandle)(shs::DTPdata &), uint16_t port, uint8_t max_clients)
-    : server(new WiFiServer(port)),
-      clients(new WiFiClient[max_clients]{}),
-      lens(new uint8_t[max_clients]{}),
-      dtp(new shs::DTP(IPaddress[3], (Stream*)server, TCPhandle))
+shs::TcpServer::TcpServer(const uint8_t *IPaddress, uint16_t port, uint8_t max_clients)
+    : server(WiFiServer(port)),
+      clients(new WiFiClient[max_clients]),
+      lens(new uint8_t[max_clients]),
+      IP(IPaddress),
+      maxClients(max_clients)
 
 {
-    IP = IPaddress;
-    maxClients = max_clients;
-    _TCPhandle = TCPhandle;
+    m_dtp_beg = ::operator new(sizeof(shs::DTP));
 }
 
 shs::TcpServer::~TcpServer()
 {
-    delete server;
     delete[] clients;
     delete[] lens;
-    delete dtp;
+    ::operator delete(m_dtp_beg);
 }
 
 void shs::TcpServer::begin()
 {
-    server->begin();
-    server->setNoDelay(true);
+    server.begin();
+    server.setNoDelay(true);
 }
 
 void shs::TcpServer::tick()
 {
 
-    if (server->hasClient())
+    if (server.hasClient())
     {
         for (i = 0; i < maxClients; i++)
         {
@@ -38,29 +36,33 @@ void shs::TcpServer::tick()
 
                 if (clients[i])
                     clients[i].stop();
-                clients[i] = server->available();
+                clients[i] = server.available();
                 break;
             }
         }
-        WiFiClient client = server->available();
+        WiFiClient client = server.available();
         client.stop();
     }
 
     for (i = 0; i < maxClients; i++)
     {
         if (clients[i] && clients[i].connected())
-            dtp->checkBus(&lens[i]);
+        {
+            dtp = new (m_dtp_beg) shs::DTP(&clients[i], IP[3]);
+            dtp->checkBus(lens[i]);
+        }
     }
 }
 
-uint8_t shs::TcpServer::sendPacket(shs::ByteCollector *col, uint8_t id)
+uint8_t shs::TcpServer::sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
+                             const shs::settings::shs_ID_t api_ID)
 {
     for (uint8_t i = 0; i < maxClients; i++)
     {
-        if (clients[i].remoteIP()[3] == id)
+        if (clients[i].remoteIP()[3] == to)
         {
-            dtp->packDTP(col, id);
-            clients[i].write(col->buf, col->buf[0]);
+            dtp->packDTP(bc, to, api_ID, IP[3]);
+            clients[i].write(bc->buf, bc->buf[0]);
             return 0;
         }
     }

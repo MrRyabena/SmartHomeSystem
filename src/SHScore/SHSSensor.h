@@ -15,8 +15,8 @@
 
 namespace shs
 {
-    class Sensor;
-    enum SensorType;
+    enum SensorType : uint8_t;
+    class Sensor;  
 };
 
 enum shs::SensorType : uint8_t
@@ -40,13 +40,13 @@ public:
 
     virtual void setup() = 0;
 
-    virtual int16_t getValueI() = 0;
-    virtual shs::settings::shs_float_t getValueF() = 0;
-    virtual shs::settings::shs_double_t getValueD() = 0;
+    virtual int16_t getValueI(const shs::settings::shs_ID_t ID = 0) = 0;
+    virtual shs::settings::shs_float_t getValueF(const shs::settings::shs_ID_t ID = 0) = 0;
+    virtual shs::settings::shs_double_t getValueD(const shs::settings::shs_ID_t ID = 0) = 0;
 
-    virtual int16_t getAverageI() = 0;
-    virtual shs::settings::shs_float_t getAverageF() = 0;
-    virtual shs::settings::shs_double_t getAverageD() = 0;
+    virtual int16_t getAverageI(const shs::settings::shs_ID_t ID = 0) = 0;
+    virtual shs::settings::shs_float_t getAverageF(const shs::settings::shs_ID_t ID = 0) = 0;
+    virtual shs::settings::shs_double_t getAverageD(const shs::settings::shs_ID_t ID = 0) = 0;
 
 protected:
     shs::settings::shs_ID_t m_ID{};

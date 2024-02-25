@@ -12,7 +12,7 @@ namespace shs
 class shs::ProcessesKeeper : public shs::Process
 {
 public:
-    explicit ProcessesKeeper();
+    explicit ProcessesKeeper() {};
     void attach(shs::Process *object);
     void detach(shs::Process *object);
 
@@ -20,7 +20,7 @@ public:
     void tick();
     void end();
 
-private:
-    std::vector<shs::Process *> _ptrs;
-    uint8_t _fined(shs::Process *object);
+protected:
+    std::vector<shs::Process *> m_ptrs;
+    uint8_t m_find(const shs::Process *object);
 };

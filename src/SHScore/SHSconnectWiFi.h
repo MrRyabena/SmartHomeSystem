@@ -26,7 +26,9 @@
 #include <esp_wifi.h>
 #endif
 
-#include "settings.h"
+#ifndef _SHS_SETTINGS_
+#include <SHSsettings.h>
+#endif
 
 namespace shs
 {
@@ -38,7 +40,7 @@ namespace shs
         void checkReconnection(); // call constantly, will cause a reboot if the board is disconnected from WiFi for a long time
 };
 
-void shs::connectWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *pass = shs::settigns::WIFI_PASSWORD)
+void shs::connectWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *pass = shs::settings::WIFI_PASSWORD)
 {
         WiFi.begin(ssid, pass);
         while (WiFi.status() != WL_CONNECTED)
@@ -68,7 +70,7 @@ void shs::connectWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *p
 
 void shs::setMac(const uint8_t id)
 {
-        uint8_t *mac[6] = shs::settings::MACconstant; // 53:48:53:6D:61:xx xx = 0x(id)
+        uint8_t *mac = const_cast<uint8_t*>(shs::settings::MACconstant); // 53:48:53:6D:61:xx xx = 0x(id)
         mac[5] = id;
 
         WiFi.mode(WIFI_STA);
@@ -83,7 +85,7 @@ void shs::setMac(const uint8_t *mac)
 {
         WiFi.mode(WIFI_STA);
 #ifdef ESP8266
-        wifi_set_macaddr(STATION_IF, cosnt_cast<uint8_t *>(mac));
+        wifi_set_macaddr(STATION_IF, const_cast<uint8_t *>(mac));
 #else
         esp_wifi_set_mac(WIFI_IF_STA, const_cast<uint8_t *>(mac));
 #endif

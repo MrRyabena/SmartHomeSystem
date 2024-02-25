@@ -1,3 +1,4 @@
+
 # SmartHomeSystem
 
 <!-- <pre> -->
@@ -18,6 +19,7 @@
 # Note
 
 ### <u>Проект в разработке, архитектура ядра, документация и концепции постоянно меняются и дорабатываются. Полная картина будет понятна ближе к релизу.</u>
+
 
 ---
 <a id="versions"></a>
@@ -97,7 +99,7 @@ _Ожидаемая дата релиза:_ 05.03.2024
     - [6.3.6 BME280/BMP280](#6-3-6_bme280)
     - [6.3.7 MH-Z19b](#6-3-7_mh-z19b)
     - [6.3.8 HX711](#6-3-8_hx711)
-- [7. Этап II](#7_stage2)
+- [7. Этап II](#7_stageII)
   - [7.1 Containers](#7-1_containers)
     - [7.1.1 ByteCollector](#7-1-1_ByteCollector)
     - [7.1.2 Handlers](#7-1-2_Handlers)
@@ -105,7 +107,16 @@ _Ожидаемая дата релиза:_ 05.03.2024
     - [7.2.1 SHSDTP](#7-2-1_SHSDTP)
     - [7.2.2 API](#7-2-2_API)
     - [7.2.3 SHSF](#7-2-3_SHSF)
-    -
+    - [7.2.4 TCP/IP](#7-2-4_tcpip)
+  - [7.3 System](#7-3_system)
+    - [7.3.1 Process](#7-3-1_Process)
+    - [7.3.2 Sensor](#7-3-2_sensor)
+    - [7.3.3 Load](#7-3-3_load)
+    - [7.3.4 ErrorsHandler](#7-3-4_errorshandler)
+    - [7.3.5 Settings](#7-3-5_settings)
+  - [7.4 Algorithms](#7-4_algorithms)
+    - [7.4.1 CRC](#7-4-1_CRC)
+- [8. Этап III](#8_stageIII)
 
 development
 
@@ -612,6 +623,8 @@ Module — самостоятельная часть Smart Home System, отве
 
 # 6. Этап I
 
+В этом этапе рассказаны принципы построения системы умного дома. В _**Smart Home System**_ алгоритмы управления уже реализованы в ядре и библиотеке (см. [Этап II](#7_stageII) и [Этап III](#8_stageIII)), что упрощает и ускоряет разработку системы.
+
 <a id="6-1_module"></a>
 
 ## 6.1  Module
@@ -804,7 +817,7 @@ value = map(value, 0, 1023, 0, 100);
 
 Библиотека: [GyverHX711](https://github.com/GyverLibs/GyverHX711).
 
-<a id="7_stage2"></a>
+<a id="7_stageII"></a>
 
 # 7. Этап II
 
@@ -884,11 +897,15 @@ public:
   public:
       explicit ProcessesKeeper();
       void attach(shs::Process *object);
-      void detach(shs::Process *object);
-  
+      void detach(shs::Process*object);
+
       void begin();
       void tick();
       void end();
+
+  protected:
+      std::vector<shs::Process *> m_ptrs;
+      uint8_t m_find(const shs::Process*object);
   };
   ```
 
@@ -901,12 +918,68 @@ public:
       explicit CallbacksKeeper() {}
       void attach(shs::API *object);
       void detach(shs::API *object);
-  
+
       uint8_t handler(shs::ByteCollector &data);
+
+  protected:
+      std::vector<shs::API *> m_ptrs;
+      uint8_t m_find(shs::API *object);
   };
   ```
 
-Аналогично будут разработаны классы для обработки датчиков и нагрузок.
+- [SensorsKeeper](src/SHScore/SHSSensorsKeeper.h) — хранит набор датчиков и позволяет вызывать методы конкретного датчика по ID.
+
+  ```c++
+  class shs::SensorsKeeper : public Sensor
+  {
+  public:
+      explicit SensorsKeeper();
+      void attach(shs::Sensor *object);
+      void detach(shs::Sensor *object);
+
+      void setup() override;
+
+      uint8_t find(const shs::settings::shs_ID_t ID);
+    
+      int16_t getValueI(const shs::settings::shs_ID_t ID) override;
+      shs::settings::shs_float_t getValueF(const shs::settings::shs_ID_t ID) override;
+      shs::settings::shs_double_t getValueD(const shs::settings::shs_ID_t ID) override;
+
+      int16_t getAverageI(const shs::settings::shs_ID_t ID) override;
+      shs::settings::shs_float_t getAverageF(const shs::settings::shs_ID_t ID) override;
+      shs::settings::shs_double_t getAverageD(const shs::settings::shs_ID_t ID) override;
+
+  protected:
+      std::vector<shs::Sensor *> m_ptrs;
+      uint8_t m_find(const shs::Sensor *object);
+  };
+  ```
+
+- [LoadKeeper](src/SHScore/SHSLoadKeeper.h) — аналогично SensorsKeeper управляет нагрузками.
+
+  ```c++
+   class shs::LoadKeeper : public shs::Load
+  {
+  public:
+      explicit LoadKeeper();
+      void attach(shs::Load *object);
+      void detach(shs::Load *object);
+
+      uint8_t find(shs::settings::shs_ID_t ID);
+
+      void setup() override;
+    
+      void on(const uint8_t value = 255, const uint8_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) override;
+      void on(const uint16_t value = UINT16_MAX, const uint16_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) override;
+
+      void off(const uint16_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) override;
+
+    
+  protected:
+      std::vector<shs::Load *> m_ptrs;
+      uint8_t m_find(const shs::Load *object);
+  };
+  ```
 
 <a id="7-2_protocols"></a>
 
@@ -1214,9 +1287,15 @@ protected:
 
 В класс ```shs::ErrorsHandler``` ([SHSErrorsHandler](src/SHScore/SHSErrorsHandler.h)) передаются коды ошибок, которые обрабатываются подключенными обработчиками.</br>
 
-<a id="7-4_algorithmes"></a>
+<a id="7-3-5_settings"></a>
 
-## 7.4 Algorithmes
+### 7.3.5 Settings
+
+Все настройки обернуты в ```namespace shs::settings```. Файл [SHSsettings.h](src/SHScore/SHSsettings.h) является пользовательским шаблоном настроек. Там можно разово задать общие параметры для всей системы. В файл [SHSsettings_private.h](src/SHScore/SHSsettings_private.h) рекомендуется не вносить изменения, во избежание некорректной работы системы.
+
+<a id="7-4_algorithms"></a>
+
+## 7.4 Algorithms
 
 <a id="7-4-1_CRC"></a>
 
@@ -1258,7 +1337,45 @@ public:
 
 # 8. Этап III
 
+[SHSlibrary](src/SHSlibrary/) — следующий уровень архитектуры _**Smart Home System**_. Библиотека реализует более функциональные и направленные решения, API к устройствам и библиотекам.</br>
 
+Пока что большая часть библиотеки находится в разработке. Сейчас в ней представлены классы [SHSModule](src/SHSlibrary/SHSModule.h), хранящий шаблон конфигурации модуля и [SHSAutoProcesses](src/SHSlibrary/SHSAutoProcesses.h), позволяющий выполнять автоматические конфигурацию и управление модулем.
+
+```c++
+namespace shs
+{
+    namespace settings;
+
+    class Module;
+    extern Module module;
+};
+
+class shs::Module
+{
+public:
+    GyverNTP ntp(3, 1800);
+    shs::Config config;
+    shs::ErrorsHandler errorsHandler;
+    shs::ProcessesKeeper processes;
+    shs::SensorsKeeper sensors;
+    shs::LoadKeeper load;
+};
+
+class shs::AutoProcesses : public shs::Process
+{
+public:
+    WiFiClient tcp;
+    shs::DTP dtp;
+    shs::ProcessesKeeper keeper;
+
+    explicit AutoProcesses();
+    ~AutoProcesses();
+
+    void begin() override;
+    void tick() override;
+    void end() override;
+};
+```
 
 <a id="stageVI"></a>
 

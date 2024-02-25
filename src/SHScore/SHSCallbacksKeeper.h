@@ -23,7 +23,7 @@ public:
 
     uint8_t handler(shs::ByteCollector &data);
 
-private:
-    std::vector<shs::API *> _ptrs;
-    uint8_t _fined(shs::API *object);
+protected:
+    std::vector<shs::API *> m_ptrs;
+    uint8_t m_find(shs::API *object);
 };

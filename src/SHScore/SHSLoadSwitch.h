@@ -18,10 +18,10 @@ public:
 
     void setup() override;
 
-    void on(const uint8_t value = 255, const uint8_t smoother = 0) override;
-    void on(const uint16_t value = UINT16_MAX, const uint16_t smoothing = 0) override;
+    void on(const uint8_t value = 255, const uint8_t smoother = 0, const shs::settings::shs_ID_t ID = 0) override;
+    void on(const uint16_t value = UINT16_MAX, const uint16_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) override;
 
-    void off(const uint8_t smoothing = 0) override;
+    void off(const uint16_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) override;
 
     void begin() override;
     void tick() override;

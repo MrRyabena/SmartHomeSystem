@@ -16,7 +16,7 @@ void shs::LoadPWM::setup() { pinMode(m_pin, OUTPUT); }
 
 void shs::LoadPWM::setKeeper(shs::ProcessesKeeper *keeper) { m_keeper = keeper; }
 
-void shs::LoadPWM::on(uint8_t value, uint8_t smoothing)
+void shs::LoadPWM::on(uint8_t value, uint8_t smoothing, const shs::settings::shs_ID_t ID)
 {
     if (smoothing)
     {
@@ -27,7 +27,7 @@ void shs::LoadPWM::on(uint8_t value, uint8_t smoothing)
     analogWrite(m_pin, value);
 }
 
-void shs::LoadPWM::on(uint16_t value, uint16_t smoothing)
+void shs::LoadPWM::on(uint16_t value, uint16_t smoothing, const shs::settings::shs_ID_t ID)
 {
     if (smoothing)
     {
@@ -41,7 +41,7 @@ void shs::LoadPWM::on(uint16_t value, uint16_t smoothing)
     analogWrite(m_pin, value);
 }
 
-void shs::LoadPWM::off(uint16_t smoothing) { on(0, smoothing); }
+void shs::LoadPWM::off(uint16_t smoothing, const shs::settings::shs_ID_t ID) { on(0, smoothing); }
 
 void shs::LoadPWM::begin() { setup(); }
 

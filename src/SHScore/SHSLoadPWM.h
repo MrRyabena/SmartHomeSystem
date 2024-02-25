@@ -22,10 +22,10 @@ public:
 
     void setup() override;
 
-    void on(uint8_t value = 255, uint8_t smoothing = 0) override;
-    void on(uint16_t value = UINT16_MAX, uint16_t smoothing = 0) override;
+    void on(uint8_t value = 255, uint8_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) override;
+    void on(uint16_t value = UINT16_MAX, uint16_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) override;
 
-    void off(uint16_t smoothing = 0) override;
+    void off(uint16_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) override;
 
     void begin() override;
     void tick() override;

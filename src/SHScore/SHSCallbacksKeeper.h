@@ -8,6 +8,7 @@
 
 #include <vector>
 #include "SHSAPI.h"
+#include "SHSByteCollector.h"
 
 namespace shs
 {

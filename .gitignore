@@ -44,27 +44,29 @@ CMakeUserPresets.json
 
 # qtcreator generated files
 
-src/demo_version/build-SHSapp-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/
+build-DemoApp-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/
+CMakeFiles/
+CMakeCache.txt
 
-*.creator.user
-*.pro.user
-*.pyqtc.user
-*.qbs.user
-*.qmlproject.user
-*CMakeLists.txt.user
-*/share/qtcreator/examples/
-*/share/qtcreator/externaltools/
-*/share/qtcreator/fonts/
-*/share/qtcreator/generic-highlighter/
-*/share/qtcreator/qmldesigner/QtProject/
-*/src/app/Info.plist
-*/src/plugins/**/*.json
-*!/src/plugins/**/wizard.json
-*/src/plugins/coreplugin/ide_version.h
-*/src/libs/qt-breakpad/bin
-*/.cmake/
-*app_version.h
-*phony.c
+*.creator.user*
+*.pro.user*
+*.pyqtc.user*
+*.qbs.user*
+*.qmlproject.user*
+CMakeLists.txt.user*
+/share/qtcreator/examples/
+/share/qtcreator/externaltools/
+/share/qtcreator/fonts/
+/share/qtcreator/generic-highlighter/
+/share/qtcreator/qmldesigner/QtProject/
+/src/app/Info.plist
+/src/plugins/**/*.json
+!/src/plugins/**/wizard.json
+/src/plugins/coreplugin/ide_version.h
+/src/libs/qt-breakpad/bin
+.cmake/
+app_version.h
+phony.c
 
 # xemacs temporary files
 *.flc

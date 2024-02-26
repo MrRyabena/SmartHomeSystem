@@ -61,7 +61,7 @@ uint8_t shs::TcpServer::sendPacket(shs::ByteCollector *bc, const shs::settings::
     {
         if (clients[i].remoteIP()[3] == to)
         {
-            dtp->packDTP(bc, to, api_ID, IP[3]);
+            dtp->packDTP(bc, to, api_ID, static_cast<shs::settings::shs_ModuleID_t>(IP[3]));
             clients[i].write(bc->buf, bc->buf[0]);
             return 0;
         }

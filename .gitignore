@@ -43,6 +43,9 @@ debug_toolchain.cmake
 CMakeUserPresets.json
 
 # qtcreator generated files
+
+src/demo_version/build-SHSapp-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/
+
 *.creator.user*
 *.pro.user*
 *.pyqtc.user*
@@ -779,3 +782,4 @@ SHSapp/build-SHSapp-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/.cmake/api/v1/reply/ind
 SHSapp/build-SHSapp-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/.cmake/api/v1/reply/cmakeFiles-v1-5c17310000280faa9dea.json
 SHSapp/build-SHSapp-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/.cmake/api/v1/reply/index-2023-11-24T17-33-55-0055.json
 SHSapp/build-SHSapp-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/.cmake/api/v1/reply/index-2023-11-25T14-32-00-0162.json
+src/demo version/App/.cmake/api/v1/query/cmakeFiles-v1

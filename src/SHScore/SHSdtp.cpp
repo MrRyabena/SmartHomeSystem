@@ -74,12 +74,12 @@ uint8_t shs::DTP::checkBus(uint8_t len)
         *(col.ptr++) = _bus->read();
     _len = 0;
 
-    shs::DTPdata data;
-    uint8_t size = parseDTP(&col, data);
+    // shs::DTPdata data;
+    // uint8_t size = parseDTP(&col, data);
 
     handler(col);
 
-    return size;
+    return col.size();
 }
 
 uint8_t shs::DTP::sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to)

@@ -24,8 +24,16 @@
 */
 
 #pragma once
+
+#ifdef _Arduino_
 #include <Arduino.h>
+#else
+#include "SHSStream.h"
+using Stream = shs::Stream;
+#endif
+
 #include <stdint.h>
+#include "SHSsettings_private.h"
 #include "SHSCallbacksKeeper.h"
 #include "SHSCRC.h"
 #include "SHSByteCollector.h"
@@ -42,6 +50,7 @@ namespace shs::settings
 namespace shs
 {
     enum DTPcommands : uint8_t;
+    enum DTPhandlerStatus : uint8_t;
     struct DTPdata;
     class DTP;
     class DTPpacker;
@@ -54,6 +63,14 @@ enum shs::DTPcommands : uint8_t
     answer = 252,
     error,
     request,
+};
+
+enum shs::DTPhandlerStatus : uint8_t
+{
+    PROCESSED,
+    INVALIDaddress,
+    PTRerror,
+    CMDerror,
 };
 
 struct shs::DTPdata
@@ -93,6 +110,6 @@ public:
 private:
     Stream *_bus{};
     uint8_t _len{};
-    uint32_t tmr = millis();
+    uint32_t tmr{};
     shs::settings::shs_ModuleID_t m_ID{};
 };

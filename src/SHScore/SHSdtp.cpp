@@ -43,7 +43,6 @@ uint8_t shs::DTPpacker::parseDTP(shs::ByteCollector *bc, shs::DTPdata &data)
     data.from = bc->buf[3] | ((int16_t)bc->buf[4] << 8);
     data.datasize = bc->size() - shs::settings::DTP_OFFSETbeg - 1;
     bc->readPtr = bc->buf + shs::settings::DTP_OFFSETbeg;
-    data.data = bc;
 
     return 0;
 }

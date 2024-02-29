@@ -75,11 +75,10 @@ enum shs::DTPhandlerStatus : uint8_t
 
 struct shs::DTPdata
 {
-    uint8_t to{};
-    uint8_t from{};
-    int16_t apiID{};
+    shs::settings::shs_ModuleID_t to{};
+    shs::settings::shs_ModuleID_t from{};
+    shs::settings::shs_ID_t apiID{};
     uint8_t datasize{};
-    shs::ByteCollector *data{};
 };
 
 class shs::DTPpacker

@@ -28,44 +28,41 @@ find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Network REQUIRED)
 
 if(ANDROID)
-  add_library(DemoApp SHARED
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
+    add_library(DemoApp SHARED
+        main.cpp
+        mainwindow.cpp
+        mainwindow.h
+        mainwindow.ui
 
-../../../SHScore/
-TCPstream.cpp
-    TCPstream.h
-  )
+        ../../../SHScore/
+        TCPstream.cpp
+        TCPstream.h
+        )
 else()
-  add_executable(DemoApp
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    ../../../SHScore/SHSCRC.cpp
-  ../../../SHScore/SHSCRC.h
+    add_executable(DemoApp
+        main.cpp
+        mainwindow.cpp
+        mainwindow.h
+        mainwindow.ui
+        ../../../SHScore/SHSCRC.cpp
+        ../../../SHScore/SHSCRC.h
 
-  ../../../SHScore/SHSCallbacksKeeper.cpp
-    ../../../SHScore/SHSCallbacksKeeper.h
+        ../../../SHScore/SHSCallbacksKeeper.cpp
+        ../../../SHScore/SHSCallbacksKeeper.h
 
-   ../../../SHScore/SHSsettings_private.h
+        ../../../SHScore/SHSsettings_private.h
 
-   ../../../SHScore/SHSdtp.cpp
-    ../../../SHScore/SHSdtp.h
+        ../../../SHScore/SHSdtp.cpp
+        ../../../SHScore/SHSdtp.h
 
-     ../../../SHScore/SHSAPI.h
-    ../../config/config_api.h
+        ../../../SHScore/SHSAPI.h
+        ../../config/config_api.h
 
-    poligon.cpp
-    poligon.h
+        # ../../../SHScore/SHSdtp.cpp
+        TCPstream.cpp
+        TCPstream.h
 
-   # ../../../SHScore/SHSdtp.cpp
-    TCPstream.cpp
-    TCPstream.h
-
-  )
+        )
 endif()
 target_link_libraries(DemoApp PRIVATE Qt5::Widgets)
 target_link_libraries(DemoApp PRIVATE Qt5::Network)

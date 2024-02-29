@@ -2,6 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QPolygonF>
+#include <QGraphicsScene>
+#include <QDebug>
+#include <vector>
+#include <algorithm>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,8 +20,24 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void begin();
+    void setPoligons();
+    void updatePoligons();
+
+    std::vector<double> ThermBuf;
+    std::vector<double> PhotoBuf;
+
+    const int maxBufSize = 200;
+
+private slots:
+void resizeEvent(QResizeEvent*);
+
+
+void on_tabWidget_currentChanged(int index);
+
 private:
     Ui::MainWindow *ui;
+
 };
 
 

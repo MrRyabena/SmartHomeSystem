@@ -35,7 +35,7 @@ if(ANDROID)
     mainwindow.ui
 
 ../../../SHScore/
-
+TCPstream.cpp
     TCPstream.h
   )
 else()
@@ -55,10 +55,16 @@ else()
    ../../../SHScore/SHSdtp.cpp
     ../../../SHScore/SHSdtp.h
 
+     ../../../SHScore/SHSAPI.h
+    ../../config/config_api.h
+
+    poligon.cpp
+    poligon.h
 
    # ../../../SHScore/SHSdtp.cpp
-
+    TCPstream.cpp
     TCPstream.h
+
   )
 endif()
 target_link_libraries(DemoApp PRIVATE Qt5::Widgets)

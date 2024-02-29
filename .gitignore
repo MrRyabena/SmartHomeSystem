@@ -45,6 +45,7 @@ CMakeUserPresets.json
 # qtcreator generated files
 
 build-DemoApp-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/
+build-DemoApp-Qt_5_14_2_MinGW_64_bit-Debug/
 CMakeFiles/
 CMakeCache.txt
 

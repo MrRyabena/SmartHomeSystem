@@ -13,10 +13,18 @@
 
 int main(int argc, char *argv[])
 {
-   dtpSetup();
-
     QApplication a(argc, argv);
     MainWindow w;
+
+    qDTP dtp(&w);
+ //   dtp.setup();
+    //dtp.start();
+
+
     w.show();
+
+
+
+
     return a.exec();
 }

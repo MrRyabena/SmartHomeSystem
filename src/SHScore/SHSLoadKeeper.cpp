@@ -68,6 +68,12 @@ uint8_t shs::LoadKeeper::find(const shs::settings::shs_ID_t ID)
     return 0xff;
 }
 
+/*
+  ----------------------------------------
+  PRIVATE/PROTECTED
+  ----------------------------------------
+*/
+
 uint8_t shs::LoadKeeper::m_find(const shs::Load *object)
 {
     for (uint8_t i = 0; i < m_ptrs.size(); i++)

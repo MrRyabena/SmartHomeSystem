@@ -1,18 +1,19 @@
 #include "SHSCRC.h"
 
 /*
-  -----------------------------------------------------
+  ----------------------------------------
   CRC 8
-  -----------------------------------------------------
+  ----------------------------------------
 */
 
-void shs::CRC8::add(const uint8_t value) { update(crc, value); }
-void shs::CRC8::clear() { crc = shs::CRC8_beg; }
+inline void shs::CRC8::add(const uint8_t value) { update(crc, value); }
+inline void shs::CRC8::clear() { crc = shs::CRC8_beg; }
 
 void shs::CRC8::update(uint8_t &crc, uint8_t data)
 {
+    // this is algorithm from Alex Gyver: https://github.com/GyverLibs/GyverBus/blob/46fa3fc0510673a4e48e12e71030a81cde14ac24/src/GyverBus.cpp#L22
 #if defined(__AVR__)
-    // резкий алгоритм для AVR
+    // fast algorithm for AVR
     uint8_t counter;
     uint8_t buffer;
     asm volatile(
@@ -29,7 +30,7 @@ void shs::CRC8::update(uint8_t &crc, uint8_t data)
         : [crc_out] "=r"(crc), [counter] "=d"(counter), [buffer] "=d"(buffer)
         : [crc_in] "0"(crc), [data_in] "r"(data));
 #else
-    // обычный для всех остальных
+    // for the rest
     uint8_t i = 8;
     while (i--)
     {
@@ -48,13 +49,13 @@ uint8_t shs::CRC8::crcBuf(const uint8_t *ptr, uint16_t size)
 }
 
 /*
-  -----------------------------------------------------
+  ----------------------------------------
   CRC 16
-  -----------------------------------------------------
+  ----------------------------------------
 */
 
-void shs::CRC16::add(const uint8_t value) { update(crc, value); }
-void shs::CRC16::clear() { crc = shs::CRC16_beg; }
+inline void shs::CRC16::add(const uint8_t value) { update(crc, value); }
+inline void shs::CRC16::clear() { crc = shs::CRC16_beg; }
 
 void shs::CRC16::update(uint16_t &crc, uint8_t data)
 {
@@ -77,13 +78,13 @@ uint16_t shs::CRC16::crcBuf(const uint8_t *ptr, uint16_t size)
 }
 
 /*
-  -----------------------------------------------------
+  ----------------------------------------
   CRC 32
-  -----------------------------------------------------
+  ----------------------------------------
 */
 
-void shs::CRC32::add(const uint8_t value) { update(crc, value); }
-void shs::CRC32::clear() { crc = shs::CRC32_beg; }
+inline void shs::CRC32::add(const uint8_t value) { update(crc, value); }
+inline void shs::CRC32::clear() { crc = shs::CRC32_beg; }
 
 void shs::CRC32::update(uint32_t &crc, uint8_t data)
 {

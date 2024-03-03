@@ -5,4 +5,4 @@ shs::Sensor::Sensor(const shs::settings::shs_ID_t ID, const shs::SensorType::Sen
 
 inline void shs::Sensor::setID(const shs::settings::shs_ID_t ID) { m_sensorID = ID; }
 
-inline shs::settings::shs_ID_t shs::Sensor::getID() const { return m_sensorID; }
+shs::settings::shs_ID_t shs::Sensor::getID() const { return m_sensorID; }

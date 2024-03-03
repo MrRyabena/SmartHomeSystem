@@ -1,13 +1,15 @@
 #pragma once
 
 /*
-  Abstract class for the sensor interface.
-*/
-/*
-  Last update: v1.2.0
+  Last update: v1.0.0
   Versions:
-    v1.1.0 — created.
-    v1.2.0 — made purely virtual.
+    v0.1.0 — created.
+    v0.2.0 — made purely virtual.
+    v1.0.0 — release.
+*/
+
+/*
+  Abstract class for the sensor interface.
 */
 
 #include <stdint.h>
@@ -15,11 +17,14 @@
 
 namespace shs
 {
-    enum SensorType : uint8_t;
-    class Sensor;  
+    namespace SensorType
+    {
+        enum SensorType : uint8_t;
+    };
+    class Sensor;
 };
 
-enum shs::SensorType : uint8_t
+enum shs::SensorType::SensorType : uint8_t
 {
     unknown,
     analogPin,
@@ -30,10 +35,10 @@ enum shs::SensorType : uint8_t
 class shs::Sensor
 {
 public:
-    shs::SensorType type{};
+    shs::SensorType::SensorType type{};
 
 public:
-    explicit Sensor(const shs::settings::shs_ID_t ID = 0, const shs::SensorType stype = shs::SensorType::unknown);
+    explicit Sensor(const shs::settings::shs_ID_t ID = 0, const shs::SensorType::SensorType stype = shs::SensorType::unknown);
 
     void setID(const shs::settings::shs_ID_t ID);
     shs::settings::shs_ID_t getID() const;
@@ -49,5 +54,5 @@ public:
     virtual shs::settings::shs_double_t getAverageD(const shs::settings::shs_ID_t ID = 0) = 0;
 
 protected:
-    shs::settings::shs_ID_t m_ID{};
+    shs::settings::shs_ID_t m_sensorID{};
 };

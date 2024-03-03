@@ -1,5 +1,18 @@
 #pragma once
 
+/*
+  Last update: v1.0.0
+  Versions:
+    v0.2.0 — created.
+    v1.0.0 — release.
+      - Added inline.
+      - Corrected.
+*/
+
+/*
+  A class for controlling the load in SWITCH mode.
+*/
+
 #include "SHSLoad.h"
 #include "SHSProcess.h"
 #include "SHSProcessesKeeper.h"
@@ -14,7 +27,7 @@ class shs::LoadSwitch : public shs::Load, protected shs::Process
 {
 public:
     explicit LoadSwitch(shs::settings::shs_ID_t ID = 0, uint8_t pin = 0,
-                        shs::LoadType ltype = shs::LoadType::SWITCH);
+                        shs::LoadType::LoadType ltype = shs::LoadType::SWITCH);
 
     void setup() override;
 

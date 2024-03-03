@@ -1,9 +1,15 @@
 #pragma once
 
 /*
-  Last update: v1.1.0
+  Last update: v0.1.0
   Versions:
-    v1.1.0 — created.
+    v0.1.0 — created.
+    v1.0.0 — release.
+*/
+
+/*
+  This is an abstract class of API-handler.
+  If you want to create your API-class for something, you must inherit from shs::API.
 */
 
 #include <stdint.h>

@@ -5,17 +5,17 @@ shs::ErrorsHandler::ErrorsHandler(shs::errorsCallback_t system_callback, shs::er
 
 shs::ErrorsHandler::~ErrorsHandler() {}
 
-void shs::ErrorsHandler::attachFirstHandler(shs::errorsCallback_t callback)
+inline void shs::ErrorsHandler::attachFirstHandler(shs::errorsCallback_t callback)
 {
     m_firstHandler = callback;
 }
 
-void shs::ErrorsHandler::attachSecondHandler(shs::errorsCallback_t callback)
+inline void shs::ErrorsHandler::attachSecondHandler(shs::errorsCallback_t callback)
 {
     m_secondHandler = callback;
 }
 
-void shs::ErrorsHandler::error(shs::Errors error)
+void shs::ErrorsHandler::error(const shs::Errors::Errors error)
 {
     m_lastError = error;
     m_counter++;
@@ -26,12 +26,12 @@ void shs::ErrorsHandler::error(shs::Errors error)
         m_secondHandler(error);
 }
 
-shs::Errors shs::ErrorsHandler::getLastError()
+inline shs::Errors::Errors shs::ErrorsHandler::getLastError()
 {
     return m_lastError;
 }
 
-uint8_t shs::ErrorsHandler::getCount()
+inline uint8_t shs::ErrorsHandler::getCount()
 {
     return m_counter;
 }

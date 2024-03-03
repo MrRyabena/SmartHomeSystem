@@ -26,7 +26,7 @@ struct shs::Config
 {
     uint8_t ID{};
     uint8_t serverID{};
-    shs::Mode mode{};
+    shs::Mode::Mode mode{};
 };
 
 enum shs::Mode::Mode : uint8_t

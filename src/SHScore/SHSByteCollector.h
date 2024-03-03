@@ -1,10 +1,17 @@
 #pragma once
 
 /*
-  Last update: v1.1.0
+  Last update: v1.0.0
   Versions:
-    v1.0.0 — created.
-    v1.1.0 — edited and optimized.
+    v0.1.0 — created.
+    v0.2.0 — edited and optimized.
+    v1.0.0 — release.
+*/
+
+/*
+  This is a lightweight class for packing and unpacking data into a byte array.
+  You can specify the number of bytes to be add/get to save memory or align data types.
+  The class is used in data transfer protocols.
 */
 
 namespace shs
@@ -34,7 +41,7 @@ public:
       The bytes argument specifies how many bytes
       to write from the passed type.
 
-      int value = 1000;
+      int value = 1000;  // note: sizeof(int) = 4 bytes
       bc.add(value, 2);  // will add 2 bytes
       bc.size();         // will return 2, not 4!
 

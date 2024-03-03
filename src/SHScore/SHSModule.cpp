@@ -8,4 +8,6 @@ shs::Module::Module()
       errorsHandler(),
       processes(),
       sensors(),
-      load() {}
+      load()
+{
+}

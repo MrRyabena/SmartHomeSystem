@@ -1,16 +1,24 @@
 #pragma once
 
 /*
-  Last update: v1.1.0
+  Last update: v1.0.0
   Versions:
-    v1.1.0 — created.
+    v0.2.0 — created.
+    v1.0.0 — release.
+*/
+
+/*
+  A structure for storing module parameters.
 */
 
 #include <stdint.h>
 
 namespace shs
 {
-    enum Mode : uint8_t;
+    namespace Mode
+    {
+        enum Mode : uint8_t;
+    };
     struct Config;
 };
 
@@ -21,7 +29,7 @@ struct shs::Config
     shs::Mode mode{};
 };
 
-enum shs::Mode : uint8_t
+enum shs::Mode::Mode : uint8_t
 {
     off,
     on,

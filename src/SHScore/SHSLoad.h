@@ -1,5 +1,19 @@
 #pragma once
 
+/*
+  Last update: v1.0.0
+  Versions:
+    v0.1.0 — created.
+    v0.2.0 — corrected.
+    v1.0.0 — release.
+      - Namespaces added.
+      - Variable names have been corrected.
+*/
+
+/*
+  An abstract class describing a load (electrical device or component).
+*/
+
 #include <stdint.h>
 #include "SHSsettings_private.h"
 #include "SHSProcess.h"
@@ -7,11 +21,15 @@
 
 namespace shs
 {
-    enum LoadType : uint8_t;
+    namespace LoadType
+    {
+        enum LoadType : uint8_t;
+    };
+
     class Load;
 };
 
-enum shs::LoadType : uint8_t
+enum shs::LoadType::LoadType : uint8_t
 {
     UNKNOWN,
     SWITCH,
@@ -23,10 +41,10 @@ enum shs::LoadType : uint8_t
 class shs::Load
 {
 public:
-    shs::LoadType type;
+    shs::LoadType::LoadType type;
 
 public:
-    explicit Load(shs::settings::shs_ID_t ID = 0, shs::LoadType ltype = shs::LoadType::UNKNOWN);
+    explicit Load(shs::settings::shs_ID_t ID = 0, shs::LoadType::LoadType ltype = shs::LoadType::UNKNOWN);
 
     void setID(const shs::settings::shs_ID_t ID);
     shs::settings::shs_ID_t getID() const;
@@ -39,5 +57,5 @@ public:
     virtual void off(const uint16_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) = 0;
 
 protected:
-    shs::settings::shs_ID_t m_ID{};
+    shs::settings::shs_ID_t m_loadID{};
 };

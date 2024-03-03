@@ -9,37 +9,38 @@
 */
 
 /*
-  Last update: v1.1.0
+  Last update: v1.0.0
   Versions:
-    v1.1.0 — created.
+    v0.2.0 — created.
+    v1.0.0 — release.
 */
 
 namespace shs
 {
-    class CRC8;
-    class CRC16;
-    class CRC32;
+  class CRC8;
+  class CRC16;
+  class CRC32;
 
-    const uint8_t CRC8_beg = 0x00;
-    const uint16_t CRC16_beg = 0xFFFF;
-    const uint32_t CRC32_beg = 0x00000000;
+  const uint8_t CRC8_beg = 0x00;
+  const uint16_t CRC16_beg = 0xFFFF;
+  const uint32_t CRC32_beg = 0x00000000;
 };
 
 /*
   CRC 8
- */
+*/
 
 class shs::CRC8
 {
 public:
-    uint8_t crc{};
-    explicit CRC8() : crc(shs::CRC8_beg) {}
+  uint8_t crc{};
+  explicit CRC8() : crc(shs::CRC8_beg) {}
 
-    inline void add(const uint8_t value);
-    inline void clear();
+  void add(const uint8_t value);
+  void clear();
 
-    void update(uint8_t &crc, const uint8_t data);
-    uint8_t crcBuf(const uint8_t *ptr, uint16_t size);
+  void update(uint8_t &crc, const uint8_t data);
+  uint8_t crcBuf(const uint8_t *ptr, uint16_t size);
 };
 
 /*
@@ -49,14 +50,14 @@ public:
 class shs::CRC16
 {
 public:
-    uint16_t crc{};
-    CRC16() : crc(shs::CRC16_beg) {}
+  uint16_t crc{};
+  CRC16() : crc(shs::CRC16_beg) {}
 
-    inline void add(const uint8_t value);
-    inline void clear();
+  void add(const uint8_t value);
+  void clear();
 
-    void update(uint16_t &crc, const uint8_t data);
-    uint16_t crcBuf(const uint8_t *ptr, uint16_t size);
+  void update(uint16_t &crc, const uint8_t data);
+  uint16_t crcBuf(const uint8_t *ptr, uint16_t size);
 };
 
 /*
@@ -66,12 +67,12 @@ public:
 class shs::CRC32
 {
 public:
-    uint32_t crc{};
-    explicit CRC32() : crc(shs::CRC32_beg) {}
+  uint32_t crc{};
+  explicit CRC32() : crc(shs::CRC32_beg) {}
 
-    inline void add(const uint8_t value);
-    inline void clear();
+  void add(const uint8_t value);
+  void clear();
 
-    void update(uint32_t &crc, uint8_t data);
-    uint32_t crcBuf(const uint8_t *ptr, uint16_t size);
+  void update(uint32_t &crc, uint8_t data);
+  uint32_t crcBuf(const uint8_t *ptr, uint16_t size);
 };

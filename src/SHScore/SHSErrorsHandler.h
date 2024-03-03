@@ -1,5 +1,4 @@
 #pragma once
-#include <stdint.h>
 
 /*
   Last update: v1.0.0
@@ -13,25 +12,13 @@
   It will be actively used for error handling and debugging information output.
 */
 
+#include <stdint.h>
+#include "SHSerrors.h"
+
 namespace shs
 {
-    namespace Errors
-    {
-        enum Errors : uint8_t;
-    };
     class ErrorsHandler;
-    typedef void (*errorsCallback_t)(shs::Errors::Errors error);
-};
-
-enum shs::Errors::Errors : uint8_t
-{
-    OK,
-    DTP_TIMEOUT,
-    DTP_CRC,
-    DTP_PROCESSED,
-    DTP_INVALIDaddress,
-    DTP_PTRerror,
-    DTP_CMDerror,
+    typedef void (*errorsCallback_t)(shs::errors::Errors error);
 };
 
 class shs::ErrorsHandler
@@ -43,13 +30,13 @@ public:
     void attachFirstHandler(shs::errorsCallback_t callback);
     void attachSecondHandler(shs::errorsCallback_t callback);
 
-    void error(const shs::Errors::Errors error);
+    void error(const shs::errors::Errors error);
 
-    [[nodiscard]] shs::Errors::Errors getLastError();
+    [[nodiscard]] shs::errors::Errors getLastError();
     [[nodiscard]] uint8_t getCount();
 
 private:
-    shs::Errors::Errors m_lastError{};
+    shs::errors::Errors m_lastError{};
     uint8_t m_counter = 0;
 
     shs::errorsCallback_t m_firstHandler{};

@@ -15,7 +15,7 @@ inline void shs::ErrorsHandler::attachSecondHandler(shs::errorsCallback_t callba
     m_secondHandler = callback;
 }
 
-void shs::ErrorsHandler::error(const shs::Errors::Errors error)
+void shs::ErrorsHandler::error(const shs::errors::Errors error)
 {
     m_lastError = error;
     m_counter++;
@@ -26,7 +26,7 @@ void shs::ErrorsHandler::error(const shs::Errors::Errors error)
         m_secondHandler(error);
 }
 
-inline shs::Errors::Errors shs::ErrorsHandler::getLastError()
+inline shs::errors::Errors shs::ErrorsHandler::getLastError()
 {
     return m_lastError;
 }

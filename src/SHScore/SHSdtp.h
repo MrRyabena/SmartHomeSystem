@@ -1,42 +1,47 @@
-/*
-  Smart Home System Data Transmission Protocol
-
-  The idea is taken from https://github.com/GyverLibs/GyverBus
-
-  Warning! It is necessary to include Stream-class befor this file:
-  #include <Arduino.h>
-  or write your class:
-  uint8_t Stream::write(const uint8_t* buf, size_t size);
-  uint8_t Stream::read();
-  uint8_t Stream::available();
-
-*/
+#pragma once
 
 /*
-  Last update: v1.1.0
+  Last update: v1.0.0
   Versions:
-    v1.0.0 — created.
-    v1.1.0
+    v0.1.0 — created.
+    v0.2.0
       - Divided into two classes.
       - A new type of handlers.
       - Added inheritance from class shs::CallbacksKeeper.
       - Using a new class for CRC.
+    v1.0.0 — release.
+      - Namespaces added.
+      - Variable names have been corrected.
 */
 
-#pragma once
+/*
+  Smart Home System Data Transmission Protocol
 
-#ifdef _Arduino_
+  The idea is taken from https://github.com/GyverLibs/GyverBus
+*/
+
+/*
+  WARNING! It is necessary to include Stream-class befor this file.
+  If the <Arduino.h> is not used, you need to create your own class inherited from
+  abstract class shs::Stream (SHSStream.h)
+*/
+
+#if __has_include("Arduino.h")
 #include <Arduino.h>
+
 #else
+#pragma message "Used shs::Stream"
 #include "SHSStream.h"
 using Stream = shs::Stream;
+
 #endif
 
-#include <stdint.h>
 #include "SHSsettings_private.h"
 #include "SHSCallbacksKeeper.h"
 #include "SHSCRC.h"
 #include "SHSByteCollector.h"
+
+#include <stdint.h>
 
 namespace shs::settings
 {
@@ -49,8 +54,16 @@ namespace shs::settings
 
 namespace shs
 {
-    enum DTPcommands : uint8_t;
-    enum DTPhandlerStatus : uint8_t;
+    namespace DTPcommands
+    {
+        enum DTPcommands : uint8_t;
+    };
+
+    namespace DTPhandlerStatus
+    {
+        enum DTPhandlerStatus : uint8_t;
+    };
+
     struct DTPdata;
     class DTP;
     class DTPpacker;
@@ -58,14 +71,14 @@ namespace shs
 
 };
 
-enum shs::DTPcommands : uint8_t
+enum shs::DTPcommands::DTPcommands : uint8_t
 {
     answer = 252,
     error,
     request,
 };
 
-enum shs::DTPhandlerStatus : uint8_t
+enum shs::DTPhandlerStatus::DTPhandlerStatus : uint8_t
 {
     PROCESSED,
     INVALIDaddress,
@@ -81,9 +94,13 @@ struct shs::DTPdata
     uint8_t datasize{};
 };
 
+/*
+  ----------------------------------------
+  DTPpacker
+  ----------------------------------------
+*/
 class shs::DTPpacker
 {
-
 public:
     // uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID);
     uint8_t packDTP(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t apiID, const shs::settings::shs_ModuleID_t from);
@@ -94,6 +111,11 @@ protected:
     shs::CRC8 _crc;
 };
 
+/*
+  ----------------------------------------
+  DTP
+  ----------------------------------------
+*/
 class shs::DTP : public shs::DTPpacker, public shs::CallbacksKeeper
 {
 public:
@@ -107,8 +129,8 @@ public:
     uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t api_ID, const shs::settings::shs_ModuleID_t from);
 
 private:
-    Stream *_bus{};
-    uint8_t _len{};
-    uint32_t tmr{};
+    Stream *m_bus{};
+    uint8_t m_len{};
+    uint32_t m_tmr{};
     shs::settings::shs_ModuleID_t m_ID{};
 };

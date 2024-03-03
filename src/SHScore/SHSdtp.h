@@ -26,7 +26,7 @@
   abstract class shs::Stream (SHSStream.h)
 */
 
-#if __has_include("Arduino.h")
+#if __has_include(<Arduino.h>)
 #include <Arduino.h>
 
 #else

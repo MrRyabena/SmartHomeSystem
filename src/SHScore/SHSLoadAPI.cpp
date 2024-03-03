@@ -45,9 +45,9 @@ uint8_t shs::LoadAPIhandler::handler(shs::ByteCollector &data)
     shs::settings::shs_ID_t apiID{};
     data.get(apiID, 2);
     if (apiID != m_apiID)
-        return 1;
+        return shs::errors::DTP_INVALIDaddress;
     if (!m_loads)
-        return 2;
+        return shs::errors::DTP_PTRerror;
 
     switch (data.buf[7])
     {
@@ -91,7 +91,7 @@ uint8_t shs::LoadAPIhandler::handler(shs::ByteCollector &data)
     break;
 
     default:
-        return 3;
+        return shs::errors::DTP_CMDerror;
         break;
     }
 }

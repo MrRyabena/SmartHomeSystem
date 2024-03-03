@@ -1,5 +1,11 @@
 #include "SHSCallbacksKeeper.h"
 
+/*
+  ----------------------------------------
+  PUBLIC
+  ----------------------------------------
+*/
+
 void shs::CallbacksKeeper::attach(shs::API *object)
 {
     if (m_find(object) == 0xff)
@@ -28,6 +34,12 @@ uint8_t shs::CallbacksKeeper::handler(shs::ByteCollector &data)
 
     return status;
 }
+
+/*
+  ----------------------------------------
+  PRIVATE/PROTECTED
+  ----------------------------------------
+*/
 
 uint8_t shs::CallbacksKeeper::m_find(shs::API *object)
 {

@@ -1,9 +1,15 @@
 #pragma once
 
 /*
-  Last update: v1.1.0
+  Last update: v1.0.0
   Versions:
-    v1.1.0 — created.
+    v0.2.0 — created.
+    v1.0.0 — release.
+*/
+
+/*
+  This is a class for automatically connecting and polling data handlers.
+  It is used in data transfer protocols.
 */
 
 #include <vector>
@@ -19,6 +25,7 @@ class shs::CallbacksKeeper
 {
 public:
     explicit CallbacksKeeper() {}
+    
     void attach(shs::API *object);
     void detach(shs::API *object);
 

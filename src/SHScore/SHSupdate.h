@@ -1,4 +1,9 @@
-// #pragma once
+#pragma once
+
+/*
+  There is no need for this class yet.
+*/
+
 // #include "SHSsettings.h"
 // #include <FastBot.h>
 
@@ -20,4 +25,3 @@
 //     void _newMes(FB_msg &message);
 //     void (*_handler)(FB_msg &message, FastBot &upbot) = nullptr;
 // };
-

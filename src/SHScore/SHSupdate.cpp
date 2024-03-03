@@ -1,4 +1,4 @@
-// #include "SHSupdate.h"
+#include "SHSupdate.h"
 
 // shs::Update::Update()
 // {

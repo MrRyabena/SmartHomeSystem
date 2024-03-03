@@ -1,18 +1,37 @@
 #pragma once
 #include <stdint.h>
 
+/*
+  Last update: v1.0.0
+  Versions:
+    v0.1.0 — created.
+    v0.2.0 — corrected.
+    v1.0.0 — release.
+*/
+
+/*
+  It will be actively used for error handling and debugging information output.
+*/
+
 namespace shs
 {
-    enum Errors : uint8_t;
+    namespace Errors
+    {
+        enum Errors : uint8_t;
+    };
     class ErrorsHandler;
-    typedef void (*errorsCallback_t)(shs::Errors error);
+    typedef void (*errorsCallback_t)(shs::Errors::Errors error);
 };
 
-enum shs::Errors : uint8_t
+enum shs::Errors::Errors : uint8_t
 {
     OK,
-    DTPtimeout,
-    DTPcrc,
+    DTP_TIMEOUT,
+    DTP_CRC,
+    DTP_PROCESSED,
+    DTP_INVALIDaddress,
+    DTP_PTRerror,
+    DTP_CMDerror,
 };
 
 class shs::ErrorsHandler
@@ -24,13 +43,13 @@ public:
     void attachFirstHandler(shs::errorsCallback_t callback);
     void attachSecondHandler(shs::errorsCallback_t callback);
 
-    void error(shs::Errors error);
+    void error(const shs::Errors::Errors error);
 
-    [[nodiscard]] shs::Errors getLastError();
+    [[nodiscard]] shs::Errors::Errors getLastError();
     [[nodiscard]] uint8_t getCount();
 
 private:
-    shs::Errors m_lastError{};
+    shs::Errors::Errors m_lastError{};
     uint8_t m_counter = 0;
 
     shs::errorsCallback_t m_firstHandler{};

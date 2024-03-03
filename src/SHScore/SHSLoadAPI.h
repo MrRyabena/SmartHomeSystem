@@ -1,19 +1,35 @@
 #pragma once
 
+/*
+  Last update: v1.0.0
+  Versions:
+    v0.2.0 — created.
+    v1.0.0 — release.
+*/
+
+/*
+  The "handler" class controls the load on the module itself.
+  The "virtual" class implements the interface on the remote device.
+*/
+
 #include "SHSAPI.h"
 #include "SHSLoad.h"
 #include "SHSsettings_private.h"
 #include "SHSByteCollector.h"
 #include "SHSModule.h"
+#include "SHSerrors.h"
 
 namespace shs
 {
-    enum LoadAPIcmds : uint8_t;
+    namespace LoadAPIcmds
+    {
+        enum LoadAPIcmds : uint8_t;
+    };
     class LoadAPIvirtual;
     class LoadAPIhandler;
 }
 
-enum shs::LoadAPIcmds : uint8_t
+enum shs::LoadAPIcmds::LoadAPIcmds : uint8_t
 {
     Lon8,
     Lon16,

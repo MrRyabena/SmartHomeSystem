@@ -1,5 +1,11 @@
 #include "SHSSensorsKeeper.h"
 
+/*
+  ----------------------------------------
+  PUBLIC
+  ----------------------------------------
+*/
+
 void shs::SensorsKeeper::attach(shs::Sensor *object)
 {
     if (m_find(object) != 0xff)
@@ -19,6 +25,20 @@ void shs::SensorsKeeper::detach(shs::Sensor *object)
     m_ptrs.pop_back();
     m_ptrs.shrink_to_fit();
 }
+
+uint8_t shs::SensorsKeeper::find(const shs::settings::shs_ID_t ID)
+{
+    for (uint8_t i = 0; i < m_ptrs.size(); i++)
+        if ((m_ptrs[i]) && m_ptrs[i]->getID() == ID)
+            return i;
+    return 0xff;
+}
+
+/*
+  ----------------------------------------
+  OVERRIDE
+  ----------------------------------------
+*/
 
 void shs::SensorsKeeper::setup()
 {
@@ -93,13 +113,11 @@ shs::settings::shs_double_t shs::SensorsKeeper::getAverageD(shs::settings::shs_I
     return m_ptrs[ind]->getAverageD();
 }
 
-uint8_t shs::SensorsKeeper::find(const shs::settings::shs_ID_t ID)
-{
-    for (uint8_t i = 0; i < m_ptrs.size(); i++)
-        if ((m_ptrs[i]) && m_ptrs[i]->getID() == ID)
-            return i;
-    return 0xff;
-}
+/*
+  ----------------------------------------
+  PRIVATE/PROTECTED
+  ----------------------------------------
+*/
 
 uint8_t shs::SensorsKeeper::m_find(const shs::Sensor *object)
 {

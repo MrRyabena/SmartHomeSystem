@@ -1,5 +1,16 @@
 #pragma once
 
+/*
+  Last update: v1.0.0
+  Versions:
+    v0.2.0 — created.
+    v1.0.0 — release.
+*/
+
+/*
+  This is a container for managing and configuring sensors.
+*/
+
 #include "SHSSensor.h"
 #include <vector>
 
@@ -12,6 +23,7 @@ class shs::SensorsKeeper : public Sensor
 {
 public:
     explicit SensorsKeeper() {}
+    
     void attach(shs::Sensor *object);
     void detach(shs::Sensor *object);
 

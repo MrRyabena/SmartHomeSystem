@@ -1,5 +1,16 @@
 #pragma once
+/*
+  Last update: v1.0.0
+  Versions:
+    v0.1.0 — created.
+    v0.2.0 — corrected.
+    v1.0.0 — release.
+*/
 
+/*
+  The server class for processing clients.
+  Need to be finalized.
+*/
 #include <Arduino.h>
 #ifdef ESP8266
 #include <ESP8266WiFi.h>

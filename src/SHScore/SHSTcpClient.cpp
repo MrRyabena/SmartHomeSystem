@@ -1,6 +1,6 @@
 #include "SHSTcpClient.h"
 
-// void shs::TcpClient::tick()
+inline void shs::TcpClient::tick() {}
 // {
 //     if (!client && !client.connected())
 //         return;

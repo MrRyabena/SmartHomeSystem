@@ -1,5 +1,16 @@
 #pragma once
 
+/*
+  Last update: v1.0.0
+  Versions:
+    v0.1.0 — created.
+    v1.0.0 — release.
+*/
+
+/*
+  There is no need for this class yet.
+*/
+
 #include <Arduino.h>
 #ifdef ESP8266
 #include <ESP8266WiFi.h>
@@ -19,8 +30,8 @@ namespace shs
 class shs::TcpClient : public WiFiClient
 {
 public:
-    inline void tick();
+    void tick();
 
-private:
+protected:
     uint32_t _tmr = millis();
 };

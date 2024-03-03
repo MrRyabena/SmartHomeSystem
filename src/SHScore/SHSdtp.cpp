@@ -1,5 +1,11 @@
 #include "SHSdtp.h"
 
+/*
+  ----------------------------------------
+  DTPpacker
+  ----------------------------------------
+*/
+
 // uint8_t shs::DTPpacker::packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID)
 // {
 //     return packDTP(bc, to, apiID, m_ID);
@@ -47,7 +53,13 @@ uint8_t shs::DTPpacker::parseDTP(shs::ByteCollector *bc, shs::DTPdata &data)
     return 0;
 }
 
-shs::DTP::DTP(Stream *bus, const shs::settings::shs_ModuleID_t ID) : _bus(bus), m_ID(ID) {}
+/*
+  ----------------------------------------
+  DTP
+  ----------------------------------------
+*/
+
+shs::DTP::DTP(Stream *bus, const shs::settings::shs_ModuleID_t ID) : m_bus(bus), m_ID(ID) {}
 
 shs::DTP::~DTP() {}
 
@@ -60,18 +72,18 @@ uint8_t shs::DTP::tick()
 uint8_t shs::DTP::checkBus(uint8_t len)
 {
     if (len != UINT8_MAX)
-        _len = len;
-    if (_bus->available())
-        if (!_len)
-            _len = _bus->read();
-    if (_bus->available() < _len - 1)
+        m_len = len;
+    if (m_bus->available())
+        if (!m_len)
+            m_len = m_bus->read();
+    if (m_bus->available() < m_len - 1)
         return 1;
 
-    shs::ByteCollector col(_len);
-    *(col.ptr++) = _len;
-    for (uint8_t i = 0; i < _len - 1; i++)
-        *(col.ptr++) = _bus->read();
-    _len = 0;
+    shs::ByteCollector col(m_len);
+    *(col.ptr++) = m_len;
+    for (uint8_t i = 0; i < m_len - 1; i++)
+        *(col.ptr++) = m_bus->read();
+    m_len = 0;
 
     // shs::DTPdata data;
     // uint8_t size = parseDTP(&col, data);
@@ -90,5 +102,5 @@ uint8_t shs::DTP::sendPacket(shs::ByteCollector *bc, const shs::settings::shs_Mo
                              const shs::settings::shs_ID_t api_ID, const shs::settings::shs_ModuleID_t from)
 {
     packDTP(bc, to, api_ID, from);
-    return _bus->write(bc->buf, bc->buf[0]);
+    return m_bus->write(bc->buf, bc->buf[0]);
 }

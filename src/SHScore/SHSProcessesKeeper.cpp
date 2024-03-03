@@ -39,6 +39,12 @@ void shs::ProcessesKeeper::end()
             m_ptrs[i]->end();
 }
 
+/*
+  ----------------------------------------
+  PRIVATE/PROTECTED
+  ----------------------------------------
+*/
+
 uint8_t shs::ProcessesKeeper::m_find(const shs::Process *object)
 {
     for (uint8_t i = 0; i < m_ptrs.size(); i++)

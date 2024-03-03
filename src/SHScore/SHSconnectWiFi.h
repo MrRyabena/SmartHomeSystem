@@ -10,11 +10,15 @@
 */
 
 /*
-  Simple functions for fast wifi connection for esp8266/esp32
+  Last update: v1.0.0
+  Versions:
+    v0.1.0 — created.
+    v0.2.0 — namespace has been added.
+    v1.0.0 — release.
 */
 
 /*
-
+  Simple functions for fast wifi connection for esp8266/esp32
 */
 
 #pragma once
@@ -26,9 +30,8 @@
 #include <esp_wifi.h>
 #endif
 
-#ifndef _SHS_SETTINGS_
 #include <SHSsettings.h>
-#endif
+
 
 namespace shs
 {
@@ -70,7 +73,7 @@ void shs::connectWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *p
 
 void shs::setMac(const uint8_t id)
 {
-        uint8_t *mac = const_cast<uint8_t*>(shs::settings::MACconstant); // 53:48:53:6D:61:xx xx = 0x(id)
+        uint8_t *mac = const_cast<uint8_t *>(shs::settings::MACconstant); // 53:48:53:6D:61:xx xx = 0x(id)
         mac[5] = id;
 
         WiFi.mode(WIFI_STA);

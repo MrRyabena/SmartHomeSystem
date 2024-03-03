@@ -78,14 +78,6 @@ enum shs::DTPcommands::DTPcommands : uint8_t
     request,
 };
 
-enum shs::DTPhandlerStatus::DTPhandlerStatus : uint8_t
-{
-    PROCESSED,
-    INVALIDaddress,
-    PTRerror,
-    CMDerror,
-};
-
 struct shs::DTPdata
 {
     shs::settings::shs_ModuleID_t to{};

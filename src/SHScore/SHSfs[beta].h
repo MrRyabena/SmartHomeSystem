@@ -1,4 +1,10 @@
 #pragma once
+
+/*
+  This is a bad version, it will be completely rewritten.
+*/
+
+/*
 #include <Arduino.h>
 #include <FS.h>
 #include <SHSalgoritm.h>
@@ -145,3 +151,5 @@ private:
     fs::FS *_fs = nullptr;
     fs::File o_file;
 };
+
+*/

@@ -20,7 +20,6 @@
 
 ### <u>Проект в разработке, архитектура ядра, документация и концепции постоянно меняются и дорабатываются. Полная картина будет понятна ближе к релизу.</u>
 
-
 ---
 <a id="versions"></a>
 
@@ -28,16 +27,20 @@ _Ожидаемая дата релиза:_ 05.03.2024
 
 # Versions
 
-- v1.0.0 — private beta-version.
-- **```v1.1.0``` — [current version] development.**
+- v0.1.0 — private beta-version.
+- ```v0.2.0``` **— [current version] development.**
 
 ### Announcements
 
-- v1.2.0 — release.
-  - New core architecture.
-  - New library.
-  - Documentation will be updated.
+<details>
+<summary>v1.0.0 — release.</summary>
 
+- New core architecture.
+- New library.
+- Documentation will be updated.
+
+</details>
+  
 ![SHScore scheme](schemes/SHScore-scheme.png)
 
 ---
@@ -82,7 +85,7 @@ _Ожидаемая дата релиза:_ 05.03.2024
     - [5.4.5 Стабилизаторы напряжения](#5-4-5_stabilizer)
     - [5.4.6 Оптопары (оптроны)](#5-4-6_optocoupler)
     - [5.4.7 Регистры](#5-4-7_register)
-- [6. Этап I](#6_stageI)
+- [6. Этап I. Проектирование автоматических модулей](#6_stageI)
   - [6.1 Module](#6-1_module)
   - [6.2 Server](#6-2_server)
     - [6.2.1 Основные требования к серверу](#6-2-1_server_requirements)
@@ -101,15 +104,14 @@ _Ожидаемая дата релиза:_ 05.03.2024
     - [6.4.6 BME280/BMP280](#6-4-6_bme280)
     - [6.4.7 MH-Z19b](#6-4-7_mh-z19b)
     - [6.4.8 HX711](#6-4-8_hx711)
-- [7. Этап II](#7_stageII)
+- [7. Этап II. Проектирование ядра (бизнес-логики)](#7_stageII)
   - [7.1 Containers](#7-1_containers)
     - [7.1.1 ByteCollector](#7-1-1_ByteCollector)
     - [7.1.2 Handlers](#7-1-2_Handlers)
   - [7.2 Protocols](#7-2_protocols)
     - [7.2.1 SHSDTP](#7-2-1_SHSDTP)
-    - [7.2.2 API](#7-2-2_API)
-    - [7.2.3 SHSF](#7-2-3_SHSF)
-    - [7.2.4 TCP/IP](#7-2-4_tcpip)
+    - [7.2.2 SHSF](#7-2-2_SHSF)
+    - [7.2.3 TCP/IP](#7-2-3_tcpip)
   - [7.3 System](#7-3_system)
     - [7.3.1 Process](#7-3-1_Process)
     - [7.3.2 Sensor](#7-3-2_sensor)
@@ -118,19 +120,30 @@ _Ожидаемая дата релиза:_ 05.03.2024
     - [7.3.5 Settings](#7-3-5_settings)
   - [7.4 Algorithms](#7-4_algorithms)
     - [7.4.1 CRC](#7-4-1_CRC)
-- [8. Этап III](#8_stageIII)
+- [8. Этап III. Разработка библиотеки](#8_stageIII)
+- [9. Этап IV. Объединение модулей в единую систему](#9_stageIV)
+  - [9.1 Организация соединения](#9-1_connection-organization)
+  - [9.1.2 Подключение модулей](#9-1-2_connecting-modules)
+  - [9.1.3 TCP/IP](#9-1-3_tcpip)
+  - [9.2 API](#9-2_api)
+- [10. Этап V. Взаимодействие с пользователем](#10_stageV)
+  - [10.1 Кнопки и датчики](#10-1_buttons)
+  - [10.2 Telegram bot](#10-2_TelegramBot)
+  - [10.3 Приложение](#10-3_app)
+  - [10.4 Голосовое управление](#10-4_voiceManagement)
+- [11. Этап VI. Обучение системы саморегулированию](#11_stageVI)
+  - [11.1 Алгоритмы поведения системы](#11-1-1_autosystem)
+    - [11.1.1 Автоматизация на основе датчиков](#11-1-1_autosystem)
+    - [11.1.2 Модели и режимы поведения](#11-1-2_modes)
+    - [11.1.3 Автоматический выбор режима](#11-1-3_autoChoose)
+  - [11.2 SHSNeuralNet](#11-2_neuralnet)
+    - [11.2.1 Оригинальное устройство SHSNeuralNet](#11-2-1_neuralnet_originalStruct)
+    - [11.2.2 Реализация в Smart Home System](#11-2-2_neuralnet_SHSstruct)
+    - [11.2.3 Управление системой](#11-2-3_manageSystem)
+    - [11.2.4 Предсказание событий](#11-2-4_prediction)
+  - [11.3 AdvancedNeuralNet](#11-3_advancedNeuralNet)
+- [12. Этап VII. Настройка системы](#12_stageVII)
 
-development
-
-- [~~7. Этап II~~](#stageII)
-  - [~~7.1 Организация соединения~~](#connection-organization)
-    - [~~7.1.1 Покрытие сети~~](#network-coverage)
-    - [~~7.1.2 Подключение модулей~~](#connecting-modules)
-    - [~~7.1.3 TCP/IP~~](#623-tcpip)
-- [~~8. Этап III~~](#stageIII)
-- [~~9. Этап IV]~~(#stageIV)
-- [~~10. Этап V~~](#stageV)
-- [Версии](#versions)
 - [Источники информации](#sources)
 
 <a id="1_introduction"></a>
@@ -318,7 +331,7 @@ Neil Cameron. Electronics Projects with the ESP8266 and ESP32: Building WebPages
 
 <a id="4-4_functions"></a>
 
-## Функции
+## 4.4 Функции
 
 _Выше уже описаны цели и идеи их реализации, здесь речь пойдет более конкретно о задачах, которые можно решить с помощью **Smart Home System**._</br>
 
@@ -623,7 +636,7 @@ Module — самостоятельная часть Smart Home System, отве
 
 <a id="6_stageI"></a>
 
-# 6. Этап I
+# 6. Этап I. Проектирование автоматических модулей
 
 В этом этапе рассказаны принципы построения системы умного дома. В _**Smart Home System**_ алгоритмы управления уже реализованы в ядре и библиотеке (см. [Этап II](#7_stageII) и [Этап III](#8_stageIII)), что упрощает и ускоряет разработку системы.
 
@@ -838,7 +851,7 @@ value = map(value, 0, 1023, 0, 100);
 
 <a id="7_stageII"></a>
 
-# 7. Этап II
+# 7. Этап II. Проектирование ядра (бизнес-логики)
 
 [SHScore](src/SHScore/) — логика работы системы, основанная на парадигме **ООП** и принципах **SOLID**. В ядре описаны абстрактные классы для оперируемых системой объектов и процессов, а также обработчики для них, протоколы связи и передачи данных. Ядро дискретизирует и описывает действия системы, что позволяет быстро и удобно создавать и изменять конфигурацию системы и последующие классы высокого уровня (библиотеки для конкретных задач).</br>
 
@@ -854,7 +867,7 @@ value = map(value, 0, 1023, 0, 100);
 
 ### 7.1.1 ByteCollector
 
-Для удобной упаковки данных в массив байтов и дальнейшей их обработки разработан легкий класс: [SHSByteCollector.h](SHSlibrary/SHSByteCollector.h).</br>
+Для удобной упаковки данных в массив байтов и дальнейшей их обработки разработан легкий класс: [SHSByteCollector.h](src/SHScore/SHSByteCollector.h).</br>
 
 Класс используется в протоколах передачи данных и API.</br>
 
@@ -867,8 +880,7 @@ public:
     uint8_t *readPtr{};  // read position
 
     explicit ByteCollector(uint8_t size);
-    ~ByteCollector();
-
+    
     /*
       The bytes argument specifies how many bytes 
       to write from the passed type.
@@ -915,6 +927,7 @@ public:
   {
   public:
       explicit ProcessesKeeper();
+
       void attach(shs::Process *object);
       void detach(shs::Process*object);
 
@@ -935,6 +948,7 @@ public:
   {
   public:
       explicit CallbacksKeeper() {}
+
       void attach(shs::API *object);
       void detach(shs::API *object);
 
@@ -981,6 +995,7 @@ public:
   {
   public:
       explicit LoadKeeper();
+
       void attach(shs::Load *object);
       void detach(shs::Load *object);
 
@@ -1010,43 +1025,62 @@ public:
 
 **Smart Home System Data Transmission Protocol** — единый протокол передачи данных, разработанный для передачи информации между всеми модулями. Идея взята из [GyverBus](https://github.com/GyverLibs/GyverBus).</br>
 
-Для отправки данные нужно обработать, а потом распаковать обратно, для этого создан [SHSdtp.h](SHSlibrary/SHSdtp.h). Он добавляет к пакету данные об отправителе и получателе, общее количество байт и CRC. Затем данные отправляются любым способом, основанным на классе  ```Stream```. Если не используется стандартная библиотека ```<Arduino.h>```, то класс  ```Stream``` необходимо реализовать, с тремя обязательными функциями-членами:
+Для отправки данные нужно обработать, а потом распаковать обратно, для этого создан [SHSdtp.h](src/SHScore/SHSdtp.h). Он добавляет к пакету данные об отправителе и получателе, общее количество байт и CRC. Затем данные отправляются любым способом, основанным на классе  ```Stream```. Если не используется стандартная библиотека ```<Arduino.h>```, то класс  ```Stream``` необходимо реализовать отдельно, унаследовавшись от абстрактного класса [shs::Stream](src/SHScore/SHSStream.h):
 
 ```c++
-class Stream
+class shs::Stream
 {
-    uint8_t write(const uint8_t *buf, size_t size);
-    uint8_t read();
-    uint8_t available();
+public:
+    virtual uint8_t write(const uint8_t *buf, uint16_t size) = 0;
+    virtual uint8_t read() = 0;
+    virtual uint8_t available() = 0;
 };
 ```
 
-В конструкторе ```DTP``` принимает указатели на объект ```Stream``` и функцию-обработчик входящих пакетов.
+В конструкторе ```DTP``` принимает указатель на объект ```Stream```.
 
 ```c++
 /*
   Smart Home System Data Transmission Protocol
 
   The idea is taken from https://github.com/GyverLibs/GyverBus
-
-  Warning! It is necessary to include Stream-class befor this file:
-  #include <Arduino.h>
-  or write your class:
-  uint8_t Stream::write(const uint8_t* buf, size_t size);
-  uint8_t Stream::read();
-  uint8_t Stream::available();
-
 */
-namespace settings
+
+/*
+  WARNING! It is necessary to include Stream-class befor this file.
+  If the <Arduino.h> is not used, you need to create your own class inherited from
+  abstract class shs::Stream (SHSStream.h)
+*/
+
+namespace shs::settings
 {
 #ifndef SILENCE_TIMEOUT
 #define SILENCE_TIMEOUT 120000
 #endif
 
-#define DTP_OFFSETbeg 5
+    inline const uint8_t DTP_OFFSETbeg = 5;
 };
 
-enum shs::DTPcommands : uint8_t
+namespace shs
+{
+    namespace DTPcommands
+    {
+        enum DTPcommands : uint8_t;
+    };
+
+    namespace DTPhandlerStatus
+    {
+        enum DTPhandlerStatus : uint8_t;
+    };
+
+    struct DTPdata;
+    class DTP;
+    class DTPpacker;
+    typedef void (*DTPhandler_t)(shs::DTPdata &);
+
+};
+
+enum shs::DTPcommands::DTPcommands : uint8_t
 {
     answer = 252,
     error,
@@ -1055,107 +1089,84 @@ enum shs::DTPcommands : uint8_t
 
 struct shs::DTPdata
 {
-    uint8_t to{};
-    uint8_t from{};
-    int16_t apiID{};
+    shs::settings::shs_ModuleID_t to{};
+    shs::settings::shs_ModuleID_t from{};
+    shs::settings::shs_ID_t apiID{};
     uint8_t datasize{};
-    shs::ByteCollector &data{};
 };
 
+/*
+  ----------------------------------------
+  DTPpacker
+  ----------------------------------------
+*/
 class shs::DTPpacker
 {
-
 public:
-    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to);
-    uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const uint8_t from);
+    // uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID);
+    uint8_t packDTP(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t apiID, const shs::settings::shs_ModuleID_t from);
     uint8_t checkDTP(shs::ByteCollector *bc);
     uint8_t parseDTP(shs::ByteCollector *bc, shs::DTPdata &data);
+
+protected:
+    shs::CRC8 _crc;
 };
 
+/*
+  ----------------------------------------
+  DTP
+  ----------------------------------------
+*/
 class shs::DTP : public shs::DTPpacker, public shs::CallbacksKeeper
 {
 public:
-    explicit DTP(Stream *bus);
+    explicit DTP(Stream *bus, const shs::settings::shs_ModuleID_t ID);
     ~DTP();
 
-    inline uint8_t tick();
-    uint8_t checkBus();
+    uint8_t tick();
+    uint8_t checkBus(uint8_t len = UINT8_MAX);
 
-    inline uint8_t sendPacket(shs::ByteCollector *bc, const uint8_t to);
-    uint8_t sendPacket(shs::ByteCollector *bc, uint8_t to, uint8_t from);
-
-    template <typename T>
-    uint8_t sendRAW(const T &data, const uint8_t to);
+    uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to);
+    uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t api_ID, const shs::settings::shs_ModuleID_t from);
 };
 ```
 
-<a id="7-2-2_API"></a>
+<a id=7-2-2_SHSF></a>
 
-### 7.2.2 API
-
-В файле [API.h](src/SHScore/SHSAPI.h) описан абстрактный класс для реализации ```API```. В ```handler()``` передается пакет данных, который нужно расшифровать и отправить, если требуeтся, ответ. Можно реализовать управление отдельным датчиком, нагрузкой или библиотекой. Таким образом в _**Smart Home System**_ всегда возможно интегрировать любое устройство, достаточно реализовать для него API и процессы его поведения.
-
-```c++
-class shs::API
-{
-public:
-    API(const shs::settings::shs_ID_t ID = 0);
-
-    void setID(const shs::settings::shs_ID_t ID);
-    shs::settings::shs_ID_t getID() const;
-
-    virtual uint8_t handler(shs::ByteCollector &data) = 0;
-
-protected:
-    shs::settings::shs_ID_t m_ID{};
-};
-```
-
-<a id=7-2-3_SHSF></a>
-
-### 7.2.3 SHSF
+### 7.2.2 SHSF
 
 _**Smart Home System File**_ — протокол записи данных в файл, а так же само расширение файла (.shsf). Содержит инструменты для записи, сжатия, чтения данных, сохранения настроек и конфигураций.</br>
 
 _В данной версии проекта имеются наброски, но реализация еще не готова._
 
-<a id="7-2-4_tcpip"></a>
+<a id="7-2-3_tcpip"></a>
 
-### 7.2.4 TCP/IP
+### 7.2.3 TCP/IP
 
 Для передачи данных по WiFi используется протокол TCP/IP. Для системы хватает стандартной реализации протокола в ядрах esp, однако для удобства добавлены расширения.</br>
 
 [SHSTcpClient.h](src/SHScore/SHSTcpClient.h) и [SHSTcpServer.h](src/SHScore/SHSTcpServer.h) упрощают процессы подключения и опроса входящих потоков.
 
 ```c++
-// SHSTcpClient.h
-class shs::TcpClient : WiFiClient
-{
-public:
-    inline void tick();
-};
-
-
-// SHSTcpServer.h
 class shs::TcpServer
 {
 public:
-    WiFiServer *server;
+    WiFiServer server;
     WiFiClient *clients;
-    shs::DTP *dtp;
+    shs::DTP *dtp{};
 
     const uint8_t *IP{};
     uint8_t maxClients{};
 
-    TcpServer(const uint8_t *IPaddress, void (*TCPhandle)(shs::DTPdata &), uint16_t port = 50000, uint8_t max_clients = 6);
+    TcpServer(const uint8_t *IPaddress, uint16_t port = 50000, uint8_t max_clients = 6);
     ~TcpServer();
 
-    inline void begin();
-    inline void tick();
+    void begin();
+    void tick();
 
-    uint8_t sendPacket(shs::ByteCollector *col, uint8_t id);
-    void sendRAW(uint8_t *buf, uint8_t size);
-}
+    uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
+                             const shs::settings::shs_ID_t api_ID);
+};
 ```
 
 <a id="7-3_system"></a>
@@ -1194,8 +1205,7 @@ public:
 
 ```c++
 // SHSsensor.h
-
-enum shs::SensorType : uint8_t
+enum shs::SensorType::SensorType : uint8_t
 {
     unknown,
     analogPin,
@@ -1206,45 +1216,42 @@ enum shs::SensorType : uint8_t
 class shs::Sensor
 {
 public:
-    shs::SensorType type{};
+    shs::SensorType::SensorType type{};
 
 public:
-    explicit Sensor(const shs::settings::shs_ID_t ID = 0, 
-    const shs::SensorType stype = shs::SensorType::unknown);
+    explicit Sensor(const shs::settings::shs_ID_t ID = 0, const shs::SensorType::SensorType stype = shs::SensorType::unknown);
 
     void setID(const shs::settings::shs_ID_t ID);
     shs::settings::shs_ID_t getID() const;
 
     virtual void setup() = 0;
 
-    virtual int16_t getValueI() = 0;
-    virtual shs::settings::shs_float_t getValueF() = 0;
-    virtual shs::settings::shs_double_t getValueD() = 0;
+    virtual int16_t getValueI(const shs::settings::shs_ID_t ID = 0) = 0;
+    virtual shs::settings::shs_float_t getValueF(const shs::settings::shs_ID_t ID = 0) = 0;
+    virtual shs::settings::shs_double_t getValueD(const shs::settings::shs_ID_t ID = 0) = 0;
 
-    virtual int16_t getAverageI() = 0;
-    virtual shs::settings::shs_float_t getAverageF() = 0;
-    virtual shs::settings::shs_double_t getAverageD() = 0;
+    virtual int16_t getAverageI(const shs::settings::shs_ID_t ID = 0) = 0;
+    virtual shs::settings::shs_float_t getAverageF(const shs::settings::shs_ID_t ID = 0) = 0;
+    virtual shs::settings::shs_double_t getAverageD(const shs::settings::shs_ID_t ID = 0) = 0;
 
 protected:
-    shs::settings::shs_ID_t m_ID{};
+    shs::settings::shs_ID_t m_sensorID{};
 };
 
 // SHSSensorAnalog.h
-
 class shs::SensorAnalog : public shs::Sensor
 {
 public:
-    explicit SensorAnalog(const shs::settings::shs_ID_t ID = 0, 
-    const shs::SensorType stype = shs::SensorType::unknown, const uint8_t pin = A0);
+    explicit SensorAnalog(const shs::settings::shs_ID_t ID = 0, const shs::SensorType::SensorType stype = shs::SensorType::unknown, const uint8_t pin = A0);
 
     void setup() override;
-    shs::settings::shs_float_t getValueF() override;
-    shs::settings::shs_double_t getValueD() override;
-    int16_t getValueI() override;
+    shs::settings::shs_float_t getValueF(const shs::settings::shs_ID_t ID = 0) override;
+    shs::settings::shs_double_t getValueD(const shs::settings::shs_ID_t ID = 0) override;
+    int16_t getValueI(const shs::settings::shs_ID_t ID = 0) override;
 
-    shs::settings::shs_float_t getAverageF() override;
-    shs::settings::shs_double_t getAverageD() override;
-    int16_t getAverageI() override;
+    shs::settings::shs_float_t getAverageF(const shs::settings::shs_ID_t ID = 0) override;
+    shs::settings::shs_double_t getAverageD(const shs::settings::shs_ID_t ID = 0) override;
+    int16_t getAverageI(const shs::settings::shs_ID_t ID = 0) override;
 
 protected:
     uint8_t m_pin{};
@@ -1269,10 +1276,11 @@ _**Smart Home System**_ предлагает на выбор 3 режима уп
 Для работы ```smoothing``` необходимо передать в класс объект типа ```shs::ProcessesKeeper*```. Когда потребуется выполнить сглаживание, класс сам добавится, а затем удалится из массива keeper'а.
 
 ```c++
-enum shs::LoadType : uint8_t
+enum shs::LoadType::LoadType : uint8_t
 {
     UNKNOWN,
     SWITCH,
+    PID,
     PWM,
     DIMMER,
 };
@@ -1280,24 +1288,24 @@ enum shs::LoadType : uint8_t
 class shs::Load
 {
 public:
-    shs::LoadType type;
+    shs::LoadType::LoadType type;
 
 public:
-    explicit Load(shs::settings::shs_ID_t ID = 0, shs::LoadType ltype = shs::LoadType::UNKNOWN);
+    explicit Load(shs::settings::shs_ID_t ID = 0, shs::LoadType::LoadType ltype = shs::LoadType::UNKNOWN);
 
     void setID(const shs::settings::shs_ID_t ID);
     shs::settings::shs_ID_t getID() const;
 
     virtual void setup() = 0;
 
-    virtual void on(const uint8_t value = 255, const uint8_t smoothing = 0) = 0;
-    virtual void on(const uint16_t value = UINT16_MAX, const uint16_t smoothing = 0) = 0;
+    virtual void on(const uint8_t value = 255, const uint8_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) = 0;
+    virtual void on(const uint16_t value = UINT16_MAX, const uint16_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) = 0;
 
-    virtual void off(const uint16_t smoothing = 0) = 0;
+    virtual void off(const uint16_t smoothing = 0, const shs::settings::shs_ID_t ID = 0) = 0;
 
 protected:
-    shs::settings::shs_ID_t m_ID{};
-};
+    shs::settings::shs_ID_t m_loadID{};
+}
 ```
 
 <a id="7-3-4_errorshandler"></a>
@@ -1305,6 +1313,27 @@ protected:
 ### 7.3.4 ErrorsHandler
 
 В класс ```shs::ErrorsHandler``` ([SHSErrorsHandler](src/SHScore/SHSErrorsHandler.h)) передаются коды ошибок, которые обрабатываются подключенными обработчиками.</br>
+
+Класс рассчитан на два обработчика: первый используется системой, второй — пользователем. Возможно в будущем будет рассчитан на любое число обработчиков.</br>
+
+Коды всех ошибок находятся в отдельном файле [SHSerrors.h](src/SHScore/SHSerrors.h). При необходимости, ```enum shs::errors::Errors``` может быть дополнено пользователем.
+
+```c++
+class shs::ErrorsHandler
+{
+public:
+    ErrorsHandler(shs::errorsCallback_t system_callback = nullptr, 
+    shs::errorsCallback_t user_callback = nullptr);
+
+    void attachFirstHandler(shs::errorsCallback_t callback);
+    void attachSecondHandler(shs::errorsCallback_t callback);
+
+    void error(const shs::errors::Errors error);
+
+    [[nodiscard]] shs::errors::Errors getLastError();
+    [[nodiscard]] uint8_t getCount();
+};
+```
 
 <a id="7-3-5_settings"></a>
 
@@ -1315,6 +1344,8 @@ protected:
 <a id="7-4_algorithms"></a>
 
 ## 7.4 Algorithms
+
+Для обработки информации в системе потребуется разработать много легких и эффективных алгоритмом: сортировка и сжатие данных, поиск и оптимизация хранения, собсвтенные аллокаторы для работы с памятью, хеш-функции и пр.
 
 <a id="7-4-1_CRC"></a>
 
@@ -1344,8 +1375,8 @@ public:
     uint32_t crc{};
     explicit CRC32() : crc(shs::CRC32_beg) {}
 
-    inline void add(const uint8_t value);
-    inline void clear();
+    void add(const uint8_t value);
+    void clear();
 
     void update(uint32_t &crc, uint8_t data);
     uint32_t crcBuf(const uint8_t *ptr, uint16_t size);
@@ -1354,9 +1385,9 @@ public:
 
 <a id="8_stageIII"></a>
 
-# 8. Этап III
+# 8. Этап III. Разработка библиотеки
 
-[SHSlibrary](src/SHSlibrary/) — следующий уровень архитектуры _**Smart Home System**_. Библиотека реализует более функциональные и направленные решения, API к устройствам и библиотекам.</br>
+[SHSlibrary](src/SHSlibrary/) — следующий уровень программной архитектуры _**Smart Home System**_. Библиотека реализует более функциональные и направленные решения, API к устройствам и библиотекам.</br>
 
 Пока что большая часть библиотеки находится в разработке. Сейчас в ней представлен класс [SHSAutoProcesses](src/SHSlibrary/SHSAutoProcesses.h), позволяющий выполнять автоматическую конфигурацию и управление модулем.</br>
 
@@ -1368,10 +1399,10 @@ class shs::AutoProcesses : public shs::Process
 public:
     WiFiClient tcp;
     shs::DTP dtp;
-    shs::ProcessesKeeper keeper;
+    shs::LoadAPIhandler loadAPI;
+    shs::SensorAPIhandler sensorsAPI;
 
     explicit AutoProcesses();
-    ~AutoProcesses();
 
     void begin() override;
     void tick() override;
@@ -1381,7 +1412,7 @@ public:
 
 <a id="9_stageIV"></a>
 
-# 9. Этап IV
+# 9. Этап IV. Объединение модулей в единую систему
 
 <a id="9-1_connection-organization"></a>
 
@@ -1438,36 +1469,7 @@ MAC-адрес для удобства зашифрован кодом ```SHSma`
 
 **TCP/IP** — основной протокол передачи данных в Интернете. Через него организуется соединение между всеми модулями. Для этого в ядре ESP есть классы ```WiFiClient``` и ```WiFiServer```.</br>
 
-На всех модулях создаются объекты класса ```WiFiClient```, которые подключаются к серверу. В [SHSlibrary](SHSlibrary/) есть свой клаcc, но необходимости в нем на данном этапе проекта нет, в отличии от [SHSTcpServer.h](SHSlibrary/SHSTcpServer.h), который отвечает за обработку всех клиентов.
-
-```c++
-class shs::TcpServer
-{
-public:
-    WiFiServer server;
-    WiFiClient *clients;
-    shs::DTP *dtp{};
-
-    const uint8_t *IP{};
-    uint8_t maxClients{};
-
-    TcpServer(const uint8_t *IPaddress, uint16_t port = 50000, uint8_t max_clients = 6);
-    ~TcpServer();
-
-    void begin();
-    void tick();
-
-    uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
-                             const shs::settings::shs_ID_t api_ID);
-    //void sendRAW(uint8_t *buf, uint8_t size);
-
-private:
-    void (*_TCPhandle)(shs::DTPdata &){};
-    uint8_t *lens{};
-    uint8_t i{};
-    void *m_dtp_beg{};
-};
-```
+На всех модулях создаются объекты класса ```WiFiClient```, которые подключаются к серверу. В [SHScore](src/SHScore) есть свой клаcc, но необходимости в нем на данном этапе проекта нет, в отличии от [SHSTcpServer.h](src/SHScore/SHSTcpServer.h), который отвечает за обработку всех клиентов. Подробнее об этих классах было написано выше в [п. 7.2.4 TCP/IP](#7-2-4_tcpip).
 
 <a id="9-2_api"></a>
 
@@ -1475,13 +1477,13 @@ private:
 
 Все устройства связаны и имеют доступ друг к другу. Чтобы они могли запрашивать и принимать данные, нужно определить соответствующие команды и обработчики для них. ```API``` каждого модуля состоит из перечисления(```enum```), где каждой команде соответствует числовой код. В пакет данных передается команда, а затем дополнительные параметры, если она их требует. В таком же порядке данные и будут расшифровываться на стороне приемника.</br>
 
-Для разработки ```API``` следует наследоваться от абстрактного класса [```shs::API```](src/SHScore/SHSAPI.h). API имеет смысл разделать на реальные (т.е. непостредственно управляющие устройством) и виртуальные (т.е. служащие интерфейсом на удаленном устройстве). API можно написать для управления микроконтроллером или его частю, какой-то библиотекой или сущностью или целым модулем.</br>
+Для разработки ```API``` следует наследоваться от абстрактного класса [```shs::API```](src/SHScore/SHSAPI.h). API имеет смысл разделять на реальные (т.е. непостредственно управляющие устройством) и виртуальные (т.е. служащие интерфейсом на удаленном устройстве). API можно написать для управления микроконтроллером или его частю, какой-то библиотекой или сущностью, целым модулем или подсистемой.</br>
 
-Каждому типу API стоит задавать свой ```shs::settings::shs_ID_t apiID```, для правильной и быстрой расшифровки протоколами передачи данных.
+Каждому типу API следует задавать свой ```shs::settings::shs_ID_t apiID```, для правильной и быстрой расшифровки протоколами передачи данных.
 
 <a id="10_stageV"></a>
 
-# 10. Этап V
+# 10. Этап V. Взаимодействие с пользователем
 
 В Smart Home System реализованы четыре метода взаимодействия с пользователем:</br>
 
@@ -1498,7 +1500,7 @@ private:
 
 Датчики движения позволяют оценить нахождение пользователя в пространстве и скорректировать поведение системы. Таким образом, когда пользователь не дома, включается досвечивание растений, шумные приборы (например, вытяжки, фильтры, насосы).</br>
 
-Кнопки лучше всего расположить в часто доступных местах: у входов в комнаты, около рабочего места, рядом с кроватью. Таким образом, выходя из комнаты можно дать команду перейти в ждущий режим, за рабочим местом — добавить света, а лежа в кровати — включить тихий режим и подготовиться ко сну.
+Кнопки лучше всего расположить в наиболее удобных местах: у входов в комнаты, около рабочего места, рядом с кроватью. Таким образом, выходя из комнаты, можно дать команду перейти в ждущий режим, за рабочим местом — добавить света, а лежа в кровати — включить тихий режим и подготовиться ко сну.
 
 <a id="10-2_TelegramBot"></a>
 
@@ -1509,7 +1511,7 @@ private:
 
 Масштабная разработка, которая позволяет не только управлять умным домом, но и пользоваться дополнительными функциями для составления расписания, напоминаний, получения различной информации. Кроме того, бот может предупредить об ухудшении погоды или присутствии посторонних рядом с домом.</br>
 
-Бот умеет показывать меню с горячимик кнопками, по нажатию на которые можно очень быстро управлять системой. По специальным алгоритмам меню корректируются и высвечиваются актуальные на данный момент кнопки, например, к вечеру меню предложит гасить свет и переводить систему в бесшумный режим, когда пользователь возвращается домой, меню может предложить кнопки для включения чайника, света, отопления и пр.
+Бот умеет показывать меню с кнопками, нажимая на которые можно очень быстро управлять системой. По специальным алгоритмам меню корректируются и высвечиваются актуальные на данный момент кнопки, например, к вечеру меню предложит гасить свет и переводить систему в бесшумный режим; когда пользователь возвращается домой, меню может предложить кнопки для включения чайника, света, отопления и пр.
 
 ![Smart Home Bot scheme](schemes/smart-home-bot-scheme.png)
 
@@ -1521,21 +1523,21 @@ private:
 
 **GUI** — графический интерфейс пользователя, т.е. различные приложения и web-страницы. Один из самых удобных способов организовать управление системой, визуализировать графики и настройки, сделать меню для конфигурации системы и настройки связей. Разработка хорошего приложения требует много времени, но результат того стоит.
 
-Разработка находится в папке [SHSapp](SHSapp/), но пока что особо не затронута, однако рабочая упрощенная версия есть в демонстрационной версии проекта: [demo_version](src/demo_version/).
+Главное приложение находится в папке [SHSapp](SHSapp/), но пока что детально неразработано. Рабочая упрощенная версия есть в демонстрационной части проекта: [demo_version](src/demo_version/).
 
-<a id="10-4_voisManagement"></a>
+<a id="10-4_voiceManagement"></a>
 
 ## 10.4 Голосовое управление
 
-Построено на специальном контроллере распознавания голоса. Библиотека для него достаточно не удобная и не функциональная, поэтому в ближайших версиях в проекте появится своя, разработки уже ведутся.</br>
+Построено на специальном контроллере распознавания голоса. Библиотека для него достаточно неудобная и нефункциональная, поэтому в ближайших версиях в проекте появится своя. Разработки уже ведутся.</br>
 
-Модуль имеет хранилище распознователя и общее хранилище команд. Таким образом одновременно он сравнивает 7 команд, затем передает код распознаной команды, основываясь на ней, управляющий микроконтроллер загружает в распознователь следующую порцию команд. Таким образом можно строить цепочки сложных команд и организовать своего голосового помошника.</br>
+Модуль имеет хранилище распознавателя и общее хранилище команд. Таким образом одновременно он сравнивает 7 команд, затем передает код распознанной команды, основываясь на ней, управляющий микроконтроллер загружает в распознаватель следующую порцию команд. Таким образом можно строить цепочки сложных команд и организовать своего голосового помощника.</br>
 
-В ближайшее время в проекте появится своя умная колонка с голосовым ассиситентом "Сом" (т.е. Smart hOMe).
+В ближайшее время в проекте появится своя умная колонка с голосовым ассистентом "Сом" (т.е. Smart hOMe).
 
 <a id="11_stageVI"></a>
 
-# 11. Этап VI
+# 11. Этап VI. Обучение системы саморегулированию
 
 <a id="11-1_algorithmes"></a>
 
@@ -1545,9 +1547,9 @@ private:
 
 ### 11.1.1 Автоматизация на основе датчиков
 
-Система постоянно опрашивает датчики и получает с них информацию. На ее основе полученных данных система может сама контролировать процессы.</br>
+Система постоянно опрашивает датчики и получает с них информацию. На основе полученных данных система может сама контролировать процессы.</br>
 
-Первым делом стоит автоматизировать все процессы, которые возможно. Свет может включаться по датчикам уровня освещенности, вентиляторы и вытяжки — когда зашкаливает датчик углекислого газа, ночью система не должна шуметь и издавать звуков.</br>
+Первым делом стоит автоматизировать все процессы, которые возможно. Свет может включаться по датчикам уровня освещенности, вентиляторы и вытяжки, когда зашкаливает датчик углекислого газа, ночью система не должна шуметь и издавать звуков.</br>
 
 <a id="11-1-2_modes"></a>
 
@@ -1557,13 +1559,155 @@ private:
 
 1. ```Normal``` — система работает в обычном режиме, все устройства функционируют без ограничений.
 
-2. ```StandBy``` — система функционирует, продолжает опрашивать датчики и обрабатывать данные но практически не включает никаких устройств.
+2. ```StandBy``` — система функционирует, продолжает опрашивать датчики и обрабатывать данные, но практически не включает никаких устройств.
 
-3. ```Silence``` — система функционирует, но стремится ограничить все шумные процессы. Таким образом обороты вентилятор будут максимально снижены, а реле, вытяжки, моторы и другие шумные приборы без крайней необходимости включаться не будут.
+3. ```Silence``` — система функционирует, но стремится ограничить все шумные процессы. Таким образом, обороты вентилятора будут максимально снижены, а реле, вытяжки, моторы и другие шумные приборы без крайней необходимости включаться не будут.
 
-Разумеется тремя режимами "умный" дом ограничиваться не должен, поэтому список можно продолжать, описывая различные ситуации и подстраивая под них систему.</br>
+Разумеется, тремя режимами "умный" дом ограничиваться не должен, поэтому список можно продолжать, описывая различные ситуации и подстраивая под них систему.</br>
 
-У структуры [```shs::Config```](src/SHScore/SHSconfig.h) есть поле ```mode```, отвечающее за текущее состояние системы, однако таким образом можно устанавливать режим как для всей системы, так и для ее отдельных частей (подсистем, модулей или конкретных устройсв (процессов)).
+У структуры [```shs::Config```](src/SHScore/SHSconfig.h) есть поле ```mode```, отвечающее за текущее состояние системы, однако таким образом можно устанавливать режим как для всей системы, так и для ее отдельных частей (подсистем, модулей или конкретных устройств (процессов)).
+
+<a id="11-1-3_autoChoose"></a>
+
+### 11.1.3 Автоматический выбор режима
+
+Чтобы система использовала актуальный режим, надо построить логику выбора модели поведения, основываясь на времени. Переключение общих режимов (```Normal```, ```StandBy```, ```Silence```...) можно привязать ко времени суток. Отдельные приборы можно настроить по более точному графику, связав время и дни недели, таким образом, что чайник будет горячим по утрам в будни и ближе к обеду в выходные дни. Расписание работы шумных приборов можно назначить на время отсутствия пользователя дома.</br>
+
+Правильно задав все параметры, можно добиться стабильной работы системы с оптимальным выбором режима.
+
+<a id="11-2_neuralnet"></a>
+
+## 11.2 SHSNeuralNet
+
+**SHSNeuralNet** — разработка легкой нейронной сети для автоматического управления микросистемами и устройствами. За основу взята нейронная сеть из проекта [Winderton'a](https://github.com/Winderton/nerualnet).
+
+<a id="11-2-1_neuralnet_originalStruct"></a>
+
+### 11.2.1 Оригинальное устройство SHSNeuralNet
+
+Сама нейронная сеть состоит из двух классов:
+
+1. ```neuron``` — отдельный нейрон. Для активации выбрана функция гиперболического тангенса.
+2. ```net``` — соединяет в себе нейроны.
+
+Далее для взаимодействия с сетью автор предложил класс ```trainingSet```, он может построить сеть по указанной топологии и обучить ее на представленных данных.
+
+<a id="11-2-2_neuralnet_SHSstruct"></a>
+
+### 11.2.2 Реализация в Smart Home System
+
+Для использования в _**Smart Home System**_ класс ```trainingSet``` не подходит, поэтому на его основе будет создан другой.</br>
+
+Вдобавок к существующим будет разработано еще несколько классов-инструментов для работы с нейронной сетью. Они будут сохранять ее в энергонезависимую память, разворачивать обратно, автоматически подбирать наилучшую топологию (структуру) сети, собирать информацию для обучения сети и проводить его в реальном времени. Эти инструменты позволят расширить функционал и заменять одну сеть на другую, просто вытащив ее из постоянной памяти.</br>
+
+Классы будут оптимизированы и доработаны. Такая нейросеть будет спокойно запускаться и функционировать на ресурсах одного микроконтроллера, а смена одной нейронной сети на другую расширит возможности ее применения все еще на том же контроллере.</br>
+
+Конечно, такая нейросеть достаточно примитивная и для сложного анализа большого объема данных она никак не подходит, однако это идеальный вариант в рамках умного дома.
+
+<a id="11-2-3_manageSystem"></a>
+
+### 11.2.3 Управление системой
+
+**SHSNeuralNet** принимает на вход множество факторов, обрабатывает их и выдает результат на выходе. Таким образом, она может контролировать процессы, которые сложно или долго описывать вручную. Она может определять, когда надо начать будить пользователя, как долго его не будет дома, когда подогреть чайник к его приходу и в какой момент пора начинать подготовку ко сную. Все это происходит в режиме реального времени, основываясь на показаниях датчиков, времени нахождения пользователя в разных частях дома, его занятиях и предпочтениях, которые обусловлены временными, внешними и внутренними факторами.</br>
+
+Обрабатывая большое количество факторов, нейросеть способна очень эффективно управлять системой и ее отдельными процессами, корректируясь (в рабочем режиме), что актуально, если, например, у пользователя наступил отпуск и сменилась его манера поведения.
+
+<a id="11-2-4_prediction"></a>
+
+### 11.2.4 Предсказание событий
+
+**SHSNeuralNet** может взять в "голову" много факторов и находить среди них закономерности. Основываясь на них, нейросеть может попробовать предсказать событие. Такое применение очень актуально для некоторых устройств и процессов:
+
+- Для предсказания изменения погоды людьми давно выведены закономерности, основанные на наблюдении за давлением, влажностью, температурой воздуха и прочими параметрами. Очень сложно запрограммировать и учитывать все факторы и законы одновременно. Поэтому встроенная в метеостанцию нейросеть после грамотного обучения будет способна очень точно предсказывать изменение погоды в ближайшие несколько часов. Кроме того, нейросеть сможет сформировать рекомендации по выбору одежды для выхода на улице.
+
+- _**Smart Home System**_ предлагает огромное количество настроек системы. Разобраться с ними частично помогают графические интерфейсы. Чтобы пользователю было удобнее управлять системой, она должна предлагать небольшой интерфейс, который позволяет быстро и удобно скорректировать необходимые параметры. Для формирования такого интерфейса отлично подойдет **SHSNeuralNet**.Она обрабатывает время, прошлые предпочтения пользователя и его поведение, после чего формирует наиболее востребованный интерфейс на данный момент. Например, ближе к вечеру система предложит кнопку для плавного выключения света и подготовки ко сну, а утром наоборот — расположит кнопки для включения всех устройств и настройки расписания на день.
+
+<a id="11-3_advancedNeuralNet"></a>
+
+## 11.3 AdvancedNeuralNet
+
+Идея заключается в распределении нейронной сети по всем модулям. Современные нейросети создаются на больших серверах и требуют огромных вычислительных ресурсов. _**Smart Home Syste**_ предлагает встраивать нейроны или мини-нейронные сети прямо в датчики и модули, а потом объединять их в единую сеть.</br>
+
+Такая технология позволит снизить технические требования к главному серверу и сможет учитывать не только показания с датчиков, но и вес этих датчиков в системе, т.к., по сути они будут являться отдельными нейронами.</br>
+
+_Для более точного понимая возможностей такой сети необходимо подготовить базу, собрать много данных и провести серию экспериментов. Все это будет постепенно разрабатываться в следующих версиях проекта._
+
+<a id="12_stageVII"></a>
+
+# 12. Этап VII. Настройка системы
+
+Конфигурация и настройка системы — масштабный этап разработки системы, к которому стоит подходить максимально ответсвенно. Пока что в _**Smart Home System**_ мало инструментов и интерфейсов, упрощающих процесс конфигурации и отладки. В скором времени пользователю будут доступны удобные GUI, что избавит его от необходимости писать код или вносить в него какие-то изменения.
+
+<a id="12-1_settings_coreLevel"></a>
+
+## 12.1 Настройка на уровне ядра
+
+Пока удобных инструментов не создано, настройка системы производится в специальных файлах. Когдаже они будут созданы, этот пункт будет полезен разработчикам и продвинутым пользователям.</br>
+
+<a id="12-1-1_settingsh"></a>
+
+### 12.1.1 SHSsettings.h
+
+В [SHScore](src/SHScore/) лежит файл [SHSsettings_template.h](src/SHScore/SHSsettings_template.h), его необходимо скопировать и положить куда-нибудь в папку с библиотеками (для Ардуино), например создать отдельную папку SHSsettings.</br>
+
+В файле надо указать данные для подключения к WiFi и IP адрес, если он не подходит.</br>
+
+Для оптимизации вычислений с плавающей точкой и ускорения работы можно раскомментировать ```#define USE_FLOAT_FOR_DOUBLE```. После этого тип данных ```shs::settings::shs_double_t``` будет синонимом ```float```.
+
+<a id="12-1-2_settings_privateh"></a>
+
+### 12.1.2 SHSsettings_private.h
+
+Файл лежит в глубине ядра и отвечает за настройки, которые не рекомендуется изменять. Там объявлены некоторые типы данных и заданы системные константы. Некоторые параметры можно скорректировать в файле SHSsettings.h, остальные должны оставаться неизменными, в противном случае поведение системы может быть непредсказуемым или выпадут ошибки при компиляции.
+
+## 12.2 Конфигурация системы
+
+Аналогично настройкам, удобные интерфейсы для конфигурации еще в разработке. Сейчас в системе нет строго стандарта конфигурации. Ее можно задать как в файле настроек, дописав туда отдельные поля (так сделано, например в [demo_version](src/demo_version/)), так и в файлах прошивок.</br>
+
+Позже будет написан парсер файлов конфигурации, который избавит пользователя от написания кода. Затем, останется создать только графический интерфейс, чтобы пользователю вообще не приходилось редактировать какие-либо файлы.
+
+<a id="13_resources"></a>
+
+# 13. Resources
+
+Для повторения проекта рекомендую изучить следующие ресурсы. Это только малая часть необходимой информации, но изучая ее, пользователь найдет много ссылок на сторонние источники, а так же поймет как и где найти необходимую информацию.
+
+## 13.1 Уроки и гайды
+
+- <https://alexgyver.ru/arduino-first/> — настройка среды разработки.
+
+- <https://alexgyver.ru/lessons/> — уроки по программированию и микроконтроллерам.
+
+- <https://alexgyver.ru/arduino_lessons/> — еще уроки с крутыми примерами и небольшими проектами.
+
+- <https://amperka.com> — у них есть база гайдов по подключению датчиков.
+
+## 13.2 Документация и библиотеки
+
+- <https://github.com/arduino/ArduinoCore-avr> — ядро Arduino (avr) и документация.
+
+- <https://github.com/AlexGyver/GyverCore> — улучшенный аналог предыдущего пункта, рекомендуется использовать его.
+
+- <https://github.com/esp8266/Arduino> — ядро esp8266 и документация.
+
+- <https://github.com/espressif/arduino-esp32> — ядро esp32 и документация.
+
+## 13.3 Поиск компонентов
+
+- <https://alexgyver.ru/arduino_shop/> — база микроконтроллеров, датчиков и модулей.
+
+- <https://www.chipdip.ru> — магазин радиодеталей.
+
+<a id="14_contacts"></a>
+
+# 14. Contacts
+
+Tg: <https://t.me/MrRyabena> </br>
+Mail: <daniilrazanov82349@gmail.com>
+
+_**I will be glad to receive suggestions for improving the project, cooperation, and feedback.**_</br>
+
+Daniil Ryazanov (Даниил Рязанов)
 
 <a id="sources"></a>
 
@@ -1572,3 +1716,4 @@ private:
 1. [https://alexgyver.ru](https://alexgyver.ru)
 2. Петин В. А. Создание умного дома на базе Arduino. — М.: ДМК Пресс, 2018. — 180 с.
 3. Neil Cameron. Electronics Projects with the ESP8266 and ESP32: Building WebPages, Applications, and WiFi Enabled Devices. Apress; 1st ed. edition (December 18, 2020)
+4. [https://amperka.com](https://amperka.com)

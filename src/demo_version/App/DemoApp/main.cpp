@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
     MainWindow w;
 
     qDTP dtp(&w);
- //   dtp.setup();
-    //dtp.start();
+    dtp.setup();
+    dtp.start();
 
 
     w.show();

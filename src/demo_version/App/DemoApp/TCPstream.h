@@ -22,19 +22,20 @@ inline int port = 50000;
 const shs::settings::shs_ModuleID_t ID = 10;
 
 
+
 class TCPstream : public shs::Stream
 {
 public:
     TCPstream(QTcpSocket* tcp) : m_tcp(tcp) {}
 
-    uint8_t write(const uint8_t *buf, size_t size) {     return m_tcp->write((char*)buf, size);    }
-    uint8_t read() {
+    uint8_t write(const uint8_t *buf, uint16_t size) override {     return m_tcp->write((char*)buf, size);    }
+    uint8_t read() override {
         char a;
         qint64 size = 1;
         m_tcp->read(&a, size);
         return static_cast<uint8_t>(a);
     }
-    uint8_t available(){return m_tcp->bytesAvailable();}
+    uint8_t available() override {return m_tcp->bytesAvailable();}
 
 private:
     QTcpSocket *m_tcp{};
@@ -75,12 +76,19 @@ public:
     dtp.attach(&api);
 
     qDebug() << dtp.tick();
+    shs::ByteCollector bc(2);
+    bc.add(15);
+    dtp.sendPacket(&bc, 4, -10, 10);
+    dtp.sendPacket(&bc, 4, -10, 10);
+    dtp.sendPacket(&bc, 4, -10, 10);
+    dtp.sendPacket(&bc, 4, -10, 10);
 
 }
 
 void run() override {
     for (;;) {
-       qDebug() << dtp.tick();
+       dtp.tick();
+
     }
 }
 

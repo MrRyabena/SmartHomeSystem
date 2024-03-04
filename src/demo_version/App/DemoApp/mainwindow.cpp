@@ -105,3 +105,8 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 {
     updatePoligons();
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+
+}

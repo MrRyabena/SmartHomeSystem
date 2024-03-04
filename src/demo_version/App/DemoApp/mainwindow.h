@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -34,6 +35,8 @@ void resizeEvent(QResizeEvent*);
 
 
 void on_tabWidget_currentChanged(int index);
+
+void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

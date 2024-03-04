@@ -18,7 +18,7 @@ uint8_t shs::DTPpacker::packDTP(shs::ByteCollector *bc, const shs::settings::shs
     bc->buf[1] = to;
     bc->buf[2] = from;
     bc->buf[3] = apiID & 0x000000ff;
-    bc->buf[4] = apiID & 0x0000ff00;
+    bc->buf[4] = (apiID & 0x0000ff00) >> 8;
     bc->buf[0] = bc->size() + 1;
     bc->add(_crc.crcBuf(bc->buf, bc->size()), 1);
 
@@ -44,9 +44,9 @@ uint8_t shs::DTPpacker::parseDTP(shs::ByteCollector *bc, shs::DTPdata &data)
     if (status)
         return status;
 
-    data.from = bc->buf[2];
     data.to = bc->buf[1];
-    data.from = bc->buf[3] | ((int16_t)bc->buf[4] << 8);
+    data.from = bc->buf[2];
+    data.apiID = bc->buf[3] | ((int16_t)bc->buf[4] << 8);
     data.datasize = bc->size() - shs::settings::DTP_OFFSETbeg - 1;
     bc->readPtr = bc->buf + shs::settings::DTP_OFFSETbeg;
 
@@ -69,21 +69,32 @@ uint8_t shs::DTP::tick()
     return 0;
 }
 
-uint8_t shs::DTP::checkBus(uint8_t len)
+uint8_t shs::DTP::checkBus(uint8_t *len)
 {
-    if (len != UINT8_MAX)
-        m_len = len;
-    if (m_bus->available())
+    if (!m_bus)
+        return 0;
+    if (len)
+        m_len = *len;
+
+    if (m_bus->available() > 0)
         if (!m_len)
             m_len = m_bus->read();
-    if (m_bus->available() < m_len - 1)
+    if (len)
+        *len = m_len;
+    if (!m_len)
+        return 0;
+
+    if (m_len && m_bus->available() < m_len - 1)
         return 1;
 
     shs::ByteCollector col(m_len);
     *(col.ptr++) = m_len;
+
     for (uint8_t i = 0; i < m_len - 1; i++)
         *(col.ptr++) = m_bus->read();
     m_len = 0;
+    if (len)
+        *len = 0;
 
     // shs::DTPdata data;
     // uint8_t size = parseDTP(&col, data);

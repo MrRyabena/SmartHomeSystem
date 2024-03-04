@@ -32,7 +32,6 @@
 
 #include <SHSsettings.h>
 
-
 namespace shs
 {
         void setMac(const uint8_t id);   // set mac-address SHSma + id (53:48:53:6D:61:xx xx = 0x(id))
@@ -45,14 +44,16 @@ namespace shs
 
 void shs::connectWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *pass = shs::settings::WIFI_PASSWORD)
 {
+        WiFi.mode(WIFI_STA);
         WiFi.begin(ssid, pass);
+
         while (WiFi.status() != WL_CONNECTED)
         {
                 delay(500);
 #ifdef DEBUG
                 Serial.print(".");
 #endif
-                if (millis() > 15000)
+                if (millis() > 20000)
                 {
 #ifndef connectWiFi_NORESTART
                         ESP.restart();
@@ -60,15 +61,15 @@ void shs::connectWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *p
                         break;
 #endif
                 }
+        }
 
 #ifdef DEBUG
-                Serial.println("Connected");
-                Serial.print("IP: ");
-                Serial.println(WiFi.localIP());
-                Serial.print("Mac: ");
-                Serial.println(WiFi.macAddress());
+        Serial.println("Connected");
+        Serial.print("IP: ");
+        Serial.println(WiFi.localIP());
+        Serial.print("Mac: ");
+        Serial.println(WiFi.macAddress());
 #endif
-        }
 }
 
 void shs::setMac(const uint8_t id)

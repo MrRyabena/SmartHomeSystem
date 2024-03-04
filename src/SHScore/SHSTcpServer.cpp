@@ -3,7 +3,7 @@
 shs::TcpServer::TcpServer(const uint8_t *IPaddress, uint16_t port, uint8_t max_clients)
     : server(WiFiServer(port)),
       clients(new WiFiClient[max_clients]),
-      lens(new uint8_t[max_clients]),
+      lens(new uint8_t[max_clients]{}),
       IP(IPaddress),
       maxClients(max_clients)
 
@@ -26,7 +26,6 @@ void shs::TcpServer::begin()
 
 void shs::TcpServer::tick()
 {
-
     if (server.hasClient())
     {
         for (i = 0; i < maxClients; i++)
@@ -46,16 +45,17 @@ void shs::TcpServer::tick()
 
     for (i = 0; i < maxClients; i++)
     {
-        if (clients[i] && clients[i].connected())
+        if (clients[i] && clients[i].connected() && clients[i].available())
         {
             dtp = new (m_dtp_beg) shs::DTP(&clients[i], IP[3]);
-            dtp->checkBus(lens[i]);
+            dtp->attach(api);
+            dtp->checkBus(&lens[i]);
         }
     }
 }
 
 uint8_t shs::TcpServer::sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
-                             const shs::settings::shs_ID_t api_ID)
+                                   const shs::settings::shs_ID_t api_ID)
 {
     for (uint8_t i = 0; i < maxClients; i++)
     {

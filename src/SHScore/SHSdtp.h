@@ -28,8 +28,10 @@
 
 #if __has_include(<Arduino.h>)
 #include <Arduino.h>
+#define DEBUG(value) ({  Serial.println(value); })
 
 #else
+#define DEBUG(value)
 #pragma message "Used shs::Stream"
 #include "SHSStream.h"
 using Stream = shs::Stream;
@@ -49,41 +51,41 @@ namespace shs::settings
 #define SILENCE_TIMEOUT 120000
 #endif
 
-    inline const uint8_t DTP_OFFSETbeg = 5;
+  inline const uint8_t DTP_OFFSETbeg = 5;
 };
 
 namespace shs
 {
-    namespace DTPcommands
-    {
-        enum DTPcommands : uint8_t;
-    };
+  namespace DTPcommands
+  {
+    enum DTPcommands : uint8_t;
+  };
 
-    namespace DTPhandlerStatus
-    {
-        enum DTPhandlerStatus : uint8_t;
-    };
+  namespace DTPhandlerStatus
+  {
+    enum DTPhandlerStatus : uint8_t;
+  };
 
-    struct DTPdata;
-    class DTP;
-    class DTPpacker;
-    typedef void (*DTPhandler_t)(shs::DTPdata &);
+  struct DTPdata;
+  class DTP;
+  class DTPpacker;
+  typedef void (*DTPhandler_t)(shs::DTPdata &);
 
 };
 
 enum shs::DTPcommands::DTPcommands : uint8_t
 {
-    answer = 252,
-    error,
-    request,
+  answer = 252,
+  error,
+  request,
 };
 
 struct shs::DTPdata
 {
-    shs::settings::shs_ModuleID_t to{};
-    shs::settings::shs_ModuleID_t from{};
-    shs::settings::shs_ID_t apiID{};
-    uint8_t datasize{};
+  shs::settings::shs_ModuleID_t to{};
+  shs::settings::shs_ModuleID_t from{};
+  shs::settings::shs_ID_t apiID{};
+  uint8_t datasize{};
 };
 
 /*
@@ -94,13 +96,13 @@ struct shs::DTPdata
 class shs::DTPpacker
 {
 public:
-    // uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID);
-    uint8_t packDTP(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t apiID, const shs::settings::shs_ModuleID_t from);
-    uint8_t checkDTP(shs::ByteCollector *bc);
-    uint8_t parseDTP(shs::ByteCollector *bc, shs::DTPdata &data);
+  // uint8_t packDTP(shs::ByteCollector *bc, const uint8_t to, const int16_t apiID);
+  uint8_t packDTP(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t apiID, const shs::settings::shs_ModuleID_t from);
+  uint8_t checkDTP(shs::ByteCollector *bc);
+  uint8_t parseDTP(shs::ByteCollector *bc, shs::DTPdata &data);
 
 protected:
-    shs::CRC8 _crc;
+  shs::CRC8 _crc;
 };
 
 /*
@@ -111,18 +113,18 @@ protected:
 class shs::DTP : public shs::DTPpacker, public shs::CallbacksKeeper
 {
 public:
-    explicit DTP(Stream *bus, const shs::settings::shs_ModuleID_t ID);
-    ~DTP();
+  explicit DTP(Stream *bus, const shs::settings::shs_ModuleID_t ID);
+  ~DTP();
 
-    uint8_t tick();
-    uint8_t checkBus(uint8_t len = UINT8_MAX);
+  uint8_t tick();
+  uint8_t checkBus(uint8_t *len = nullptr);
 
-    uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to);
-    uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t api_ID, const shs::settings::shs_ModuleID_t from);
+  uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to);
+  uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t api_ID, const shs::settings::shs_ModuleID_t from);
 
 private:
-    Stream *m_bus{};
-    uint8_t m_len{};
-    uint32_t m_tmr{};
-    shs::settings::shs_ModuleID_t m_ID{};
+  Stream *m_bus{};
+  uint8_t m_len{};
+  uint32_t m_tmr{};
+  shs::settings::shs_ModuleID_t m_ID{};
 };

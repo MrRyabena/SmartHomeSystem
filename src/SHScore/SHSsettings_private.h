@@ -17,8 +17,11 @@ namespace shs::settings
     using shs_ID_t = int16_t;
 
     const uint8_t SENSOR_AVERAGE_SAMPLES = 20;
-    const uint8_t COM_IP[] = {192, 168, 1, 4};
+    // const uint8_t COM_IP[] = {192, 168, 1, 4};
     const uint8_t SERVER_ID = 4;
+
+    const int8_t Load_apiID = -1;
+    const int8_t Sensor_apiID = -2;
 
 // debug
 #ifdef DEBUG

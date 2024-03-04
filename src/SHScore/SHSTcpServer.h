@@ -24,35 +24,37 @@
 #include "SHSByteCollector.h"
 #include "SHSdtp.h"
 #include "SHSsettings_private.h"
+#include "SHSCallbacksKeeper.h"
 
 namespace shs
 {
-    class TcpServer;
+  class TcpServer;
 };
 
 class shs::TcpServer
 {
 public:
-    WiFiServer server;
-    WiFiClient *clients;
-    shs::DTP *dtp{};
+  WiFiServer server;
+  WiFiClient *clients;
 
-    const uint8_t *IP{};
-    uint8_t maxClients{};
+  shs::API *api{};
 
-    TcpServer(const uint8_t *IPaddress, uint16_t port = 50000, uint8_t max_clients = 6);
-    ~TcpServer();
+  const uint8_t *IP{};
+  uint8_t maxClients{};
 
-    void begin();
-    void tick();
+  TcpServer(const uint8_t *IPaddress, uint16_t port = 50000, uint8_t max_clients = 6);
+  ~TcpServer();
 
-    uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
-                             const shs::settings::shs_ID_t api_ID);
-    //void sendRAW(uint8_t *buf, uint8_t size);
+  void begin();
+  void tick();
+
+  uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
+                     const shs::settings::shs_ID_t api_ID);
+  // void sendRAW(uint8_t *buf, uint8_t size);
 
 private:
-    void (*_TCPhandle)(shs::DTPdata &){};
-    uint8_t *lens{};
-    uint8_t i{};
-    void *m_dtp_beg{};
+  shs::DTP *dtp{};
+  uint8_t *lens{};
+  uint8_t i{};
+  void *m_dtp_beg{};
 };

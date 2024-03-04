@@ -8,6 +8,11 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     setPoligons();
+
+    socket = new QTcpSocket(this);
+
+    connect(socket, SIGNAL(readyRead()), this, SLOT(read_Data()));
+
 }
 
 MainWindow::~MainWindow()
@@ -25,23 +30,26 @@ void MainWindow::setPoligons() {
     QGraphicsScene *sceneP = new QGraphicsScene(ui->PhotoPolygon);
 
 
-
     ui->ThermPolygon->setScene(sceneT);
     ui->PhotoPolygon->setScene(sceneP);
 
-    ThermBuf.push_back(0.0);
-    ThermBuf.push_back(10.0);
-    ThermBuf.push_back(25.0);
-    ThermBuf.push_back(30.0);
-    ThermBuf.push_back(30.0);
-    ThermBuf.push_back(30.0);
-    ThermBuf.push_back(10.0);
-    ThermBuf.push_back(0.0);
+//    ThermBuf.push_back(0.0);
+//    ThermBuf.push_back(10.0);
+//    ThermBuf.push_back(25.0);
+//    ThermBuf.push_back(30.0);
+//    ThermBuf.push_back(30.0);
+//    ThermBuf.push_back(30.0);
+//    ThermBuf.push_back(10.0);
+//    ThermBuf.push_back(0.0);
 
     updatePoligons();
 
 
 
+}
+
+void MainWindow::read_Data() {
+  d->tick();
 }
 
 void MainWindow::updatePoligons() {

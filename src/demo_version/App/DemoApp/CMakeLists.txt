@@ -58,6 +58,8 @@ else()
         ../../../SHScore/SHSAPI.h
         ../../config/config_api.h
 
+        ../../SHSsettings/SHSsettings.h
+
         # ../../../SHScore/SHSdtp.cpp
         TCPstream.cpp
         TCPstream.h

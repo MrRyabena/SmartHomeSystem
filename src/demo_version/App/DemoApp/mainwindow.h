@@ -7,7 +7,8 @@
 #include <QDebug>
 #include <vector>
 #include <algorithm>
-
+#include <QTcpSocket>
+#include "../../../SHScore/SHSdtp.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,9 +25,13 @@ public:
     void begin();
     void setPoligons();
     void updatePoligons();
+    QTcpSocket *socket;
 
     std::vector<double> ThermBuf;
     std::vector<double> PhotoBuf;
+
+    void read_Data();
+    shs::DTP *d{};
 
     const int maxBufSize = 200;
 

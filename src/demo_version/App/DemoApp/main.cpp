@@ -16,14 +16,11 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     MainWindow w;
 
-    qDTP dtp(&w);
+    qDTP dtp(&w, w.socket);
     dtp.setup();
-    dtp.start();
-
+    w.d = &dtp.dtp;
 
     w.show();
-
-
 
 
     return a.exec();

@@ -6,27 +6,34 @@ uint8_t Api::handler(shs::ByteCollector &bc) {
     shs::DTPdata info;
 
     parser.parseDTP(&bc, info);
+    qDebug() << info.from << ' ' << info.apiID;
 
 
-    bc.readPtr++;
+    bc.readPtr += 3;
 
-    switch (*(bc.readPtr - 1)) {
-    using namespace shs::config::SmartServerAPI;
+    switch (info.apiID) {
 
-    case therm: {
+    case -2: {
         double value{};
-        bc.get(value, 4);
+        int val;
+        bc.get(val, 2);
+        value = getThermTemp(val);
+        qDebug() << "Temp: " << val << ' ' << value;
         m_w->ThermBuf.push_back(value);
     }
         break;
-    case photo:
-    {
-        double value{};
-        bc.get(value, 4);
-        m_w->PhotoBuf.push_back(value);
-    }
-        break;
+//    case photo:
+//    {
+//        double value{};
+//        bc.get(value, 4);
+//        m_w->PhotoBuf.push_back(value);
+//    }
+//        break;
     }
 
     return 0;
 }
+
+
+
+

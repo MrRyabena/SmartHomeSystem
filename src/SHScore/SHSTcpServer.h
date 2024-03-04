@@ -50,7 +50,7 @@ public:
 
   uint8_t sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
                      const shs::settings::shs_ID_t api_ID);
-  // void sendRAW(uint8_t *buf, uint8_t size);
+  uint8_t sendRAW(uint8_t *buf, const uint8_t size, const shs::settings::shs_ModuleID_t to);
 
 private:
   shs::DTP *dtp{};

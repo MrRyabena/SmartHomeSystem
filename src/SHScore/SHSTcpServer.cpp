@@ -68,3 +68,16 @@ uint8_t shs::TcpServer::sendPacket(shs::ByteCollector *bc, const shs::settings::
     }
     return 1;
 }
+
+uint8_t shs::TcpServer::sendRAW(uint8_t *buf, const uint8_t size, const shs::settings::shs_ModuleID_t to)
+{
+    for (uint8_t i = 0; i < maxClients; i++)
+    {
+        if (clients[i].remoteIP()[3] == to)
+        {
+            clients[i].write(buf, size);
+            return 0;
+        }
+    }
+    return 1;
+}

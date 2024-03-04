@@ -20,7 +20,7 @@ namespace shs::config
     {
         enum APIID : shs::settings::shs_ID_t
         {
-            
+            lBulb_apiID = -11,
         };
     };
 

@@ -19,6 +19,9 @@
 - New core architecture.
 - New library.
 - The documentation has been completed.
+- The SHScore has not been tested.
+- The demo version is incomplete.
+- Tests and additions are expected.
 
 </details>
 

@@ -1,5 +1,3 @@
-![image](https://github.com/MrRyabena/SmartHomeSystem/assets/147092300/b8834836-5968-4cd7-a55f-643d02216913)![logo](SHSlogos/com.png)
-
 ---
 <a id="versions"></a>
 

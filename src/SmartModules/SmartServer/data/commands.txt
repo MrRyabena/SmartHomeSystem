@@ -1,9 +1,0 @@
-help|start
-braR
-braL
-bra
-colorWheel
-fire
-off
-RGBoff
-sleepMode|sleep|sm

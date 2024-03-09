@@ -1,4 +1,4 @@
-![logo](SHSlogos/com.png)
+![image](https://github.com/MrRyabena/SmartHomeSystem/assets/147092300/b8834836-5968-4cd7-a55f-643d02216913)![logo](SHSlogos/com.png)
 
 ---
 <a id="versions"></a>
@@ -14,8 +14,9 @@
 </details>
 
 <details>
-<summary>v1.0.0 — release.</summary>
+<summary>```v1.0.0``` — **[current]** release.</summary>
 
+- [Release](https://github.com/MrRyabena/SmartHomeSystem/releases/tag/v1.x.x)
 - New core architecture.
 - New library.
 - The documentation has been completed.

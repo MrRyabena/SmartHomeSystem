@@ -14,7 +14,7 @@
 </details>
 
 <details>
-<summary>```v1.0.0``` — **[current]** release.</summary>
+<summary>v1.0.0 — [current] release.</summary>
 
 - [Release](https://github.com/MrRyabena/SmartHomeSystem/releases/tag/v1.x.x)
 - New core architecture.

@@ -42,6 +42,9 @@ wrapper.sh
 debug_toolchain.cmake
 CMakeUserPresets.json
 
+# Cmake
+build/
+
 # qtcreator generated files
 
 build-DemoApp-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/

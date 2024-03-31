@@ -1,11 +1,13 @@
 #pragma once
 
 /*
-  Last update: v1.0.0
+  Last update: v1.1.0
   Versions:
     v0.1.0 — created.
     v0.2.0 — edited and optimized.
     v1.0.0 — release.
+    v1.1.0 — added a default value for size in the constructor.
+           — fixed a critical error in functions get() and reserve().
 */
 
 /*
@@ -26,7 +28,7 @@ public:
     uint8_t *ptr{};     // current position
     uint8_t *readPtr{}; // read position
 
-    explicit ByteCollector(uint8_t size) : buf(new uint8_t[size]{}),
+    explicit ByteCollector(uint8_t size = 0) : buf(new uint8_t[size]{}),
                                            ptr(buf), readPtr(buf),
                                            _size(size)
     {
@@ -80,7 +82,7 @@ public:
     {
         uint8_t *_ptr = (uint8_t *)&var;
         for (uint8_t i = 0; i < bytes; i++)
-            *_ptr++ = *readPtr++;
+            *(_ptr++) = *(readPtr++);
     }
 
     // reserve bytes for more size
@@ -98,6 +100,7 @@ public:
         _ptrBefore = n_buf + (_ptrBefore - buf);
         delete[] buf;
         buf = n_buf;
+        readPtr = buf;
     }
 
     void reserveBefore(uint8_t size)

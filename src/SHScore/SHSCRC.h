@@ -9,10 +9,11 @@
 */
 
 /*
-  Last update: v1.0.0
+  Last update: v1.1.0
   Versions:
     v0.2.0 — created.
     v1.0.0 — release.
+    v1.1.0 — now the function crcBuf(..) writes the result to a variable crc.
 */
 
 namespace shs

@@ -12,57 +12,57 @@ void shs::tests::MultiDataTools::randomFill(shs::tests::MultiData &data)
 
 void shs::tests::MultiDataTools::print(shs::tests::MultiData &data)
 {
-    dsep();
-    dout("u8v:  ");
-    doutln(static_cast<int>(data.u8v));
+    out.sep();
+    out.pn("u8v:  ");
+    out.pvln(static_cast<int>(data.u8v));
 
-    dout("i8v:  ");
-    doutln(static_cast<int>(data.i8v));
+    out.pn("i8v:  ");
+    out.pvln(static_cast<int>(data.i8v));
 
-    dout("u16v: ");
-    doutln(data.u16v);
+    out.pn("u16v: ");
+    out.pvln(data.u16v);
 
-    dout("i16v: ");
-    doutln(data.i16v);
+    out.pn("i16v: ");
+    out.pvln(data.i16v);
 
-    dout("u32v: ");
-    doutln(data.u32v);
+    out.pn("u32v: ");
+    out.pvln(data.u32v);
 
-    dout("i32v: ");
-    doutln(data.i32v);
+    out.pn("i32v: ");
+    out.pvln(data.i32v);
 
-    dout("u64v: ");
-    doutln(data.u64v);
+    out.pn("u64v: ");
+    out.pvln(data.u64v);
 
-    dout("i64v: ");
-    doutln(data.i64v);
+    out.pn("i64v: ");
+    out.pvln(data.i64v);
 
-    // dout("fv:   ");
-    // doutln(data.fv);
+    out.pn("fv:   ");
+    out.pvln(data.fv);
 
-    // dout("dv:   ");
-    // doutln(data.dv);
+    out.pn("dv:   ");
+    out.pvln(data.dv);
 
-    dout("cstr: ");
+    out.pn("cstr: ");
     for (auto i = 0; i < 12; i++)
     {
-        dout(static_cast<int>(data.cstr[i]));
-        dout(' ');
+        out.pv(static_cast<int>(data.cstr[i]));
+        out.pv(' ');
     }
-    doutln("");
-    dsep();
+    out.pvln("");
+    out.sep();
 }
 
 void shs::tests::MultiDataTools::printBytesArray(shs::tests::MultiData &data)
 {
-    dout("size: ");
-    doutln(sizeof(data));
-    doutln("{ ");
+    out.pn("size: ");
+    out.pnln(sizeof(data));
+    out.psln("{ ");
     uint8_t *ptr = (uint8_t*)(&data);
     for (auto i = 0; i < sizeof(data); i++)
     {
-        dout((int)*(ptr++));
-        doutln(',');
+        out.pv((int)*(ptr++));
+        out.pvln(',');
     }
-    doutln("};");
+    out.psln("};");
 }

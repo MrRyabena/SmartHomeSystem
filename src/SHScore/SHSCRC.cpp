@@ -6,8 +6,8 @@
   ----------------------------------------
 */
 
-inline void shs::CRC8::add(const uint8_t value) { update(crc, value); }
-inline void shs::CRC8::clear() { crc = shs::CRC8_beg; }
+void shs::CRC8::add(const uint8_t value) { update(crc, value); }
+void shs::CRC8::clear() { crc = shs::CRC8_beg; }
 
 void shs::CRC8::update(uint8_t &crc, uint8_t data)
 {
@@ -54,8 +54,8 @@ uint8_t shs::CRC8::crcBuf(const uint8_t *ptr, uint16_t size)
   ----------------------------------------
 */
 
-inline void shs::CRC16::add(const uint8_t value) { update(crc, value); }
-inline void shs::CRC16::clear() { crc = shs::CRC16_beg; }
+void shs::CRC16::add(const uint8_t value) { update(crc, value); }
+void shs::CRC16::clear() { crc = shs::CRC16_beg; }
 
 void shs::CRC16::update(uint16_t &crc, uint8_t data)
 {
@@ -83,8 +83,8 @@ uint16_t shs::CRC16::crcBuf(const uint8_t *ptr, uint16_t size)
   ----------------------------------------
 */
 
-inline void shs::CRC32::add(const uint8_t value) { update(crc, value); }
-inline void shs::CRC32::clear() { crc = shs::CRC32_beg; }
+void shs::CRC32::add(const uint8_t value) { update(crc, value); }
+void shs::CRC32::clear() { crc = shs::CRC32_beg; }
 
 void shs::CRC32::update(uint32_t &crc, uint8_t data)
 {

@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 3.22)
+
+project(SHSByteCollectorTests VERSION 24.02.06 LANGUAGES CXX C)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_library (SHSByteCollector STATIC 
+  ../../../SHScore/SHSByteCollector.h
+  ../../../SHScore/SHSdebug.h
+  ../../../SHScore/SHSdtp.cpp
+  ../../../SHScore/SHSdtp.h
+)
+
+add_library(SHSMultiData
+  ../../utils/SHSMultiData.h
+  ../../utils/SHSMultiDataTools.cpp
+  ../../utils/SHSMultiDataTools.h
+)
+
+add_library(SHSByteCollectorTest 
+  ../../source/SHSByteCollectorTest.cpp
+  ../../source/SHSByteCollectorTest.h
+  ../../source/SHSprinter.h
+)
+
+add_executable(SHSByteCollectorTests
+SHSByteCollectorTests.cpp
+)
+
+target_link_libraries(SHSByteCollectorTest 
+  PRIVATE SHSByteCollector
+  PRIVATE SHSMultiData
+)
+
+target_link_libraries(SHSByteCollectorTests 
+  PRIVATE SHSByteCollectorTest
+)
+
+target_include_directories(SHSByteCollectorTests PUBLIC 
+  ../../../SHScore/
+  ../../utils/
+)

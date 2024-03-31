@@ -33,7 +33,7 @@ public:
   size_t quantity;
   shs::tests::Printer out;
 
-  RandomTest(size_t setQuantity) : quantity(setQuantity) {}
+  RandomTest(size_t setQuantity = 100000) : quantity(setQuantity) {}
 
   template <typename T>
   unsigned int printRandomSequence(const T min, const T max);
@@ -74,7 +74,7 @@ template <typename T>
 [[nodiscard]] unsigned int shs::tests::RandomTest::correctRange(const T min, const T max)
 {
   out.sep();
-  out.pmln("Starting the test \"RandomTest::correctRange\".\n");
+  out.pmln("Starting the test \"RandomTest::correctRange\".");
   out.psln("Starting path 1.");
   shs::Random<T> rnd1(min, max);
   rnd1.autoSeed();
@@ -104,7 +104,7 @@ template <typename T>
 
   out.psln("Path 3 has completed.\n");
   out.pmln("Test RandomTest::correctRange has completed.");
-
+  out.sep();
   return 0;
 }
 

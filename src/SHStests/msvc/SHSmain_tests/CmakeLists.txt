@@ -1,0 +1,44 @@
+cmake_minimum_required(VERSION 3.22)
+
+project(SHSmain_tests VERSION 24.02.06 LANGUAGES CXX C)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+add_library (SHScore STATIC 
+  ../../../SHScore/SHSByteCollector.h
+  ../../../SHScore/SHSdebug.h
+  ../../../SHScore/SHSCRC.cpp
+  ../../../SHScore/SHSCRC.h
+  ../../../SHScore/SHSRandom.h
+)
+
+add_library(SHSMultiData
+  ../../utils/SHSMultiData.h
+  ../../utils/SHSMultiDataTools.cpp
+  ../../utils/SHSMultiDataTools.h
+)
+
+add_library(SHStests
+  ../../source/data.h
+  ../../source/SHSByteCollectorTest.cpp
+  ../../source/SHSByteCollectorTest.h
+  ../../source/SHSCRCTest.cpp
+  ../../source/SHSCRCTest.h
+  ../../source/SHSprinter.h
+  ../../source/SHSRandomTest.h
+)
+
+add_executable(SHSmain_tests
+  SHSmain_tests.cpp
+)
+
+target_link_libraries(SHStests
+  PRIVATE SHScore
+  PRIVATE SHSMultiData
+)
+
+target_link_libraries(SHSmain_tests
+  PRIVATE SHStests
+)
+

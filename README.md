@@ -1,3 +1,4 @@
+
 ---
 <a id="versions"></a>
 
@@ -12,15 +13,29 @@
 </details>
 
 <details>
-<summary>v1.0.0 — [current] release.</summary>
+<summary>v1.0.0 — release.</summary>
 
-- [Release](https://github.com/MrRyabena/SmartHomeSystem/releases/tag/v1.x.x)
+- [See release](https://github.com/MrRyabena/SmartHomeSystem/releases/tag/v1.x.x)
 - New core architecture.
 - New library.
 - The documentation has been completed.
 - The SHScore has not been tested.
 - The demo version is incomplete.
 - Tests and additions are expected.
+
+</details>
+
+<details>
+<summary>v1.1.0 — [current] added tests.</summary>
+
+- Tests have been written and conducted, created the library SHStests.
+- A random number generator (shs::Random) has been created.
+- Development of a project assembly system.
+- shs::ByteCollecor: fixed a critical error in functions get() and reserve().
+- shs::CRC: now the function crcBuf(..) writes the result to a variable crc.
+- The synchronizer has been replaced with a make.sh.
+
+![SHScore-changes](/schemes/SHScore-changes.png)
 
 </details>
 

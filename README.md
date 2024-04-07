@@ -1,3 +1,4 @@
+![](/SHSlogos/com.png)
 
 ---
 <a id="versions"></a>

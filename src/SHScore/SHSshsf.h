@@ -25,7 +25,12 @@
     - 0x06 - 1B (CRCdegree): Power of 2 that determines the block size for CRC.
     - 0x07 - 4B (CRC): Header CRC checksum.
 
-  2. Information (INFO)
+  2. Index (INDEX)
+    - 0x0B - 2B - INFO_begin
+    - 0x0D - 2B - INFO_comment_begin
+    - 0xxx - 2B - DATA_begin
+
+  2. Metadata (METADATA)
     - 0x0B - 2B (size): Size of the information block.
     - 0x0D - 8B (reserved): Reserved.
     - 0x15 - 2B (comment size): Size of the comment.
@@ -65,6 +70,7 @@
 #include <string.h>
 #include <stdint.h>
 
+#define CURRENT_SHSF_VERSION 1
 
 namespace shs
 {
@@ -76,6 +82,7 @@ namespace shs
     struct SHSF_INFO_member;
   }
   class SHSF;
+  class SHSFmanager;
 }
 
 enum shs::fs::SHSF_type : uint8_t
@@ -104,8 +111,9 @@ enum shs::fs::SHSF_INFO_member_type : uint8_t
 
 struct shs::fs::SHSF_HEADER
 {
-  uint8_t header_shsf[4]{ 's', 'h', 's', 'f' };
-  uint8_t version = 1;
+  static constexpr uint8_t size = 7;
+  static constexpr uint8_t header_shsf[4]{ 's', 'h', 's', 'f' };
+  uint8_t version = CURRENT_SHSF_VERSION;
   shs::fs::SHSF_type type{};
   uint8_t CRCdegree{};
 };
@@ -114,13 +122,14 @@ struct shs::fs::SHSF_INFO_member
 {
   ~SHSF_INFO_member();
 
-  void setName(const char* name, uint8_t size);
-  void setNote(const char* note, uint8_t size);
+  shs::fs::SHSF_INFO_member& setName(const char* name, uint8_t size);
+  shs::fs::SHSF_INFO_member& setNote(const char* note, uint8_t size);
+  shs::fs::SHSF_INFO_member& setType(shs::fs::SHSF_INFO_member_type type) { member_type = type; return *this; }
 
   const char* getName() const { return m_name; }
   const char* getNote() const { return m_note; }
 
-  void clear();
+  shs::fs::SHSF_INFO_member& clear();
 
   uint8_t member_size{};
   shs::fs::SHSF_INFO_member_type member_type{};
@@ -130,13 +139,14 @@ private:
   friend class shs::SHSF;
 };
 
+
+
 class shs::SHSF : public shs::File
 {
 public:
-  shs::fs::SHSF_HEADER header_data;
-  // shs::File* file;
-  uint32_t file_status{};
+  int32_t file_status{};
   static constexpr uint8_t block_constant = 0xBA;
+  shs::fs::SHSF_HEADER header_data;
 
 public:
   SHSF(shs::fs::File_basic_t* file = nullptr);
@@ -144,32 +154,46 @@ public:
 
   ~SHSF() = default;
 
+  // utils
+  [[nodiscard]] bool hasData();
+  [[nodiscard]] int32_t getFree();
+  [[nodiscard]] size_t posBlockBeg() const;
+  [[nodiscard]] size_t posBlockCRC();
+  [[nodiscard]] size_t posPrevBlock() const;
+  [[nodiscard]] size_t posNextBlock() const;
+
+  [[nodiscard]] size_t blockNumber();
+
+  uint8_t checkBlock();
+  uint8_t checkFile();
+
+  uint32_t calculateCRC(const size_t from, const size_t size);
+  uint32_t updateCRC(const size_t from, const size_t size);
+  uint32_t writeBlockCRC();
+  uint32_t calculateBlockCRC();
+
+
   // header
-  void writeHeader();
-  void readHeader();
+  shs::SHSF& writeHeader();
+  shs::SHSF& readHeader();
   bool checkHeader();
 
   // info
   uint16_t writeInfoSize();
   uint16_t readInfoSize();
-  void writeInfoComment(const char* buf, uint16_t size);
+  shs::SHSF& writeInfoComment(const char* buf, uint16_t size);
   uint16_t readInfoCommentSize();
   uint16_t readInfoComment(char* buf, const uint16_t comment_size);
   uint16_t readInfoComment(char*& buf);
-  void addInfoMember(shs::fs::SHSF_INFO_member& stc);
-  void getInfoMember(shs::fs::SHSF_INFO_member& stc);
+  shs::SHSF& addInfoMember(shs::fs::SHSF_INFO_member& stc);
+  bool getInfoMember(shs::fs::SHSF_INFO_member& stc);
 
   uint16_t seekToBeginning();
 
   size_t add(const uint8_t* buf, const size_t size);
   size_t get(uint8_t* buf, const size_t size);
-  uint8_t checkBlock();
-  uint8_t checkFile();
 
-  uint32_t calculateCRC(const size_t from, const size_t size);
 
-  uint32_t updateCRC(const size_t from, const size_t size);
-  [[nodiscard]] int32_t getFree();
 
 
 protected:
@@ -181,4 +205,30 @@ protected:
   using File::insert;
   using File::shiftLeft;
   using File::shiftRight;
+};
+
+class shs::SHSFmanager
+{
+public:
+  shs::SHSF* file;
+  uint32_t flags{};
+  bool newFile{};
+
+  enum Errors : uint32_t;
+
+  explicit SHSFmanager(shs::SHSF* ptr);
+
+  // header
+  shs::SHSFmanager& h_setHeader(const shs::fs::SHSF_HEADER& header_data);
+  shs::SHSFmanager& h_setVersion(const uint8_t version = CURRENT_SHSF_VERSION);
+  shs::SHSFmanager& h_setType(const shs::fs::SHSF_type type);
+  shs::SHSFmanager& h_setCRC(const uint8_t degree);
+
+  shs::SHSFmanager& h_getHeader(shs::fs::SHSF_HEADER& header_data);
+  const uint8_t            h_getVersion();
+  const shs::fs::SHSF_type h_getType();
+  const uint8_t            h_getCRC();
+
+
+
 };

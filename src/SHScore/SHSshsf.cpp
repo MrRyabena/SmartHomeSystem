@@ -7,24 +7,30 @@ shs::fs::SHSF_INFO_member::~SHSF_INFO_member()
     clear();
 }
 
-void shs::fs::SHSF_INFO_member::clear()
+shs::fs::SHSF_INFO_member& shs::fs::SHSF_INFO_member::clear()
 {
     if (m_name) delete [] m_name;
     if (m_note) delete [] m_note;
+
+    return *this;
 }
 
-void shs::fs::SHSF_INFO_member::setName(const char* name, uint8_t size)
+shs::fs::SHSF_INFO_member& shs::fs::SHSF_INFO_member::setName(const char* name, uint8_t size)
 {
     if (m_name) delete [] m_name;
     m_name = new char(size);
     strcpy(m_name, name);
+
+    return *this;
 }
 
-void shs::fs::SHSF_INFO_member::setNote(const char* note, uint8_t size)
+shs::fs::SHSF_INFO_member& shs::fs::SHSF_INFO_member::setNote(const char* note, uint8_t size)
 {
     if (m_note) delete [] m_note;
     m_note = new char(size);
     strcpy(m_note, note);
+
+    return *this;
 }
 
 // ----------------------------------------
@@ -39,22 +45,38 @@ shs::SHSF& shs::SHSF::operator=(shs::fs::File_basic_t* file)
     return *this;
 }
 
+
+// ----------------------------------------
+// Bools
+// ----------------------------------------
+
+bool shs::SHSF::hasData()
+{
+    if (size() < shs::fs::SHSF_HEADER::size) return false;
+
+    return true;
+}
+
 // ----------------------------------------
 // HEADER
 // ----------------------------------------
-void shs::SHSF::writeHeader()
+shs::SHSF& shs::SHSF::writeHeader()
 {
     seek(0);
     write((uint8_t*) &header_data, sizeof(header_data));
     m_crc.clear();
     m_crc.crcBuf((uint8_t*) &header_data, sizeof(header_data));
     write((uint8_t*) &m_crc.crc, sizeof(m_crc.crc));
+
+    return *this;
 }
 
-void shs::SHSF::readHeader()
+shs::SHSF& shs::SHSF::readHeader()
 {
     seek(0);
     read((uint8_t*) &header_data, sizeof(header_data));
+
+    return *this;
 }
 
 bool shs::SHSF::checkHeader()
@@ -107,11 +129,13 @@ uint16_t shs::SHSF::readInfoSize()
     return info_size;
 }
 
-void shs::SHSF::writeInfoComment(const char* buf, uint16_t size)
+shs::SHSF& shs::SHSF::writeInfoComment(const char* buf, uint16_t size)
 {
     seek(sizeof(header_data) + 4 + 2 + 8);
     write((uint8_t*) &size, 2);
     write((uint8_t*) buf, size);
+
+    return *this;
 }
 
 uint16_t shs::SHSF::readInfoCommentSize()
@@ -137,7 +161,7 @@ uint16_t shs::SHSF::readInfoComment(char*& buf)
     return readInfoComment(buf, comment_size);
 }
 
-void shs::SHSF::addInfoMember(shs::fs::SHSF_INFO_member& stc)
+shs::SHSF& shs::SHSF::addInfoMember(shs::fs::SHSF_INFO_member& stc)
 {
     uint8_t name_size = strlen(stc.m_name);
     uint8_t note_size = strlen(stc.m_note);
@@ -152,9 +176,11 @@ void shs::SHSF::addInfoMember(shs::fs::SHSF_INFO_member& stc)
 
     if (!stc.m_note) write('\0');
     else write((uint8_t*) stc.m_note, note_size);
+
+    return *this;
 }
 
-void shs::SHSF::getInfoMember(shs::fs::SHSF_INFO_member& stc)
+bool shs::SHSF::getInfoMember(shs::fs::SHSF_INFO_member& stc)
 {
     size_t pos{};
     uint8_t com_size = read();
@@ -176,6 +202,9 @@ void shs::SHSF::getInfoMember(shs::fs::SHSF_INFO_member& stc)
     while (read() != '\0') str_size++;
     str_size++;
     read((uint8_t*) stc.m_note, str_size);
+
+// !!!!!!!!!!!!!!!!!!!!!
+    return true;
 }
 
 // ----------------------------------------
@@ -202,25 +231,57 @@ size_t shs::SHSF::add(const uint8_t* buf, const size_t size)
     for (size_t i = 0; i < size;)
     {
         free = getFree();
-        //std::cout << position() << ' ' << free << ' ';// << std::endl;
+        if (free <= 0) seek(posNextBlock());
+
         if (free <= size - i)
         {
             //std::cout << "if" << std::endl;
             written_size += write(&buf[i], free);
             i += free;
            // std::cout << (position() - ((uint32_t) 1 << header_data.CRCdegree)) << ' ' << (((uint32_t) 1 << header_data.CRCdegree) - 6) << ' ' << position() << std::endl;
-            calculateCRC(position() - ((uint32_t) 1 << header_data.CRCdegree) + sizeof(m_crc.crc) + 2, ((uint32_t) 1 << header_data.CRCdegree) - 6);
+            //calculateCRC(position() - ((uint32_t) 1 << header_data.CRCdegree) + sizeof(m_crc.crc) + 2, ((uint32_t) 1 << header_data.CRCdegree) - 6);
            // std::cout << position() << std::endl;
-            write((uint8_t*) &block_constant, 1);
-            write((uint8_t*) &m_crc.crc, sizeof(m_crc.crc));
-            write((uint8_t*) &block_constant, 1);
+
+            writeBlockCRC();
+             // write((uint8_t*) &block_constant, 1);
+             // write((uint8_t*) &m_crc.crc, sizeof(m_crc.crc));
+             // write((uint8_t*) &block_constant, 1);
 
             continue;
         }
         written_size += write(&buf[i], size - i);
+        writeBlockCRC();
+
         break;
     }
     return written_size;
+}
+
+size_t shs::SHSF::posBlockBeg() const
+{
+    return ((position() >> header_data.CRCdegree) << header_data.CRCdegree);
+}
+
+size_t shs::SHSF::posBlockCRC()
+{
+    return ((posBlockBeg() + (1 << header_data.CRCdegree) - 6) < size() ? (posBlockBeg() + (1 << header_data.CRCdegree) - 6) : size());
+}
+
+uint32_t shs::SHSF::calculateBlockCRC()
+{
+    return calculateCRC(posBlockBeg(), posBlockCRC() - posBlockBeg());
+    //(posBlockBeg() + (1 << header_data.CRCdegree) - 6) < size() ? ((1 << header_data.CRCdegree) - 6) : size() - posBlockBeg());
+}
+
+uint32_t shs::SHSF::writeBlockCRC()
+{
+    seek(posBlockCRC());
+    write((uint8_t*) &block_constant, 1);
+    calculateBlockCRC();
+    write((uint8_t*) &m_crc.crc, sizeof(m_crc.crc));
+    write((uint8_t*) &block_constant, 1);
+
+    return m_crc.crc;
 }
 
 size_t shs::SHSF::get(uint8_t* buf, const size_t size)
@@ -296,3 +357,55 @@ shs::SHSF& shs::SHSF::operator=(shs::SHSF& other)
 //     return *this;
 // }
 #endif
+
+
+// ----------------------------------------
+// SHSFmanager
+// Constructor
+// ----------------------------------------
+
+shs::SHSFmanager::SHSFmanager(shs::SHSF* ptr) : file(ptr), newFile(!ptr->hasData())
+{
+    file->readHeader();
+}
+
+// ----------------------------------------
+// HEADER
+// ----------------------------------------
+
+shs::SHSFmanager& shs::SHSFmanager::h_setHeader(const shs::fs::SHSF_HEADER& header_data)
+{
+    if (header_data.CRCdegree < 5) { flags |= Errors::h_invalid_CRCdegree; return *this; }
+    if (!newFile && header_data.CRCdegree != file->header_data.CRCdegree)
+    {
+        flags |= Errors::h_not_match_CRCdegree;
+        return *this;
+    }
+    if (!newFile && header_data.version != file->header_data.version)
+    {
+        flags |= Errors::h_not_match_version;
+        return *this;
+    }
+
+    file->header_data = header_data;
+    file->writeHeader();
+    return *this;
+}
+
+shs::SHSFmanager& h_setVersion(const uint8_t version = CURRENT_SHSF_VERSION);
+shs::SHSFmanager& h_setType(const shs::fs::SHSF_type type);
+shs::SHSFmanager& h_setCRC(const uint8_t degree);
+
+shs::SHSFmanager& h_getHeader(shs::fs::SHSF_HEADER& header_data);
+const uint8_t            h_getVersion();
+const shs::fs::SHSF_type h_getType();
+const uint8_t            h_getCRC();
+
+
+enum shs::SHSFmanager::Errors : uint32_t
+{
+    h_invalid_CRCdegree = 0b1,
+    h_not_match_CRCdegree = 0b10,
+    h_not_match_version = 0b100,
+
+};

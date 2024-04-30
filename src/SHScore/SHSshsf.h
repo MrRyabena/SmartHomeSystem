@@ -124,7 +124,8 @@ struct shs::fs::SHSF_INFO_member
 
   shs::fs::SHSF_INFO_member& setName(const char* name, uint8_t size);
   shs::fs::SHSF_INFO_member& setNote(const char* note, uint8_t size);
-  shs::fs::SHSF_INFO_member& setType(shs::fs::SHSF_INFO_member_type type) { member_type = type; return *this; }
+  shs::fs::SHSF_INFO_member& setType(shs::fs::SHSF_INFO_member_type type) \
+  { member_type = type; return *this; }
 
   const char* getName() const { return m_name; }
   const char* getNote() const { return m_note; }
@@ -157,20 +158,33 @@ public:
   // utils
   [[nodiscard]] bool hasData();
   [[nodiscard]] int32_t getFree();
-  [[nodiscard]] size_t posBlockBeg() const;
-  [[nodiscard]] size_t posBlockCRC();
-  [[nodiscard]] size_t posPrevBlock() const;
-  [[nodiscard]] size_t posNextBlock() const;
 
-  [[nodiscard]] size_t blockNumber();
+  [[nodiscard]] size_t posBlockBeg() const \
+  { return ((position() >> header_data.CRCdegree) << header_data.CRCdegree); };
 
-  uint8_t checkBlock();
-  uint8_t checkFile();
+  [[nodiscard]] size_t posBlockCRC() \
+  { return ((posBlockBeg() + ((size_t) 1 << header_data.CRCdegree) - 6) \
+   < size() ? (posBlockBeg() + (1 << header_data.CRCdegree) - 6) : size()); }
+
+  [[nodiscard]] size_t posPrevBlock() const \
+  { return (posBlockBeg() - ((size_t) 1 << header_data.CRCdegree)); }
+
+  [[nodiscard]] size_t posNextBlock() const \
+  { return (posBlockBeg() + ((size_t) 1 << header_data.CRCdegree)); }
+
+  [[nodiscard]] size_t blockNumber() const \
+  { return (position() >> header_data.CRCdegree); }
+
+  [[nodiscard]] uint8_t checkBlock();
+  [[nodiscard]] uint8_t checkFile();
 
   uint32_t calculateCRC(const size_t from, const size_t size);
   uint32_t updateCRC(const size_t from, const size_t size);
+
   uint32_t writeBlockCRC();
-  uint32_t calculateBlockCRC();
+
+  uint32_t calculateBlockCRC() \
+  { return calculateCRC(posBlockBeg(), posBlockCRC() - posBlockBeg()); }
 
 
   // header
@@ -192,9 +206,6 @@ public:
 
   size_t add(const uint8_t* buf, const size_t size);
   size_t get(uint8_t* buf, const size_t size);
-
-
-
 
 protected:
   shs::CRC32 m_crc;

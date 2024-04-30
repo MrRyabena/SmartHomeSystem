@@ -235,18 +235,9 @@ size_t shs::SHSF::add(const uint8_t* buf, const size_t size)
 
         if (free <= size - i)
         {
-            //std::cout << "if" << std::endl;
             written_size += write(&buf[i], free);
             i += free;
-           // std::cout << (position() - ((uint32_t) 1 << header_data.CRCdegree)) << ' ' << (((uint32_t) 1 << header_data.CRCdegree) - 6) << ' ' << position() << std::endl;
-            //calculateCRC(position() - ((uint32_t) 1 << header_data.CRCdegree) + sizeof(m_crc.crc) + 2, ((uint32_t) 1 << header_data.CRCdegree) - 6);
-           // std::cout << position() << std::endl;
-
             writeBlockCRC();
-             // write((uint8_t*) &block_constant, 1);
-             // write((uint8_t*) &m_crc.crc, sizeof(m_crc.crc));
-             // write((uint8_t*) &block_constant, 1);
-
             continue;
         }
         written_size += write(&buf[i], size - i);
@@ -255,22 +246,6 @@ size_t shs::SHSF::add(const uint8_t* buf, const size_t size)
         break;
     }
     return written_size;
-}
-
-size_t shs::SHSF::posBlockBeg() const
-{
-    return ((position() >> header_data.CRCdegree) << header_data.CRCdegree);
-}
-
-size_t shs::SHSF::posBlockCRC()
-{
-    return ((posBlockBeg() + (1 << header_data.CRCdegree) - 6) < size() ? (posBlockBeg() + (1 << header_data.CRCdegree) - 6) : size());
-}
-
-uint32_t shs::SHSF::calculateBlockCRC()
-{
-    return calculateCRC(posBlockBeg(), posBlockCRC() - posBlockBeg());
-    //(posBlockBeg() + (1 << header_data.CRCdegree) - 6) < size() ? ((1 << header_data.CRCdegree) - 6) : size() - posBlockBeg());
 }
 
 uint32_t shs::SHSF::writeBlockCRC()

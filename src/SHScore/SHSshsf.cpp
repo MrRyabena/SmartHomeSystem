@@ -218,13 +218,15 @@ size_t shs::SHSF::add(const uint8_t* buf, const size_t size)
 {
     if (!header_data.CRCdegree)
         return write(buf, size);
+    
+    if (position() == size()) seek(porition() - 6);
 
     int32_t free{};
     size_t written_size{};
     for (size_t i = 0; i < size;)
     {
         free = getFree();
-        if (free <= 0) seek(posNextBlock());
+        if (free < 0) seek(posNextBlock());
 
         if (free <= size - i)
         {
@@ -235,9 +237,9 @@ size_t shs::SHSF::add(const uint8_t* buf, const size_t size)
         }
         written_size += write(&buf[i], size - i);
         writeBlockCRC();
-
         break;
     }
+
     return written_size;
 }
 
@@ -254,8 +256,7 @@ uint32_t shs::SHSF::writeBlockCRC()
 
 size_t shs::SHSF::get(uint8_t* buf, const size_t size)
 {
-    if (!header_data.CRCdegree)
-        return read(buf, size);
+    if (!header_data.CRCdegree) return read(buf, size);
 
     size_t free{};
     size_t read_size{};
@@ -263,6 +264,7 @@ size_t shs::SHSF::get(uint8_t* buf, const size_t size)
     for (size_t i = 0; i < size;)
     {
         free = getFree();
+        if (free < 0) seek(posNextBlock());
         if (free <= size - i)
         {
             read_size += read(&buf[i], free);
@@ -273,14 +275,23 @@ size_t shs::SHSF::get(uint8_t* buf, const size_t size)
         read_size += read(&buf[i], size - i);
         break;
     }
+
     return read_size;
 }
 
-uint8_t shs::SHSF::checkBlock()
+int8_t shs::SHSF::checkBlock()
 {
-    return 0;
-    seek(position() - (((uint32_t) 1 << header_data.CRCdegree) - 1) + getFree());
+    uint32_t crc_data = calculateBlockCRC();
+    uint32_t crc_read{};
 
+    seek(posBlockCRC);
+    if (read() != block_constant) return -1;
+    read((uint8_t*)&crc_read, sizeof(crc_read));
+    if (read() != block_constant) return -2;
+    if (crc_read != crc_data) return -3;
+
+    return 1;    
+    
 }
 
 
@@ -293,36 +304,6 @@ uint32_t shs::SHSF::calculateCRC(const size_t from, const size_t size)
         m_crc.add(read());
     return m_crc.crc;
 }
-
-// shs::File::operator bool()
-// {
-//     return fb != nullptr && fb->operator bool();
-// }
-#ifdef ARDUINO
-shs::SHSF& shs::SHSF::operator=(shs::SHSF& other)
-{
-    if (this == &other)
-        return *this;
-    if (fb)
-        fb->close();
-
-    fb = other.fb;
-
-
-
-
-    return *this;
-}
-#else
-
-// shs::SHSF& shs::SHSF::operator=(const shs::FileCreateData& data)
-// {
-//     if (fstr) fstr.close();
-//     fstr.open(data.path, m_createOpenMode(data.mode, data.create));
-//     fb = &fstr;
-//     return *this;
-// }
-#endif
 
 
 // ----------------------------------------

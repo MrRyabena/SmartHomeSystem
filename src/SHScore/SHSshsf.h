@@ -180,8 +180,8 @@ public:
   [[nodiscard]] size_t blockNumber() const \
   { return (position() >> header_data.CRCdegree); }
 
-  [[nodiscard]] uint8_t checkBlock();
-  [[nodiscard]] uint8_t checkFile();
+  [[nodiscard]] int8_t checkBlock();
+  [[nodiscard]] int8_t checkFile();
 
   uint32_t calculateCRC(const size_t from, const size_t size);
   uint32_t updateCRC(const size_t from, const size_t size);

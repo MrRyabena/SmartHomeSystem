@@ -156,8 +156,13 @@ public:
   ~SHSF() = default;
 
   // utils
-  [[nodiscard]] bool hasData();
-  [[nodiscard]] int32_t getFree();
+  [[nodiscard]] bool hasData() \
+  { return !(size() < shs::fs::SHSF_HEADER::size); }
+
+  // ( int( (1 << n) - (p & ((1 << n) - 1)) ) - 4 - 2)
+  [[nodiscard]] int32_t getFree() \
+  { return ((((int32_t) 1 << header_data.CRCdegree) - (position() & \
+    (((int32_t) 1 << header_data.CRCdegree) - 1))) - sizeof(m_crc.crc) - 2); }
 
   [[nodiscard]] size_t posBlockBeg() const \
   { return ((position() >> header_data.CRCdegree) << header_data.CRCdegree); };

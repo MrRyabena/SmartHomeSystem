@@ -36,26 +36,19 @@ shs::fs::SHSF_INFO_member& shs::fs::SHSF_INFO_member::setNote(const char* note, 
 // ----------------------------------------
 // CONSTRUCTORS 
 // ----------------------------------------
-shs::SHSF::SHSF(shs::fs::File_basic_t* file) : ::shs::File(file) {}
+shs::SHSF::SHSF(shs::fs::File_basic_t* file) : ::shs::File(file)
+{
+    readHeader();
+}
 
 shs::SHSF& shs::SHSF::operator=(shs::fs::File_basic_t* file)
 {
     if (fb) { fb->close(); delete fb; }
     fb = file;
+    readHeader();
     return *this;
 }
 
-
-// ----------------------------------------
-// Bools
-// ----------------------------------------
-
-bool shs::SHSF::hasData()
-{
-    if (size() < shs::fs::SHSF_HEADER::size) return false;
-
-    return true;
-}
 
 // ----------------------------------------
 // HEADER
@@ -290,8 +283,6 @@ uint8_t shs::SHSF::checkBlock()
 
 }
 
-// ( int( (1 << n) - (p & ((1 << n) - 1)) ) - 4 - 2)
-int32_t shs::SHSF::getFree() { return ((((int32_t) 1 << header_data.CRCdegree) - (position() & (((int32_t) 1 << header_data.CRCdegree) - 1))) - sizeof(m_crc.crc) - 2); }
 
 uint32_t shs::SHSF::calculateCRC(const size_t from, const size_t size)
 {
@@ -339,10 +330,7 @@ shs::SHSF& shs::SHSF::operator=(shs::SHSF& other)
 // Constructor
 // ----------------------------------------
 
-shs::SHSFmanager::SHSFmanager(shs::SHSF* ptr) : file(ptr), newFile(!ptr->hasData())
-{
-    file->readHeader();
-}
+shs::SHSFmanager::SHSFmanager(shs::SHSF* ptr) : file(ptr), newFile(!ptr->hasData()) {}
 
 // ----------------------------------------
 // HEADER

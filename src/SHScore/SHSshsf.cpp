@@ -1,41 +1,35 @@
 #include "SHSshsf.h"
 
-//
 
-shs::fs::SHSF_INFO_member::~SHSF_INFO_member()
+// --------------------------------------------------------------------------
+// TYPES
+// --------------------------------------------------------------------------
+enum shs::SHSF::Type : uint8_t
 {
-    clear();
-}
+    unknown,
+    structs_collector,
+    data_sequences,
+    text,
+};
 
-shs::fs::SHSF_INFO_member& shs::fs::SHSF_INFO_member::clear()
+struct shs::SHSF::HEADER
 {
-    if (m_name) delete [] m_name;
-    if (m_note) delete [] m_note;
+    static constexpr uint8_t size = 7;
+    static constexpr uint8_t header_shsf[4]{ 's', 'h', 's', 'f' };
+    uint8_t version = CURRENT_SHSF_VERSION;
+    shs::SHSF::Type type{};
+    uint8_t CRCdegree{};
+};
 
-    return *this;
-}
-
-shs::fs::SHSF_INFO_member& shs::fs::SHSF_INFO_member::setName(const char* name, uint8_t size)
+struct shs::SHSF::INDEX
 {
-    if (m_name) delete [] m_name;
-    m_name = new char(size);
-    strcpy(m_name, name);
+    static constexpr uint8_t posINFObeg = 0x0B;
+    static constexpr uint8_t posDATAbeg = 0x0D;
+};
 
-    return *this;
-}
-
-shs::fs::SHSF_INFO_member& shs::fs::SHSF_INFO_member::setNote(const char* note, uint8_t size)
-{
-    if (m_note) delete [] m_note;
-    m_note = new char(size);
-    strcpy(m_note, note);
-
-    return *this;
-}
-
-// ----------------------------------------
+// --------------------------------------------------------------------------
 // CONSTRUCTORS 
-// ----------------------------------------
+// --------------------------------------------------------------------------
 shs::SHSF::SHSF(shs::fs::File_basic_t* file) : ::shs::File(file)
 {
     readHeader();
@@ -49,16 +43,18 @@ shs::SHSF& shs::SHSF::operator=(shs::fs::File_basic_t* file)
     return *this;
 }
 
-
-// ----------------------------------------
+// --------------------------------------------------------------------------
 // HEADER
-// ----------------------------------------
+// --------------------------------------------------------------------------
 shs::SHSF& shs::SHSF::writeHeader()
 {
     seek(0);
-    write((uint8_t*) &header_data, sizeof(header_data));
+    write(header_data.header_shsf, 4);
+    write(&header_data, 3);
+
     m_crc.clear();
-    m_crc.crcBuf((uint8_t*) &header_data, sizeof(header_data));
+    m_crc.crcBuf(header_data.header_shsf, 4);
+    m_crc.crcBuf(&header_data.version, 3);
     write((uint8_t*) &m_crc.crc, sizeof(m_crc.crc));
 
     return *this;
@@ -66,8 +62,8 @@ shs::SHSF& shs::SHSF::writeHeader()
 
 shs::SHSF& shs::SHSF::readHeader()
 {
-    seek(0);
-    read((uint8_t*) &header_data, sizeof(header_data));
+    seek(4);
+    read((uint8_t*) &header_data, 3);
 
     return *this;
 }
@@ -76,57 +72,63 @@ bool shs::SHSF::checkHeader()
 {
     uint32_t crc_from_file{};
 
-    seek(sizeof(header_data));
+    seek(header_data.size);
     read((uint8_t*) &crc_from_file, 4);
     m_crc.clear();
-    m_crc.crcBuf((uint8_t*) &header_data, sizeof(header_data));
+    m_crc.crcBuf(header_data.header_shsf, 4);
+    m_crc.crcBuf(&header_data.version, 3);
+
     return m_crc.crc == crc_from_file;
 }
 
-// ----------------------------------------
+
+// --------------------------------------------------------------------------
 // INFO
-// ----------------------------------------
+// --------------------------------------------------------------------------
 
 uint16_t shs::SHSF::writeInfoSize()
 {
-    uint16_t info_size{};
-    seek(sizeof(header_data) + 4 + 2 + 8);
-    info_size = 10;
-    uint16_t value{};
-    read((uint8_t*) &value, 2);
-    info_size += value;
+    uint16_t info_size = 10;
+    seek(incrPos(shs::SHSF::INDEX::posINFObeg, 2 + 8));
+    uint16_t comment_size{};
+    get((uint8_t*) &comment_size, 2);
+    info_size += comment_size;
 
+    /*
     if (header_data.type == shs::fs::structs_collector)
     {
         seek(value + 1, shs::fs::Seek_Cur);
         uint8_t number_of_members = read();
-        while (number_of_members-- > 0)
+        while (number_of_members--)
         {
-            value = read();
+            get((uint8_t*) &value, 1);
             info_size += value;
-            seek(value, shs::fs::Seek_Cur);
+            seekData(value + position());
         }
     }
-    seek(sizeof(header_data) + 4);
-    write((uint8_t*) &info_size, 2);
+    */
+
+    seek(shs::SHSF::INDEX::posINFObeg);
+    add((uint8_t*) &info_size, 2);
 
     return info_size;
 }
 
 uint16_t shs::SHSF::readInfoSize()
 {
-    seek(sizeof(header_data) + 4);
     uint16_t info_size{};
-    read((uint8_t*) &info_size, 2);
+
+    seek(shs::SHSF::INDEX::posINFObeg);
+    get((uint8_t*) &info_size, 2);
 
     return info_size;
 }
 
 shs::SHSF& shs::SHSF::writeInfoComment(const char* buf, uint16_t size)
 {
-    seek(sizeof(header_data) + 4 + 2 + 8);
-    write((uint8_t*) &size, 2);
-    write((uint8_t*) buf, size);
+    seekData(shs::SHSF::INDEX::posINFObeg + 2 + 8);
+    add((uint8_t*) &size, 2);
+    add((uint8_t*) buf, size);
 
     return *this;
 }
@@ -134,16 +136,16 @@ shs::SHSF& shs::SHSF::writeInfoComment(const char* buf, uint16_t size)
 uint16_t shs::SHSF::readInfoCommentSize()
 {
     uint16_t comment_size{};
-    seek(sizeof(header_data) + 4 + 2 + 8);
-    read((uint8_t*) &comment_size, 2);
+    seekData(shs::SHSF::INDEX::posINFObeg + 2 + 8);
+    get((uint8_t*) &comment_size, 2);
 
     return comment_size;
 }
 
 uint16_t shs::SHSF::readInfoComment(char* buf, const uint16_t comment_size)
 {
-    seek(sizeof(header_data) + 4 + 2 + 8 + 2);
-    return read((uint8_t*) buf, comment_size);
+    seekData(0x0F + 2 + 8 + 2);
+    return get((uint8_t*) buf, comment_size);
 }
 
 uint16_t shs::SHSF::readInfoComment(char*& buf)
@@ -154,72 +156,87 @@ uint16_t shs::SHSF::readInfoComment(char*& buf)
     return readInfoComment(buf, comment_size);
 }
 
-shs::SHSF& shs::SHSF::addInfoMember(shs::fs::SHSF_INFO_member& stc)
-{
-    uint8_t name_size = strlen(stc.m_name);
-    uint8_t note_size = strlen(stc.m_note);
-    uint8_t com_size = 2 + name_size + note_size;
+// shs::SHSF& shs::SHSF::addInfoMember(shs::fs::SHSF_INFO_member& stc)
+// {
+//     uint8_t name_size = strlen(stc.m_name);
+//     uint8_t note_size = strlen(stc.m_note);
+//     uint8_t com_size = 2 + name_size + note_size;
 
-    write(com_size);
-    write(stc.member_size);
-    write(stc.member_type);
+//     add((uint8_t*) &com_size, 1);
+//     add((uint8_t*) &stc.member_size, 1);
+//     add((uint8_t*) &stc.member_type, 1);
 
-    if (!stc.m_name) write('\0');
-    else write((uint8_t*) stc.m_name, name_size);
+//     if (!stc.m_name) add('\0');
+//     else write((uint8_t*) stc.m_name, name_size);
 
-    if (!stc.m_note) write('\0');
-    else write((uint8_t*) stc.m_note, note_size);
+//     if (!stc.m_note) write('\0');
+//     else write((uint8_t*) stc.m_note, note_size);
 
-    return *this;
-}
+//     return *this;
+// }
 
-bool shs::SHSF::getInfoMember(shs::fs::SHSF_INFO_member& stc)
-{
-    size_t pos{};
-    uint8_t com_size = read();
-    uint8_t str_size{};
+// bool shs::SHSF::getInfoMember(shs::fs::SHSF_INFO_member& stc)
+// {
+//     size_t pos{};
+//     uint8_t com_size = read();
+//     uint8_t str_size{};
 
-    stc.member_size = read();
-    stc.member_type = static_cast<shs::fs::SHSF_INFO_member_type>(read());
+//     stc.member_size = read();
+//     stc.member_type = static_cast<shs::fs::SHSF_INFO_member_type>(read());
 
-    pos = position();
-    while (read() != '\0') str_size++;
-    str_size++;
-    seek(pos);
-    if (stc.m_name)  delete [] stc.m_name;
-    stc.m_name = new char(str_size);
-    read((uint8_t*) stc.m_name, str_size);
+//     pos = position();
+//     while (read() != '\0') str_size++;
+//     str_size++;
+//     seek(pos);
+//     if (stc.m_name)  delete [] stc.m_name;
+//     stc.m_name = new char(str_size);
+//     read((uint8_t*) stc.m_name, str_size);
 
-    pos = position();
-    str_size = 0;
-    while (read() != '\0') str_size++;
-    str_size++;
-    read((uint8_t*) stc.m_note, str_size);
+//     pos = position();
+//     str_size = 0;
+//     while (read() != '\0') str_size++;
+//     str_size++;
+//     read((uint8_t*) stc.m_note, str_size);
 
-// !!!!!!!!!!!!!!!!!!!!!
-    return true;
-}
+// // !!!!!!!!!!!!!!!!!!!!!
+//     return true;
+// }
 
 // ----------------------------------------
 //
 // ----------------------------------------
 
-uint16_t shs::SHSF::seekToBeginning()
+uint16_t shs::SHSF::posDataBeg(bool go)
 {
     uint16_t value{};
-    seek(sizeof(header_data) + 4);
+    size_t pos = position();
+
+    seek(0x0B);
     read((uint8_t*) &value, 2);
-    value += sizeof(header_data) + 4 + 2;
-    seek(value);
+
+    seek(go ? value : pos);
+
     return value;
+}
+
+size_t shs::SHSF::incrPos(const size_t pos, const size_t incr)
+{
+    int32_t free = ((((int32_t) 1 << header_data.CRCdegree) - (pos & \
+        (((int32_t) 1 << header_data.CRCdegree) - 1))) - sizeof(m_crc.crc) - 2);
+    if (incr > free)
+    {
+        return pos + free + 6 + \
+            ((incr - free) / (((uint32_t) 1 << header_data.CRCdegree) - 6)) * 6 + (incr - free);
+    }
+    return pos + incr;
 }
 
 size_t shs::SHSF::add(const uint8_t* buf, const size_t size)
 {
     if (!header_data.CRCdegree)
         return write(buf, size);
-    
-    if (position() == size()) seek(porition() - 6);
+
+    if (position() == SHSF::size()) seek(position() - 6);
 
     int32_t free{};
     size_t written_size{};
@@ -284,14 +301,31 @@ int8_t shs::SHSF::checkBlock()
     uint32_t crc_data = calculateBlockCRC();
     uint32_t crc_read{};
 
-    seek(posBlockCRC);
+    size_t pos = position();
+    seek(posBlockCRC());
+
     if (read() != block_constant) return -1;
-    read((uint8_t*)&crc_read, sizeof(crc_read));
+    read((uint8_t*) &crc_read, sizeof(crc_read));
     if (read() != block_constant) return -2;
     if (crc_read != crc_data) return -3;
 
-    return 1;    
-    
+    seek(pos);
+
+    return 0;
+}
+
+int8_t shs::SHSF::checkFile()
+{
+    if (!checkHeader) return -1;
+    posDataBeg(true);
+
+    for (uint8_t i = 0; i < blocksCount(); i++)
+    {
+        if (!checkBlock()) return -2;
+        seek(posNextBlock());
+    }
+
+    return 0;
 }
 
 
@@ -353,3 +387,37 @@ enum shs::SHSFmanager::Errors : uint32_t
     h_not_match_version = 0b100,
 
 };
+
+
+/*
+shs::fs::SHSF_INFO_member::~SHSF_INFO_member()
+{
+    clear();
+}
+
+shs::fs::SHSF_INFO_member& shs::fs::SHSF_INFO_member::clear()
+{
+    if (m_name) delete [] m_name;
+    if (m_note) delete [] m_note;
+
+    return *this;
+}
+
+shs::fs::SHSF_INFO_member& shs::fs::SHSF_INFO_member::setName(const char* name, uint8_t size)
+{
+    if (m_name) delete [] m_name;
+    m_name = new char(size);
+    strcpy(m_name, name);
+
+    return *this;
+}
+
+shs::fs::SHSF_INFO_member& shs::fs::SHSF_INFO_member::setNote(const char* note, uint8_t size)
+{
+    if (m_note) delete [] m_note;
+    m_note = new char(size);
+    strcpy(m_note, note);
+
+    return *this;
+}
+*/

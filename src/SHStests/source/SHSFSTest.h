@@ -43,6 +43,8 @@ public:
   int simpleFile();
   int simpleSHSF();
 
+  int shsfFull();
+
   // utils
   void logFile(shs::File& file);
 };

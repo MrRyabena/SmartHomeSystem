@@ -37,23 +37,24 @@
 - shs::CRC: now the function crcBuf(..) writes the result to a variable crc.
 - The synchronizer has been replaced with a make.sh.
 
-![SHScore-changes](/schemes/SHScore-changes.png)
+![SHScore-changes-v1_1_0](/schemes/SHScore-changes/SHScore-changes-v1_1_0.png)
 
 </details>
 
 <details>
 <summary>v1.2.0 — <b>[current]</b> intermediate version.</summary>
 
-A file system has been developed [beta]:
+- A file system has been developed [beta]:
+  - shs::FSAbstract and shs::FileAbstract — interface classes.
+  - shs::FS — file system class.
+  - shs::File — file class.
+  - shs::SHSF — [beta] Smart Home System File (.shsf). It has errors now.</br>
+    _*note: The File System is poorly tested and isn't fully developed.*_
+- Developed a new ID-type SHSID.
+- Added SHSversion.h.
+- An important version for the further development of the project.
 
-- shs::FSAbstract and shs::FileAbstract — interface classes.
-- shs::FS — file system class.
-- shs::File — file class.
-- shs::SHSF — [beta] Smart Home System File (.shsf). It has errors now.
-  The File System is poorly tested and isn't fully developed.
-  Developed a new ID-type SHSID.
-  Added SHSversion.h.
-  An important version for the further development of the project.
+![SHScore-changes-v1_2_0](/schemes/SHScore-changes/SHScore-changes-v1_2_0.png)
 
 </details>
 
@@ -62,7 +63,7 @@ A file system has been developed [beta]:
 # Note
 
 Для краткого ознакомления с проектом можно посмотреть [презентацию](pitch/SmartHomeSystem.pdf).</br>
-В этой версии написана основная логика (ядро), макеты, тесты и приложения пока что не доработаны и будут появляться в следующих релизах.
+В этой версии написана основная логика (ядро), разработана файловая система. Нововведения плохо протестированы и не доработаны. Версия является промежуточным этапом перед глобальным изменением ядра.
 
 ---
 

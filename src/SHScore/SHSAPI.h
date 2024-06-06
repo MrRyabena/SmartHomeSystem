@@ -5,6 +5,7 @@
   Versions:
     v0.1.0 — created.
     v1.0.0 — release.
+    v2.0.0 — changed types, using shs::ID.
 */
 
 /*
@@ -14,7 +15,7 @@
 
 #include <stdint.h>
 #include "SHSByteCollector.h"
-#include "SHSsettings_private.h"
+#include "SHStypes.h"
 
 namespace shs
 {
@@ -24,13 +25,10 @@ namespace shs
 class shs::API
 {
 public:
-    explicit API(const shs::settings::shs_ID_t apiID = 0,
-                 const shs::settings::shs_ModuleID_t to = 0)
-        : m_apiID(apiID), m_to(to) {}
+    explicit API(const shs::t::shs_ID_t id) : m_API_ID(id) {}
 
     virtual uint8_t handler(shs::ByteCollector &data) = 0;
 
 protected:
-    shs::settings::shs_ID_t m_apiID{};
-    shs::settings::shs_ModuleID_t m_to{};
+    shs::t::shs_ID_t m_API_ID{};
 };

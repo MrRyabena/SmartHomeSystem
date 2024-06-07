@@ -1,11 +1,11 @@
 #pragma once
 
 /*
-  Last update: v0.1.0
+  Last update: v2.0.0
   Versions:
     v0.1.0 — created.
     v1.0.0 — release.
-    v2.0.0 — changed types, using shs::ID.
+    v2.0.0 — changed types, using shs::ID, added virtual destructor.
 */
 
 /*
@@ -15,20 +15,23 @@
 
 #include <stdint.h>
 #include "SHSByteCollector.h"
-#include "SHStypes.h"
-
+#include "shs_types.h"
 namespace shs
 {
-    class API;
+  class API;
 };
-
 class shs::API
 {
 public:
-    explicit API(const shs::t::shs_ID_t id) : m_API_ID(id) {}
+  explicit API(const shs::t::shs_ID_t id) : API_ID(id) {}
+  virtual ~API() = default;
 
-    virtual uint8_t handler(shs::ByteCollector &data) = 0;
+  virtual uint8_t handler(shs::ByteCollector &data) = 0;
 
-protected:
-    shs::t::shs_ID_t m_API_ID{};
+  shs::t::shs_ID_t API_ID{};
+
+  bool operator<(const shs::API &other) const { return API_ID < other.API_ID; }
+  bool operator>(const shs::API &other) const { return API_ID > other.API_ID; }
+  bool operator==(const shs::API &other) const { return API_ID == other.API_ID; }
+  bool operator!=(const shs::API &other) const { return API_ID != other.API_ID; }
 };

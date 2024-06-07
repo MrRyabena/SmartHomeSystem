@@ -16,6 +16,8 @@
   The class is used in data transfer protocols.
 */
 
+#include <stdint.h>
+
 namespace shs
 {
     class ByteCollector;

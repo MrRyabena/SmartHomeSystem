@@ -4,6 +4,7 @@
   Last update: v1.2.0
   Versions:
     v1.2.0 — created.
+    v2.0.0 — added comparison operators.
 */
 
 #include <stdint.h>
@@ -43,4 +44,9 @@ struct shs::ID
         id |= api & 0xffff;
         return *this;
     }
+
+    bool operator<(const shs::ID &other) const { return id < other.id; }
+    bool operator>(const shs::ID &other) const { return id > other.id; }
+    bool operator==(const shs::ID &other) const { return id == other.id; }
+    bool operator!=(const shs::ID &other) const { return id != other.id; }
 };

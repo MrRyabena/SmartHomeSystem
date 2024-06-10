@@ -1,43 +1,52 @@
-#include <GyverDimmer.h>
 #include <GyverNTC.h>
 #include <SHSsettings.h>
 #include <shs_ControlWiFi.h>
 
-#define Dpin 13
-#define INTpin 12
-
-DimmerBres<Dpin> dim;
-IRAM_ATTR void ist();
+#define PART1_pin 13
+#define PART2_pin 14
+#define AC_DATA_pin 12
 
 GyverNTC therm(A0, 10000, 3435);
 
+bool signal_on();
 
+void setup() {
+  delay(200);
+  pinMode(A0, INPUT);
 
-void setup()
-{
-    pinMode(A0, INPUT);
+  pinMode(AC_DATA_pin, INPUT);
+  pinMode(PART1_pin, OUTPUT);
+  pinMode(PART2_pin, OUTPUT);
 
-    pinMode(INTpin, INPUT);
-    attachInterrupt(INTpin, isr, RISING);
+  digitalWrite(PART1_pin, 0);
+  digitalWrite(PART2_pin, 0);
 
-    shs::ControlWiFi::connectWiFi();
+  attachInterrupt(AC_DATA_pin, isr, RISING);
 
-    dim.write(0);
-}
+  shs::ControlWiFi::connectWiFi();
 
-void loop()
-{
-    if (!shs::ControlWiFi::WiFiConnected())
-    {
-        //dim.write(255);
-    } else
-    {
-        telegramBot();
-    }
 
 }
 
-IRAM_ATTR void isr()
-{
-    dim.tick();
+void loop() {
+  if (shs::ControlWiFi::WiFiConnected()) {
+    telegramBot();
+  }
+
+  static bool state{};
+  if (signal_on() != state) {
+    state = !state;
+    digitalWrite(PART1_pin, state);
+    digitalWrite(PART2_pin, state);
+  }
+}
+
+uint64_t signal_tmr{};
+IRAM_ATTR void isr() {
+  signal_tmr = millis();
+}
+
+
+bool signal_on() {
+  return !(millis() - signal_tmr >= 200);
 }

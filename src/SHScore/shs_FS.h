@@ -10,9 +10,9 @@
     v1.2.0 — created.
 */
 
-#include "SHSsettings_private.h"
-#include "SHSFileAbstract.h"
-#include "SHSFSAbstract.h"
+#include "shs_settings_private.h"
+#include "shs_FileAbstract.h"
+#include "shs_FSAbstract.h"
 
 #include <stddef.h>
 #include <stdint.h>

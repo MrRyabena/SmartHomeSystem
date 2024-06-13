@@ -6,8 +6,8 @@
     v1.2.0 — created.
 */
 
-#include "SHSFileAbstract.h"
-#include "SHSFile.h"
+#include "shs_FileAbstract.h"
+#include "shs_File.h"
 
 #include <stddef.h>
 #include <stdint.h>

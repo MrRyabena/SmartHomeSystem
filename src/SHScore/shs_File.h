@@ -10,8 +10,8 @@
     v1.2.0 — created.
 */
 
-#include "SHSsettings_private.h"
-#include "SHSFileAbstract.h"
+#include "shs_settings_private.h"
+#include "shs_FileAbstract.h"
 
 #ifdef ARDUINO
 #include <Arduino>

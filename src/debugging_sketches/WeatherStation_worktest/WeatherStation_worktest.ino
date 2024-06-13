@@ -67,7 +67,7 @@ void loop() {
     Serial.print("pht\nillumination:  ");
     Serial.println(analogRead(A0));
     
-    Serial.println("----------------------------------------\n");
+    Serial.println("----------------------------------------\ n");
     
     
     tmr = millis();

@@ -1,9 +1,9 @@
-#include <GyverBME280.h>
+//#include <GyverBME280.h>
 #include <GyverHTU21D.h>
 
 
 GyverHTU21D htu;
-GyverBME280 bme;
+//GyverBME280 bme;
 
 /*
   BME280/HTU21D:
@@ -23,9 +23,9 @@ void setup() {
   htu.begin() ? Serial.println("htu OK") : Serial.println("htu ERROR");
   htu.setResolution(HTU21D_RES_HIGH);
 
-  bme.begin(0x76) ? Serial.println("bme OK") : Serial.println("bme ERROR");
+  //bme.begin(0x76) ? Serial.println("bme OK") : Serial.println("bme ERROR");
 
-  pinMode(A0, INPUT);
+  //pinMode(A0, INPUT);
 }
 
 void loop() {
@@ -39,15 +39,15 @@ void loop() {
     Serial.println(htu.getHumidityWait());
     Serial.println("");
 
-    Serial.print("bme\ntemperature:  ");
-    Serial.println(bme.readTemperature());
-    Serial.print("pressure:     ");
-    Serial.println(bme.readPressure());
-    Serial.println("");
+    //Serial.print("bme\ntemperature:  ");
+    //Serial.println(bme.readTemperature());
+    //Serial.print("pressure:     ");
+    //Serial.println(bme.readPressure());
+    //Serial.println("");
 
-    Serial.print("pht\nlightness:    ");
-    Serial.println(analogRead(A0));
-    Serial.println("");
+   // Serial.print("pht\nlightness:    ");
+    //Serial.println(analogRead(A0));
+   // Serial.println("");
     tmr = millis();
   }
 }

@@ -11,11 +11,11 @@
   A mandatory component of the system responsible for the content of the basic elements.
 */
 
-#include "SHSsettings_private.h"
+#include "shs_settings_private.h"
 #include "SHSErrorsHandler.h"
 #include "SHSProcess.h"
 #include "SHSProcessesKeeper.h"
-#include "SHSByteCollector.h"
+#include "shs_ByteCollector.h"
 #include "SHSSensorsKeeper.h"
 #include "SHSLoadKeeper.h"
 #include "SHSconfig.h"

@@ -24,22 +24,19 @@ namespace shs
 class shs::ControlWiFi
 {
 public:
-    bool setMac(uint8_t *mac);
-    bool setMac(const shs::t::shs_ID_t id);
+    static bool setHostname(const char *hostname) { return WiFi.hostname(hostname); }
 
-    bool setHostname(const char *hostname) { return WiFi.hostname(hostname); }
+    static void connectWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *pass = shs::settings::WIFI_PASSWORD);
+    static bool connectWiFiWait(const size_t time = 20000, const char *ssid = shs::settings::WIFI_SSID, const char *pass = shs::settings::WIFI_PASSWORD);
 
-    void connectWiFi(const char *ssid = shs::settings::WiFi_SSID, const char *pass = shs::settings::WiFi_PASSWORD);
-    bool connectWiFiWait(const size_t time = 20000, const char *ssid = shs::settings::WiFi_SSID, const char *pass = shs::settings::WiFi_PASSWORD);
+    static void configureWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *pass = shs::settings::WIFI_PASSWORD);
 
-    void configureWiFi(const char *ssid = shs::settings::WiFi_SSID, const char *pass = shs::settings::WiFi_PASSWORD);
+    static bool disableWiFi() { return WiFi.forceSleepBegin(); }
+    static bool enableWiFi() { return WiFi.forceSleepWake(); }
 
-    bool disableWiFi() { return WiFi.forceSleepBegin(); }
-    bool enableWiFi() { return WiFi.forceSleepWake(); }
+    static bool WiFiConnected() { return WiFi.status() == WL_CONNECTED; }
 
-    bool WiFiConnected() { return WiFi.status() == WL_CONNECTED; }
-
-    bool setMac(uint8_t *mac)
+    static bool setMac(uint8_t *mac)
     {
 #ifdef SHS_SF_ESP8266
         return wifi_set_macaddr(STATION_IF, mac);
@@ -48,7 +45,7 @@ public:
 #endif
     }
 
-    bool setMac(const shs::t::shs_ID_t id)
+    static bool setMac(const shs::t::shs_ID_t id)
     {
         uint8_t mac[6]{};
         for (uint8_t i = 0; i < 5; i++) mac[i] = shs::settings::MACconstant[i];
@@ -57,13 +54,13 @@ public:
         return setMac(mac);
     }
 
-    void connectWiFi(const char *ssid, const char *pass)
+    static void connectWiFi(const char *ssid, const char *pass)
     {
         WiFi.mode(WiFi_STA);
         WiFi.begin(ssid, pass);
     }
 
-    bool connectWiFiWait(const size_t time, const char *ssid, const char *pass)
+    static bool connectWiFiWait(const size_t time, const char *ssid, const char *pass)
     {
         uint32_t tmr = millis();
 
@@ -76,12 +73,12 @@ public:
         return true;
     }
 
-    void configureWiFi(const char *ssid, const char *pass)
+    static void configureWiFi(const char *ssid, const char *pass)
     {
         WiFi.mode(WiFi_STA);
         WiFi.persistent(true);
         WiFi.setAutoConnect(true);
         WiFi.setAutoReconnect(true);
-        WiFi.autoConnect(ssid, pass);
+        WiFi.setAutoConnect(ssid, pass);
     }
 };

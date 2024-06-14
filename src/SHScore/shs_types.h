@@ -7,8 +7,8 @@
     v2.0.0 — developed from shs_settings_private.h.
 */
 
-#include "SHSsettings_private.h"
-#include "SHSID.h"
+#include "shs_settings_private.h"
+#include "shs_ID.h"
 
 #include <stdint.h>
 

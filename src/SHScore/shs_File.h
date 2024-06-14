@@ -8,13 +8,15 @@
   Last update: v1.2.0
   Versions:
     v1.2.0 — created.
+    v2.0.0 — integrated shs_types.h.
 */
 
 #include "shs_settings_private.h"
 #include "shs_FileAbstract.h"
+#include "shs_types.h"
 
-#ifdef ARDUINO
-#include <Arduino>
+#ifdef SHS_SF_ARDUINO
+#include <Arduino.h>
 #include <FS.h>
 #else
 #include <fstream>
@@ -65,12 +67,12 @@ public:
     size_t size() override;
     void close() override;
     time_t getLastWrite() override;
-    shs::settings::shs_string_t path() const override;
-    shs::settings::shs_string_t name() const override;
+    shs::t::shs_string_t path() const override;
+    shs::t::shs_string_t name() const override;
     bool isDirectory(void) override;
     bool seekDir(long position) override;
-    shs::settings::shs_string_t getNextFileName(void) override;
-    shs::settings::shs_string_t getNextFileName(bool* isDir) override;
+    shs::t::shs_string_t getNextFileName(void) override;
+    shs::t::shs_string_t getNextFileName(bool* isDir) override;
     void rewindDirectory(void) override;
     operator bool() override;
 

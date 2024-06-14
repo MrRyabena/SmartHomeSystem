@@ -17,7 +17,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
 #include <Arduino.h>
 #include <FS.h>
 #else

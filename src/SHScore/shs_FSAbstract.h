@@ -12,7 +12,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
 #include <FS.h>
 #else
 #include <ios>
@@ -27,8 +27,8 @@ namespace shs
         static constexpr char File_Write [] = "w";
         static constexpr char File_Append [] = "a";
 
-#ifdef ARDUINO
-        using FS_basic_t = fs::FS;
+#ifdef SHS_SF_ARDUINO
+        using FS_basic_t = FS;
 #else
         using FS_basic_t = void;
         // Helper methods for non-Arduino platforms
@@ -56,7 +56,7 @@ public:
 };
 
 
-#ifndef ARDUINO
+#ifndef SHS_SF_ARDUINO
 std::ios::openmode shs::fs::createOpenMode(const char* mode, bool create)
 {
     std::ios::openmode cpp_mode{};

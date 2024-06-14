@@ -4,12 +4,16 @@
   Last update: v1.2.0
   Versions:
     v1.2.0 — created.
+    v2.0.0 — integrated shs_types.h.
 */
 
 #include <stddef.h>
 #include <stdint.h>
 
-#ifdef ARDUINO
+#include "shs_types.h"
+
+#ifdef SHS_SF_ARDUINO
+#include <Arduino.h>
 #include <FS.h>
 #else
 #include <ios>
@@ -22,8 +26,8 @@ namespace shs
     {
         enum SeekMode : uint8_t;
 
-#ifdef ARDUINO
-        using File_basic_t = fs::File;
+#ifdef SHS_SF_ARDUINO
+        using File_basic_t = File;
 #else
         using File_basic_t = std::fstream;
         // Helper methods for non-Arduino platforms
@@ -55,17 +59,17 @@ public:
     virtual size_t size() = 0;
     virtual void close() = 0;
     virtual time_t getLastWrite() = 0;
-    virtual shs::settings::shs_string_t path() const = 0;
-    virtual shs::settings::shs_string_t name() const = 0;
+    virtual shs::t::shs_string_t path() const = 0;
+    virtual shs::t::shs_string_t name() const = 0;
     virtual bool isDirectory(void) = 0;
     virtual bool seekDir(long position) = 0;
-    virtual shs::settings::shs_string_t getNextFileName(void) = 0;
-    virtual shs::settings::shs_string_t getNextFileName(bool* isDir) = 0;
+    virtual shs::t::shs_string_t getNextFileName(void) = 0;
+    virtual shs::t::shs_string_t getNextFileName(bool* isDir) = 0;
     virtual void rewindDirectory(void) = 0;
     virtual operator bool() = 0;
 };
 
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
 
 #else
 std::ios::seekdir shs::fs::createSeekMode(shs::fs::SeekMode mode)

@@ -1,4 +1,4 @@
-#include "SHSfs.h"
+#include "shs_FS.h"
 
 // ----------------------------------------
 // Constructors
@@ -27,7 +27,7 @@ bool shs::FS::copy(const char* from, const char* to)
 
 shs::fs::File_basic_t* shs::FS::open(const char* path, const char* mode, const bool create)
 {
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return new shs::fs::File_basic_t(fsb->open(path, mode, create));
 #else
     return new shs::fs::File_basic_t(path, shs::fs::createOpenMode(mode, create));
@@ -36,7 +36,7 @@ shs::fs::File_basic_t* shs::FS::open(const char* path, const char* mode, const b
 
 bool shs::FS::exists(const char* path)
 {
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fsb->exists(path);
 #else
     return std::filesystem::exists(path);
@@ -45,7 +45,7 @@ bool shs::FS::exists(const char* path)
 
 bool shs::FS::rename(const char* pathFrom, const char* pathTo)
 {
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fsb->rename(pathFrom, pathTo);
 #else
     std::error_code e;
@@ -56,7 +56,7 @@ bool shs::FS::rename(const char* pathFrom, const char* pathTo)
 
 bool shs::FS::remove(const char* path)
 {
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fsb->remove(path);
 #else
     return std::filesystem::remove(path);
@@ -65,7 +65,7 @@ bool shs::FS::remove(const char* path)
 
 bool shs::FS::mkdir(const char* path)
 {
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fsb->mkdir(path);
 #else
     return std::filesystem::create_directory(path);
@@ -74,7 +74,7 @@ bool shs::FS::mkdir(const char* path)
 
 bool shs::FS::rmdir(const char* path)
 {
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fsb->rmdir(path);
 #else
     std::error_code e;

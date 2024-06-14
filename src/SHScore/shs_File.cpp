@@ -1,4 +1,4 @@
-#include "SHSFile.h"
+#include "shs_File.h"
 
 // ----------------------------------------
 // Constructors
@@ -82,7 +82,7 @@ size_t shs::File::shiftLeft(const size_t from, const size_t indent)
 size_t shs::File::write(const uint8_t* buf, size_t size)
 {
     if (!fb) return 0;
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->write(buf, size);
 #else
     fb->write(reinterpret_cast<const char*>(buf), size);
@@ -93,7 +93,7 @@ size_t shs::File::write(const uint8_t* buf, size_t size)
 size_t shs::File::read(uint8_t* buf, size_t size)
 {
     if (!fb) return 0;
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->read(buf, size);
 #else
     fb->read(reinterpret_cast<char*>(buf), size);
@@ -110,7 +110,7 @@ void shs::File::flush()
 bool shs::File::seek(uint32_t pos, shs::fs::SeekMode mode)
 {
     if (!fb) return false;
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->seek(pos, mode);
 #else
     fb->seekg(pos, createSeekMode(mode));
@@ -121,7 +121,7 @@ bool shs::File::seek(uint32_t pos, shs::fs::SeekMode mode)
 size_t shs::File::position() const
 {
     if (!fb) return 0;
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->position();
 #else
     return fb->tellg();
@@ -131,7 +131,7 @@ size_t shs::File::position() const
 size_t shs::File::size()
 {
     if (!fb) return 0;
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->size();
 #else
     std::streampos current = fb->tellg();
@@ -151,20 +151,20 @@ void shs::File::close()
     fb = nullptr;
 }
 
-shs::settings::shs_string_t shs::File::path() const
+shs::t::shs_string_t shs::File::path() const
 {
     if (!fb) return "";
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->path();
 #else
     return "";
 #endif
 }
 
-shs::settings::shs_string_t shs::File::name() const
+shs::t::shs_string_t shs::File::name() const
 {
     if (!fb) return "";
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->name();
 #else
     return "";
@@ -174,27 +174,27 @@ shs::settings::shs_string_t shs::File::name() const
 bool shs::File::isDirectory(void)
 {
     if (!fb) return false;
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->isDirectiry();
 #else
     return false;
 #endif
 }
 
-shs::settings::shs_string_t shs::File::getNextFileName()
+shs::t::shs_string_t shs::File::getNextFileName()
 {
     if (!fb) return "";
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->getNextFileName();
 #else
     return "";
 #endif
 }
 
-shs::settings::shs_string_t shs::File::getNextFileName(bool* isDir)
+shs::t::shs_string_t shs::File::getNextFileName(bool* isDir)
 {
     if (!fb) return "";
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->getNextFileName();
 #else
     return "";
@@ -204,7 +204,7 @@ shs::settings::shs_string_t shs::File::getNextFileName(bool* isDir)
 time_t shs::File::getLastWrite()
 {
     if (!fb) return -1;
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->getLastWrite();
 #else
     return -1;
@@ -214,7 +214,7 @@ time_t shs::File::getLastWrite()
 bool shs::File::seekDir(long position)
 {
     if (!fb) return false;
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     return fb->seekDir(position);
 #else
     fb->seekg(position, std::ios_base::beg);
@@ -225,7 +225,7 @@ bool shs::File::seekDir(long position)
 void shs::File::rewindDirectory()
 {
     if (!fb) return;
-#ifdef ARDUINO
+#ifdef SHS_SF_ARDUINO
     fb->rewindDirectory();
 #else
 

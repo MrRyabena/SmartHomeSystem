@@ -13,7 +13,7 @@
 */
 
 #include <stdint.h>
-#include "SHSsettings_private.h"
+#include "shs_settings_private.h"
 
 #if __has_include(<Arduino.h>)
 #include <Random16.h>

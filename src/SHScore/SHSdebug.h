@@ -6,7 +6,7 @@
     v1.1.0 — created.
 */
 
-#include "SHSsettings_private.h"
+#include "shs_settings_private.h"
 #ifdef DEBUG
 
 #if __has_include(<Arduino.h>)

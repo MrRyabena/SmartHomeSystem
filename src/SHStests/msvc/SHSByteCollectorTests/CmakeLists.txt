@@ -6,10 +6,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_library (SHSByteCollector STATIC 
-  ../../../SHScore/SHSByteCollector.h
+  ../../../SHScore/shs_ByteCollector.h
   ../../../SHScore/SHSdebug.h
-  ../../../SHScore/SHSdtp.cpp
-  ../../../SHScore/SHSdtp.h
+  ../../../SHScore/shs_CRC.cpp
 )
 
 add_library(SHSMultiData

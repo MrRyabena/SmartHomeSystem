@@ -5,12 +5,13 @@
 */
 
 /*
-  Last update: v1.1.0
+  Last update: v2.0.0
   Versions:
     v1.1.0 — created.
+    v2.0.0
 */
 
-#include "SHSprinter.h"
+
 
 #ifdef ARDUINO
 #include <SHSByteCollector.h>
@@ -18,28 +19,40 @@
 #include <SHSMultiData.h>
 #include <SHSMultiDataTools.h>
 #else
-#include "../../SHScore/SHSByteCollector.h"
+#include "../../SHScore/shs_ByteCollector.h"
 #include "../../SHScore/SHSRandom.h"
 #include "../utils/SHSMultiData.h"
 #include "../utils/SHSMultiDataTools.h"
 #endif
 
+#include <assert.h>
+
+#include "SHSprinter.h"
+
 namespace shs
 {
     namespace tests
     {
-        class ByteCollectorTest;
-    }
-}
+        class ByteCollector_test;
+    };
+};
 
-class shs::tests::ByteCollectorTest
+class shs::tests::ByteCollector_test
 {
 public:
     size_t quantity;
     shs::tests::Printer out;
 
-    ByteCollectorTest(size_t setQuantity = 10000) : quantity(setQuantity), out() {}
+    ByteCollector_test(size_t setQuantity = 10000) : quantity(setQuantity), out() {}
     
+    int write_read_test();
+    int add_get_test();
+    int reserve_test();
+    int insert_test();
+    int shrink_to_fit_test();
+
+
     int multiplatform();
     int sequence();
+    void myTest();
 };

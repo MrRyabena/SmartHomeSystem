@@ -12,6 +12,10 @@
            — changed function-member reserve_front().
            — added operator +=.
            — added BCbuf_t and BCsize_t.
+           — added begin() and end().
+           — renamed functions, added push_front, push_back, write and read.
+           — added insert().
+
 */
 
 /*
@@ -37,6 +41,24 @@ public:
         : m_buf(new BCbuf_t[size]{}), m_capacity(size)
     {}
 
+    ByteCollector(ByteCollector &&other)
+    {
+        m_buf = other.m_buf;
+        other.m_buf = nullptr;
+
+        m_capacity = other.m_capacity;
+        other.m_capacity = {};
+
+        m_pos_back = other.m_pos_back;
+        other.m_pos_back = {};
+
+        m_pos_front = other.m_pos_front;
+        other.m_pos_front = {};
+
+        m_pos_read = other.m_pos_read;
+        other.m_pos_read = {};
+    }
+
     ~ByteCollector() { delete [] m_buf; }
 
     /*
@@ -60,12 +82,12 @@ public:
 
     // add to the end
     template <typename T>
-    void add_back(const T &value, const BCsize_t bytes = sizeof(T)) { write((BCbuf_t *) &value, bytes); }
+    void push_back(const T &value, const BCsize_t bytes = sizeof(T)) { write((BCbuf_t *) &value, bytes); }
 
 
     // add to the beginning
     template <typename T>
-    void add_front(const T &value, const BCsize_t bytes = sizeof(T))
+    void push_front(const T &value, const BCsize_t bytes = sizeof(T))
     {
         if (capacity_front() < bytes) reserve_front(bytes - capacity_front());
 
@@ -91,7 +113,7 @@ public:
     }
 
     template <typename T>
-    void add_pos(const T &value, const BCsize_t size, const BCsize_t position) { insert((BCbuf_t *) &value, size, position); }
+    void insert(const T &value, const BCsize_t size, const BCsize_t position) { insert((const BCbuf_t *) &value, size, position); }
 
     // unpack data
 
@@ -188,7 +210,7 @@ public:
     template <typename T>
     auto &operator+=(const T &other)
     {
-        add_back(other);
+        push_back(other);
         return *this;
     }
 

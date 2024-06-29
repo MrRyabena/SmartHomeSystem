@@ -40,10 +40,10 @@ int shs::tests::ByteCollector_test::write_read_test()
     return 0;
 }
 
-int shs::tests::ByteCollector_test::add_get_test()
+int shs::tests::ByteCollector_test::push_get_test()
 {
     out.sep();
-    out.pmln("Starting the test ByteCollector_test::add_get_test.");
+    out.pmln("Starting the test ByteCollector_test::push_get_test.");
     out.pn("quantity: ");
     out.pnln(quantity);
 
@@ -54,18 +54,18 @@ int shs::tests::ByteCollector_test::add_get_test()
     random.setRange(10, 100);
 
     uint16_t size = random.get();
-    uint16_t *buf_add_back = new uint16_t[size];
-    uint16_t *buf_add_front = new uint16_t[size];
+    uint16_t *buf_push_back = new uint16_t[size];
+    uint16_t *buf_push_front = new uint16_t[size];
 
     for (auto i = 0; i < size; i++)
     {
-        buf_add_back[i] = random.get();
-        bc += buf_add_back[i];
+        buf_push_back[i] = random.get();
+        bc += buf_push_back[i];
     }
     for (auto i = 0; i < size; i++)
     {
-        buf_add_front[i] = random.get();
-        bc.add_front(buf_add_front[i]);
+        buf_push_front[i] = random.get();
+        bc.push_front(buf_push_front[i]);
     }
 
 
@@ -73,18 +73,18 @@ int shs::tests::ByteCollector_test::add_get_test()
     for (auto i = 0; i < size; i++)
     {
         bc.get(value);
-        assert(buf_add_front[size - i - 1] == value);
+        assert(buf_push_front[size - i - 1] == value);
     }
     for (auto i = 0; i < size; i++)
     {
         bc.get(value);
-        assert(buf_add_back[i] == value);
+        assert(buf_push_back[i] == value);
     }
 
-    delete [] buf_add_back;
-    delete [] buf_add_front;
+    delete [] buf_push_back;
+    delete [] buf_push_front;
 
-    out.pmln("The test ByteCollector_test::add_get_test is compleated with code 0.");
+    out.pmln("The test ByteCollector_test::push_get_test is compleated with code 0.");
     out.sep();
 
     return 0;
@@ -103,45 +103,45 @@ int shs::tests::ByteCollector_test::reserve_test()
     random.setRange(10, 10000);
 
     uint16_t size = random.get();
-    uint16_t *buf_add_back = new uint16_t[size]{};
-    uint16_t *buf_add_front = new uint16_t[size]{};
+    uint16_t *buf_push_back = new uint16_t[size]{};
+    uint16_t *buf_push_front = new uint16_t[size]{};
 
-    bc.reserve(size * sizeof(buf_add_back[0]));
-    assert(bc.capacity_back() == size * sizeof(buf_add_back[0]));
+    bc.reserve(size * sizeof(buf_push_back[0]));
+    assert(bc.capacity_back() == size * sizeof(buf_push_back[0]));
     assert(bc.capacity_front() == 0);
     assert(bc.getPositionBack() == 0);
     assert(bc.getPostitionFront() == 0);
 
     for (auto i = 0; i < size; i++)
     {
-        buf_add_back[i] = random.get();
-        bc += buf_add_back[i];
+        buf_push_back[i] = random.get();
+        bc += buf_push_back[i];
     }
 
-    bc.reserve_front(size * sizeof(buf_add_front[0]));
+    bc.reserve_front(size * sizeof(buf_push_front[0]));
     assert(bc.capacity_back() == 0);
-    assert(bc.capacity_front() == size * sizeof(buf_add_front[0]));
-    assert(bc.getPositionBack() == size * sizeof(buf_add_back[0]) * 2);
-    assert(bc.getPostitionFront() == size * sizeof(buf_add_back[0]));
+    assert(bc.capacity_front() == size * sizeof(buf_push_front[0]));
+    assert(bc.getPositionBack() == size * sizeof(buf_push_back[0]) * 2);
+    assert(bc.getPostitionFront() == size * sizeof(buf_push_back[0]));
     for (auto i = 0; i < size; i++)
     {
-        buf_add_front[i] = random.get();
-        bc.add_front(buf_add_front[i]);
+        buf_push_front[i] = random.get();
+        bc.push_front(buf_push_front[i]);
     }
     uint16_t value{};
     for (auto i = 0; i < size; i++)
     {
         bc.get(value);
-        assert(buf_add_front[size - 1 - i] == value);
+        assert(buf_push_front[size - 1 - i] == value);
     }
     for (auto i = 0; i < size; i++)
     {
         bc.get(value);
-        assert(buf_add_back[i] == value);
+        assert(buf_push_back[i] == value);
     }
 
-    delete [] buf_add_back;
-    delete [] buf_add_front;
+    delete [] buf_push_back;
+    delete [] buf_push_front;
 
     out.pmln("The test ByteCollector_test::reserve_test is compleated with code 0.");
     out.sep();
@@ -160,6 +160,7 @@ int shs::tests::ByteCollector_test::insert_test()
     uint8_t buf[200]{};
     uint8_t buf_ins[10]{};
 
+    
     bc.reserve(200);
     for (auto i = 0; i < 200; i++)
     {
@@ -202,12 +203,13 @@ int shs::tests::ByteCollector_test::shrink_to_fit_test()
     out.pmln("Starting the test ByteCollector_test::shrink_to_fit_test.");
 
     shs::ByteCollector<uint8_t, uint16_t> bc;
+
     shs::Random<uint8_t> random;
     uint8_t buf[100];
 
     bc.reserve(200);
     bc.reserve_front(200);
-
+    
     random.autoSeed();
     for (auto i = 0; i < 100; i++)
     {
@@ -232,6 +234,24 @@ int shs::tests::ByteCollector_test::shrink_to_fit_test()
 }
 
 
+int shs::tests::ByteCollector_test::move_test()
+{
+    shs::ByteCollector bc;
+    bc.push_back("Hello, World!");
+
+    auto new_bc = std::move(bc);
+
+    assert(bc.size() == 0);
+    assert(bc.begin() == nullptr);
+    assert(new_bc.size() == 14);
+
+    std::string str = (char *) new_bc.begin();
+    assert(str == "Hello, World!");
+
+    return 0;
+}
+
+
 
 int shs::tests::ByteCollector_test::multiplatform()
 {
@@ -249,17 +269,17 @@ int shs::tests::ByteCollector_test::multiplatform()
 
     tools.randomFill(md);
 
-    bc.add_back(md.u8v);
-    bc.add_front(md.i8v);
-    bc.add_back(md.u16v, 2);
-    bc.add_front(md.i16v, 2);
-    bc.add_back(md.u32v);
-    bc.add_front(md.i32v);
-    bc.add_back(md.u64v);
-    bc.add_front(md.i64v);
-    bc.add_back(md.fv);
-    bc.add_front(md.dv);
-    // bc.add_back(md.cstr);
+    bc.push_back(md.u8v);
+    bc.push_front(md.i8v);
+    bc.push_back(md.u16v, 2);
+    bc.push_front(md.i16v, 2);
+    bc.push_back(md.u32v);
+    bc.push_front(md.i32v);
+    bc.push_back(md.u64v);
+    bc.push_front(md.i64v);
+    bc.push_back(md.fv);
+    bc.push_front(md.dv);
+    // bc.push_back(md.cstr);
 
     shs::tests::MultiData md_n;
     bc.get(md_n.dv);
@@ -352,8 +372,8 @@ int shs::tests::ByteCollector_test::sequence()
     int l = r + 1;
     for (auto i = 0; i < quantity / 2; i++)
     {
-        bc.add_front(r--, 1);
-        bc.add_back(l++, 1);
+        bc.push_front(r--, 1);
+        bc.push_back(l++, 1);
     }
 
     if (bc.begin() + bc.getPositionRead() != bc.begin()) out.pmln("ERROR! bc.readPtr != bc.begin()");
@@ -383,10 +403,10 @@ void shs::tests::ByteCollector_test::myTest()
 
     std::cout << (int) u8 << ' ' << u16 << ' ' << u32 << ' ' << i64 << std::endl;
 
-    bc.add_back(u8);
-    bc.add_back(u16, 1);
-    bc.add_front(u32, 2);
-    bc.add_back(i64, 2);
+    bc.push_back(u8);
+    bc.push_back(u16, 1);
+    bc.push_front(u32, 2);
+    bc.push_back(i64, 2);
     bc += 100;
 
     bc.get(u32, 2);

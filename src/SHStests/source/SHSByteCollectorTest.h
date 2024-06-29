@@ -26,33 +26,35 @@
 #endif
 
 #include <assert.h>
+#include <string>
 
 #include "SHSprinter.h"
 
 namespace shs
 {
-    namespace tests
-    {
-        class ByteCollector_test;
-    };
+  namespace tests
+  {
+    class ByteCollector_test;
+  };
 };
 
 class shs::tests::ByteCollector_test
 {
 public:
-    size_t quantity;
-    shs::tests::Printer out;
+  size_t quantity;
+  shs::tests::Printer out;
 
-    ByteCollector_test(size_t setQuantity = 10000) : quantity(setQuantity), out() {}
-    
-    int write_read_test();
-    int add_get_test();
-    int reserve_test();
-    int insert_test();
-    int shrink_to_fit_test();
+  ByteCollector_test(size_t setQuantity = 10000) : quantity(setQuantity), out() {}
 
+  int write_read_test();
+  int push_get_test();
+  int reserve_test();
+  int insert_test();
+  int shrink_to_fit_test();
 
-    int multiplatform();
-    int sequence();
-    void myTest();
+  int move_test();
+
+  int multiplatform();
+  int sequence();
+  void myTest();
 };

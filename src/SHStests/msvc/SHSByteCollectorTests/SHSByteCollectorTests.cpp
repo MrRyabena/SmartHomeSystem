@@ -28,11 +28,12 @@ int tests()
   status |= test.shrink_to_fit_test();
 
   status |= test.move_test();
+  status |= test.iterator_test();
 
   status |= test.multiplatform();
   status |= test.sequence();
 
-  //test.myTest();
+ //test.myTest();
   return status;
 }
 

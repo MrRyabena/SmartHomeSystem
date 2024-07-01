@@ -53,6 +53,7 @@ public:
   int shrink_to_fit_test();
 
   int move_test();
+  int iterator_test();
 
   int multiplatform();
   int sequence();

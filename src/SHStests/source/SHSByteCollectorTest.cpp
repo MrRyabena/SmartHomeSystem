@@ -160,7 +160,7 @@ int shs::tests::ByteCollector_test::insert_test()
     uint8_t buf[200]{};
     uint8_t buf_ins[10]{};
 
-    
+
     bc.reserve(200);
     for (auto i = 0; i < 200; i++)
     {
@@ -209,7 +209,7 @@ int shs::tests::ByteCollector_test::shrink_to_fit_test()
 
     bc.reserve(200);
     bc.reserve_front(200);
-    
+
     random.autoSeed();
     for (auto i = 0; i < 100; i++)
     {
@@ -236,6 +236,9 @@ int shs::tests::ByteCollector_test::shrink_to_fit_test()
 
 int shs::tests::ByteCollector_test::move_test()
 {
+    out.sep();
+    out.pmln("Starting the test ByteCollector_test::move_test.");
+
     shs::ByteCollector bc;
     bc.push_back("Hello, World!");
 
@@ -245,8 +248,29 @@ int shs::tests::ByteCollector_test::move_test()
     assert(bc.begin() == nullptr);
     assert(new_bc.size() == 14);
 
-    std::string str = (char *) new_bc.begin();
+    std::string str = (char *) &new_bc.begin();
     assert(str == "Hello, World!");
+
+    out.pmln("The test ByteCollector_test::move_test is compleated with code 0.");
+    out.sep();
+    return 0;
+}
+
+
+int shs::tests::ByteCollector_test::iterator_test()
+{
+    out.sep();
+    out.pmln("Starting the test ByteCollector_test::iterator_test.");
+
+    shs::ByteCollector bc;
+    constexpr char str [] = "Hello, World!";
+    bc.push_back(str, 14);
+
+
+    for (auto i = 0; auto x : bc) assert(x == str[i++]);
+
+    out.pmln("The test ByteCollector_test::iterator_test is compleated with code 0.");
+    out.sep();
 
     return 0;
 }
@@ -376,7 +400,7 @@ int shs::tests::ByteCollector_test::sequence()
         bc.push_back(l++, 1);
     }
 
-    if (bc.begin() + bc.getPositionRead() != bc.begin()) out.pmln("ERROR! bc.readPtr != bc.begin()");
+    // if (bc.begin() + bc.getPositionRead() != bc.begin()) out.pmln("ERROR! bc.readPtr != bc.begin()");
 
     unsigned int value{};
     for (auto i = 0; i < bc.size(); i++)

@@ -14,8 +14,9 @@
 #elif defined(ESP32)
 #define SHS_SF_ESP32
 
-#elif defined(_AVR_)
+#elif defined(__AVR__)
 #define SHS_SF_AVR
+#define SHS_SF_UNUSE_STL
 #endif
 
 #endif

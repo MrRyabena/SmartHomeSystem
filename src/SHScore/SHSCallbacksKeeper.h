@@ -13,8 +13,8 @@
 */
 
 #include <vector>
-#include "SHSAPI.h"
-#include "SHSByteCollector.h"
+#include "shs_API.h"
+#include "shs_ByteCollector.h"
 
 namespace shs
 {

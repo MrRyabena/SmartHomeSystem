@@ -8,8 +8,7 @@
 
 void shs::CallbacksKeeper::attach(shs::API *object)
 {
-    if (m_find(object) == 0xff)
-        m_ptrs.push_back(object);
+    if (m_find(object) == 0xff) m_ptrs.push_back(object);
     m_ptrs.shrink_to_fit();
 }
 
@@ -29,8 +28,7 @@ uint8_t shs::CallbacksKeeper::handler(shs::ByteCollector &data)
 {
     uint8_t status = 0;
     for (uint8_t i = 0; i < m_ptrs.size(); i++)
-        if (m_ptrs[i])
-            status = m_ptrs[i]->handler(data);
+        if (m_ptrs[i]) status = m_ptrs[i]->handler(data);
 
     return status;
 }
@@ -44,7 +42,6 @@ uint8_t shs::CallbacksKeeper::handler(shs::ByteCollector &data)
 uint8_t shs::CallbacksKeeper::m_find(shs::API *object)
 {
     for (uint8_t i = 0; i < m_ptrs.size(); i++)
-        if (m_ptrs[i] == object)
-            return i;
+        if (m_ptrs[i] == object) return i;
     return 0xff;
 }

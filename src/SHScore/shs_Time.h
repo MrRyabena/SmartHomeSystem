@@ -11,7 +11,7 @@ struct shs::Time
 {
     uint32_t unixTime{};
     
-    uint16_t getYear() 
+    uint16_t getYear() ;
 
     // uint16_t year{};
     // uint8_t month{};

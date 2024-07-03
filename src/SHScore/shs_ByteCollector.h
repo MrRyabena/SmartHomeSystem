@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-  Last update: v1.1.0
+  Last update: v2.0.0
   Versions:
     v0.1.0 — created.
     v0.2.0 — edited and optimized.
@@ -15,7 +15,8 @@
            — added begin() and end().
            — renamed functions, added push_front, push_back, write and read.
            — added insert().
-
+           — added move semantics.
+           — added iterator.
 */
 
 /*
@@ -25,6 +26,8 @@
 */
 
 #include <stdint.h>
+
+#include "shs_ByteCollectorIterator.h"
 
 namespace shs
 {
@@ -177,8 +180,8 @@ public:
         m_pos_front = 0;
     }
 
-    BCbuf_t *begin() const { return (m_buf + m_pos_front); }
-    BCbuf_t *end() const { return (m_buf + m_pos_back + 1); }
+    shs::ByteCollectorIterator<BCbuf_t> begin() const { return shs::ByteCollectorIterator(m_buf + m_pos_front); }
+    shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator(m_buf + m_pos_back + 1); }
     BCsize_t size() const { return m_pos_back - m_pos_front; }
 
     BCsize_t getPositionBack() const { return m_pos_back; }

@@ -14,12 +14,15 @@
 */
 
 #include <stdint.h>
-#include "SHSByteCollector.h"
+
+#include "shs_ByteCollector.h"
 #include "shs_types.h"
+
 namespace shs
 {
   class API;
 };
+
 class shs::API
 {
 public:

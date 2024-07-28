@@ -89,7 +89,7 @@ namespace std
         using iterator_category = std::forward_iterator_tag;
         using value_type = BCsize_t;
         using pointer = BCsize_t *;
-        using reference = BCsize_t;
+        using reference = BCsize_t &;
         using difference_type = size_t;
     };
 };

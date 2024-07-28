@@ -180,8 +180,8 @@ public:
         m_pos_front = 0;
     }
 
-    shs::ByteCollectorIterator<BCbuf_t> begin() const { return shs::ByteCollectorIterator(m_buf + m_pos_front); }
-    shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator(m_buf + m_pos_back + 1); }
+    shs::ByteCollectorIterator<BCbuf_t> begin() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_front); }
+    shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_back + 1); }
     BCsize_t size() const { return m_pos_back - m_pos_front; }
 
     BCsize_t getPositionBack() const { return m_pos_back; }
@@ -211,7 +211,7 @@ public:
 
 
     template <typename T>
-    auto &operator+=(const T &other)
+    shs::ByteCollector<BCbuf_t, BCsize_t> &operator+=(const T &other)
     {
         push_back(other);
         return *this;

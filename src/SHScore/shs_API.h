@@ -29,7 +29,7 @@ public:
   explicit API(const shs::t::shs_ID_t id) : API_ID(id) {}
   virtual ~API() = default;
 
-  virtual uint8_t handler(shs::ByteCollector &data) = 0;
+  virtual uint8_t handler(shs::ByteCollector<> &data) = 0;
 
   shs::t::shs_ID_t API_ID{};
 

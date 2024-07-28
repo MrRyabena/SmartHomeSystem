@@ -10,9 +10,9 @@ namespace shs
         void quick_remove_at(Class &obj, size_t ind)
         {
 #ifdef SHS_SF_UNUSE_STL
-                obj[pos] = obj.back();
+                obj[ind] = obj.back();
 #else
-                obj[pos] = std::move(obj.back());
+                obj[ind] = std::move(obj.back());
 #endif
                 obj.pop_back();
         }

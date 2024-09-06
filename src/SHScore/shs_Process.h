@@ -12,6 +12,7 @@
   i.e. an entity that can be started, cycled, and stopped.
 */
 
+
 namespace shs
 {
     class Process;
@@ -20,7 +21,9 @@ namespace shs
 class shs::Process
 {
 public:
-    virtual void begin() = 0;
+    virtual ~Process() = default;
+
+    virtual void start() = 0;
     virtual void tick() = 0;
-    virtual void end() = 0;
+    virtual void stop() = 0;
 };

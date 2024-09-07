@@ -19,9 +19,9 @@
 
 namespace shs
 {
-  class CRC8;
-  class CRC16;
-  class CRC32;
+    class CRC8;
+    class CRC16;
+    class CRC32;
 };
 
 /*
@@ -31,15 +31,15 @@ namespace shs
 class shs::CRC8
 {
 public:
-  static constexpr uint8_t CRC8_beg = 0x00;
-  uint8_t crc{};
-  explicit CRC8() : crc(CRC8_beg) {}
+    static constexpr uint8_t CRC8_beg = 0x00;
+    uint8_t crc{};
+    explicit CRC8() : crc(CRC8_beg) {}
 
-  void add(const uint8_t value) { update(crc, value); }
-  void clear() { crc = CRC8_beg; }
+    void add(const uint8_t value) { update(crc, value); }
+    void clear() { crc = CRC8_beg; }
 
-  void update(uint8_t &crc, const uint8_t data);
-  uint8_t crcBuf(const uint8_t *ptr, uint16_t size);
+    void update(uint8_t &crc, const uint8_t data);
+    uint8_t crcBuf(const uint8_t *ptr, uint16_t size);
 };
 
 /*
@@ -49,15 +49,15 @@ public:
 class shs::CRC16
 {
 public:
-  static constexpr uint16_t CRC16_beg = 0xFFFF;
-  uint16_t crc{};
-  CRC16() : crc(CRC16_beg) {}
+    static constexpr uint16_t CRC16_beg = 0xFFFF;
+    uint16_t crc{};
+    CRC16() : crc(CRC16_beg) {}
 
-  void add(const uint8_t value) { update(crc, value); }
-  void clear() { crc = CRC16_beg; }
+    void add(const uint8_t value) { update(crc, value); }
+    void clear() { crc = CRC16_beg; }
 
-  void update(uint16_t &crc, const uint8_t data);
-  uint16_t crcBuf(const uint8_t *ptr, uint16_t size);
+    void update(uint16_t &crc, const uint8_t data);
+    uint16_t crcBuf(const uint8_t *ptr, uint16_t size);
 };
 
 /*
@@ -67,13 +67,13 @@ public:
 class shs::CRC32
 {
 public:
-  static constexpr uint32_t CRC32_beg = 0x00000000;
-  uint32_t crc{};
-  explicit CRC32() : crc(CRC32_beg) {}
+    static constexpr uint32_t CRC32_beg = 0x00000000;
+    uint32_t crc{};
+    explicit CRC32() : crc(CRC32_beg) {}
 
-  void add(const uint8_t value) { update(crc, value); }
-  void clear() { crc = CRC32_beg; }
+    void add(const uint8_t value) { update(crc, value); }
+    void clear() { crc = CRC32_beg; }
 
-  void update(uint32_t &crc, uint8_t data);
-  uint32_t crcBuf(const uint8_t *ptr, uint16_t size);
+    void update(uint32_t &crc, uint8_t data);
+    uint32_t crcBuf(const uint8_t *ptr, uint16_t size);
 };

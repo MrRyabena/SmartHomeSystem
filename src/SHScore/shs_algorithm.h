@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <functional>
 
 #include "shs_settings_private.h"
 
@@ -22,7 +23,10 @@ namespace shs
             It m{left + (right - left) / 2};
             comp(*m, key) ? left = m + 1 : right = m;
         }
-        return (comp(*left, key) ? end : left);
+        
+        if (left != end && !comp(key, *left)) return left;
+        return end; 
+
     }
 
     template <class Container, typename T, typename Compare = std::less<T>>
@@ -43,7 +47,16 @@ namespace shs
     template <class Container, typename T, typename Compare = std::less<T>>
     inline void remove_sorted(Container &container, const T &value, Compare comp = Compare())
     {
-        container.erase(binary_search(std::begin(container), std::end(container), value, comp));
+        auto left = std::begin(container);
+        auto right = std::end(container);
+
+        while (left < right)
+        {
+            auto m{left + (right - left) / 2};
+            comp(*m, value) ? left = m + 1 : right = m;
+        }
+
+        container.erase(comp(*left, value) ? std::end(container) : left);
         container.shrink_to_fit();
     }
 

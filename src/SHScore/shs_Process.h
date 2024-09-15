@@ -5,6 +5,7 @@
   Versions:
     v0.2.0 — created.
     v1.0.0 — release.
+    v2.0.0 — Function names have been changed.
 */
 
 /*

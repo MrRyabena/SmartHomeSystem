@@ -19,7 +19,7 @@
 
 namespace shs
 {
-    template<> struct TaskData;
+    template<class T> struct TaskData;
     class Task;
 
 
@@ -57,15 +57,18 @@ struct shs::TaskData<shs::Task>
     static constexpr shs::task::stack_size_t stack_size = 100;   // In words
     static constexpr shs::task::priority_t   priority = 0;       // 0 is the highest priority
     static constexpr shs::task::complexy_t   complexy = 1;       // 1 is the lowest complexity
-}
+};
 
 
 class shs::Task
 {
 public:
     explicit Task(shs::task::function_t set_function, shs::task::parameters_t set_parameters = nullptr)
-        : function(set_function), parameters(set_parameters), isCompleted(false)
+        : function(set_function), parameters(set_parameters), m_completed(false)
     {}
+
+    Task(const Task &) = default;
+    Task(Task&&) = default;
 
     ~Task() { std::cout << "~Task()" << std::endl; }
 

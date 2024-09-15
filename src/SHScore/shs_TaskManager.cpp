@@ -1,114 +1,67 @@
 #include "shs_TaskManager.h"
 
 shs::TaskManager::TaskManager(const uint8_t cores)
-    : m_cores(cores), m_cores_load(cores, 0), nextID(1),
-      m_tasks([](const std::shared_ptr<shs::Task> v1, const std::shared_ptr<shs::Task> v2)
-              { return v1->id < v2->id; })
-{
-    // shs::Task TMloop_task(
-    //     &shs::TaskManager::m_loop,
-    //     this,
-    //     10,
-    //     1,
-    //     0,
-    //     20,
-    //     "TMloop");
-
-    // addTask(TMloop_task);
-}
+    : m_cores(cores), m_cores_load(cores, 0) {}
 
 #include <iostream>
 shs::TaskManager::~TaskManager()
 {
     std::cout << "~TaskManager()" << std::endl;
-    //for (auto &x : m_tasks) if (x->handle && x->handle->joinable()) x->handle->join();
-    //checkCompleted();
-}
-
-shs::task::task_id_t shs::TaskManager::addTask(const shs::Task &task, const bool set_core_auto)
-{
-    // if (set_core_auto)
-    // {
-    //     uint8_t core_id{};
-    //     uint32_t min_load = std::numeric_limits<uint32_t>::max();
-    //     for (uint8_t i = 0; i < m_cores; i++)
-    //         if (m_cores_load[i] < min_load)
-    //         {
-    //             min_load = m_cores_load[i];
-    //             core_id = i;
-    //         }
-    //     task.coreID = core_id;
-    // }
-
-    // for (task.id; shs::binary_search(m_tasks.begin(), m_tasks.end(), &task) != m_tasks.end(); task.id++)
-    //     ;
-
-    
-
-    //auto task_ptr = std::make_shared<shs::Task>(std::move(task));
-    // task_ptr->id = nextID++;
-
-    // m_start_task(*task_ptr);
-    // m_tasks.attach(task_ptr);
-    // m_cores_load[task_ptr->coreID] += task_ptr->complexy;
-
-    // return task_ptr->id;
-    return 0;
+    checkCompleted();
 }
 
 #include <iostream>
 uint8_t shs::TaskManager::deleteTask(const shs::task::task_id_t taskID)
 {
-    // auto task = std::make_shared<shs::Task>(nullptr);
-    // task->id = taskID;
-    
-    // auto it = shs::binary_search(m_tasks.begin(), m_tasks.end(), task,
-    //                              [](const std::shared_ptr<shs::Task> v1, const std::shared_ptr<shs::Task> v2)
-    //           { return v1->id < v2->id; });
+    shs::TM_data tm(taskID);
 
-    // if (it != m_tasks.end())
-    // {       
-    //     m_end_task(**it);
-    //     m_cores_load[(*it)->coreID] -= (*it)->complexy;
-    //     m_tasks.detach(*it);
-    //     return 0;
-    // }
+    auto it = shs::binary_search(m_tasks.begin(), m_tasks.end(), tm);
+
+    if (it != m_tasks.end())
+    {
+        m_end_task(*it);
+        //m_cores_load[(*it)->coreID] -= (*it)->complexy;
+        m_tasks.detach(*it);
+        return 0;
+    }
     return 1;
 }
 
+
 void shs::TaskManager::checkCompleted()
 {
-    // std::vector<shs::task::task_id_t> ids;
-    // for (auto &x : m_tasks)
-    //     if (x->isCompleted) ids.push_back(x->id);
-    
+    std::vector<shs::task::task_id_t> ids;
+    for (auto& x : m_tasks)
+        if (x.task->isCompleted()) ids.push_back(x.id);
 
-    // for (auto x : ids) deleteTask(x);
+
+    for (auto x : ids) deleteTask(x);
 }
 
-void shs::TaskManager::m_start_task(shs::Task &task)
+
+void shs::TaskManager::m_start_task(TM_data& tm_data, const uint8_t coreID, const shs::task::stack_size_t stack_size, const shs::task::priority_t priority)
 {
 #ifdef SHS_SF_FreeRTOS
 #ifdef SHS_SF_ESP32
     // Create a new task using xTaskCreatePinnedToCore
     xTaskCreatePinnedToCore(
-        shs::Task::doTask, // Pointer to the task function
-        nullptr,           // Name of the task
-        task.stack_size,   // Stack size in words
-        &task,             // Task input parameters
-        task.priority,     // Task priority
-     //   &task.handle,      // Pointer to store the task handle
-        task.coreID        // Core where the task should run
+        shs::Task::doTask,         // Pointer to the task function
+        nullptr,                   // Name of the task
+        stack_size,                // Stack size in words
+        tm_data.task.get(),        // Task input parameters
+        tm_data.task->priority,    // Task priority
+        tm_data.handle,      // Pointer to store the task handle
+        coreID                     // Core where the task should run
     );
 #else
     xTaskCreate(
-        shs::Task::doTask, // Pointer to the task function
-        nullptr,           // Name of the task
-        task.stack_size,   // Stack size in words
-        &task,             // Task input parameters
-        task.priority,     // Task priority
-       // &task.handle       // Pointer to store the task handle
-    );
+        shs::Task::doTask,         // Pointer to the task function
+        nullptr,                   // Name of the task
+        stack_size,                // Stack size in words
+        tm_data.task.get(),        // Task input parameters
+        tm_data.task->priority,    // Task priority
+        tm_data.task->handle,      // Pointer to store the task handle
+        );
 #endif
 
 #elif defined(SHS_SF_AVR)
@@ -116,36 +69,24 @@ void shs::TaskManager::m_start_task(shs::Task &task)
 #error "Not implemented for AVR"
 
 #else
-    //task.handle = std::make_unique<std::thread>(shs::Task::doTask, &task);
+    tm_data.handle = std::move(std::make_unique<std::thread>(shs::Task::doTask, tm_data.task.get()));
+    std::cout << "and this" << std::endl;
 #endif
 }
 
-void shs::TaskManager::m_loop(void *ptr)
-{
-    // auto self = static_cast<shs::TaskManager *>(ptr);
-    // while (true)
-    // {
-    //     self->checkCompleted();
-    //     // shs::Task::sleep_for_ticks(100);
-    //     std::this_thread::sleep_for(std::chrono::microseconds(100));
-    // }
-}
 
-void shs::TaskManager::m_end_task(shs::Task &task)
+void shs::TaskManager::m_end_task(TM_data& tm_data)
 {
 #ifdef SHS_SF_FreeRTOS
-    if (task.handle != nullptr)
+    if (tm_data.handle != nullptr)
     {
-        vTaskDelete(task.handle);
-        task.handle = nullptr;
+        vTaskDelete(tm_data.handle);
+        tm_data.handle = nullptr;
     }
 #elif defined(SHS_SF_AVR)
 #error "Not implemented for AVR"
 #else
-   // if (task.handle != nullptr)
-   // {
-        //  task.handle->request_stop();
-       // if (task.handle && task.handle->joinable()) task.handle->join();
-   // }
+    if (tm_data.handle && tm_data.handle->joinable()) tm_data.handle->join();
 #endif
 }
+

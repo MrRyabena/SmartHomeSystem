@@ -18,8 +18,9 @@ public:
     SortedBuf(Compare compare = Compare()) : m_compare(compare) {}
     ~SortedBuf() = default;
 
-    auto attach(const BufT &value) { return shs::insert_sorted(m_srtdbuf, value, m_compare); };
-    void detach(const BufT &value) { shs::remove_sorted(m_srtdbuf, value, m_compare); };
+    template <typename T>
+    auto attach(T&& value) { return shs::insert_sorted(m_srtdbuf, std::forward<T>(value), m_compare); };
+    void detach(const BufT& value) { shs::remove_sorted(m_srtdbuf, value, m_compare); };
 
     auto begin() { return m_srtdbuf.begin(); }
     auto end() { return m_srtdbuf.end(); }

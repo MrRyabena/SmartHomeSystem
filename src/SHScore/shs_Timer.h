@@ -23,10 +23,8 @@ namespace shs
 class shs::Timer : public shs::Process
 {
 public:
-    Timer(
-        decltype(shs::timer_resolution::microseconds)
-        resolution = shs::timer_resolution::milliseconds,
-        const size_t T = 0, shs::Process *process = nullptr
+    Timer(const size_t T = 0, shs::Process *process = nullptr,
+    decltype(shs::timer_resolution::milliseconds) resolution = shs::timer_resolution::milliseconds
     )
         : m_res_func(resolution), m_T(T),
         m_process(process), m_tmr(m_res_func())

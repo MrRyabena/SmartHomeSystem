@@ -39,7 +39,9 @@ public:
     void clear() { crc = CRC8_beg; }
 
     void update(uint8_t &crc, const uint8_t data);
-    uint8_t crcBuf(const uint8_t *ptr, uint16_t size);
+    uint8_t addBuf(const uint8_t *ptr, uint16_t size);
+
+    static uint8_t crcBuf(const uint8_t *ptr, uint16_t size);
 };
 
 /*

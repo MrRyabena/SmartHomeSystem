@@ -37,13 +37,19 @@ void shs::CRC8::update(uint8_t &crc, uint8_t data)
 #endif
 }
 
-uint8_t shs::CRC8::crcBuf(const uint8_t *ptr, uint16_t size)
+uint8_t shs::CRC8::addBuf(const uint8_t *ptr, uint16_t size)
 {
-    //uint8_t crc = 0;
-    for (uint16_t i = 0; i < size; i++)
-        update(crc, *ptr);
+    for (uint16_t i = 0; i < size; i++) update(crc, *ptr);
     return crc;
 }
+
+uint8_t shs::CRC8::crcBuf(const uint8_t *ptr, uint16_t size)
+{
+    uint8_t crc = CRC8_beg;
+    for (uint16_t i = 0; i < size; i++) update(crc, crcBuf)
+    return crc;
+}
+
 
 /*
   ----------------------------------------

@@ -17,6 +17,8 @@
 
 #include "shs_ByteCollector.h"
 #include "shs_types.h"
+#include "shs_DTPpacket.h"
+
 
 namespace shs
 {
@@ -25,16 +27,18 @@ namespace shs
 
 class shs::API
 {
-public:
+  public:
   explicit API(const shs::t::shs_ID_t id) : API_ID(id) {}
   virtual ~API() = default;
 
-  virtual uint8_t handler(shs::ByteCollector<> &data) = 0;
+  virtual void handle(shs::DTPpacket& data) = 0;
 
   shs::t::shs_ID_t API_ID{};
 
-  bool operator<(const shs::API &other) const { return API_ID < other.API_ID; }
-  bool operator>(const shs::API &other) const { return API_ID > other.API_ID; }
-  bool operator==(const shs::API &other) const { return API_ID == other.API_ID; }
-  bool operator!=(const shs::API &other) const { return API_ID != other.API_ID; }
+  bool operator<(const shs::API& other) const { return API_ID < other.API_ID; }
+  bool operator>(const shs::API& other) const { return API_ID > other.API_ID; }
+  bool operator==(const shs::API& other) const { return API_ID == other.API_ID; }
+  bool operator!=(const shs::API& other) const { return API_ID != other.API_ID; }
 };
+
+

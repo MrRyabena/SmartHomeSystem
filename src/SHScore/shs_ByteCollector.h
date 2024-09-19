@@ -43,7 +43,7 @@ public:
     explicit ByteCollector(BCsize_t size = 0)
         : m_buf(new BCbuf_t[size]{}), m_capacity(size) {}
 
-    ByteCollector(ByteCollector<BCbuf_t, BCsize_t&& other) noexcept
+    ByteCollector(ByteCollector<BCbuf_t, BCsize_t>&& other) noexcept
         : m_buf(other.m_buf), m_capacity(other.m_capacity),
         m_pos_back(other.m_pos_back), m_pos_front(other.m_pos_front),
         m_pos_read(other.m_pos_read)

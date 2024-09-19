@@ -8,15 +8,19 @@
 */
 
 
-uint8_t shs::DTPpacker::packDTP(const uint8_t* data, const uint8_t size, const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID)
+uint8_t shs::DTPpacker::packDTP(shs::DTPpacket& packet)
 {
-    shs::ByteCollector bc(size + DTP_OFFSETbeg + 1);
+    packet.bc.reserve(1);
+    packet.bc.reserve_front(DTP_OFFSETbeg);
 
-    bc.push_back(size + DTP_OFFSETbeg + 1, 1);
-    bc.push_back(senderID);
-    bc.push_back(recipientID);
-    bc.write(data, size);
-    bc.push_back(shs::CRC8::crcBuf(bc.getPtr(), bc.size()), 1);
+
+    // note: reversed order
+    bc.push_front(recipientID);
+    bc.push_front(senderID);
+    bc.push_front(size + DTP_OFFSETbeg + 1, 1);
+
+
+    bc.push_back(shs::CRC8::crcBuf(bc.getPtr(), bc.size() - 1), 1);
 
     return bc.buf[0];
 }

@@ -83,16 +83,41 @@ enum shs::DTPcommands::DTPcommands : uint8_t
 
 struct shs::DTPpacket
 {
+
+    explicit DTPpacket(
+        const shs::t::shs_ID_t set_senderID,
+        const shs::t::shs_ID_t set_recipientID,
+        shs::ByteCollector<>&& set_data
+    )
+        :
+        senderID(set_senderID), recipientID(set_recipientID),
+        bc(std::move(set_data))
+    {}
+
+    explicit DTPpacket(
+        const shs::t::shs_ID_t set_senderID,
+        const shs::t::shs_ID_t set_recipientID,
+        const uint8_t* data,
+        const uint8_t size
+    )
+        :
+        senderID(set_senderID), recipientID(set_recipientID),
+        datasize(size), bc(size)
+    {
+        bc.write(data, size);
+    }
+
+
     DTPpacket(shs::ByteCollector<>&& bc_data)
         : bc(std::move(bc_data))
     {
         shs::DTPpacker::parseDTP(&bc, *this);
     }
-    
+
     shs::t::shs_ID_t senderID{};
     shs::t::shs_ID_t recipientID{};
-    uint8_t datasize{};
     shs::ByteCollector<> bc;
+    uint8_t datasize{};
 
 };
 
@@ -106,15 +131,14 @@ struct shs::DTPpacket
   0x00  1B  -- message size
   0x01  4B  -- sender's ID
   0x05  4B  -- recipient's ID
-  0x09
-  ....  ..  -- data
+  0x09  xB  -- data
   0xXX  1B  -- CRC
 */
 class shs::DTPpacker
 {
-public:
+    public:
 
-    static uint8_t packDTP(const uint8_t* data, const uint8_t size, const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID);
+    static uint8_t packDTP(shs::DTPpacket &packet);
     static uint8_t checkDTP(const shs::ByteCollector<>* bc);
     uint8_t parseDTP(shs::ByteCollector<>&& bc, shs::DTPpacket& packet);
 
@@ -137,7 +161,7 @@ public:
 */
 class shs::DTP : public shs::DTPpacker, public shs::CallbacksKeeper
 {
-public:
+    public:
     explicit DTP(Stream* bus, const shs::settings::shs_ModuleID_t ID);
     ~DTP();
 
@@ -147,7 +171,7 @@ public:
     uint8_t sendPacket(shs::ByteCollector* bc, const shs::settings::shs_ModuleID_t to);
     uint8_t sendPacket(shs::ByteCollector* bc, const shs::settings::shs_ModuleID_t to, const shs::settings::shs_ID_t api_ID, const shs::settings::shs_ModuleID_t from);
 
-private:
+    private:
     Stream* m_bus{};
     uint8_t m_len{};
     uint32_t m_tmr{};

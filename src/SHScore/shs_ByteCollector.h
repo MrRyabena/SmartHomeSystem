@@ -41,7 +41,8 @@ class shs::ByteCollector
     static_assert(sizeof(BCbuf_t) == 1);
 public:
     explicit ByteCollector(BCsize_t size = 0)
-        : m_buf(new BCbuf_t[size]{}), m_capacity(size) {}
+        : m_buf(new BCbuf_t[size]{}), m_capacity(size)
+    {}
 
     ByteCollector(ByteCollector<BCbuf_t, BCsize_t>&& other) noexcept
         : m_buf(other.m_buf), m_capacity(other.m_capacity),
@@ -56,8 +57,8 @@ public:
         other.m_pos_read = {};
     }
 
-    ByteCollector(const ByteCollector<BCbuf_t, BCsize_t> &) = delete;
-    ByteCollector<BCbuf_t, BCsize_t>& operator=(const ByteCollector<BCbuf_t, BCsize_t> &) = delete;   
+    ByteCollector(const ByteCollector<BCbuf_t, BCsize_t>&) = delete;
+    ByteCollector<BCbuf_t, BCsize_t>& operator=(const ByteCollector<BCbuf_t, BCsize_t>&) = delete;
 
     ~ByteCollector() { delete[] m_buf; }
 
@@ -82,7 +83,7 @@ public:
 
     // add to the end
     template <typename T>
-    void push_back(const T& value, const BCsize_t bytes = sizeof(T)) { write((BCbuf_t*)&value, bytes); }
+    void push_back(const T& value, const BCsize_t bytes = sizeof(T)) { write(( BCbuf_t* )&value, bytes); }
 
 
     // add to the beginning
@@ -92,7 +93,7 @@ public:
         if (capacity_front() < bytes) reserve_front(bytes - capacity_front());
 
         m_pos_front -= bytes;
-        BCbuf_t* data_ptr = (BCbuf_t*)&value;
+        BCbuf_t* data_ptr = ( BCbuf_t* )&value;
         for (BCsize_t i = 0; i < bytes; i++) m_buf[m_pos_front + i] = *data_ptr++;
     }
 
@@ -113,7 +114,7 @@ public:
     }
 
     template <typename T>
-    void insert(const T& value, const BCsize_t size, const BCsize_t position) { insert((const BCbuf_t*)&value, size, position); }
+    void insert(const T& value, const BCsize_t size, const BCsize_t position) { insert(( const BCbuf_t* )&value, size, position); }
 
     // unpack data
 
@@ -123,7 +124,7 @@ public:
     }
 
     template <typename T>
-    void get(T& var, const BCsize_t bytes = sizeof(T)) { read((BCbuf_t*)&var, bytes); }
+    void get(T& var, const BCsize_t bytes = sizeof(T)) { read(( BCbuf_t* )&var, bytes); }
 
     // reserve bytes for more size
     void reserve(const BCsize_t size)
@@ -177,6 +178,19 @@ public:
         m_pos_front = 0;
     }
 
+    void reset()
+    {
+        m_pos_back = 0;
+        m_pos_front = 0;
+        m_pos_read = 0;
+    }
+
+    void clear()
+    {
+        for (auto& x : *this) x = 0;
+        reset();
+    }
+
     uint8_t* getPtr() const { return m_buf; }
     shs::ByteCollectorIterator<BCbuf_t> begin() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_front); }
     shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_back + 1); }
@@ -187,6 +201,8 @@ public:
     BCsize_t getPositionBack() const { return m_pos_back; }
     BCsize_t getPostitionFront() const { return m_pos_front; }
     BCsize_t getPositionRead() const { return m_pos_read; }
+
+    shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t> getReadIt(const bool set_begin = false) const { return shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t>(m_buf, m_buf + m_pos_back, set_begin ? m_buf : (m_buf + m_pos_read)); }
 
     BCbuf_t setPositionBack(const BCsize_t position)
     {
@@ -216,6 +232,7 @@ public:
         push_back(other);
         return *this;
     }
+
 
 private:
     BCbuf_t* m_buf{};          // array

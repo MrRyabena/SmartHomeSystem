@@ -31,7 +31,7 @@ class shs::API
   explicit API(const shs::t::shs_ID_t id) : API_ID(id) {}
   virtual ~API() = default;
 
-  virtual void handle(shs::DTPpacket& data) = 0;
+  virtual void handle(shs::ByteCollectorReadIterator<>& data) = 0;
 
   shs::t::shs_ID_t API_ID{};
 

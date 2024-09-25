@@ -40,16 +40,12 @@ using Stream = shs::Stream;
 
 #include "shs_settings_private.h"
 #include "shs_types.h"
-#include "shs_CRC.h"
 #include "shs_ByteCollector.h"
 #include "shs_ID.h"
-#include "shs_SortedBuf.h"
 #include "shs_Process.h"
 #include "shs_API.h"
-#include "shs_algorithm.h"
-#include "shs_DTPpacket.h"
+
 #include <stdint.h>
-#include "functional"
 
 namespace shs::settings
 {
@@ -68,11 +64,11 @@ namespace shs
 
     class DTP;
 
-    namespace DTPless
-    {
-        struct APIptr;
-        struct APIid;
-    }
+    // namespace DTPless
+    // {
+    //     struct APIptr;
+    //     struct APIid;
+    // }
 };
 
 enum shs::DTPcommands::DTPcommands : uint8_t
@@ -83,12 +79,12 @@ enum shs::DTPcommands::DTPcommands : uint8_t
 };
 
 
-struct shs::DTPless::APIptr { bool operator()(const shs::API* lhs, const shs::API* rhs) const { return lhs->API_ID < rhs->API_ID; } };
-struct shs::DTPless::APIid
-{
-    bool operator()(const shs::API* lhs, const shs::t::shs_ID_t rhs) const { return lhs->API_ID < rhs; }
-    bool operator()(const shs::t::shs_ID_t lhs, const shs::API* rhs) const { return lhs < rhs->API_ID; }
-};
+// struct shs::DTPless::APIptr { bool operator()(const shs::API* lhs, const shs::API* rhs) const { return lhs->API_ID < rhs->API_ID; } };
+// struct shs::DTPless::APIid
+// {
+//     bool operator()(const shs::API* lhs, const shs::t::shs_ID_t rhs) const { return lhs->API_ID < rhs; }
+//     bool operator()(const shs::t::shs_ID_t lhs, const shs::API* rhs) const { return lhs < rhs->API_ID; }
+// };
 
 
 /*
@@ -96,11 +92,11 @@ struct shs::DTPless::APIid
   DTP
   ----------------------------------------
 */
-class shs::DTP : public shs::Process, public shs::SortedBuf<shs::API*, shs::DTPless::APIptr>
+class shs::DTP : public shs::Process
 {
 public:
-    explicit DTP(Stream& bus, const shs::t::shs_ID_t ID)
-        : m_bus(bus), m_ID(ID), m_len(0), m_tmr(0)
+    explicit DTP(Stream& bus, shs::API& handler, const shs::t::shs_ID_t ID, const uint8_t bufsize = 25)
+        : m_bus(bus), m_handler(handler) m_ID(ID), m_len(0), m_tmr(0), m_bc(bufsize)
     {}
 
     ~DTP() = default;
@@ -116,10 +112,14 @@ public:
     enum Status : uint8_t { no_data, packet_is_expected, packet_processed, invalid_recipient };
 
 private:
-    uint8_t m_handle_packet(shs::ByteCollector<>&& bc);
-
+    
     Stream& m_bus;
+
+    shs::ByteCollector<> m_bc;
     uint8_t m_len;
     uint32_t m_tmr;
+
+    shs::API& m_handler;
+
     shs::t::shs_ID_t m_ID;
 };

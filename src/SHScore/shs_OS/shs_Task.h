@@ -8,7 +8,8 @@
 #endif
 
 #if defined(SHS_SF_ESP8266) || defined(SHS_SF_ESP32)
-#include <freertos.h>
+#include <Arduino.h>
+#include <stdio.h>
 #define SHS_SF_FreeRTOS
 #endif
 
@@ -26,17 +27,17 @@ namespace shs
     namespace task
     {
 
-#ifdef SHS_SF_FreeRTOS
+    #ifdef SHS_SF_FreeRTOS
         using base_type_t = BaseType_t;
         using ubase_type_t = uBaseType_t;
 
         using handle_t = TaskHandle_t;
-#else
+    #else
         using base_type_t = int32_t;
         using ubase_type_t = uint32_t;
 
         using handle_t = std::unique_ptr<std::thread>;
-#endif
+    #endif
 
         using function_t = void (*)(void*);
         using name_t = const char*;
@@ -67,7 +68,7 @@ public:
         : function(set_function), parameters(set_parameters), m_completed(false)
     {}
 
-    Task(const Task &) = default;
+    Task(const Task&) = default;
     Task(Task&&) = default;
 
     ~Task() { std::cout << "~Task()" << std::endl; }
@@ -86,7 +87,7 @@ private:
 
     static void doTask(void* args)
     {
-        auto self = static_cast<shs::Task*>(args);
+        auto self = static_cast< shs::Task* >(args);
         self->function(self->parameters);
         self->m_completed = true;
     }

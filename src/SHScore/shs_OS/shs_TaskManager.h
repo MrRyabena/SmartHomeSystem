@@ -10,9 +10,8 @@
 #endif
 
 #if defined(SHS_SF_ESP8266) || defined(SHS_SF_ESP32)
+#include <Arduino.h>
 #include <stdio.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
 #define SHS_SF_FreeRTOS
 #endif
 

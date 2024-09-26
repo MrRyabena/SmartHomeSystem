@@ -18,49 +18,21 @@
 
 namespace shs
 {
-    class ControlWiFi;
+    class ControlWiFi;  // note: use [[no_unique_address]], all members are static.
 };
 
 class shs::ControlWiFi
 {
 public:
-    static bool setHostname(const char *hostname) { return WiFi.hostname(hostname); }
+    static bool setHostname(const char* hostname) { return WiFi.hostname(hostname); }
 
-    static void connectWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *pass = shs::settings::WIFI_PASSWORD);
-    static bool connectWiFiWait(const size_t time = 20000, const char *ssid = shs::settings::WIFI_SSID, const char *pass = shs::settings::WIFI_PASSWORD);
-
-    static void configureWiFi(const char *ssid = shs::settings::WIFI_SSID, const char *pass = shs::settings::WIFI_PASSWORD);
-
-    static bool disableWiFi() { return WiFi.forceSleepBegin(); }
-    static bool enableWiFi() { return WiFi.forceSleepWake(); }
-
-    static bool WiFiConnected() { return WiFi.status() == WL_CONNECTED; }
-
-    static bool setMac(uint8_t *mac)
+    static void connectWiFi(const char* ssid = shs::settings::WIFI_SSID, const char* pass = shs::settings::WIFI_PASSWORD)
     {
-#ifdef SHS_SF_ESP8266
-        return wifi_set_macaddr(STATION_IF, mac);
-#else
-        return esp_wifi_set_mac(WIFI_IF_STA, mac);
-#endif
-    }
-
-    static bool setMac(const shs::t::shs_ID_t id)
-    {
-        uint8_t mac[6]{};
-        for (uint8_t i = 0; i < 5; i++) mac[i] = shs::settings::MACconstant[i];
-        mac[5] = id.getModuleID();
-
-        return setMac(mac);
-    }
-
-    static void connectWiFi(const char *ssid, const char *pass)
-    {
-        WiFi.mode(WiFi_STA);
+        WiFi.mode(WIFI_STA);
         WiFi.begin(ssid, pass);
     }
 
-    static bool connectWiFiWait(const size_t time, const char *ssid, const char *pass)
+    static bool connectWiFiWait(const size_t time = 20000, const char* ssid = shs::settings::WIFI_SSID, const char* pass = shs::settings::WIFI_PASSWORD)
     {
         uint32_t tmr = millis();
 
@@ -73,12 +45,36 @@ public:
         return true;
     }
 
-    static void configureWiFi(const char *ssid, const char *pass)
+    static void configureWiFi(const char* ssid = shs::settings::WIFI_SSID, const char* pass = shs::settings::WIFI_PASSWORD)
     {
-        WiFi.mode(WiFi_STA);
+        WiFi.mode(WIFI_STA);
         WiFi.persistent(true);
         WiFi.setAutoConnect(true);
         WiFi.setAutoReconnect(true);
-        WiFi.setAutoConnect(ssid, pass);
+        WiFi.begin(ssid, pass);
     }
+
+    static bool disableWiFi() { return WiFi.forceSleepBegin(); }
+    static bool enableWiFi() { return WiFi.forceSleepWake(); }
+
+    static bool WiFiConnected() { return WiFi.status() == WL_CONNECTED; }
+
+    static bool setMac(uint8_t* mac)
+    {
+    #ifdef SHS_SF_ESP8266
+        return wifi_set_macaddr(STATION_IF, mac);
+    #else
+        return esp_wifi_set_mac(WIFI_IF_STA, mac);
+    #endif
+    }
+
+    // static bool setMac(const shs::t::shs_ID_t id)
+    // {
+    //     uint8_t mac[6]{};
+    //     for (uint8_t i = 0; i < 5; i++) mac[i] = shs::settings::MACconstant[i];
+    //     mac[5] = id.getModuleID();
+
+    //     return setMac(mac);
+    // }
+
 };

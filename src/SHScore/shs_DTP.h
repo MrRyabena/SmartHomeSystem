@@ -28,8 +28,6 @@
 
 #if __has_include(<Arduino.h>)
 #include <Arduino.h>
-#define DEBUG(value) ({ Serial.println(value); })
-
 #else
 #define DEBUG(value)
 #pragma message "Used shs::Stream"
@@ -96,7 +94,7 @@ class shs::DTP : public shs::Process
 {
 public:
     explicit DTP(Stream& bus, shs::API& handler, const shs::t::shs_ID_t ID, const uint8_t bufsize = 25)
-        : m_bus(bus), m_handler(handler) m_ID(ID), m_len(0), m_tmr(0), m_bc(bufsize)
+        : m_bus(bus), m_handler(handler), m_ID(ID), m_len(0), m_tmr(0), m_bc(bufsize)
     {}
 
     ~DTP() = default;

@@ -42,7 +42,7 @@ public:
 
     void handle(shs::ByteCollectorReadIterator<>& it) override
     {
-
+        ++it;
         switch (it.read())
         {
         case commands::enable:   m_grgb.enable();  break;
@@ -60,5 +60,5 @@ public:
 
 
 private:
-    GRGB m_grgb;
+    GRGB& m_grgb;
 };

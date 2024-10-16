@@ -191,12 +191,12 @@ public:
         reset();
     }
 
-    uint8_t* getPtr() const { return m_buf; }
+    BCbuf_t* getPtr() const { return m_buf; }
     shs::ByteCollectorIterator<BCbuf_t> begin() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_front); }
     shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_back + 1); }
     BCsize_t size() const { return m_pos_back - m_pos_front; }
 
-    const BCbuf_t& operator[](BCsize_t index) const { return m_buf[index]; }
+    const BCbuf_t& operator[](const BCsize_t index) const { return m_buf[index]; }
 
     BCsize_t getPositionBack() const { return m_pos_back; }
     BCsize_t getPostitionFront() const { return m_pos_front; }

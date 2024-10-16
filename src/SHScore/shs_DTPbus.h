@@ -45,57 +45,20 @@ using Stream = shs::Stream;
 
 #include <stdint.h>
 
-namespace shs::settings
-{
-#ifndef SILENCE_TIMEOUT
-#define SILENCE_TIMEOUT 120000
-#endif
-
-};
 
 namespace shs
 {
-    namespace DTPcommands
-    {
-        enum DTPcommands : uint8_t;
-    };
-
     class DTP;
-
-    // namespace DTPless
-    // {
-    //     struct APIptr;
-    //     struct APIid;
-    // }
-};
-
-enum shs::DTPcommands::DTPcommands : uint8_t
-{
-    answer = 252,
-    error,
-    request,
 };
 
 
-// struct shs::DTPless::APIptr { bool operator()(const shs::API* lhs, const shs::API* rhs) const { return lhs->API_ID < rhs->API_ID; } };
-// struct shs::DTPless::APIid
-// {
-//     bool operator()(const shs::API* lhs, const shs::t::shs_ID_t rhs) const { return lhs->API_ID < rhs; }
-//     bool operator()(const shs::t::shs_ID_t lhs, const shs::API* rhs) const { return lhs < rhs->API_ID; }
-// };
-
-
-/*
-  ----------------------------------------
-  DTP
-  ----------------------------------------
-*/
 class shs::DTP : public shs::Process
 {
 public:
     explicit DTP(Stream& bus, shs::API& handler, const shs::t::shs_ID_t ID, const uint8_t bufsize = 25)
         : m_bus(bus), m_handler(handler), m_ID(ID), m_len(0), m_tmr(0), m_bc(bufsize)
-    {}
+    {
+    }
 
     ~DTP() = default;
 
@@ -106,18 +69,18 @@ public:
 
     uint8_t checkBus();
     uint8_t sendPacket(shs::DTPpacket& packet) { return m_bus.write(packet.bc.getPtr(), packet.bc.size()); }
+    uint8_t sendRAW(shs::ByteCollector<>& bc) { return m_bus.write(bc.getPtr(), bc.size()); }
 
     enum Status : uint8_t { no_data, packet_is_expected, packet_processed, invalid_recipient };
 
 private:
-    
     Stream& m_bus;
+    shs::API& m_handler;
+
+    shs::t::shs_ID_t m_ID;
 
     shs::ByteCollector<> m_bc;
     uint8_t m_len;
     uint32_t m_tmr;
 
-    shs::API& m_handler;
-
-    shs::t::shs_ID_t m_ID;
 };

@@ -58,7 +58,7 @@ protected:
 template <typename BCbuf_t>
 size_t operator-(const shs::ByteCollectorIterator<BCbuf_t>& right, const shs::ByteCollectorIterator<BCbuf_t>& left)
 {
-    return static_cast< size_t >(right.m_ptr - left.m_ptr);
+    return static_cast<size_t>(right.m_ptr - left.m_ptr);
 }
 
 
@@ -68,8 +68,7 @@ class shs::ByteCollectorReadIterator : public shs::ByteCollectorIterator<BCbuf_t
     static_assert(sizeof(BCbuf_t) == 1);
 public:
     explicit ByteCollectorReadIterator(const BCbuf_t* begin, const BCbuf_t* end, BCbuf_t* read_ptr)
-        : ByteCollectorIterator<BCbuf_t>(read_ptr), m_begin(begin), m_end(end)
-    {}
+        : ByteCollectorIterator<BCbuf_t>(read_ptr), m_begin(begin), m_end(end) {}
 
     ~ByteCollectorReadIterator() = default;
 
@@ -77,26 +76,38 @@ public:
     BCsize_t get(T& var, BCsize_t bytes = sizeof(T))
     {
         if (m_end - this->m_ptr < bytes) bytes = m_end - this->m_ptr;
-        for (BCsize_t i = 0; i < bytes; i++) *(( BCbuf_t* )&var + i) = *(this->m_ptr++);
+        for (BCsize_t i = 0; i < bytes; i++) *((BCbuf_t*)&var + i) = *this->m_ptr++;
         return bytes;
     }
 
     BCbuf_t read() { return this->m_ptr < m_end ? *(this->m_ptr++) : *(this->m_ptr - 1); }
+    const BCbuf_t& operator[](const BCsize_t index) const { return m_begin[index]; }
 
     BCsize_t size() const { return m_end - m_begin; }
+
+    BCbuf_t* getPtr() const { return m_begin; }
 
     bool set_position(const BCsize_t pos)
     {
         if (m_end - m_begin < pos) return 0;
-        this->m_ptr = m_begin + pos;
+        this->m_ptr = (BCbuf_t*)(m_begin + pos);
         return 1;
     }
 
-     shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t>& operator++()
+    shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t>& operator++()
     {
         this->m_ptr++;
         return *this;
     }
+
+    shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t> operator++(int)
+    {
+        shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t> temp = *this;
+        ++(*this);
+        return temp;
+    }
+
+
 
 private:
     const BCbuf_t* m_begin;

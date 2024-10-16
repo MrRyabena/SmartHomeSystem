@@ -1,7 +1,7 @@
 #include "shs_DTP.h"
 
 
-uint8_t shs::DTP::checkBus()
+uint8_t shs::DTPbus::checkBus()
 {
     if (m_bus.available() == 0) return Status::no_data;
 

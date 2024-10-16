@@ -48,19 +48,19 @@ using Stream = shs::Stream;
 
 namespace shs
 {
-    class DTP;
+    class DTPbus;
 };
 
 
-class shs::DTP : public shs::Process
+class shs::DTPbus : public shs::Process
 {
 public:
-    explicit DTP(Stream& bus, shs::API& handler, const shs::t::shs_ID_t ID, const uint8_t bufsize = 25)
+    explicit DTPbus(Stream& bus, shs::API& handler, const shs::t::shs_ID_t ID, const uint8_t bufsize = 25)
         : m_bus(bus), m_handler(handler), m_ID(ID), m_len(0), m_tmr(0), m_bc(bufsize)
     {
     }
 
-    ~DTP() = default;
+    ~DTPbus() = default;
 
 
     void start() override {}

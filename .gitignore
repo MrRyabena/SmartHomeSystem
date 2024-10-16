@@ -45,6 +45,13 @@ CMakeUserPresets.json
 # Cmake
 build/
 
+
+# development
+delayed_dev/
+test_dev/
+test/
+
+
 # qtcreator generated files
 
 build-DemoApp-Desktop_Qt_5_14_2_MinGW_64_bit-Debug/

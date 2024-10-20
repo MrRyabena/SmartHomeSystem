@@ -33,12 +33,12 @@ shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_
     bc.push_back(shs::CRC8::crcBuf(bc.getPtr(), bc.size() - 1), 1);
 }
 
-uint8_t shs::DTPpacket::check(shs::ByteCollectorReadIterator<>& it)
+uint8_t shs::DTPpacket::check(shs::ByteCollectorReadIterator<> it)
 {
     if (it.size() < it[0]) return Error::size_less;
-    if (it.size() > bc[0]) return Error::size_bigger;
+    if (it.size() > it[0]) return Error::size_bigger;
 
-    if (it[it[0] - 1] != shs::CRC8::crcBuf(it.begin(), it[0] - 1)) return Error::invalid_crc;
+    if (it[it[0] - 1] != shs::CRC8::crcBuf(it.getPtr(), it[0] - 1)) return Error::invalid_crc;
 
     return Error::ok;
 }

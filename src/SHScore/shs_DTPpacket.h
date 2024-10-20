@@ -38,10 +38,10 @@ public:
 
 
 public:
-    [[nodiscard]] static shs::t::shs_ID_t get_senderID(shs::ByteCollectorReadIterator<>& it) { it.set_position(1); shs::t::shs_ID_t id{}; it.get(id); return id; }
-    [[nodiscard]] static shs::t::shs_ID_t get_recipientID(shs::ByteCollectorReadIterator<>& it) { it.set_position(1 + sizeof(shs::t::shs_ID_t)); shs::t::shs_ID_t id{}; it.get(id); return id; }
-    [[nodiscard]] static uint8_t get_datasize(shs::ByteCollectorReadIterator<>& it) { it.set_position(0); return it.read(); }
-    [[nodiscard]] static uint8_t check(shs::ByteCollectorReadIterator<>& it);
+    [[nodiscard]] static shs::t::shs_ID_t get_senderID(shs::ByteCollectorReadIterator<> it) { it.set_position(1); shs::t::shs_ID_t id{}; it.get(id); return id; }
+    [[nodiscard]] static shs::t::shs_ID_t get_recipientID(shs::ByteCollectorReadIterator<> it) { it.set_position(1 + sizeof(shs::t::shs_ID_t)); shs::t::shs_ID_t id{}; it.get(id); return id; }
+    [[nodiscard]] static uint8_t get_datasize(shs::ByteCollectorReadIterator<> it) { it.set_position(0); return it.read(); }
+    [[nodiscard]] static uint8_t check(shs::ByteCollectorReadIterator<> it);
 
     [[nodiscard]] shs::t::shs_ID_t get_senderID()    const { return get_senderID(bc.getReadIt()); }
     [[nodiscard]] shs::t::shs_ID_t get_recipientID() const { return get_recipientID(bc.getReadIt()); }

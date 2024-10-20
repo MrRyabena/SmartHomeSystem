@@ -11,6 +11,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(SHSCORE_PATH ../../SHScore/)
+
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
 # Check http://doc.qt.io/qt-5/deployment-android.html for more information.
 # They need to be set before the find_package(Qt5 ...) call.
@@ -26,6 +28,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Network REQUIRED)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
 
 if(ANDROID)
@@ -50,6 +58,16 @@ else()
 
   )
 endif()
+
+find_library(SHSCORE_LIB NAMES SHScore PATHS ${SHSCORE_PATH}/build/)
+if(NOT SHSCORE_LIB)
+    message(FATAL_ERROR "Library SHScore not found in ${SHSCORE_PATH}")
+else()
+    message(STATUS "Library SHScore found: ${SHSCORE_LIB}")
+endif()
+
+target_include_directories(SHSapp PUBLIC ${SHSCORE_PATH})
+target_link_libraries(SHSapp PUBLIC ${SHSCORE_LIB})
 
 target_link_libraries(SHSapp PRIVATE Qt5::Widgets)
 target_link_libraries(SHSapp PRIVATE Qt5::Network)

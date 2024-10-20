@@ -22,23 +22,29 @@
 #include "shs_Process.h"
 #include "shs_types.h"
 
+#include <stdio.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
 namespace shs
 {
     class TcpClient;
 
 };
 
-class shs::TcpClient : public WiFiClient, public shs::Process
+class shs::TcpClient : public WiFiClient
 {
 public:
     TcpClient(const uint32_t hostIP, const uint32_t port, const shs::t::shs_ID_t ID) : m_hostIP(hostIP), m_port(port) {}
-    TcpClient(const char* hostIP, const uint32_t port) : TcpClient((uint32_t)IPAddress(hostIP), port) {}
+    //TcpClient(const char* hostIP, const uint32_t port) : TcpClient(getIPstr(hostIP), port) {}
 
     virtual ~TcpClient() = default;
 
-    virtual void start() override { connect(m_hostIP, m_port); }
+    void start() { connect(m_hostIP, m_port); }
 
-    virtual void tick() override
+    void tick()
     {
         if (!connected())
         {
@@ -47,10 +53,33 @@ public:
         }
     }
 
-    void Process::stop() override = delete;
-
 private:
     const uint32_t m_hostIP;
     const uint32_t m_port;
     const shs::t::shs_ID_t m_ID;
+
+public:    static uint32_t getIPstr(const char* IP)
+    {
+        uint8_t ipbytes[4] = { 0 };
+        int i = 0, j = 0;
+        char temp[4] = { 0 };
+
+        for (int k = 0; k < 4; k++)
+        {
+            while (IP[i] != '.' && IP[i] != '\0')
+            {
+                if (!isdigit(IP[i]))
+                {
+                    return 0; // Неверный символ в IP-адресе
+                }
+                temp[j++] = IP[i++];
+            }
+            temp[j] = '\0';
+            ipbytes[k] = ( uint8_t )atoi(temp);
+            j = 0;
+            i++;
+        }
+
+        return (ipbytes[0] << 24) | (ipbytes[1] << 16) | (ipbytes[2] << 8) | ipbytes[3];
+    }
 };

@@ -5,8 +5,8 @@
 #    v1.1.0 — created.
 #
 
-# Уou must specify the path to the folder here:
-ArduinoLibraries=/mnt/c/Users/Daniil/Documents/Arduino/libraries/
+# Уou must specify the path to the folder in the file libraries_path:
+ArduinoLibraries=$(cat libraries_path)
 
 echo "ArduinoLibraries directory is: $ArduinoLibraries"
 

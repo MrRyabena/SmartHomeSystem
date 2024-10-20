@@ -25,11 +25,11 @@ namespace shs
          * version strings formatted as "vX.Y.Z", where X, Y, and Z are non-negative integers.
          *
          * Example usage:
-         * 
+         *
          * ```
          * Version v0 = Version::parseVersion("v2.1.0");
          * ```
-         * 
+         *
          * ```
          * Version v1(2, 1, 0);
          * ```

@@ -10,7 +10,7 @@
 namespace shs
 {
     class DTP;
-    namespace shs::DTPless
+    namespace DTPless
     {
         struct APIptr;
         struct APIid;
@@ -25,12 +25,11 @@ struct shs::DTPless::APIid
 };
 
 
-class shs::DTP : public shs::API, public shs::SortedBuf<shs::API*>
+class shs::DTP : public shs::SortedBuf<shs::API*>
 {
 public:
 
-    void handle(shs::ByteCollectorReadIterator<>& it) override;
 
 
 private:
-}
+};

@@ -2,6 +2,7 @@
 cpp_indent_style=space
 cpp_indent_size=4
 cpp_tab_width=4
+end_of_line = lf
 
 
 cpp_indent_braces=false

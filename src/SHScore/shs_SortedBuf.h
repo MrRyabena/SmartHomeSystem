@@ -25,7 +25,7 @@ public:
     auto begin() { return m_srtdbuf.begin(); }
     auto end() { return m_srtdbuf.end(); }
     auto size() { return m_srtdbuf.size(); }
-    auto bask() { return m_srtdbuf.back(); }
+    auto back() { return m_srtdbuf.back(); }
 
     void shrink_to_fit() { m_srtdbuf.shrink_to_fit(); }
     void reserve() { m_srtdbuf.reserve(); }

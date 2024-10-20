@@ -85,7 +85,7 @@ public:
 
     BCsize_t size() const { return m_end - m_begin; }
 
-    BCbuf_t* getPtr() const { return m_begin; }
+    const BCbuf_t* getPtr() const { return m_begin; }
 
     bool set_position(const BCsize_t pos)
     {

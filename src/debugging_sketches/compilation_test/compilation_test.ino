@@ -20,9 +20,15 @@
 
 #include <shs_ID.h>
 
+#include <shs_SortedBuf.h>
+#include <shs_Time.h>
+#include <shs_Timer.h>
+
+
+#include <shs_version.h>
+
 
 #include <shs_types.h>
-
 
 void setup() {}
 void loop() {}

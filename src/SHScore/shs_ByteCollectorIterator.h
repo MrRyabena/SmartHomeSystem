@@ -82,6 +82,7 @@ public:
 
     BCbuf_t read() { return this->m_ptr < m_end ? *(this->m_ptr++) : *(this->m_ptr - 1); }
     const BCbuf_t& operator[](const BCsize_t index) const { return m_begin[index]; }
+    BCbuf_t& back() { return const_cast<BCbuf_t&>(*(m_end - 1)); }
 
     BCsize_t size() const { return m_end - m_begin; }
 

@@ -83,7 +83,7 @@ public:
 
     // add to the end
     template <typename T>
-    void push_back(const T& value, const BCsize_t bytes = sizeof(T)) { write(( BCbuf_t* )&value, bytes); }
+    void push_back(const T& value, const BCsize_t bytes = sizeof(T)) { write((BCbuf_t*)&value, bytes); }
 
 
     // add to the beginning
@@ -93,7 +93,7 @@ public:
         if (capacity_front() < bytes) reserve_front(bytes - capacity_front());
 
         m_pos_front -= bytes;
-        BCbuf_t* data_ptr = ( BCbuf_t* )&value;
+        BCbuf_t* data_ptr = (BCbuf_t*)&value;
         for (BCsize_t i = 0; i < bytes; i++) m_buf[m_pos_front + i] = *data_ptr++;
     }
 
@@ -114,7 +114,7 @@ public:
     }
 
     template <typename T>
-    void insert(const T& value, const BCsize_t size, const BCsize_t position) { insert(( const BCbuf_t* )&value, size, position); }
+    void insert(const T& value, const BCsize_t size, const BCsize_t position) { insert((const BCbuf_t*)&value, size, position); }
 
     // unpack data
 
@@ -124,7 +124,7 @@ public:
     }
 
     template <typename T>
-    void get(T& var, const BCsize_t bytes = sizeof(T)) { read(( BCbuf_t* )&var, bytes); }
+    void get(T& var, const BCsize_t bytes = sizeof(T)) { read((BCbuf_t*)&var, bytes); }
 
     // reserve bytes for more size
     void reserve(const BCsize_t size)
@@ -195,6 +195,8 @@ public:
     shs::ByteCollectorIterator<BCbuf_t> begin() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_front); }
     shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_back + 1); }
     BCsize_t size() const { return m_pos_back - m_pos_front; }
+    BCbuf_t& back() const { return m_buf[m_pos_back]; }
+    bool empty() const { return size() == 0; }
 
     const BCbuf_t& operator[](const BCsize_t index) const { return m_buf[index]; }
 

@@ -19,26 +19,29 @@
 #include "shs_types.h"
 #include "shs_DTPpacket.h"
 
+#include <utility>
+
 
 namespace shs
 {
-  class API;
+    class API;
 };
 
 class shs::API
 {
-  public:
-  explicit API(const shs::t::shs_ID_t id) : API_ID(id) {}
-  virtual ~API() = default;
+public:
+    explicit API(const shs::t::shs_ID_t id) : API_ID(id) {}
+    virtual ~API() = default;
 
-  virtual void handle(shs::ByteCollectorReadIterator<>& it) = 0;
+    [[nodiscard]] virtual shs::DTPpacket&& handle(shs::ByteCollectorReadIterator<>& it) = 0;
 
-  shs::t::shs_ID_t API_ID{};
+    shs::t::shs_ID_t API_ID{};
 
-  bool operator<(const shs::API& other) const { return API_ID < other.API_ID; }
-  bool operator>(const shs::API& other) const { return API_ID > other.API_ID; }
-  bool operator==(const shs::API& other) const { return API_ID == other.API_ID; }
-  bool operator!=(const shs::API& other) const { return API_ID != other.API_ID; }
+
+    bool operator<(const shs::API& other) const { return API_ID < other.API_ID; }
+    bool operator>(const shs::API& other) const { return API_ID > other.API_ID; }
+    bool operator==(const shs::API& other) const { return API_ID == other.API_ID; }
+    bool operator!=(const shs::API& other) const { return API_ID != other.API_ID; }
 };
 
 

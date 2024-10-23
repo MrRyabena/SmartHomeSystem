@@ -16,7 +16,10 @@ uint8_t shs::DTPbus::checkBus()
     m_len = 0;
 
     auto it = m_bc.getReadIt();
-    m_handler.handle(it);
+    auto output = m_handler.handle(it);
+
+
+    if (!output.empty()) sendPacket(output);
 
     return Status::packet_processed;
 }

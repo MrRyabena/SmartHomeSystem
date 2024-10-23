@@ -57,8 +57,7 @@ class shs::DTPbus : public shs::Process
 public:
     explicit DTPbus(Stream& bus, shs::API& handler, const shs::t::shs_ID_t ID, const uint8_t bufsize = 25)
         : m_bus(bus), m_handler(handler), m_ID(ID), m_len(0), m_tmr(0), m_bc(bufsize)
-    {
-    }
+    {}
 
     ~DTPbus() = default;
 
@@ -70,6 +69,7 @@ public:
     uint8_t checkBus();
     uint8_t sendPacket(shs::DTPpacket& packet) { return m_bus.write(packet.bc.getPtr(), packet.bc.size()); }
     uint8_t sendRAW(shs::ByteCollector<>& bc) { return m_bus.write(bc.getPtr(), bc.size()); }
+    uint8_t sendRAW(const uint8_t* data, const uint8_t size) { return m_bus.write(data, size); }
 
     enum Status : uint8_t { no_data, packet_is_expected, packet_processed, invalid_recipient };
 

@@ -20,7 +20,13 @@ public:
 
     template <typename T>
     auto attach(T&& value) { return shs::insert_sorted(m_srtdbuf, std::forward<T>(value), m_compare); };
-    void detach(const BufT& value) { shs::remove_sorted(m_srtdbuf, value, m_compare); };
+
+  
+    template <typename T>
+    void detach(const T& value) { shs::remove_sorted(m_srtdbuf, value, m_compare); };
+
+    template <typename T>
+    [[nodiscard]] BufT& get(const T& value) { return *shs::binary_search(begin(), end(), value, m_compare); }
 
     auto begin() { return m_srtdbuf.begin(); }
     auto end() { return m_srtdbuf.end(); }

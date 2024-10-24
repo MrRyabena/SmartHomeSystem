@@ -31,7 +31,10 @@ class shs::API
 {
 public:
     explicit API(const shs::t::shs_ID_t id) : API_ID(id) {}
+    API(API&& other) : API_ID(other.API_ID) { other.API_ID = {}; }
+
     virtual ~API() = default;
+
 
     [[nodiscard]] virtual shs::DTPpacket&& handle(shs::ByteCollectorReadIterator<>& it) = 0;
 

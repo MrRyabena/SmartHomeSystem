@@ -40,7 +40,18 @@ public:
     explicit DTPpacket(const uint8_t* data, const uint8_t size);
 
 
+    DTPpacket(shs::ByteCollector<>&) = delete;
+    DTPpacket& operator=(DTPpacket&) = delete;
+
     DTPpacket(shs::ByteCollector<>&& bc_data) : bc(std::move(bc_data)) {}
+    DTPpacket& operator=(DTPpacket&& other) noexcept
+    {
+        if (this != &other)
+        {
+            bc = std::move(other.bc);
+        }
+        return *this;
+    }
 
 
     DTPpacket(DTPpacket&& other) noexcept : bc(std::move(other.bc)) {}

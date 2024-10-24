@@ -57,6 +57,27 @@ public:
         other.m_pos_read = {};
     }
 
+    ByteCollector& operator=(ByteCollector<BCbuf_t, BCsize_t>&& other) noexcept
+    {
+        if (this != &other)
+        {
+            if (m_buf) delete[] m_buf;
+
+            m_buf = other.m_buf;
+            m_capacity = other.m_capacity;
+            m_pos_back = other.m_pos_back;
+            m_pos_front = other.m_pos_front;
+            m_pos_read = other.m_pos_read;
+
+            other.m_buf = nullptr;
+            other.m_capacity = {};
+            other.m_pos_back = {};
+            other.m_pos_front = {};
+            other.m_pos_read = {};
+        }
+        return *this;
+    }
+
     ByteCollector(const ByteCollector<BCbuf_t, BCsize_t>&) = delete;
     ByteCollector<BCbuf_t, BCsize_t>& operator=(const ByteCollector<BCbuf_t, BCsize_t>&) = delete;
 

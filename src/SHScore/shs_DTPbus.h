@@ -55,11 +55,21 @@ namespace shs
 class shs::DTPbus : public shs::Process
 {
 public:
-    explicit DTPbus(Stream& bus, shs::API& handler, const shs::t::shs_ID_t ID, const uint8_t bufsize = 25)
-        : m_bus(bus), m_handler(handler), m_ID(ID), m_len(0), m_tmr(0), m_bc(bufsize)
+    explicit DTPbus(Stream& bus, const shs::t::shs_ID_t ID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
+        : m_bus(bus), m_handler(handler), busID(ID), m_len(0), m_tmr(0), m_bc(bufsize)
     {}
 
+    DTPbus(DTPbus&& other) : m_bus(other.m_bus), m_handler(other.m_handler), busID(other.busID),
+        m_len(other.m_len), m_tmr(other.m_tmr), m_bc(std::move(other.m_bc))
+    {
+        other.busID = {};
+        other.m_len = {};
+        other.m_tmr = {};
+    }
+
     ~DTPbus() = default;
+
+    shs::t::shs_ID_t busID;
 
 
     void start() override {}
@@ -71,13 +81,21 @@ public:
     uint8_t sendRAW(shs::ByteCollector<>& bc) { return m_bus.write(bc.getPtr(), bc.size()); }
     uint8_t sendRAW(const uint8_t* data, const uint8_t size) { return m_bus.write(data, size); }
 
+    void setHandler(shs::API* handler) { m_handler = handler; }
+
+    shs::ByteCollectorReadIterator<> getLastData() { return m_bc.getReadIt(); }
+
+
     enum Status : uint8_t { no_data, packet_is_expected, packet_processed, invalid_recipient };
+
+    bool operator<(const shs::DTPbus& other) const { return busID < other.busID; }
+    bool operator>(const shs::DTPbus& other) const { return busID > other.busID; }
+    bool operator==(const shs::DTPbus& other) const { return busID == other.busID; }
+    bool operator!=(const shs::DTPbus& other) const { return busID != other.busID; }
 
 private:
     Stream& m_bus;
-    shs::API& m_handler;
-
-    shs::t::shs_ID_t m_ID;
+    shs::API* m_handler;
 
     shs::ByteCollector<> m_bc;
     uint8_t m_len;

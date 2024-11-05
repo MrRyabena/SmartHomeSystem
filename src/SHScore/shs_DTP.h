@@ -22,6 +22,7 @@ namespace shs
     }
 }
 
+
 struct shs::DTPless::API
 {
     bool operator()(const shs::API* lhs, const shs::API* rhs) const { return *lhs < *rhs; }
@@ -58,15 +59,14 @@ public:
 
     void attachBus(std::unique_ptr<shs::DTPbus>&& bus) { m_buss.attach(std::move(bus)); }
     void detachBud(const shs::t::shs_ID_t& id) { m_buss.detach(id); }
-    std::unique_ptr<shs::DTPbus>& getBus(const shs::t::shs_ID_t& id) { return m_buss.get(id); }
+    std::unique_ptr<shs::DTPbus>& getBus(const shs::t::shs_ID_t& id) { return *m_buss.get(id); }
 
     void attachAPI(std::unique_ptr<shs::API>&& api) { m_APIs.attach(std::move(api)); }
     void detachAPI(const shs::t::shs_ID_t& id) { m_APIs.detach(id); }
-    std::unique_ptr<shs::API>& getAPI(const shs::t::shs_ID_t& id) { return m_APIs.get(id); }
+    std::unique_ptr<shs::API>& getAPI(const shs::t::shs_ID_t& id) { return *m_APIs.get(id); }
 
 
 private:
     shs::SortedBuf<std::unique_ptr<shs::DTPbus>, DTPless::BUS> m_buss;
     shs::SortedBuf<std::unique_ptr<shs::API>, DTPless::API> m_APIs;
-
 };

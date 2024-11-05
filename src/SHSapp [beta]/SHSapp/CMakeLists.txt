@@ -26,8 +26,13 @@ set(SHSCORE_PATH ../../SHScore/)
 #    endif()
 #endif()
 
+
+
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5 COMPONENTS Network REQUIRED)
+
+qt5_add_resources(RESOURCES resources.qrc)
+
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -56,8 +61,11 @@ else()
     tcpclient.cpp
     tcpclient.h
 
+
   )
 endif()
+
+
 
 find_library(SHSCORE_LIB NAMES SHScore PATHS ${SHSCORE_PATH}/build/)
 if(NOT SHSCORE_LIB)

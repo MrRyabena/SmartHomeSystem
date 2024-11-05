@@ -7,11 +7,13 @@ void RGB() {
       break;
     case 1:
       fireTick();
+      //fire_2();
       break;
 
     case 2:
       task_3();
       break;
+    default: break;
   }
 }
 
@@ -135,7 +137,7 @@ void fireTick() {
   // задаём направление движения огня
   if (millis() - prevTime > 100) {
     prevTime = millis();
-    fireRnd = random(0, 10);
+    fireRnd = random(2, 10);
   }
   // двигаем пламя
   if (millis() - prevTime2 > 20) {
@@ -147,4 +149,18 @@ void fireTick() {
       constrain(map(fireValue, 20, 60, MIN_BRIGHT, MAX_BRIGHT), 0, 255)           // V
     );
   }
+}
+
+int val, rndVal;
+
+void fire_2() {
+  static uint32_t prevTime{};
+  if (millis() - prevTime > 20) {
+    rndVal = random(2, 13) * 10;
+    prevTime = millis();
+  }
+  val = val * (1 - SMOOTH_K) + rndVal * SMOOTH_K;
+  strip.setWheel(val);
+  uint8_t thisBrightness = map(val, 20, 120, MIN_BRIGHT, MAX_BRIGHT);
+  strip.setBrightness(thisBrightness);
 }

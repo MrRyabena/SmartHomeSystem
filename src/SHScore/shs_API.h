@@ -36,7 +36,7 @@ public:
     virtual ~API() = default;
 
 
-    [[nodiscard]] virtual shs::DTPpacket&& handle(shs::ByteCollectorReadIterator<>& it) = 0;
+    [[nodiscard]] virtual shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) = 0;
 
     shs::t::shs_ID_t API_ID{};
 

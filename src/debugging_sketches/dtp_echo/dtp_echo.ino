@@ -48,13 +48,13 @@ void setup()
     dsep();
     doutln(shs::ControlWiFi::connectWiFiWait());
     dsep();
-    tcp.connect("192.168.1.10", 5000);
-    if (tcp.connected()) tcp.write(1);
-    doutln("tcp started");
+    //tcp.connect("192.168.1.10", 5000);
+    //if (tcp.connected()) tcp.write(1);
+    //doutln("tcp started");
 
     dtp.attachBus(std::make_unique<shs::DTPbus>(tcp, senID));
     
-    doutln("this");
+   // doutln("this");
 
     dtp.attachAPI(std::make_unique<EhoAPI>(senID));
 
@@ -66,7 +66,7 @@ void setup()
 
 void loop()
 {
-    //tcp.tick();
+    tcp.tick();
     dtp.tick();
 
 }

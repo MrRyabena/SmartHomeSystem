@@ -49,7 +49,6 @@ public:
         m_pos_back(other.m_pos_back), m_pos_front(other.m_pos_front),
         m_pos_read(other.m_pos_read)
     {
-
         other.m_buf = nullptr;
         other.m_capacity = {};
         other.m_pos_back = {};
@@ -219,7 +218,7 @@ public:
     BCbuf_t& back() const { return m_buf[m_pos_back]; }
     bool empty() const { return size() == 0; }
 
-    const BCbuf_t& operator[](const BCsize_t index) const { return m_buf[index]; }
+    BCbuf_t& operator[](const BCsize_t index) const { return m_buf[index]; }
 
     BCsize_t getPositionBack() const { return m_pos_back; }
     BCsize_t getPostitionFront() const { return m_pos_front; }

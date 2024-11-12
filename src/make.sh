@@ -10,7 +10,7 @@ ArduinoLibraries=$(cat libraries_path)
 
 echo "ArduinoLibraries directory is: $ArduinoLibraries"
 
-rm -rf "${ArduinoLibraries}SHScore/"
+rm -rf "${ArduinoLibraries}SHScore"
 cp -r ./SHScore/ "${ArduinoLibraries}SHScore/"
 
 rm -rf  "${ArduinoLibraries}SHSlibrary"

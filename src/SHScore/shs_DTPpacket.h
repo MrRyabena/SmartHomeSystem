@@ -26,6 +26,8 @@ namespace shs
 class shs::DTPpacket
 {
 public:
+    enum Error : uint8_t { ok, size_less, size_bigger, invalid_crc };
+    enum DTPcode : uint8_t { STANDARD = 1, FAST, INITIAL };
 
     explicit DTPpacket(const bool empty) : bc() {}
 
@@ -64,7 +66,7 @@ public:
     [[nodiscard]] static shs::t::shs_ID_t get_senderID(shs::ByteCollectorReadIterator<> it) { it.set_position(2); shs::t::shs_ID_t id{}; it.get(id); return id; }
     [[nodiscard]] static shs::t::shs_ID_t get_recipientID(shs::ByteCollectorReadIterator<> it) { it.set_position(2 + sizeof(shs::t::shs_ID_t)); shs::t::shs_ID_t id{}; it.get(id); return id; }
     [[nodiscard]] static uint8_t get_datasize(shs::ByteCollectorReadIterator<> it) { return int(it[0]) - (it[1] == STANDARD ? DTPstandard_OFFSETbeg + 1 : DTPstandard_OFFSETbeg); }
-    [[nodiscard]] static uint8_t get_dataBeg(shs::ByteCollectorReadIterator<> it) { return it[1ь] == STANDARD ? DTPstandard_OFFSETbeg : 2; }
+    [[nodiscard]] static uint8_t get_dataBeg(shs::ByteCollectorReadIterator<> it) { return it[1] == STANDARD ? DTPstandard_OFFSETbeg : 2; }
     [[nodiscard]] static uint8_t check(shs::ByteCollectorReadIterator<> it);
 
 
@@ -78,12 +80,14 @@ public:
 
     [[nodiscard]] bool empty() { return bc.empty(); }
 
+    void set_DTPcode(const DTPcode code)
+    {
+        bc[1] = code;
+        bc.back() = shs::CRC8::crcBuf(bc.getPtr(), bc.size() - 1);
+    }
+
 
     shs::ByteCollector<> bc;
     static constexpr auto DTPstandard_OFFSETbeg = 1 + 1 + 4 + 4;
     static constexpr auto DTPfast_OFFSETbeg = 1 + 1;
-
-
-    enum Error : uint8_t { ok, size_less, size_bigger, invalid_crc };
-    enum DTPcode : uint8_t { STANDARD = 1, FAST, };
 };

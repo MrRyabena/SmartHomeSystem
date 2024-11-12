@@ -18,15 +18,15 @@
 #include <WiFi.h>
 #endif
 
+#include <stdint.h>
+#include <functional>
 
 #include "shs_Process.h"
 #include "shs_types.h"
+#include "shs_DTP_API.h"
+#include "shs_Stream.h"
+#include "shs_Config.h"
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
 
 namespace shs
 {
@@ -34,52 +34,54 @@ namespace shs
 
 };
 
-class shs::TcpClient : public WiFiClient
+
+class shs::TcpClient : public shs::Process, public shs::Stream
 {
 public:
-    TcpClient(const uint32_t hostIP, const uint32_t port, const shs::t::shs_ID_t ID) : m_hostIP(hostIP), m_port(port) {}
-    //TcpClient(const char* hostIP, const uint32_t port) : TcpClient(getIPstr(hostIP), port) {}
+    WiFiClient client;
+
+    TcpClient
+    (
+        const IPAddress hostIP, const uint16_t port,
+        const std::function<void(shs::TcpClient& client)>& connect_callback =
+        [](shs::TcpClient& client) { auto packet = shs::DTP_APIpackets::getInitialPacket(shs::Config::moduleID); client.write(packet.bc.getPtr(), packet.bc.size()); },
+        const std::function<void(shs::TcpClient& client)>& disconnect_callback = [](shs::TcpClient& client) { client.reconnect(); }
+    ) : m_hostIP(hostIP), m_port(port), m_connect_callback(connect_callback), m_disconnect_callback(disconnect_callback)
+    {}
+
+
+    TcpClient(const char* hostIP, const uint16_t port, const std::function<void(shs::TcpClient& client)>& connect_callback)
+        : m_port(port), m_connect_callback(connect_callback)
+    {
+        WiFi.hostByName(hostIP, m_hostIP);
+    }
 
     virtual ~TcpClient() = default;
 
-    void start() { connect(m_hostIP, m_port); }
 
-    void tick()
-    {
-        if (!connected())
-        {
-            if (connect(m_hostIP, m_port))
-                write(( uint8_t* )&m_ID, sizeof(m_ID));
-        }
-    }
+    void reconnect() { client.connect(m_hostIP, m_port); }
+
+
+    void start() override { m_flags.set(ACTIVE); client.connect(m_hostIP, m_port); }
+    void tick() override { if (!client.connected()) m_disconnect_callback(); }
+    void stop() override { m_flags.set(ACTIVE, false); client.stop(); }
+
+
+    uint8_t read() override { return client.read(); }
+    uint8_t read(uint8_t* buf, const uint16_t size) override { return client.read(buf, size); }
+    uint8_t write(const uint8_t* buf, const uint16_t) override { return client.write(buf, size); }
+    uint8_t available() override { return client.available(); }
+
+
+    IPAddress getIP() const { return m_hostIP; }
+    uint16_t getPort() const { return m_port; }
 
 private:
-    const uint32_t m_hostIP;
-    const uint32_t m_port;
-    const shs::t::shs_ID_t m_ID;
+    IPAddress m_hostIP;
+    const uint16_t m_port;
 
-public:    static uint32_t getIPstr(const char* IP)
-    {
-        uint8_t ipbytes[4] = { 0 };
-        int i = 0, j = 0;
-        char temp[4] = { 0 };
+    std::function<void(shs::TcpClient& client)> m_connect_callback;
+    std::function<void(shs::TcpClient& client)> m_disconnect_callback;
 
-        for (int k = 0; k < 4; k++)
-        {
-            while (IP[i] != '.' && IP[i] != '\0')
-            {
-                if (!isdigit(IP[i]))
-                {
-                    return 0; // Неверный символ в IP-адресе
-                }
-                temp[j++] = IP[i++];
-            }
-            temp[j] = '\0';
-            ipbytes[k] = ( uint8_t )atoi(temp);
-            j = 0;
-            i++;
-        }
-
-        return (ipbytes[0] << 24) | (ipbytes[1] << 16) | (ipbytes[2] << 8) | ipbytes[3];
-    }
+    void m_connect() { if (client.connect(m_hostIP, m_port)) m_connect_callback(); }
 };

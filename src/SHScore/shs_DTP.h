@@ -53,12 +53,12 @@ class shs::DTP : public shs::Process
 {
 public:
 
-    void start() override {}
+    void start() override { for (auto& bus : m_buss) bus->start(); }
     void tick() override;
-    void stop() override {}
+    void stop() override { for (auto& bus : m_buss) bus->stop(); }
 
     void attachBus(std::unique_ptr<shs::DTPbus>&& bus) { m_buss.attach(std::move(bus)); }
-    void detachBud(const shs::t::shs_ID_t& id) { m_buss.detach(id); }
+    void detachBus(const shs::t::shs_ID_t& id) { m_buss.detach(id); }
     std::unique_ptr<shs::DTPbus>& getBus(const shs::t::shs_ID_t& id) { return *m_buss.get(id); }
 
     void attachAPI(std::unique_ptr<shs::API>&& api) { m_APIs.attach(std::move(api)); }

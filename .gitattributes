@@ -1,0 +1,40 @@
+# linguist-vendored
+# libraries/** linguist-vendored
+
+# Auto detect text files and perform LF normalization
+* text eol=lf
+
+*.c text
+*.h text
+*.cpp text
+*.hpp text
+*.java text
+*.py text
+*.js text
+*.html text
+*.css text
+*.xml text
+*.json text
+*.md text
+*.txt text
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.flv binary
+*.fla binary
+*.swf binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.ttf binary
+*.eot binary
+*.woff binary
+*.pyc binary
+*.pdf binary
+*.shsf binary

@@ -1,6 +1,8 @@
 # linguist-vendored
 # libraries/** linguist-vendored
 
+* text=auto
+* text eol=lf
 
 # LF normalization
 *.c text eol=lf
@@ -16,6 +18,7 @@
 *.json text eol=lf
 *.md text eol=lf
 *.txt text eol=lf
+*.sh text eol=lf
 
 
 # CRLF normalization

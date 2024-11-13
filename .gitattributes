@@ -1,23 +1,29 @@
 # linguist-vendored
 # libraries/** linguist-vendored
 
-# Auto detect text files and perform LF normalization
-* text eol=lf
 
-*.c text
-*.h text
-*.cpp text
-*.hpp text
-*.java text
-*.py text
-*.js text
-*.html text
-*.css text
-*.xml text
-*.json text
-*.md text
-*.txt text
+# LF normalization
+*.c text eol=lf
+*.h text eol=lf
+*.cpp text eol=lf
+*.hpp text eol=lf
+*.java text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.xml text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
 
+
+# CRLF normalization
+*.bat text eol=crlf
+*.ini text eol=crlf
+
+
+# binary files
 *.png binary
 *.jpg binary
 *.jpeg binary

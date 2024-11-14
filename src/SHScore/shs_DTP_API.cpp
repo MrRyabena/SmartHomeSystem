@@ -1,7 +1,7 @@
 #include "shs_DTP_API.h"
 
 
-shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it)
+shs::DTPpacket shs::DTP_APIhandler::handle(shs::ByteCollectorReadIterator<>& it)
 {
     switch (shs::DTPpacket::get_DTPcode(it))
     {

@@ -24,7 +24,7 @@ namespace shs
 
 struct shs::Config
 {
-    static constexpr shs::t::shs_ID_t moduleID;
+    //static constexpr shs::t::shs_ID_t moduleID = SHS_CONFIG_moduleID;
     shs::SystemMode mode{};
 };
 

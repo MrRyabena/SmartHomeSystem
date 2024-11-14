@@ -1,4 +1,5 @@
 #pragma once
+
 /*
   Last update: v1.0.0
   Versions:
@@ -9,8 +10,10 @@
 
 /*
   The server class for processing clients.
-  Need to be finalized.
 */
+
+#include <memory>
+
 #include <Arduino.h>
 #ifdef ESP8266
 #include <ESP8266WiFi.h>
@@ -18,43 +21,45 @@
 #include <WiFi.h>
 #endif
 
+
 #include <WiFiServer.h>
 #include <WiFiClient.h>
 
-#include "SHSByteCollector.h"
-#include "SHSdtp.h"
-#include "SHSsettings_private.h"
-#include "SHSCallbacksKeeper.h"
+
+#include "shs_settings_private.h"
+#include "shs_Process.h"
+#include "shs_DTP.h"
+#include "shs_reservedID.h"
+#include "shs_DTPpacket.h"
+#include "shs_TcpSocket.h"
+
 
 namespace shs
 {
     class TcpServer;
 };
 
-class shs::TcpServer
+
+class shs::TcpServer : public shs::Process
 {
 public:
     WiFiServer server;
-    WiFiClient* clients;
 
-    shs::API* api{};
+    explicit TcpServer(const IPAddress& hostIP, const uint16_t port, shs::DTP& dtp)
+        : server(hostIP, port), m_dtp(dtp)
+    {}
 
-    const uint8_t* IP{};
-    uint8_t maxClients{};
+    explicit TcpServer(const uint16_t port, shs::DTP& dtp)
+        : server(port), m_dtp(dtp)
+    {}
 
-    TcpServer(const uint8_t* IPaddress, uint16_t port = 50000, uint8_t max_clients = 6);
-    ~TcpServer();
+    ~TcpServer() = default;
 
-    void begin();
-    void tick();
 
-    uint8_t sendPacket(shs::ByteCollector* bc, const shs::settings::shs_ModuleID_t to,
-        const shs::settings::shs_ID_t api_ID);
-    uint8_t sendRAW(uint8_t* buf, const uint8_t size, const shs::settings::shs_ModuleID_t to);
+    void start() override { server.begin(); };
+    void tick() override;
+    void stop() override {}
 
 private:
-    shs::DTP* dtp{};
-    uint8_t* lens{};
-    uint8_t i{};
-    void* m_dtp_beg{};
+    shs::DTP& m_dtp;
 };

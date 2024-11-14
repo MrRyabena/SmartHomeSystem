@@ -1,83 +1,27 @@
-#include "SHSTcpServer.h"
+#include "shs_TcpServer.h"
 
-shs::TcpServer::TcpServer(const uint8_t *IPaddress, uint16_t port, uint8_t max_clients)
-    : server(WiFiServer(port)),
-      clients(new WiFiClient[max_clients]),
-      lens(new uint8_t[max_clients]{}),
-      IP(IPaddress),
-      maxClients(max_clients)
-
-{
-    m_dtp_beg = ::operator new(sizeof(shs::DTP));
-}
-
-shs::TcpServer::~TcpServer()
-{
-    delete[] clients;
-    delete[] lens;
-    ::operator delete(m_dtp_beg);
-}
-
-void shs::TcpServer::begin()
-{
-    server.begin();
-    server.setNoDelay(true);
-}
 
 void shs::TcpServer::tick()
 {
     if (server.hasClient())
     {
-        for (i = 0; i < maxClients; i++)
+        if (server.hasClientData())
         {
-            if (!clients[i] || (clients[i] && !clients[i].connected()))
-            {
+            WiFiClient client = server.available();
+            uint8_t len = client.read();
+            while (client.available() < len - 1);
+            shs::ByteCollector<> bc(len);
+            bc.push_back(len, 1);
+            for (uint8_t i = 0; i < len - 1; i++) bc.push_back(client.read(), 1);
 
-                if (clients[i])
-                    clients[i].stop();
-                clients[i] = server.available();
-                break;
+            shs::DTPpacket packet(std::move(bc));
+            if (packet.get_DTPcode() == shs::DTPpacket::DTPcode::INITIAL)
+            {
+                auto mes = shs::DTP_APIpackets::getInitialPacket(10);
+                client.write(mes.bc.getPtr(), mes.bc.size());
+                auto busID = packet.get_senderID();
+                m_dtp.attachBus(std::make_unique<shs::TcpSocket>(client, busID, nullptr, 25, [](shs::TcpSocket&) {doutln("connect!");}, [this](shs::TcpSocket& socket) { doutln("disconnect!"); m_dtp.detachBus(socket.busID); }));
             }
         }
-        WiFiClient client = server.available();
-        client.stop();
     }
-
-    for (i = 0; i < maxClients; i++)
-    {
-        if (clients[i] && clients[i].connected() && clients[i].available())
-        {
-            dtp = new (m_dtp_beg) shs::DTP(&clients[i], IP[3]);
-            dtp->attach(api);
-            dtp->checkBus(&lens[i]);
-        }
-    }
-}
-
-uint8_t shs::TcpServer::sendPacket(shs::ByteCollector *bc, const shs::settings::shs_ModuleID_t to,
-                                   const shs::settings::shs_ID_t api_ID)
-{
-    for (uint8_t i = 0; i < maxClients; i++)
-    {
-        if (clients[i].remoteIP()[3] == to)
-        {
-            dtp->packDTP(bc, to, api_ID, static_cast<shs::settings::shs_ModuleID_t>(IP[3]));
-            clients[i].write(bc->buf, bc->buf[0]);
-            return 0;
-        }
-    }
-    return 1;
-}
-
-uint8_t shs::TcpServer::sendRAW(uint8_t *buf, const uint8_t size, const shs::settings::shs_ModuleID_t to)
-{
-    for (uint8_t i = 0; i < maxClients; i++)
-    {
-        if (clients[i].remoteIP()[3] == to)
-        {
-            clients[i].write(buf, size);
-            return 0;
-        }
-    }
-    return 1;
 }

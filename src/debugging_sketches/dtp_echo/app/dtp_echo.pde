@@ -6,15 +6,35 @@ Client client;
 long tmr;
 void tickServer()
 {
-  Client cl = server.available();
+ // Client cl = server.available();
+  if (client == null) {
+    client = new Client(this, "192.168.1.182", 5000);
+   if (client.active())
+   {
+      byte [] buf = new byte[10];
+      buf[0] = 10;
+      buf[1] = 3;   
+      buf[2] = 0;
+      buf[3] = 6;
+      buf[4] = 4;
+      buf[5] = 10;
+      buf[6] = 0;
+      buf[7] = 5;
+      buf[8] = 0;
+      buf[9] = 12;
 
-
-  if (client == null && cl != null)
-  {
-    print("new client!  ");
-    println(cl.ip());
-    client = cl;
+      client.write(buf);
+      println("sended initial message");
+   }
   }
+  
+
+  //if (client == null && cl != null)
+  //{
+  //  print("new client!  ");
+  //  println(cl.ip());
+  //  client = cl;
+  //}
   if (client != null && client.active())
   {
     if (client.available() > 0) {
@@ -41,7 +61,7 @@ void tickServer()
       buf[12] = 'l';
       buf[13] = 'l';
       buf[14] = 'o';
-      buf[15] |= 0xff;
+      buf[15] |= ;
 
       client.write(buf);
       println("sended");

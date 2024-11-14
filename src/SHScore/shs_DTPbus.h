@@ -26,6 +26,9 @@
   abstract class shs::Stream (SHSStream.h)
 */
 
+#include <stdint.h>
+#include <memory>
+
 #if __has_include(<Arduino.h>)
 #include <Arduino.h>
 #else
@@ -33,7 +36,6 @@
 #pragma message "Used shs::Stream"
 #include "shs_Stream.h"
 using Stream = shs::Stream;
-
 #endif
 
 #include "shs_settings_private.h"
@@ -42,8 +44,6 @@ using Stream = shs::Stream;
 #include "shs_ID.h"
 #include "shs_Process.h"
 #include "shs_API.h"
-
-#include <stdint.h>
 
 
 namespace shs
@@ -55,11 +55,11 @@ namespace shs
 class shs::DTPbus : public shs::Process
 {
 public:
-    explicit DTPbus(Stream& bus, const shs::t::shs_ID_t ID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
-        : m_bus(bus), m_handler(handler), busID(ID), m_len(0), m_tmr(0), m_bc(bufsize)
+    explicit DTPbus(const shs::t::shs_ID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
+        : busID(busID), m_handler(handler), m_len(0), m_tmr(0), m_bc(bufsize)
     {}
 
-    DTPbus(DTPbus&& other) : m_bus(other.m_bus), m_handler(other.m_handler), busID(other.busID),
+    DTPbus(DTPbus&& other) : busID(other.busID), m_handler(other.m_handler),
         m_len(other.m_len), m_tmr(other.m_tmr), m_bc(std::move(other.m_bc))
     {
         other.busID = {};
@@ -67,19 +67,19 @@ public:
         other.m_tmr = {};
     }
 
-    ~DTPbus() = default;
-
-    shs::t::shs_ID_t busID;
+    virtual ~DTPbus() = default;
 
 
-    void start() override {}
-    void tick() override { checkBus(); }
-    void stop() override {}
+    void start() override = 0;
+    void tick() override = 0;
+    void stop() override = 0;
 
-    uint8_t checkBus();
-    uint8_t sendPacket(shs::DTPpacket& packet) { return m_bus.write(packet.bc.getPtr(), packet.bc.size()); }
-    uint8_t sendRAW(shs::ByteCollector<>& bc) { return m_bus.write(bc.getPtr(), bc.size()); }
-    uint8_t sendRAW(const uint8_t* data, const uint8_t size) { return m_bus.write(data, size); }
+    virtual uint8_t checkBus() = 0;
+
+    virtual uint8_t sendPacket(shs::DTPpacket& packet) = 0;
+    virtual uint8_t sendRAW(shs::ByteCollector<>& bc) = 0;
+    virtual uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) = 0;
+    virtual uint8_t sendRAW(const uint8_t* data, const uint8_t size) = 0;
 
     void setHandler(shs::API* handler) { m_handler = handler; }
 
@@ -93,12 +93,13 @@ public:
     bool operator==(const shs::DTPbus& other) const { return busID == other.busID; }
     bool operator!=(const shs::DTPbus& other) const { return busID != other.busID; }
 
-private:
-    Stream& m_bus;
+    shs::t::shs_ID_t busID;
+
+protected:
     shs::API* m_handler;
 
     shs::ByteCollector<> m_bc;
+
     uint8_t m_len;
     uint32_t m_tmr;
-
 };

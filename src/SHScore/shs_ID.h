@@ -10,21 +10,19 @@
 #include <stdint.h>
 #include <memory>
 
+
 namespace shs
 {
     struct ID;
 };
+
 
 struct shs::ID
 {
     uint32_t id{};
 
 
-    constexpr explicit ID(const uint8_t module_id = 0, const uint8_t device_id = 0, const uint16_t api_id = 0)
-        : id(((uint32_t)module_id << 24) | ((uint32_t)device_id << 16) | (api_id & 0xffff))
-    {}
-
-    ID(const uint8_t module_id = 0, const uint8_t device_id = 0, const int16_t api_id = 0)
+    constexpr ID(const uint8_t module_id = 0, const uint8_t device_id = 0, const uint16_t api_id = 0)
         : id(((uint32_t)module_id << 24) | ((uint32_t)device_id << 16) | (api_id & 0xffff))
     {}
 

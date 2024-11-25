@@ -102,7 +102,7 @@ public:
 
 
     // inherited from shs::DTPbus
-    uint8_t checkBus() override;
+    uint8_t checkBus() override { processBus(client); processPacket(); }
     uint8_t sendPacket(shs::DTPpacket& packet) override { return client.write(packet.bc.getPtr(), packet.bc.size()); }
     uint8_t sendRAW(shs::ByteCollector<>& bc) override { return client.write(bc.getPtr(), bc.size()); }
     uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return client.write(it.getPtr(), it.size()); }

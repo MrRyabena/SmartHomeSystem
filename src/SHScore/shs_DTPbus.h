@@ -55,6 +55,7 @@ namespace shs
 class shs::DTPbus : public shs::Process
 {
 public:
+
     explicit DTPbus(const shs::t::shs_ID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
         : busID(busID), m_handler(handler), m_len(0), m_tmr(0), m_bc(bufsize)
     {}
@@ -69,12 +70,16 @@ public:
 
     virtual ~DTPbus() = default;
 
+    enum Status : uint8_t { no_data, packet_is_expected, packet_received, packet_processed, invalid_recipient };
 
     void start() override = 0;
     void tick() override = 0;
     void stop() override = 0;
 
-    virtual uint8_t checkBus() = 0;
+    virtual Status  processBus() = 0;
+    template <class Bus> Status checkBus(Bus& bus);
+    template <class Bus> static inline Status checkBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len);
+    inline Status processPacket();
 
     virtual uint8_t sendPacket(shs::DTPpacket& packet) = 0;
     virtual uint8_t sendRAW(shs::ByteCollector<>& bc) = 0;
@@ -86,20 +91,74 @@ public:
     shs::ByteCollectorReadIterator<> getLastData() { return m_bc.getReadIt(); }
 
 
-    enum Status : uint8_t { no_data, packet_is_expected, packet_processed, invalid_recipient };
-
     bool operator<(const shs::DTPbus& other) const { return busID < other.busID; }
     bool operator>(const shs::DTPbus& other) const { return busID > other.busID; }
     bool operator==(const shs::DTPbus& other) const { return busID == other.busID; }
     bool operator!=(const shs::DTPbus& other) const { return busID != other.busID; }
 
+
     shs::t::shs_ID_t busID;
+    Status status;
 
 protected:
-    shs::API* m_handler;
-
-    shs::ByteCollector<> m_bc;
 
     uint8_t m_len;
+    shs::ByteCollector<> m_bc;
     uint32_t m_tmr;
+    shs::API* m_handler;
 };
+
+
+template <class Bus>
+shs::DTPbus::Status shs::DTPbus::checkBus(Bus& bus)
+{
+    if (bus.available() == 0) { return Status::no_data; }
+
+    if (m_len == 0) m_len = bus.read();
+    if (bus.available() < m_len - 1) { status = Status::packet_is_expected; return status; }
+
+    m_bc.reset();
+    m_bc.push_back(m_len, 1);
+
+    for (uint8_t i = 0; i < m_len - 1; i++) m_bc.push_back(bus.read(), 1);
+
+    m_len = 0;
+
+    status = Status::packet_received;
+    return status;
+}
+
+template <class Bus>
+shs::DTPbus::Status shs::DTPbus::checkBus(Bus& bus, shs::ByteCollector& buf, uint8_t& len)
+{
+    if (bus.available() == 0) { return Status::no_data; }
+
+    if (len == 0) len = bus.read();
+    if (bus.available() < len - 1) { status = Status::packet_is_expected; return status; }
+
+    buf.reset();
+    buf.push_back(len, 1);
+
+    for (uint8_t i = 0; i < len - 1; i++) buf.push_back(bus.read(), 1);
+
+    len = 0;
+
+    status = Status::packet_received;
+    return status;
+}
+
+
+void shs::DTPbus::processPacket()
+{
+    if (status != packet_received) return no_data;
+    auto it = m_bc.getReadIt();
+    // DTPhandler ...
+
+    if (m_handler)
+    {
+        auto output = m_handler->handle(it);
+        if (!output.empty()) sendPacket(output);
+    }
+
+    return Status::packet_processed;
+}

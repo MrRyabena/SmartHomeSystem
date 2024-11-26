@@ -24,6 +24,7 @@
 #include "shs_DTPbus.h"
 #include "shs_types.h"
 #include "shs_API.h"
+#include "shs_ProgramTime.h"
 
 
 namespace shs
@@ -36,6 +37,7 @@ class shs::TcpSocket : public shs::DTPbus
 {
 public:
     WiFiClient client;
+    static constexpr max_connection_time = 2000;
 
 
     using default_connect_callback = [](shs::TcpSocket& socket)
@@ -112,6 +114,8 @@ public:
 private:
     IPAddress m_hostIP;
     const uint16_t m_port;
+    std::unique_ptr<shs::TcpSocket> m_connecting_client{};
+    uint16_t m_connecting_client_time{};
 
     std::function<void(shs::TcpSocket& client)> m_connect_callback;
     std::function<void(shs::TcpSocket& client)> m_disconnect_callback;

@@ -36,10 +36,20 @@ public:
 
     static shs::DTPpacket getInitialPacket(shs::t::shs_ID_t ID)
     {
-        shs::ByteCollector<> bc;
         ID.setApiID(static_cast<uint16_t>(dtp_api_ID));
-        shs::DTPpacket packet(ID, 0, std::move(bc));
+        shs::DTPpacket packet(ID, 0, std::move(shs::ByteCollector<>()));
         packet.set_DTPcode(shs::DTPpacket::INITIAL);
+
+        return std::move(packet);
+    }
+
+    static shs::DTPpacket getInitialAnswerPacket(shs::t::shs_ID_t ID, bool success)
+    {
+        shs::ByteCollector<> bc(1);
+        bc.push_back(success);
+
+        shs::DTPpacket packet(ID, 0, std::move(bc));
+        packet.set_DTPcode(shs::DTPpacket::INITIAL_ANSWER);
 
         return std::move(packet);
     }

@@ -17,14 +17,15 @@
 #define DEBUG
 #include <shs_debug.h>
 
-shs::DTP dtp;
+constexpr shs::t::shs_ID_t recID(10, 0, 0);
+constexpr shs::t::shs_ID_t senID(12, 0, 0);
+
+shs::DTP dtp(senID);
 
 //shs::TcpSocket tcp("192.168.1.10", 5000);
 
 shs::TcpServer server(5000, dtp);
 
-constexpr shs::t::shs_ID_t recID(10, 0, 0);
-constexpr shs::t::shs_ID_t senID(12, 0, 0);
 
 class EhoAPI : public shs::API
 {

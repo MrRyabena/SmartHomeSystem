@@ -13,7 +13,7 @@ void tickServer()
    {
       byte [] buf = new byte[10];
       buf[0] = 10;
-      buf[1] = 3;   
+      buf[1] = 4;    
       buf[2] = 0;
       buf[3] = 6;
       buf[4] = 4;
@@ -61,7 +61,7 @@ void tickServer()
       buf[12] = 'l';
       buf[13] = 'l';
       buf[14] = 'o';
-      buf[15] |= ;
+      buf[15] |= 0;
 
       client.write(buf);
       println("sended");

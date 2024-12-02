@@ -22,19 +22,20 @@ namespace shs
 {
     namespace t
     {
-#ifndef USE_FLOAT_FOR_DOUBLE
+    #ifndef USE_FLOAT_FOR_DOUBLE
         using shs_double_t = double;
-#else
+    #else
         using shs_double_t = float;
-#endif
+    #endif
 
-#ifdef SHS_SF_ARDUINO
+    #ifdef SHS_SF_ARDUINO
         using shs_string_t = String;
-#else
+    #else
         using shs_string_t = std::string;
-#endif
+    #endif
 
         using shs_float_t = float;
         using shs_ID_t = shs::ID;
+        using shs_busID_t = uint16_t;
     }
 }

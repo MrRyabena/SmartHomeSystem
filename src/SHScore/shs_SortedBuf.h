@@ -26,13 +26,14 @@ public:
     void detach(const T& value) { shs::remove_sorted(m_srtdbuf, value, m_compare); };
 
     template <typename T>
-    [[nodiscard]] auto get(const T& value) { return shs::binary_search(begin(), end(), value, m_compare); }
+    [[nodiscard]] auto get(const T& value) const { return shs::binary_search(begin(), end(), value, m_compare); }
 
 
-    auto begin() { return m_srtdbuf.begin(); }
-    auto end() { return m_srtdbuf.end(); }
-    auto size() { return m_srtdbuf.size(); }
-    auto back() { return m_srtdbuf.back(); }
+    auto begin() const { return m_srtdbuf.begin(); }
+    auto end() const { return m_srtdbuf.end(); }
+    auto size() const { return m_srtdbuf.size(); }
+    auto back() const { return m_srtdbuf.back(); }
+    auto rbegin() const { return m_srtdbuf.rbegin(); }
 
     void shrink_to_fit() { m_srtdbuf.shrink_to_fit(); }
     void reserve() { m_srtdbuf.reserve(); }

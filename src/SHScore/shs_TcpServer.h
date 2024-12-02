@@ -44,6 +44,7 @@ class shs::TcpServer : public shs::Process
 {
 public:
     WiFiServer server;
+    static constexpr auto max_connection_time = 2000;
 
     explicit TcpServer(const IPAddress& hostIP, const uint16_t port, shs::DTP& dtp)
         : server(hostIP, port), m_dtp(dtp)
@@ -62,4 +63,6 @@ public:
 
 private:
     shs::DTP& m_dtp;
+    std::unique_ptr<shs::TcpSocket> m_connecting_client{};
+    size_t m_connecting_client_time{};
 };

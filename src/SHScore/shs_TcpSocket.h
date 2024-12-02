@@ -37,18 +37,17 @@ class shs::TcpSocket : public shs::DTPbus
 {
 public:
     WiFiClient client;
-    static constexpr max_connection_time = 2000;
 
 
-    using default_connect_callback = [](shs::TcpSocket& socket)
-        { auto packet = shs::DTP_APIpackets::getInitialPacket(socket.busID); socket.client.write(packet.bc.getPtr(), packet.bc.size()); };
-    using default_disconnect_callback = [](shs::TcpSocket& socket) { socket.reconnect(); };
+#define default_connect_callback ([](shs::TcpSocket& socket) \
+        { auto packet = shs::DTP_APIpackets::getInitialPacket(socket.busID); socket.client.write(packet.bc.getPtr(), packet.bc.size()); })
+#define default_disconnect_callback ([](shs::TcpSocket& socket) { socket.reconnect(); })
 
 
     explicit TcpSocket
     (
         const IPAddress& hostIP, const uint16_t port,
-        const shs::t::shs_ID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
+        const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
         const std::function<void(shs::TcpSocket&)>& connect_callback = default_connect_callback,
         const std::function<void(shs::TcpSocket&)>& disconnect_callback = default_disconnect_callback
     )
@@ -62,7 +61,7 @@ public:
     explicit TcpSocket
     (
         const char* hostIP, const uint16_t port,
-        const shs::t::shs_ID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
+        const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
         const std::function<void(shs::TcpSocket&)>& connect_callback = default_connect_callback,
         const std::function<void(shs::TcpSocket&)>& disconnect_callback = default_disconnect_callback
     )
@@ -77,7 +76,7 @@ public:
     explicit TcpSocket
     (
         const WiFiClient& other,
-        const shs::t::shs_ID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
+        const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
         const std::function<void(shs::TcpSocket&)>& connect_callback = default_connect_callback,
         const std::function<void(shs::TcpSocket&)>& disconnect_callback = default_disconnect_callback
     )
@@ -99,13 +98,13 @@ public:
 
     // inherited from shs::Process (from shs::DTPbus)
     void start() override { client.connect(m_hostIP, m_port); }
-    void tick() override { if (!client.connected()) m_disconnect_callback(*this); }
+    void tick() override { if (!client.connected() && m_disconnect_callback) m_disconnect_callback(*this); }
     void stop() override { client.stop(); }
 
 
     // inherited from shs::DTPbus
-    uint8_t checkBus() override { processBus(client); processPacket(); }
-    uint8_t sendPacket(shs::DTPpacket& packet) override { return client.write(packet.bc.getPtr(), packet.bc.size()); }
+    Status checkBus() override { processBus(client); return processPacket(); }
+    uint8_t sendPacket(const shs::DTPpacket& packet) override { return client.write(packet.bc.getPtr(), packet.bc.size()); }
     uint8_t sendRAW(shs::ByteCollector<>& bc) override { return client.write(bc.getPtr(), bc.size()); }
     uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return client.write(it.getPtr(), it.size()); }
     uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return client.write(data, size); }
@@ -114,11 +113,9 @@ public:
 private:
     IPAddress m_hostIP;
     const uint16_t m_port;
-    std::unique_ptr<shs::TcpSocket> m_connecting_client{};
-    uint16_t m_connecting_client_time{};
 
     std::function<void(shs::TcpSocket& client)> m_connect_callback;
     std::function<void(shs::TcpSocket& client)> m_disconnect_callback;
 
-    void m_connect() { if (client.connect(m_hostIP, m_port)) m_connect_callback(*this); }
+    void m_connect() { if (client.connect(m_hostIP, m_port) && m_connect_callback) m_connect_callback(*this); }
 };

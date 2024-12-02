@@ -5,10 +5,12 @@ void shs::DTP::tick()
 {
     for (auto& bus : m_buss)
     {
-        auto status = bus->checkBus();
-        if (status == shs::DTPbus::packet_processed)
+        // if the data is fully received and ready for processing 
+        if (bus->checkBus() == shs::DTPbus::packet_processed)
         {
             auto it = bus->getLastData();
+
+            // processing of DTP-code
             switch (shs::DTPpacket::get_DTPcode(it))
             {
                 case shs::DTPpacket::STANDARD:
@@ -30,6 +32,17 @@ void shs::DTP::tick()
 
             }
         }
-        bus->tick();
+        bus->tick();    // update bus
     }
+}
+
+
+shs::t::shs_busID_t shs::DTP::getUniqueBusID() const
+{
+    if (m_buss.size() == 0) return 1;
+    shs::t::shs_busID_t newID = (*m_buss.rbegin())->busID;
+
+    while (m_buss.get(++newID) != m_buss.end());
+
+    return newID;
 }

@@ -1,6 +1,15 @@
 #include "shs_DTP.h"
 
 
+shs::DTPbus* shs::DTP::findBusFromModule(const uint8_t moduleID) const
+{
+    for (auto& bus : m_buss)
+        if (bus->connected_modules.get(id) != bus->connected_modules.end()) return bus.get();
+
+    return nullptr;
+}
+
+
 void shs::DTP::tick()
 {
     for (auto& bus : m_buss)

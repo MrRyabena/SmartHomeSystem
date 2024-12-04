@@ -27,7 +27,7 @@ class shs::DTPpacket
 {
 public:
     enum Error : uint8_t { ok, size_less, size_bigger, invalid_crc };
-    enum DTPcode : uint8_t { STANDARD = 1, FAST, INITIAL, INITIAL_ANSWER, };
+    enum DTPcode : uint8_t { STANDARD = 1, FAST, INITIAL, INITIAL_ANSWER, DEINITIAL, CONNECTION_REQUEST };
 
     explicit DTPpacket(const bool empty) : bc() {}
 

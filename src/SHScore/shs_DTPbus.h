@@ -83,12 +83,15 @@ public:
 
     shs::t::shs_busID_t busID;
     Status status;
+    shs::SortedBuf<uint8_t> connected_modules;
 
 protected:
     shs::ByteCollector<> m_bc;
     shs::API* m_handler;
     uint32_t m_tmr;
     uint8_t m_len;
+
+    void m_DTPhandler(shs::ByteCollectorReadIterator& it);
 };
 
 
@@ -116,7 +119,8 @@ shs::DTPbus::Status shs::DTPbus::processPacket()
 {
     if (status != packet_received) return status;
     auto it = m_bc.getReadIt();
-    // DTPhandler ...
+
+    m_DTPhandler(it);
 
     if (m_handler)
     {
@@ -126,4 +130,15 @@ shs::DTPbus::Status shs::DTPbus::processPacket()
 
     status = Status::packet_processed;
     return status;
+}
+
+
+void shs::DTPbus::m_DTPhandler(shs::ByteCollectorReadIterator& it)
+{
+    switch (shs::DTPpacket::get_DTPcode(it))
+    {
+        case shs::DTPpacket::INITIAL: connected_modules.attach(shs::DTPpacket::get_senderID(it)); break;
+        case shs::DTPpacket::DEINITIAL: connected_modules.detach(shs::DTPpacket::get_senderID(it)); break;
+        default: break;
+    }
 }

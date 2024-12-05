@@ -1,3 +1,4 @@
+#define DEBUG
 #include <shs_ControlWiFi.h>
 #include <shs_TcpSocket.h>
 
@@ -14,7 +15,7 @@
 #include <shs_TcpServer.h>
 
 #include <shs_ByteCollector.h>
-#define DEBUG
+
 #include <shs_debug.h>
 
 constexpr shs::t::shs_ID_t recID(10, 0, 0);
@@ -27,51 +28,70 @@ shs::DTP dtp(senID);
 shs::TcpServer server(5000, dtp);
 
 
-class EhoAPI : public shs::API
-{
+class EhoAPI : public shs::API {
 public:
-    EhoAPI(const shs::t::shs_ID_t id) : API(id) { doutln(id.id); doutln(this->API_ID.id); }
-    
-    virtual shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) noexcept override
-    {
-        
-        auto size = shs::DTPpacket::get_datasize(it);
-        
-        it.set_position(0);
-        for (auto i = 0; i < it.size(); i++) doutln(int(it[i]));
-       
-        shs::DTPpacket p(senID, recID, it.getPtr() + shs::DTPpacket::get_dataBeg(it), size);
-        
-        doutln("processed!");
-        return std::move(p);
-    }
+  EhoAPI(const shs::t::shs_ID_t id)
+    : API(id) {
+    doutln(id.id);
+    doutln(this->API_ID.id);
+  }
+
+  virtual shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) noexcept override {
+
+    auto size = shs::DTPpacket::get_datasize(it);
+
+    it.set_position(0);
+    for (auto i = 0; i < it.size(); i++) doutln(int(it[i]));
+
+    shs::DTPpacket p(senID, recID, it.getPtr() + shs::DTPpacket::get_dataBeg(it), size);
+
+    doutln("processed!");
+    return std::move(p);
+  }
 };
 
-void setup()
-{
-    Serial.begin(115200);
+void send() {
+  static uint32_t tmr{};
+  if (millis() - tmr >= 10000) {
+    shs::ByteCollector<> bc(10);
+    bc.push_back(100, 1);
+    bc.push_back(100, 1);
+    bc.push_back(100, 1);
+    bc.push_back(100, 1);
+    bc.push_back(100, 1);
+
+    shs::DTPpacket packet(senID, recID, std::move(bc));
+    
+    dout("\nsended: ");
+    doutln(dtp.sendPacket(packet));
     doutln();
-   
-    dsep();
-    doutln(shs::ControlWiFi::connectWiFiWait());
-    dsep();
-    
-    server.start();
 
-    //dtp.attachBus(std::make_unique<shs::DTPbus>(tcp.client, senID));
-    
-   // doutln("this");
-
-    dtp.attachAPI(std::make_unique<EhoAPI>(senID));
-
-    doutln("ok"); 
-
+    tmr = millis();
+  }
 }
 
-void loop()
-{
-    //tcp.tick();
-    dtp.tick();
-    server.tick();
+void setup() {
+  Serial.begin(115200);
+  doutln();
 
+  dsep();
+  doutln(shs::ControlWiFi::connectWiFiWait());
+  dsep();
+
+  server.start();
+
+  //dtp.attachBus(std::make_unique<shs::DTPbus>(tcp.client, senID));
+
+  // doutln("this");
+
+  dtp.attachAPI(std::make_unique<EhoAPI>(senID));
+
+  doutln("ok");
+}
+
+void loop() {
+  //tcp.tick();
+  send();
+  dtp.tick();
+  server.tick();
 }

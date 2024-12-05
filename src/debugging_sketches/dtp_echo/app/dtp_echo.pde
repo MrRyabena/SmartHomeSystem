@@ -25,6 +25,21 @@ void tickServer()
 
       client.write(buf);
       println("sended initial message");
+      byte [] buf = new byte[10];
+      buf[0] = 10;
+      buf[1] = 3;    
+      buf[2] = 0;
+      buf[3] = 6;
+      buf[4] = 4;
+      buf[5] = 10;
+      buf[6] = 0;
+      buf[7] = 5;
+      buf[8] = 0;
+      buf[9] = 12;
+
+      client.write(buf);
+      println("sended initial message");
+      
    }
   }
   

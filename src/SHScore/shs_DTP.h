@@ -83,10 +83,10 @@ public:
     explicit DTP(const shs::t::shs_ID_t module_id) : moduleID(module_id) {}
 
     // sending data
-    uint8_t sendPacket(const shs::DTPpacket& packet) { auto bus = findBusFromModule(packet.get_recipientID()); return (bus ? bus->sendPacket(packet) : 0); }
-    uint8_t sendRAW(shs::ByteCollector<>& bc, const shs::t::shs_ID_t id) { auto bus = findBusFromModule(id); return (bus ? bus->sendRAW(bc) : 0); }
-    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it, const shs::t::shs_ID_t id) { auto bus = findBusFromModule(id); return (bus ? bus->sendRAW(it) : 0); }
-    uint8_t sendRAW(const uint8_t* data, const uint8_t size) { auto bus = findBusFromModule(id); return (bus ? bus->sendRAW(data, size) : 0); }
+    uint8_t sendPacket(const shs::DTPpacket& packet) { auto bus = findBusFromModule(packet.get_recipientID().getModuleID()); return (bus ? bus->sendPacket(packet) : 0); }
+    uint8_t sendRAW(shs::ByteCollector<>& bc, const uint8_t id) { auto bus = findBusFromModule(id); return (bus ? bus->sendRAW(bc) : 0); }
+    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it, const uint8_t id) { auto bus = findBusFromModule(id); return (bus ? bus->sendRAW(it) : 0); }
+    uint8_t sendRAW(const uint8_t* data, const uint8_t size, const uint8_t id) { auto bus = findBusFromModule(id); return (bus ? bus->sendRAW(data, size) : 0); }
 
     shs::DTPbus* findBusFromModule(const uint8_t moduleID) const;
 
@@ -99,7 +99,7 @@ public:
     }
 
     void detachBus(const shs::t::shs_busID_t& id) { m_buss.detach(id); }
-    shs::DTPbus* getBus(const shs::t::shs_busID_t& id) const { auto it = m_buss.get(id); return it ? it->get() : nullptr; }
+    shs::DTPbus* getBus(const shs::t::shs_busID_t& id) const { auto it = m_buss.get(id); return it != m_buss.end() ? it->get() : nullptr; }
 
     shs::t::shs_busID_t getUniqueBusID() const;
 
@@ -118,5 +118,5 @@ private:
     shs::SortedBuf<std::unique_ptr<shs::DTPbus>, DTPless::BUS> m_buss;
     shs::SortedBuf<std::unique_ptr<shs::API>, DTPless::API> m_APIs;
 
-    void m_sendEvery
+    // void m_sendEvery
 };

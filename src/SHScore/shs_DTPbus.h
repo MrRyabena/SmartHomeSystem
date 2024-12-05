@@ -20,6 +20,7 @@ using Stream = shs::Stream;
 #include "shs_ID.h"
 #include "shs_Process.h"
 #include "shs_API.h"
+#include "shs_SortedBuf.h"
 
 
 namespace shs
@@ -91,7 +92,7 @@ protected:
     uint32_t m_tmr;
     uint8_t m_len;
 
-    void m_DTPhandler(shs::ByteCollectorReadIterator& it);
+    inline void m_DTPhandler(shs::ByteCollectorReadIterator<>& it);
 };
 
 
@@ -132,13 +133,13 @@ shs::DTPbus::Status shs::DTPbus::processPacket()
     return status;
 }
 
-
-void shs::DTPbus::m_DTPhandler(shs::ByteCollectorReadIterator& it)
+#include <shs_debug.h>
+void shs::DTPbus::m_DTPhandler(shs::ByteCollectorReadIterator<>& it)
 {
     switch (shs::DTPpacket::get_DTPcode(it))
     {
-        case shs::DTPpacket::INITIAL: connected_modules.attach(shs::DTPpacket::get_senderID(it)); break;
-        case shs::DTPpacket::DEINITIAL: connected_modules.detach(shs::DTPpacket::get_senderID(it)); break;
+        case shs::DTPpacket::INITIAL: doutln("attach module to bus"); connected_modules.attach(shs::DTPpacket::get_senderID(it).getModuleID()); break;
+        case shs::DTPpacket::DEINITIAL: doutln("deattach module to bus"); connected_modules.detach(shs::DTPpacket::get_senderID(it).getModuleID()); break;
         default: break;
     }
 }

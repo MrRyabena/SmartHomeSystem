@@ -93,7 +93,6 @@ public:
     // BUS
     shs::t::shs_busID_t attachBus(std::unique_ptr<shs::DTPbus>&& bus)
     {
-
         if (bus->busID == 0 || m_buss.get(bus) != m_buss.end()) bus->busID = getUniqueBusID();
         return (*m_buss.attach(std::move(bus)))->busID;
     }

@@ -1,6 +1,5 @@
-
-#ifndef _SHSSettings_private_ // note: don't use <#pragma once> in settings files!
-#define _SHSSettings_private_
+#ifndef _shs_SETTINGS_PRIVATE_   // note: don't use <#pragma once> in settings files!
+#define _shs_SETTINGS_PRIVATE_
 
 #include <stdint.h>
 
@@ -23,16 +22,34 @@
 
 #define DEBUG
 
+#include "shs_types.h"
+
 namespace shs
 {
-        namespace settings
-        {
-                const uint8_t SENSOR_AVERAGE_SAMPLES = 20;
-                // const uint8_t COM_IP[] = {192, 168, 1, 4};
-                const uint8_t SERVER_ID = 4;
+    namespace settings
+    {
+        constexpr uint8_t SENSOR_AVERAGE_SAMPLES = 20;
 
-                const int8_t Load_apiID = -1;
-                const int8_t Sensor_apiID = -2;
-        }
+    #ifndef SHS_SET_DEFAULT_TCP_PORT
+    #define SHS_SET_DEFAULT_TCP_PORT 5000
+    #endif
+    #ifndef SHS_SET_DEFAULT_UDP_PORT
+    #define SHS_SET_DEFAULT_UDP_PORT 6000
+    #endif
+    #ifndef SHS_SET_DEFAULT_MULTICAST_IP
+    #define SHS_SET_DEFAULT_MULTICAST_IP "224.0.0.4"
+    #endif
+    #ifndef SHS_SET_DEFAULT_BROADCAST_IP
+    #define SHS_SET_DEFAULT_BROADCAST_IP "192.168.1.255"
+    #endif
+        constexpr shs::t::shs_port_t DEFAULT_TCP_PORT = SHS_SET_DEFAULT_TCP_PORT;
+        constexpr shs::t::shs_port_t DEFAULT_UDP_PORT = SHS_SET_DEFAULT_UDP_PORT;
+        constexpr auto DEFAULT_MULTICAST_IP = SHS_SET_DEFAULT_MULTICAST_IP;
+        constexpr auto DEFAULT_BROADCAST_IP = SHS_SET_DEFAULT_BROADCAST_IP;
+    #undef SHS_SET_DEFAULT_TPC_PORT
+    #undef SHS_SET_DEFAULT_UDP_PORT
+    #undef SHS_SET_DEFAULT_MULTICAST_IP
+    #undef SHS_SET_DEFAULT_BROADCAST_IP
+    }
 }
 #endif

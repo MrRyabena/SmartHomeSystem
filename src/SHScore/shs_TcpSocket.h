@@ -41,12 +41,13 @@ public:
 
 #define default_connect_callback ([](shs::TcpSocket& socket) \
         { auto packet = shs::DTP_APIpackets::getInitialPacket(socket.busID); socket.client.write(packet.bc.getPtr(), packet.bc.size()); })
+
 #define default_disconnect_callback ([](shs::TcpSocket& socket) { socket.reconnect(); })
 
 
     explicit TcpSocket
     (
-        const IPAddress& hostIP, const uint16_t port,
+        const shs::t::shs_IP_t& hostIP, const shs::t::shs_port_t port,
         const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
         const std::function<void(shs::TcpSocket&)>& connect_callback = default_connect_callback,
         const std::function<void(shs::TcpSocket&)>& disconnect_callback = default_disconnect_callback
@@ -60,7 +61,7 @@ public:
 
     explicit TcpSocket
     (
-        const char* hostIP, const uint16_t port,
+        const char* hostIP, const shs::t::shs_port_t port,
         const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
         const std::function<void(shs::TcpSocket&)>& connect_callback = default_connect_callback,
         const std::function<void(shs::TcpSocket&)>& disconnect_callback = default_disconnect_callback
@@ -92,8 +93,8 @@ public:
 
     void reconnect() { m_connect(); }
 
-    IPAddress getIP() const { return m_hostIP; }
-    uint16_t getPort() const { return m_port; }
+    shs::t::shs_IP_t getIP() const { return m_hostIP; }
+    shs::t::shs_port_t getPort() const { return m_port; }
 
 
     // inherited from shs::Process (from shs::DTPbus)
@@ -104,15 +105,16 @@ public:
 
     // inherited from shs::DTPbus
     Status checkBus() override { processBus(client); return processPacket(); }
-    uint8_t sendPacket(const shs::DTPpacket& packet) override { return client.write(packet.bc.getPtr(), packet.bc.size()); }
-    uint8_t sendRAW(shs::ByteCollector<>& bc) override { return client.write(bc.getPtr(), bc.size()); }
-    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return client.write(it.getPtr(), it.size()); }
-    uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return client.write(data, size); }
+
+    uint8_t sendPacket(const shs::DTPpacket& packet) override { return shs::DTPbus::sendPacket(client, packet); }
+    uint8_t sendRAW(shs::ByteCollector<>& bc) override { return shs::DTPbus::sendRAW(client, bc); }
+    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return shs::DTPbus::sendRAW(client, it); }
+    uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return shs::DTPbus::sendRAW(client, data, size); }
 
 
 private:
-    IPAddress m_hostIP;
-    const uint16_t m_port;
+    shs::t::shs_IP_t m_hostIP;
+    shs::t::shs_port_t m_port;
 
     std::function<void(shs::TcpSocket& client)> m_connect_callback;
     std::function<void(shs::TcpSocket& client)> m_disconnect_callback;

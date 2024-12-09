@@ -1,9 +1,12 @@
+#pragma once
+
+#include <GRGB.h>
+
 #include <shs_API.h>
 #include <shs_ByteCollector.h>
 #include <shs_ByteCollectorIterator.h>
 #include <shs_DTPpacket.h>
 #include <shs_types.h>
-#include <GRGB.h>
 
 
 namespace shs
@@ -17,7 +20,9 @@ class shs::GRGB_API : public shs::API
 public:
     GRGB_API(GRGB& grgb, const shs::t::shs_ID_t ID) : shs::API(ID), m_grgb(grgb) {}
 
-    enum commands : uint8_t
+    ~GRGB_API() = default;
+
+    enum Commands : uint8_t
     {
         enable,
         disable,
@@ -42,19 +47,20 @@ public:
 
     void handle(shs::ByteCollectorReadIterator<>& it) override
     {
-        ++it;
+        it.set_position(shs::DTPpacket::get_dataBeg(it));
+
         switch (it.read())
         {
-        case commands::enable:   m_grgb.enable();  break;
-        case commands::disable:  m_grgb.disable(); break;
-        case commands::setPower: m_grgb.setPower(it.read()); break;
-        [[lickely]] case commands::setRGB: m_grgb.setRGB(it.read(), it.read(), it.read(), it.read()); break;
-        [[lickely]] case commands::setBrightness: m_grgb.setBrightness(it.read()); break;
-        case commands::fadeMode: m_grgb.fadeMode(it.read()); break;
-        case commands::setFadePeriod: { uint32_t t{}; it.get(t, 4); m_grgb.setFadePeriod(t); } break;
-        case commands::setWheel8: m_grgb.setWheel8(it.read(), it.read()); break;
+            case commands::enable:   m_grgb.enable();  break;
+            case commands::disable:  m_grgb.disable(); break;
+            case commands::setPower: m_grgb.setPower(it.read()); break;
+            [[likely]] case commands::setRGB: m_grgb.setRGB(it.read(), it.read(), it.read(), it.read()); break;
+            [[likely]] case commands::setBrightness: m_grgb.setBrightness(it.read()); break;
+            case commands::fadeMode: m_grgb.fadeMode(it.read()); break;
+            case commands::setFadePeriod: { uint32_t t{}; it.get(t, 4); m_grgb.setFadePeriod(t); } break;
+            case commands::setWheel8: m_grgb.setWheel8(it.read(), it.read()); break;
 
-        default: break;
+            default: break;
         }
     }
 

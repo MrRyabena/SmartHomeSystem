@@ -56,9 +56,11 @@ public:
 
     // processing incoming data
     virtual Status checkBus() = 0;
-    template <class Bus> Status processBus(Bus& bus);
-    inline Status processPacket();
 
+    template <class Bus> Status processBus(Bus& bus) { status = processBus(bus, m_bc, m_len); return status; }
+    template <class Bus> inline static Status processBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len);
+    inline Status processPacket();
+    inline static Status processPacket(shs::ByteCollector<>& bc, const Status status);
     // for additional handlers
     shs::ByteCollectorReadIterator<> getLastData() { return m_bc.getReadIt(); }
 
@@ -69,6 +71,10 @@ public:
     virtual uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) = 0;
     virtual uint8_t sendRAW(const uint8_t* data, const uint8_t size) = 0;
 
+    template <class Bus> static uint8_t sendPacket(Bus& bus, const shs::DTPpacket& packet) { return bus.write(packet.bc.getPtr(), packet.bc.size()); }
+    template <class Bus> static uint8_t sendRAW(Bus& bus, shs::ByteCollector<>& bc) { return bus.write(bc.getPtr(), bc.size()); };
+    template <class Bus> static uint8_t sendRAW(Bus& bus, shs::ByteCollectorReadIterator<>& it) { return bus.write(it.getPtr(), it.size()); };
+    template <class Bus> static uint8_t sendRAW(Bus& bus, const uint8_t* data, const uint8_t size) { return bus.write(data, size); };
 
     // shs::Process
     void start() override = 0;
@@ -97,26 +103,25 @@ protected:
 
 
 template <class Bus>
-shs::DTPbus::Status shs::DTPbus::processBus(Bus& bus)
+shs::DTPbus::Status shs::DTPbus::processBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len)
 {
-    if (bus.available() == 0) { status = Status::no_data; return status; }
+    if (bus.available() == 0) return Status::no_data;
 
-    if (m_len == 0) m_len = bus.read();
-    if (bus.available() < m_len - 1) { status = Status::packet_is_expected; return status; }
+    if (len == 0) len = bus.read();
+    if (bus.available() < len - 1) return Status::packet_is_expected;
 
-    m_bc.reset();
-    m_bc.push_back(m_len, 1);
+    buf.reset();
+    buf.push_back(len, 1);
 
-    for (uint8_t i = 0; i < m_len - 1; i++) m_bc.push_back(bus.read(), 1);
+    for (uint8_t i = 0; i < len - 1; i++) buf.push_back(bus.read(), 1);
 
-    m_len = 0;
+    len = 0;
 
-    status = Status::packet_received;
-    return status;
+    return Status::packet_received;
 }
 
 
-shs::DTPbus::Status shs::DTPbus::processPacket()
+shs::DTPbus::Status shs::DTPbus::processPacket(shs::ByteCollector<>& bc, const Status status, shs::API* handler = nullptr)
 {
     if (status != packet_received) return status;
     auto it = m_bc.getReadIt();

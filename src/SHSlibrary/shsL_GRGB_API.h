@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <GRGB.h>
 
 #include <shs_API.h>
@@ -51,17 +53,19 @@ public:
 
         switch (it.read())
         {
-            case commands::enable:   m_grgb.enable();  break;
-            case commands::disable:  m_grgb.disable(); break;
-            case commands::setPower: m_grgb.setPower(it.read()); break;
-            [[likely]] case commands::setRGB: m_grgb.setRGB(it.read(), it.read(), it.read(), it.read()); break;
-            [[likely]] case commands::setBrightness: m_grgb.setBrightness(it.read()); break;
-            case commands::fadeMode: m_grgb.fadeMode(it.read()); break;
-            case commands::setFadePeriod: { uint32_t t{}; it.get(t, 4); m_grgb.setFadePeriod(t); } break;
-            case commands::setWheel8: m_grgb.setWheel8(it.read(), it.read()); break;
+            case enable:   m_grgb.enable();  break;
+            case disable:  m_grgb.disable(); break;
+            case setPower: m_grgb.setPower(it.read()); break;
+            [[likely]] case setRGB: m_grgb.setRGB(it.read(), it.read(), it.read(), it.read()); break;
+            [[likely]] case setBrightness: m_grgb.setBrightness(it.read()); break;
+            case fadeMode: m_grgb.fadeMode(it.read()); break;
+            case setFadePeriod: { uint32_t t{}; it.get(t, 4); m_grgb.setFadePeriod(t); } break;
+            case setWheel8: m_grgb.setWheel8(it.read(), it.read()); break;
 
             default: break;
         }
+
+        return std::move(shs::DTPpacket(true));
     }
 
 

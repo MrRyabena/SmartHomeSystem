@@ -42,8 +42,8 @@ namespace shs
     #ifndef SHS_SET_DEFAULT_BROADCAST_IP
     #define SHS_SET_DEFAULT_BROADCAST_IP "192.168.1.255"
     #endif
-        constexpr shs::t::shs_port_t DEFAULT_TCP_PORT = SHS_SET_DEFAULT_TCP_PORT;
-        constexpr shs::t::shs_port_t DEFAULT_UDP_PORT = SHS_SET_DEFAULT_UDP_PORT;
+        constexpr auto DEFAULT_TCP_PORT = SHS_SET_DEFAULT_TCP_PORT;
+        constexpr auto DEFAULT_UDP_PORT = SHS_SET_DEFAULT_UDP_PORT;
         constexpr auto DEFAULT_MULTICAST_IP = SHS_SET_DEFAULT_MULTICAST_IP;
         constexpr auto DEFAULT_BROADCAST_IP = SHS_SET_DEFAULT_BROADCAST_IP;
     #undef SHS_SET_DEFAULT_TPC_PORT

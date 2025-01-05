@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <algorithm>
+#include <initializer_list>
 #include <functional>
 
 #include "shs_algorithm.h"
@@ -16,6 +18,9 @@ class shs::SortedBuf
 {
 public:
     SortedBuf(Compare compare = Compare()) : m_compare(compare) {}
+    explicit SortedBuf(std::initializer_list<BufT> list) : m_compare(Compare()), m_srtdbuf(list) { std::sort(std::begin(m_srtdbuf), std::end(m_srtdbuf)); }
+    explicit SortedBuf(Compare compare, std::initializer_list<BufT> list) : m_compare(compare), m_srtdbuf(list) { std::sort(std::begin(m_srtdbuf), std::end(m_srtdbuf)); }
+
     ~SortedBuf() = default;
 
     template <typename T>

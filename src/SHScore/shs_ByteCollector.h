@@ -44,7 +44,15 @@ public:
         : m_buf(new BCbuf_t[size]{}), m_capacity(size)
     {}
 
-    ByteCollector(ByteCollector<BCbuf_t, BCsize_t>&& other) noexcept
+    ByteCollector(const ByteCollector<BCbuf_t, BCsize_t>& other) noexcept
+        : m_buf(new BCbut_t[other.capacity]), m_capacity(other.capacity),
+        m_pos_back(other.m_pos_back), m_pos_front(other.m_pos_front),
+        m_pos_read(other.m_pos_read)
+    {
+        for (BCsize_t i = 0; i < m_capacity; i++) m_buf[i] = other.m_buf[i];
+    }
+
+    ByteCollector(const ByteCollector<BCbuf_t, BCsize_t>&& other) noexcept
         : m_buf(other.m_buf), m_capacity(other.m_capacity),
         m_pos_back(other.m_pos_back), m_pos_front(other.m_pos_front),
         m_pos_read(other.m_pos_read)
@@ -54,6 +62,25 @@ public:
         other.m_pos_back = {};
         other.m_pos_front = {};
         other.m_pos_read = {};
+    }
+
+    ByteCollector& operator=(const ByteCollector<BCbuf_t, BCsize_t>& other) noexcept
+    {
+        if (this != &other)
+        {
+            if (m_buf) delete[] m_buf;
+
+            m_capacity = other.m_capacity;
+            m_pos_back = other.m_pos_back;
+            m_pos_front = other.m_pos_front;
+            m_pos_read = other.m_pos_read;
+
+            m_buf = new BCbuf_t[m_capacity];
+
+            for (BCsize_t i = 0; i < m_size; i++) m_buf[i] = other.m_buf[i];
+        }
+
+        return *this
     }
 
     ByteCollector& operator=(ByteCollector<BCbuf_t, BCsize_t>&& other) noexcept
@@ -74,10 +101,12 @@ public:
             other.m_pos_front = {};
             other.m_pos_read = {};
         }
+
         return *this;
     }
 
-    ByteCollector(const ByteCollector<BCbuf_t, BCsize_t>&) = delete;
+
+
     ByteCollector<BCbuf_t, BCsize_t>& operator=(const ByteCollector<BCbuf_t, BCsize_t>&) = delete;
 
     ~ByteCollector() { delete[] m_buf; }

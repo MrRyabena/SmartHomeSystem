@@ -22,6 +22,21 @@ shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_
 }
 
 
+shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_busID_t recipientID, const shs::ByteCollector<>& data)
+    : bc(data.size() + DTPstandard_OFFSETbeg + 1)
+{
+    // note: direct order
+    bc.push_back(data.size() + DTPstandard_OFFSETbeg + 1, 1);
+    bc.push_back(STANDARD, 1);
+    bc.push_back(senderID);
+    bc.push_back(recipientID);
+
+    for (auto x : data) bc.push_back(x, 1);
+
+    bc.push_back(shs::CRC8::crcBuf(bc.getPtr(), bc.size() - 1), 1);
+}
+
+
 shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID, const uint8_t* data, const uint8_t size)
     : bc(size + DTPstandard_OFFSETbeg + 1)
 {
@@ -64,4 +79,3 @@ uint8_t shs::DTPpacket::check() const
 
     return Error::ok;
 }
-

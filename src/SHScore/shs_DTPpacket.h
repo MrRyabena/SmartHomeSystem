@@ -29,37 +29,44 @@ public:
     enum Error : uint8_t { ok, size_less, size_bigger, invalid_crc };
     enum DTPcode : uint8_t { STANDARD = 1, FAST, INITIAL, INITIAL_ANSWER, DEINITIAL, CONNECTION_REQUEST };
 
-    explicit DTPpacket(const bool empty) : bc() {}
+    explicit DTPpacket() noexcept : bc() {}
 
     explicit DTPpacket(
         const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID,
         shs::ByteCollector<>&& data
-    );
+    ) noexcept;
+
+    explicit DTPpacket(
+        const shs::t::shs_ID_t senderID, const shs::t::shs_busID_t recipientID,
+        const shs::ByteCollector<>& data
+    ) noexcept;
 
     explicit DTPpacket(
         const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID,
         const uint8_t* data, const uint8_t size
-    );
+    ) noexcept;
 
-    explicit DTPpacket(const uint8_t* data, const uint8_t size);
-
-
-    DTPpacket(shs::ByteCollector<>&) = delete;
-    DTPpacket& operator=(const DTPpacket&) = delete;
-    DTPpacket(const DTPpacket&) = delete;
-
-    int value = 10;
-    int val2 = std::move(value);
+    explicit DTPpacket(const uint8_t* data, const uint8_t size) noexcept;
 
     DTPpacket(shs::ByteCollector<>&& bc_data) noexcept : bc(std::move(bc_data)) {}
+    DTPpacket(const shs::ByteCollector<>& bc_data) noexcept : bc(bc_data) {}
+
     DTPpacket(DTPpacket&& other) noexcept : bc(std::move(other.bc)) {}
+    DTPpacket(const DTPpacket& other) noexcept : bc(other.bc) {}
+
     DTPpacket& operator=(DTPpacket&& other) noexcept
     {
         if (this != &other) bc = std::move(other.bc);
         return *this;
     }
 
-    ~DTPpacket() = default;
+    DTPpacket& operator=(const DTPpacket& other) noexcept
+    {
+        if (this != other) bc = other.bc;
+        return *this;
+    }
+
+    ~DTPpacket() noexcept = default;
 
 
     [[nodiscard]] static uint8_t get_DTPcode(shs::ByteCollectorReadIterator<> it) { it.set_position(1); return it.read(); }

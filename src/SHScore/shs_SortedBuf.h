@@ -39,7 +39,9 @@ public:
     auto size() const { return m_srtdbuf.size(); }
     auto back() const { return m_srtdbuf.back(); }
     auto rbegin() const { return m_srtdbuf.rbegin(); }
-
+    auto rend() const { return m_srtdbuf.rend(); }
+    auto empty() const { return m_stdbuf.empty(); }
+    
     void shrink_to_fit() { m_srtdbuf.shrink_to_fit(); }
     void reserve() { m_srtdbuf.reserve(); }
 

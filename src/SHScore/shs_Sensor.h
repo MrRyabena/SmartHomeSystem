@@ -16,6 +16,7 @@
 
 #include "shs_settings_private.h"
 #include "shs_types.h"
+#include "shs_SimpleFixed.h"
 
 
 namespace shs
@@ -51,7 +52,7 @@ public:
     [[nodiscard]] virtual bool isUpdated() = 0;
 
     [[nodiscard]] virtual int32_t              getValueI() = 0;
-    [[nodiscard]] virtual int32_t              getValueR() = 0;
+    [[nodiscard]] virtual shs::t::shs_fixed_t  getValueFx() = 0;
     [[nodiscard]] virtual shs::t::shs_float_t  getValueF() = 0;
     [[nodiscard]] virtual shs::t::shs_double_t getValueD() = 0;
 };

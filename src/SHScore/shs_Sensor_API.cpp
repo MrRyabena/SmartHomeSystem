@@ -7,7 +7,7 @@ void shs::Sensor_API::tick()
     {
         shs::ByteCollector<> data(5);
         data.push_back(Commands::DATA, 1);
-        data.push_back(m_sensor.getValueR(), 4);
+        data.push_back(m_sensor.getValueFx(), 4);
 
         for (auto id : m_requestIDs)
             m_dtp.sendPacket(shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), data));
@@ -37,12 +37,12 @@ shs::DTPpacket shs::Sensor_API::handle(shs::ByteCollectorReadIterator<>& it)
             [[likely]]
         case REQUEST_DATA:
             {
-                m_sensor.update();
+                it.read() ? m_sensor.updateFast() : m_sensor.update();
 
                 if (m_sensor.isUpdated())
                 {
                     data.push_back(Commands::DATA, 1);
-                    data.push_back(m_sensor.getValueR(), 4);
+                    data.push_back(m_sensor.getValueFx(), 4);
                 }
 
                 else

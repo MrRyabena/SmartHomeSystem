@@ -28,8 +28,8 @@ public:
         : m_value(static_cast<int32_t>(value* std::pow(10, power_of_ten)) & 0xffffffe0 | power_of_ten & 1f)
     {}
 
-    shs::t::shs_float_t getFloat() const { return static_cast<shs::t::shs_float_t>(m_value & 0xffffffe0) * m_value & 1f; }
-    shs::t::shs_double_t getDouble() const { return static_cast<shs::t::shs_double_t>(m_value & 0xffffffe0) * m_value & 1f; }
+    shs::t::shs_float_t toFloat() const { return static_cast<shs::t::shs_float_t>(m_value & 0xffffffe0) * m_value & 1f; }
+    shs::t::shs_double_t toDouble() const { return static_cast<shs::t::shs_double_t>(m_value & 0xffffffe0) * m_value & 1f; }
 
 private:
     int32_t m_value;

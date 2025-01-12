@@ -17,19 +17,19 @@
 
 namespace shs
 {
-    class Event;
+    class EventTracker;
 };
 
 
-class shs::Event : public shs::Process, public shs::API
+class shs::EventTracker : public shs::Process, public shs::API
 {
 public:
 
-    Event(shs::DTP& dtp, const shs::t::shs_ID_t apiID, std::initializer_list<shs::t::shs_ID_t> listenerIDs = {})
+    Event(shs::DTP& dtp, const shs::t::shs_ID_t apiID, std::initializer_list<shs::t::shs_ID_t> listenerIDs = {}) noexcept
         : API(id), m_dtp(dtp), m_listenerIDs(listenerIDs)
     {}
 
-    virtual ~Event() = default;
+    virtual ~Event() noexcept = default;
 
 
     void attachListeners(std::initializer_list<shs::t::shs_ID_t> listenerIDs) { for (const auto& id : listenerIDs) m_listeners.attach(id); }
@@ -75,7 +75,7 @@ public:
 
     void tick() override
     {
-        if (m_checkEvent()) 
+        if (m_checkEvent())
         {
             auto data = m_getEventData(m_observed);
 
@@ -87,10 +87,10 @@ public:
 
 
 protected:
-    virtual bool m_checkEvent() = 0;
-    virtual shs::ByteCollector<> m_getEventData() = 0;
+    [[nodiscard]] virtual bool m_checkEvent() = 0;
+    [[nodiscard]] virtual shs::ByteCollector<> m_getEventData() = 0;
 
+private:
     shs::DTP& m_dtp;
-
     shs::SortedBuf<shs::t::shs_ID_t> m_listenerIDs;
 };

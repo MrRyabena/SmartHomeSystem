@@ -27,7 +27,7 @@ namespace shs
 class shs::Sensor
 {
 public:
-    enum Type : uint8_t
+    enum Type : uint16_t
     {
         UNKNOWN,
         ANALOG_PIN,
@@ -46,12 +46,12 @@ public:
 
     virtual void setup() = 0;
 
-    virtual int16_t getValueI() = 0;
-    virtual shs::t::shs_float_t getValueF() = 0;
-    virtual shs::t::shs_double_t getValueD() = 0;
+    virtual void update() = 0;
+    virtual void updateFast() = 0;
+    [[nodiscard]] virtual bool isUpdated() = 0;
 
-    virtual int16_t getAverageI() = 0;
-    virtual shs::t::shs_float_t getAverageF() = 0;
-    virtual shs::t::shs_double_t getAverageD() = 0;
-
+    [[nodiscard]] virtual int32_t              getValueI() = 0;
+    [[nodiscard]] virtual int32_t              getValueR() = 0;
+    [[nodiscard]] virtual shs::t::shs_float_t  getValueF() = 0;
+    [[nodiscard]] virtual shs::t::shs_double_t getValueD() = 0;
 };

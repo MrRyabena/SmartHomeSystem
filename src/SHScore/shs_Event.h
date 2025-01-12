@@ -2,6 +2,7 @@
 
 
 #include <initializer_list>
+#include <functional>
 
 #include "shs_SortedBuf.h"
 #include "shs_Process.h"
@@ -16,31 +17,57 @@
 
 namespace shs
 {
-    template <class>
     class Event;
 };
 
 
-template <class TObserved>
 class shs::Event : public shs::Process, public shs::API
 {
 public:
 
-    using EventPtr = bool (TObserved::*)();
-    using EventDataPtr = shs::ByteCollector<>(TObserved::*)();
-
-    Event(TObserved& observed, shs::DTP& dtp, EventPtr event_ptr, EventDataPtr eventData_ptr, std::initializer_list<shs::t::shs_ID_t> listenerIDs)
-        : m_observed(observed), m_dtp(dtp), m_event_ptr(event_ptr), m_eventData_ptr(eventData_ptr), m_listenerIDs(listenerIDs)
+    Event(shs::DTP& dtp, const shs::t::shs_ID_t apiID, std::initializer_list<shs::t::shs_ID_t> listenerIDs = {})
+        : API(id), m_dtp(dtp), m_listenerIDs(listenerIDs)
     {}
 
-    ~Event() = default;
+    virtual ~Event() = default;
 
 
     void attachListeners(std::initializer_list<shs::t::shs_ID_t> listenerIDs) { for (const auto& id : listenerIDs) m_listeners.attach(id); }
-    void detachListeners(std::initializer_list<shs::t::shs_ID_t> listenerIDs) { for (const auto& id : listenerIDs) m_listeners.detach(is); }
+    void detachListeners(std::initializer_list<shs::t::shs_ID_t> listenerIDs) { for (const auto& id : listenerIDs) m_listeners.detach(id); }
+
 
     // shs::API
-    shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
+    enum Commands : uint8_t { NOCOMMAND, ERROR, ATTACH_LISTENER, DETACH_LISTENER };
+
+    shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override
+    {
+        it.set_position(shs::DTPpacket::get_dataBeg(it));
+
+        switch (it.read())
+        {
+            case ATTACH_LISTENER:
+                {
+                    shs::t::shs_ID_t id{};
+
+                    it.get(id);
+                    attachListeners(id);
+                }
+                break;
+
+            case DETACH_LISTENER:
+                {
+                    shs::t::shs_ID_t id{};
+
+                    it.get(id);
+                    detachListeners(id);
+                }
+                break;
+
+            default: break;
+        }
+
+        return std::move(shs::DTPpacket(true));
+    }
 
 
     // shs::Process
@@ -48,18 +75,22 @@ public:
 
     void tick() override
     {
-        if (m_observed.*m_event_ptr())
-            for (const auto& id : m_listenerIDs)
-                m_dtp.sendPacket(shs::DTPpacket(API_ID, id, std::move(m_observed.*m_eventData_ptr())));
+        if (m_checkEvent()) 
+        {
+            auto data = m_getEventData(m_observed);
+
+            for (const auto& id : m_listenerIDs) m_dtp.sendPacket(shs::DTPpacket(API_ID, id, data));
+        }
     }
 
     void stop() override {}
 
 
 protected:
-    TObserved& m_observed;
+    virtual bool m_checkEvent() = 0;
+    virtual shs::ByteCollector<> m_getEventData() = 0;
+
     shs::DTP& m_dtp;
-    EventPtr m_event_ptr;
-    EventDataPtr m_eventData_ptr;
+
     shs::SortedBuf<shs::t::shs_ID_t> m_listenerIDs;
 };

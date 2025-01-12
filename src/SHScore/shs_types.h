@@ -9,6 +9,7 @@
 
 #include "shs_settings_private.h"
 #include "shs_ID.h"
+#include "shs_SimpleFixed.h"
 
 #include <stdint.h>
 
@@ -51,6 +52,9 @@ namespace shs
     #endif
 
         using shs_float_t = float;
+
+        using shs_fixed_t = shs::SimpleFixed;
+
         using shs_ID_t = shs::ID;
         using shs_busID_t = uint16_t;
 

@@ -5,7 +5,7 @@
 #include <memory>
 
 #include "shs_API.h"
-#include "shs_reservedID.h"
+#include "shs_APIids.h"
 #include "shs_types.h"
 #include "shs_DTPpacket.h"
 #include "shs_ByteCollector.h"
@@ -22,7 +22,7 @@ namespace shs
 class shs::DTP_APIhandler : public shs::API
 {
 public:
-    DTP_APIhandler(const shs::t::shs_ID_t ID) : API(ID) {}
+    DTP_APIhandler(shs::t::shs_ID_t ID) : API(ID.setApiID(shs::constants::APIids::DTP)) {}
     ~DTP_APIhandler() = default;
 
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
@@ -32,7 +32,7 @@ public:
 class shs::DTP_APIpackets
 {
 public:
-    static constexpr auto dtp_api_ID = shs::ApiIDreserved::DTP;
+    static constexpr auto DTP_API_ID = shs::constants::APIids::DTP;
 
     static shs::DTPpacket getInitialPacket(shs::t::shs_ID_t ID)
     {

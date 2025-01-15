@@ -5,6 +5,7 @@
 #include "shs_Sensor.h"
 #include "shs_Sensor_API.h"
 #include "shs_types.h"
+#include "shs_APIids.h"
 #include "shs_API.h"
 #include "shs_ByteCollector.h"
 #include "shs_ByteCollectorIterator.h"
@@ -21,8 +22,8 @@ namespace shs
 class shs::SensorVirtual : public shs::Sensor, public shs::API
 {
 public:
-    explicit SensorVirtual(const shs::t::shs_ID_t thisID, const shs::t::shs_ID_t virtualID, shs::DTP& dtp, const shs::Sensor::Type stype = UNKNOWN)
-        : API(id), Sensor(stype), m_virtualID(virtualID), m_dtp(dtp)
+    explicit SensorVirtual(shs::t::shs_ID_t thisID, const shs::t::shs_ID_t virtualID, shs::DTP& dtp, const shs::Sensor::Type stype = UNKNOWN)
+        : API(thisID.setApiID(shs::constants::APIids::Sensor)), Sensor(stype), m_virtualID(virtualID), m_dtp(dtp)
     {}
 
     ~SensorVirtual() = default;

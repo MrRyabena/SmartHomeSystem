@@ -7,6 +7,7 @@
 #include "shs_SortedBuf.h"
 #include "shs_Process.h"
 #include "shs_types.h"
+#include "shs_APIids.h"
 #include "shs_API"
 #include "shs_DTP.h"
 #include "shs_DTPpacket.h"
@@ -25,8 +26,8 @@ class shs::EventTracker : public shs::Process, public shs::API
 {
 public:
 
-    Event(shs::DTP& dtp, const shs::t::shs_ID_t apiID, std::initializer_list<shs::t::shs_ID_t> listenerIDs = {}) noexcept
-        : API(id), m_dtp(dtp), m_listenerIDs(listenerIDs)
+    Event(shs::DTP& dtp, shs::t::shs_ID_t apiID, std::initializer_list<shs::t::shs_ID_t> listenerIDs = {}) noexcept
+        : API(apiID.setApiID(shs::constants::APIids::EventTracker)), m_dtp(dtp), m_listenerIDs(listenerIDs)
     {}
 
     virtual ~Event() noexcept = default;

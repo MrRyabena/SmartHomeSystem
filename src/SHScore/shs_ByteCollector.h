@@ -45,14 +45,14 @@ public:
     {}
 
     ByteCollector(const ByteCollector<BCbuf_t, BCsize_t>& other) noexcept
-        : m_buf(new BCbut_t[other.capacity]), m_capacity(other.capacity),
+        : m_buf(new BCbut_t[other.capacity]), m_capacity(other.m_capacity),
         m_pos_back(other.m_pos_back), m_pos_front(other.m_pos_front),
         m_pos_read(other.m_pos_read)
     {
         for (BCsize_t i = 0; i < m_capacity; i++) m_buf[i] = other.m_buf[i];
     }
 
-    ByteCollector(const ByteCollector<BCbuf_t, BCsize_t>&& other) noexcept
+    ByteCollector(ByteCollector<BCbuf_t, BCsize_t>&& other) noexcept
         : m_buf(other.m_buf), m_capacity(other.m_capacity),
         m_pos_back(other.m_pos_back), m_pos_front(other.m_pos_front),
         m_pos_read(other.m_pos_read)

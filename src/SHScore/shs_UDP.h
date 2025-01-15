@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <functional>
+#include <memory>
 
 #include <Arduino.h>
 #ifdef ESP8266
@@ -41,20 +42,23 @@ public:
 
     using Status = shs::DTPbus::Status;
 
-    UDP(const UDP& other) : udp(other) {}
+    UDP() {}
+
+    UDP(const UDP& other) : udp(other.udp) {}
     UDP& operator=(const UDP& rhs) { udp = rhs.udp; return *this; }
 
 
     // UDP
-    static Status checkBus(UDP_t& udp, shs::ByteCollector<>& buf, uint8_t& len, shs::API* handler)
+    static Status checkBus(UDP_t& udp, shs::ByteCollector<>& buf, uint8_t& len, shs::API* handler = nullptr)
     {
         if (udp.parsepacket())
         {
             auto status = shs::DTPbus::processBus(udp, buf, len);
             return shs::DTPbus::processPacket(buf, status, handler);
         }
+        return Status::no_data;
     }
-    Status checkBus(shs::ByteCollector<>& buf, uint8_t& len) { return checkBus(udp, buf, len); }
+    Status checkBus(shs::ByteCollector<>& buf, uint8_t& len, shs::API* handler = nullptr) { return checkBus(udp, buf, len, handler); }
 
     static uint8_t sendBroadcastPacket(UDP_t& udp, const shs::DTPpacket& packet, const shs::t::shs_port_t port = shs::settings::DEFAULT_UDP_PORT) { return sendPacket(udp, packet, shs::settings::DEFAULT_BROADCAST_IP, port); }
     static uint8_t sendBroadcastRAW(UDP_t& udp, shs::ByteCollector<>& bc, const shs::t::shs_port_t port = shs::settings::DEFAULT_UDP_PORT) { return sendRAW(udp, bc, shs::settings::DEFAULT_BROADCAST_IP, port); }
@@ -69,7 +73,7 @@ public:
 
     static uint8_t sendMulticastPacket(UDP_t& udp, const shs::DTPpacket& packet, const shs::t::shs_IP_t multicastIP = shs::settings::DEFAULT_MULTICAST_IP, const shs::t::shs_port_t port = shs::settings::DEFAULT_UDP_PORT)
     {
-        if (!udp.beginMulticastPacket(multicastIP, port, WiFi.mode() == WIFI_STA ? WiFi.localIP() : WiFi.softAPIP())) return 0;
+        if (!udp.beginMulticast(multicastIP, port, WiFi.mode() == WIFI_STA ? WiFi.localIP() : WiFi.softAPIP())) return 0;
         auto out = shs::DTPbus::sendPacket(udp, packet);
         udp.endPacket();
 
@@ -78,7 +82,7 @@ public:
 
     static uint8_t sendMulticastRAW(UDP_t& udp, shs::ByteCollector<>& bc, const shs::t::shs_IP_t multicastIP = shs::settings::DEFAULT_MULTICAST_IP, const shs::t::shs_port_t port = shs::settings::DEFAULT_UDP_PORT)
     {
-        if (!udp.beginMulticastPacket(multicastIP, port, WiFi.mode() == WIFI_STA ? WiFi.localIP() : WiFi.softAPIP())) return 0;
+        if (!udp.beginMulticast(multicastIP, port, WiFi.mode() == WIFI_STA ? WiFi.localIP() : WiFi.softAPIP())) return 0;
         auto out = shs::DTPbus::sendRAW(udp, bc);
         udp.endPacket();
 
@@ -87,7 +91,7 @@ public:
 
     static uint8_t sendMulticastRAW(UDP_t& udp, shs::ByteCollectorIterator<>& it, const shs::t::shs_IP_t multicastIP = shs::settings::DEFAULT_MULTICAST_IP, const shs::t::shs_port_t port = shs::settings::DEFAULT_UDP_PORT)
     {
-        if (!udp.beginMulticastPacket(multicastIP, port, WiFi.mode() == WIFI_STA ? WiFi.localIP() : WiFi.softAPIP())) return 0;
+        if (!udp.beginMulticast(multicastIP, port, WiFi.mode() == WIFI_STA ? WiFi.localIP() : WiFi.softAPIP())) return 0;
         auto out = shs::DTPbus::sendRAW(udp, it);
         udp.endPacket();
 
@@ -96,7 +100,7 @@ public:
 
     static uint8_t sendMulticastRAW(UDP_t& udp, const uint8_t* data, const uint8_t size, const shs::t::shs_IP_t multicastIP = shs::settings::DEFAULT_MULTICAST_IP, const shs::t::shs_port_t port = shs::settings::DEFAULT_UDP_PORT)
     {
-        if (!udp.beginMulticastPacket(multicastIP, port, WiFi.mode() == WIFI_STA ? WiFi.localIP() : WiFi.softAPIP())) return 0;
+        if (!udp.beginMulticast(multicastIP, port, WiFi.mode() == WIFI_STA ? WiFi.localIP() : WiFi.softAPIP())) return 0;
         auto out = shs::DTPbus::sendRAW(udp, data, size);
         udp.endPacket();
 
@@ -163,20 +167,20 @@ class shs::UdpBus : public shs::DTPbus
         : DTPbus(busID, handler, bufsize), m_ip(ip), m_port(port)
     {}
 
-    UdpBus(UdpBus&& other) : DTPbus(other), m_ip(ip), m_port(port) {}
+    UdpBus(UdpBus&& other) : DTPbus(std::move(other)), m_ip(other.m_ip), m_port(other.m_port) {}
 
     ~UdpBus() = default;
 
 
     // DTPbus
-    Status checkBus() override { return shs::UDP::checkBus(m_udp, m_bc, m_len, m_handler); }
+    Status checkBus() override { return shs::UDP::checkBus(m_udp.udp, m_bc, m_len, m_handler); }
 
 
     // sending data
-    uint8_t sendPacket(const shs::DTPpacket& packet) override { m_udp.sendPacket(packet, m_ip, m_port); }
-    uint8_t sendRAW(shs::ByteCollector<>& bc) override { m_udp.sendRAW(bc, m_ip, m_port); }
-    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { m_udp.sendRAW(it, m_ip, m_port); }
-    uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { m_udp.sendRAW(data, size, m_ip, m_port); }
+    uint8_t sendPacket(const shs::DTPpacket& packet) override { return m_udp.sendPacket(packet, m_ip, m_port); }
+    uint8_t sendRAW(shs::ByteCollector<>& bc) override { return m_udp.sendRAW(bc, m_ip, m_port); }
+    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return m_udp.sendRAW(it, m_ip, m_port); }
+    uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return m_udp.sendRAW(data, size, m_ip, m_port); }
 
 
     // shs::Process (from DTPbus)
@@ -196,9 +200,11 @@ class shs::UdpBroadcastBus : public shs::DTPbus
 public:
     explicit UdpBroadcastBus(const shs::t::shs_port_t port, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
         : DTPbus(busID, handler, bufsize), m_port(port)
-    {}
+    {
+        connected_modules.attach(0xff);
+    }
 
-    UdpBroadcastBus(UdpBroadcastBus&& other) : DTPbus(other) {}
+    UdpBroadcastBus(UdpBroadcastBus&& other) : DTPbus(std::move(other)) {}
 
     ~UdpBroadcastBus() = default;
 
@@ -206,10 +212,10 @@ public:
     Status checkBus() = 0;
 
     // sending data
-    uint8_t sendPacket(const shs::DTPpacket& packet) override { m_udp.sendBroadcastPacket(packet, m_port); }
-    uint8_t sendRAW(shs::ByteCollector<>& bc) override { m_udp.sendBroadcastRAW(bc, m_port); }
-    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { m_udp.sendBroadcastRAW(it, m_port); }
-    uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { m_udp.sendBroadcastRAW(data, size, m_port); }
+    uint8_t sendPacket(const shs::DTPpacket& packet) override { return m_udp.sendBroadcastPacket(packet, m_port); }
+    uint8_t sendRAW(shs::ByteCollector<>& bc) override { return m_udp.sendBroadcastRAW(bc, m_port); }
+    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return m_udp.sendBroadcastRAW(it, m_port); }
+    uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return m_udp.sendBroadcastRAW(data, size, m_port); }
 
 
     // shs::Process (from DTPbus)
@@ -226,11 +232,11 @@ protected:
 class shs::UdpMulticastBus : public DTPbus
 {
 public:
-    explicit UdpMulticastBus(const shs::t::shs_IP_t multicastIP shs::t::shs_port_t port, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
+    explicit UdpMulticastBus(const shs::t::shs_IP_t multicastIP, shs::t::shs_port_t port, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
         : DTPbus(busID, handler, bufsize), m_multicastIP(multicastIP), m_port(port)
     {}
 
-    UdpMulticastBus(UdpMulticastBus&& other) : DTPbus(other) {}
+    UdpMulticastBus(UdpMulticastBus&& other) : DTPbus(std::move(other)) {}
 
     ~UdpMulticastBus() = default;
 
@@ -238,10 +244,10 @@ public:
     Status checkBus() = 0;
 
     // sending data
-    uint8_t sendPacket(const shs::DTPpacket& packet) override { m_udp.sendMulticastPacket(packet, m_multicastIP, m_port); }
-    uint8_t sendRAW(shs::ByteCollector<>& bc) override { m_udp.sendMulticastRAW(bc, m_multicastIP, m_port); }
-    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { m_udp.sendMulticastRAW(it, m_multicastIP, m_port); }
-    uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { m_udp.sendMulticastRAW(data, size, m_multicastIP, m_port); }
+    uint8_t sendPacket(const shs::DTPpacket& packet) override { return m_udp.sendMulticastPacket(packet, m_multicastIP, m_port); }
+    uint8_t sendRAW(shs::ByteCollector<>& bc) override { return m_udp.sendMulticastRAW(bc, m_multicastIP, m_port); }
+    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return  m_udp.sendMulticastRAW(it, m_multicastIP, m_port); }
+    uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return m_udp.sendMulticastRAW(data, size, m_multicastIP, m_port); }
 
 
     // shs::Process (from DTPbus)

@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 #include <memory>
+#include <shs_APIids.h>
 
 
 namespace shs
@@ -49,6 +50,9 @@ struct shs::ID
         id |= api & 0xffff;
         return *this;
     }
+
+    shs::ID& setApiID(const shs::constants::APIids api) { return setApiID(static_cast<uint16_t>(api)); }
+
 
     bool operator<(const shs::ID& other) const { return id < other.id; }
     bool operator>(const shs::ID& other) const { return id > other.id; }

@@ -5,7 +5,7 @@
   DTPpacket
   ----------------------------------------
 */
-shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID, shs::ByteCollector<>&& data)
+shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID, shs::ByteCollector<>&& data) noexcept
     : bc(std::move(data))
 {
     uint8_t size = bc.size();
@@ -22,7 +22,7 @@ shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_
 }
 
 
-shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_busID_t recipientID, const shs::ByteCollector<>& data)
+shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID, const shs::ByteCollector<>& data) noexcept
     : bc(data.size() + DTPstandard_OFFSETbeg + 1)
 {
     // note: direct order
@@ -37,7 +37,7 @@ shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_bus
 }
 
 
-shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID, const uint8_t* data, const uint8_t size)
+shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID, const uint8_t* data, const uint8_t size) noexcept
     : bc(size + DTPstandard_OFFSETbeg + 1)
 {
     bc.push_back(size + DTPstandard_OFFSETbeg + 1, 1);
@@ -60,7 +60,7 @@ shs::DTPpacket::DTPpacket(const uint8_t* data, const uint8_t size)
 }
 
 
-uint8_t shs::DTPpacket::check(shs::ByteCollectorReadIterator<> it)
+uint8_t shs::DTPpacket::check(shs::ByteCollectorReadIterator<> it) noexcept
 {
     if (it.size() < it[0]) return Error::size_less;
     if (it.size() > it[0]) return Error::size_bigger;

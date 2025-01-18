@@ -29,7 +29,7 @@ public:
     enum Error : uint8_t { ok, size_less, size_bigger, invalid_crc };
     enum DTPcode : uint8_t { STANDARD = 1, FAST, INITIAL, INITIAL_ANSWER, DEINITIAL, CONNECTION_REQUEST };
 
-    explicit DTPpacket() noexcept : bc() {}
+    DTPpacket() noexcept : bc() {}
 
     explicit DTPpacket(
         const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID,
@@ -37,7 +37,7 @@ public:
     ) noexcept;
 
     explicit DTPpacket(
-        const shs::t::shs_ID_t senderID, const shs::t::shs_busID_t recipientID,
+        const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID,
         const shs::ByteCollector<>& data
     ) noexcept;
 
@@ -48,8 +48,8 @@ public:
 
     explicit DTPpacket(const uint8_t* data, const uint8_t size) noexcept;
 
-    DTPpacket(shs::ByteCollector<>&& bc_data) noexcept : bc(std::move(bc_data)) {}
-    DTPpacket(const shs::ByteCollector<>& bc_data) noexcept : bc(bc_data) {}
+    explicit DTPpacket(shs::ByteCollector<>&& bc_data) noexcept : bc(std::move(bc_data)) {}
+    explicit DTPpacket(const shs::ByteCollector<>& bc_data) noexcept : bc(bc_data) {}
 
     DTPpacket(DTPpacket&& other) noexcept : bc(std::move(other.bc)) {}
     DTPpacket(const DTPpacket& other) noexcept : bc(other.bc) {}

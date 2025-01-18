@@ -10,7 +10,7 @@ void shs::Sensor_API::tick()
         data.push_back(m_sensor.getValueFx(), 4);
 
         for (auto id : m_requestIDs)
-            m_dtp.sendPacket(shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), data));
+            m_dtp.sendPacket(shs::DTPpacket(API_ID, id, data));
 
         m_requestIDs.clear();
         m_requestIDs.shrink_to_fit();
@@ -29,7 +29,7 @@ shs::DTPpacket shs::Sensor_API::handle(shs::ByteCollectorReadIterator<>& it)
         [[unlikely]]
         case GET_TYPE:
             {
-                data.push_back(Commands::Type, 1);
+                data.push_back(Commands::TYPE, 1);
                 data.push_back(m_sensor.type, 1);
             }
             break;
@@ -53,7 +53,7 @@ shs::DTPpacket shs::Sensor_API::handle(shs::ByteCollectorReadIterator<>& it)
             break;
 
         default:
-            return std::move(shs::DTPpacket(true));
+            return std::move(shs::DTPpacket());
             break;
     }
 

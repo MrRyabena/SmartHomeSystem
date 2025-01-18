@@ -9,7 +9,7 @@ shs::DTPpacket shs::SensorVirtual::handle(shs::ByteCollectorReadIterator<>& it)
     switch (it.read())
     {
         case shs::Sensor_API::Commands::DATA:
-            it.read(m_value);
+            it.get(m_value);
             m_updatedFlag = true;
             break;
 
@@ -24,7 +24,7 @@ shs::DTPpacket shs::SensorVirtual::handle(shs::ByteCollectorReadIterator<>& it)
 void shs::SensorVirtual::update()
 {
     shs::ByteCollector<> bc(2);
-    bc.push_back(shs::Sensor_API::Commands::requestData, 1);
+    bc.push_back(shs::Sensor_API::Commands::REQUEST_DATA, 1);
     bc.push_back(false, 1);
 
     m_dtp.sendPacket(shs::DTPpacket(API_ID, m_virtualID, std::move(bc)));
@@ -36,7 +36,7 @@ void shs::SensorVirtual::update()
 void shs::SensorVirtual::updateFast()
 {
     shs::ByteCollector<> bc(2);
-    bc.push_back(shs::Sensor_API::Commands::requestData, 1);
+    bc.push_back(shs::Sensor_API::Commands::REQUEST_DATA, 1);
     bc.push_back(true, 1);
 
     m_dtp.sendPacket(shs::DTPpacket(API_ID, m_virtualID, std::move(bc)));

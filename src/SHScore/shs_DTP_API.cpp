@@ -10,5 +10,5 @@ shs::DTPpacket shs::DTP_APIhandler::handle(shs::ByteCollectorReadIterator<>& it)
         default: break;
     }
 
-    return std::move(shs::DTPpacket(true));
+    return std::move(shs::DTPpacket());
 }

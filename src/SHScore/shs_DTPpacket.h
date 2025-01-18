@@ -62,7 +62,7 @@ public:
 
     DTPpacket& operator=(const DTPpacket& other) noexcept
     {
-        if (this != other) bc = other.bc;
+        if (this != &other) bc = other.bc;
         return *this;
     }
 
@@ -85,7 +85,9 @@ public:
 
     [[nodiscard]] uint8_t check() const;
 
-    [[nodiscard]] bool empty() { return bc.empty(); }
+    [[nodiscard]] bool empty() const { return bc.empty(); }
+    operator bool() const { return bc.empty(); }
+
 
     void set_DTPcode(const DTPcode code)
     {

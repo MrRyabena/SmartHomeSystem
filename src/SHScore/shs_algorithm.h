@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 #include <functional>
+#include <memory>
 
 #include "shs_settings_private.h"
 
@@ -15,7 +16,7 @@ namespace shs
     }
 
     template <class It, typename T, typename Compare = std::less<T>>
-    [[nodiscard]] It binary_search(It left, It right, const T& key, Compare comp = Compare())
+    [[nodiscard]] inline It binary_search(It left, It right, const T& key, Compare comp = Compare())
     {
         const auto end = right;
         while (left < right)
@@ -30,7 +31,7 @@ namespace shs
     }
 
     template <class Container, typename T, typename Compare = std::less<T>>
-    auto insert_sorted(Container& container, T&& value, Compare comp = Compare())
+    inline auto insert_sorted(Container& container, T&& value, Compare comp = Compare())
     {
         auto left = std::begin(container);
         auto right = std::end(container);

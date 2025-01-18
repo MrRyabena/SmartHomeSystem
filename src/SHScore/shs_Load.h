@@ -55,4 +55,9 @@ public:
 
     virtual void off() = 0;
 
+    [[nodiscard]] uint16_t getValue() const noexcept { return m_value; }
+
+protected:
+    uint16_t m_value;
+
 };

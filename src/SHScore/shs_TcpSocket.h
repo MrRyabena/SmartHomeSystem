@@ -11,12 +11,22 @@
 #include <stdint.h>
 #include <functional>
 
+#include "shs_settings_private.h"
+
+#ifdef SHS_SF_ARDUINO
 #include <Arduino.h>
-#ifdef ESP8266
+
+#ifdef SHS_SF_ESP8266 
 #include <ESP8266WiFi.h>
 #else
 #include <WiFi.h>
 #endif
+
+#elif defined(SHS_SF_QT)
+#include "../SHSqt_core/shs_qt_TcpSocket.h"
+#include <QObject>
+#endif
+
 
 #include "shs_Process.h"
 #include "shs_types.h"
@@ -36,7 +46,12 @@ namespace shs
 class shs::TcpSocket : public shs::DTPbus
 {
 public:
+
+#ifdef SHS_SF_ARDUINO
     WiFiClient client;
+#elif defined(SHS_SF_QT)
+    shs::qt::TcpSocket client;
+#endif
 
 
 #define default_connect_callback ([](shs::TcpSocket& socket) \
@@ -53,37 +68,26 @@ public:
         const std::function<void(shs::TcpSocket&)>& disconnect_callback = default_disconnect_callback
     )
         :
-        m_hostIP(hostIP), m_port(port),
         DTPbus(busID, handler, bufsize),
+        m_hostIP(hostIP), m_port(port),
         m_connect_callback(connect_callback), m_disconnect_callback(disconnect_callback)
     {}
 
 
     explicit TcpSocket
     (
-        const char* hostIP, const shs::t::shs_port_t port,
-        const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
-        const std::function<void(shs::TcpSocket&)>& connect_callback = default_connect_callback,
-        const std::function<void(shs::TcpSocket&)>& disconnect_callback = default_disconnect_callback
-    )
-        :
-        m_port(port),
-        DTPbus(busID, handler, bufsize),
-        m_connect_callback(connect_callback), m_disconnect_callback(disconnect_callback)
-    {
-        WiFi.hostByName(hostIP, m_hostIP);
-    }
-
-    explicit TcpSocket
-    (
+    #ifdef SHS_SF_ARDUINO
         const WiFiClient& other,
+    #elif defined(SHS_SF_QT)
+       // QObject* parent,
+    #endif
         const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
         const std::function<void(shs::TcpSocket&)>& connect_callback = default_connect_callback,
         const std::function<void(shs::TcpSocket&)>& disconnect_callback = default_disconnect_callback
     )
         :
-        client(other), m_port(0),
         DTPbus(busID, handler, bufsize),
+        client(), m_port(0),
         m_connect_callback(connect_callback), m_disconnect_callback(disconnect_callback)
     {}
 
@@ -104,7 +108,7 @@ public:
 
 
     // inherited from shs::DTPbus
-    Status checkBus() override { processBus(client); return processPacket(); }
+    Status checkBus() override { return shs::DTPbus::checkBus(client); }
 
     uint8_t sendPacket(const shs::DTPpacket& packet) override { return shs::DTPbus::sendPacket(client, packet); }
     uint8_t sendRAW(shs::ByteCollector<>& bc) override { return shs::DTPbus::sendRAW(client, bc); }

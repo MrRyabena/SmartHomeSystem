@@ -9,6 +9,7 @@
 
 #include "shs_settings_private.h"
 #include "shs_ID.h"
+#include "shs_IP.h"
 #include "shs_SimpleFixed.h"
 
 #include <stdint.h>
@@ -43,13 +44,11 @@ namespace shs
 
     #ifdef SHS_SF_ARDUINO
         using shs_string_t = String;
-
-        using shs_IP_t = IPAddress;
     #else
         using shs_string_t = std::string;
-
-        using shs_IP_t = uint32_t;
     #endif
+
+        using shs_IP_t = shs::IP;
 
         using shs_float_t = float;
 

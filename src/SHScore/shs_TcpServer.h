@@ -29,7 +29,7 @@
 #include "shs_settings_private.h"
 #include "shs_Process.h"
 #include "shs_DTP.h"
-#include "shs_reservedID.h"
+#include "shs_APIids.h"
 #include "shs_DTPpacket.h"
 #include "shs_TcpSocket.h"
 

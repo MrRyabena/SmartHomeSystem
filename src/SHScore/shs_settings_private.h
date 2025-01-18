@@ -16,9 +16,12 @@
 #elif defined(__AVR__)
 #define SHS_SF_AVR
 #define SHS_SF_UNUSE_STL
+#endif 
+
+#elif defined(SHS_QT_FLAG)
+#define SHS_SF_QT
 #endif
 
-#endif
 
 #define DEBUG
 
@@ -28,7 +31,10 @@ namespace shs
 {
     namespace settings
     {
-        constexpr uint8_t SENSOR_AVERAGE_SAMPLES = 20;
+
+    #ifndef SHS_SET_SENSOR_AVERAGE_SAMPLES
+    #define SHS_SET_SENSOR_AVERAGE_SAMPLES 20
+    #endif
 
     #ifndef SHS_SET_DEFAULT_TCP_PORT
     #define SHS_SET_DEFAULT_TCP_PORT 5000

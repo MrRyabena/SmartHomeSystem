@@ -25,17 +25,17 @@ public:
 
     ~LoadVirtual() = default;
 
+    
+    // -------------------- API --------------------
     using Commands = shs::Load_API::Commands;
-
-    // API
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override { return shs::DTPpacket(); }
 
-    // Load
+    
+    // -------------------- Load --------------------
     void setup() override {}
 
-    inline void on(const uint8_t value = UINT8_MAX) override;
-    inline void on(const uint16_t value = UINT16_MAX) override;
-    inline void off() override;
+    void on(const uint16_t value = UINT16_MAX) override;
+    void off() override;
 
 
 protected:

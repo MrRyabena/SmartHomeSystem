@@ -50,7 +50,6 @@ public:
 
     virtual void setup() = 0;
 
-    virtual void on(const uint8_t value = UINT8_MAX) = 0;
     virtual void on(const uint16_t value = UINT16_MAX) = 0;
 
     virtual void off() = 0;

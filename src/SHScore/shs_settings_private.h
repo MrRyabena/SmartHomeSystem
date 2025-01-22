@@ -9,9 +9,11 @@
 
 #if defined(ESP8266)
 #define SHS_SF_ESP8266
+#define SHS_SF_ESP
 
 #elif defined(ESP32)
 #define SHS_SF_ESP32
+#define SHS_SF_ESP
 
 #elif defined(__AVR__)
 #define SHS_SF_AVR

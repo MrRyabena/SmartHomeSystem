@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-  Smart Home System Data Transmission Protocol
+  Smart Home System Data Transfer Protocol
 
   The idea is taken from https://github.com/GyverLibs/GyverBus
 */
@@ -31,46 +31,20 @@
 #include "shs_SortedBuf.h"
 #include "shs_algorithm.h"
 #include "shs_ID.h"
+#include "shs_types.h"
 #include "shs_DTPbus.h"
 #include "shs_DTPpacket.h"
+#include "shs_DTPless.h"
+//#include "shs_UDP.h"
 
 
 namespace shs
 {
     class DTP;
 
-    namespace DTPless
-    {
-        struct API;
-        struct BUS;
-    }
 }
 
 
-struct shs::DTPless::API
-{
-    bool operator()(const shs::API* lhs, const shs::API* rhs) const { return *lhs < *rhs; }
-    bool operator()(const std::unique_ptr<shs::API>& lhs, const std::unique_ptr<shs::API>& rhs) const { return *lhs < *rhs; }
-
-    bool operator()(const shs::API* lhs, const shs::t::shs_ID_t rhs) const { return lhs->API_ID < rhs; }
-    bool operator()(const shs::t::shs_ID_t lhs, const shs::API* rhs) const { return lhs < rhs->API_ID; }
-
-    bool operator()(const std::unique_ptr<shs::API>& lhs, const shs::t::shs_ID_t rhs) const { return lhs->API_ID < rhs; }
-    bool operator()(const shs::t::shs_ID_t lhs, const std::unique_ptr<shs::API>& rhs) const { return lhs < rhs->API_ID; }
-};
-
-
-struct shs::DTPless::BUS
-{
-    bool operator()(const shs::DTPbus* lhs, const shs::DTPbus* rhs) const { return *lhs < *rhs; }
-    bool operator()(const std::unique_ptr<shs::DTPbus>& lhs, const std::unique_ptr<shs::DTPbus>& rhs) const { return *lhs < *rhs; }
-
-    bool operator()(const shs::DTPbus* lhs, const shs::t::shs_busID_t rhs) const { return lhs->busID < rhs; }
-    bool operator()(const shs::t::shs_busID_t lhs, const shs::DTPbus* rhs) const { return lhs < rhs->busID; }
-
-    bool operator()(const std::unique_ptr<shs::DTPbus>& lhs, const shs::t::shs_busID_t rhs) const { return lhs->busID < rhs; }
-    bool operator()(const shs::t::shs_busID_t lhs, const std::unique_ptr<shs::DTPbus>& rhs) const { return lhs < rhs->busID; }
-};
 
 
 class shs::DTP : public shs::Process
@@ -81,6 +55,8 @@ public:
 
 
     explicit DTP(const shs::t::shs_ID_t module_id) : moduleID(module_id) {}
+
+    ~DTP() override = default;
 
     // sending data
     uint8_t sendPacket(const shs::DTPpacket& packet) { auto bus = findBusFromModule(packet.get_recipientID().getModuleID()); return (bus ? bus->sendPacket(packet) : 0); }
@@ -116,6 +92,4 @@ public:
 private:
     shs::SortedBuf<std::unique_ptr<shs::DTPbus>, DTPless::BUS> m_buss;
     shs::SortedBuf<std::unique_ptr<shs::API>, DTPless::API> m_APIs;
-
-    // void m_sendEvery
 };

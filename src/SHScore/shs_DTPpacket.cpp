@@ -50,7 +50,7 @@ shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_
     bc.push_back(shs::CRC8::crcBuf(bc.getPtr(), bc.size() - 1), 1);
 }
 
-shs::DTPpacket::DTPpacket(const uint8_t* data, const uint8_t size)
+shs::DTPpacket::DTPpacket(const uint8_t* data, const uint8_t size) noexcept
     : bc(size + DTPfast_OFFSETbeg)
 {
     bc.push_back(size + DTPstandard_OFFSETbeg, 1);
@@ -60,7 +60,7 @@ shs::DTPpacket::DTPpacket(const uint8_t* data, const uint8_t size)
 }
 
 
-uint8_t shs::DTPpacket::check(shs::ByteCollectorReadIterator<> it) noexcept
+uint8_t shs::DTPpacket::check(shs::ByteCollectorReadIterator<> it)
 {
     if (it.size() < it[0]) return Error::size_less;
     if (it.size() > it[0]) return Error::size_bigger;

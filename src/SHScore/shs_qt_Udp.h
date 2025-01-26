@@ -35,15 +35,15 @@ public:
     void begin(const shs::t::shs_port_t port = shs::settings::DEFAULT_UDP_PORT) { m_socket.bind(port); }
     void stop() { m_socket.close(); }
 
-    uint8_t write(const uint8_t* buf, const uint16_t size, const shs::t::shs_IP_t ip, const shs::t::shs_port_t port) { return m_socket.writedatagram(reinterpret_cast<const char*>(buf), size, QHostAddress(static_cast<uint32_t>(ip), port); ) }
+    uint8_t write(const uint8_t* buf, const uint16_t size, const shs::t::shs_IP_t ip, const shs::t::shs_port_t port) { return m_socket.writeDatagram(reinterpret_cast<const char*>(buf), size, QHostAddress(static_cast<uint32_t>(ip)), port); }
     uint8_t read(uint8_t* buf, const uint16_t size) { return m_socket.readDatagram(reinterpret_cast<char*>(buf), size); }
     uint8_t available() { return m_socket.pendingDatagramSize(); }
 
-    bool joinMulticastGroup(const shs::t::shs_IP_t groupIP) { m_socket.joinMulticastGroup(static_cast<uint32_t>(groupIP)); }
-    bool leaveMulticastGroup(const shs::t::shs_IP_t groupIP) { m_socket.leaveMulticastGroup(static_cast<uint32_t>(groupIP)); }
+    bool joinMulticastGroup(const shs::t::shs_IP_t groupIP) { return m_socket.joinMulticastGroup(QHostAddress(static_cast<uint32_t>(groupIP))); }
+    bool leaveMulticastGroup(const shs::t::shs_IP_t groupIP) { return m_socket.leaveMulticastGroup(QHostAddress(static_cast<uint32_t>(groupIP))); }
 
 signals:
-    void dataReceived(const QByteArray& data);
+    void dataReceived();
     void error(const QString& errorString);
 
 private slots:

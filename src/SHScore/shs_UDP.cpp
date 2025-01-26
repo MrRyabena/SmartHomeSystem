@@ -34,7 +34,7 @@ uint8_t shs::UDP::sendMulticastRAW(UDP_t& udp, shs::ByteCollector<>& bc, const s
 
 #elif defined(SHS_SF_QT)
 
-    return sendPacket(udp, bc, multicastIP, port);
+    return sendRAW(udp, bc, multicastIP, port);
 
 #endif
 }
@@ -51,13 +51,13 @@ uint8_t shs::UDP::sendMulticastRAW(UDP_t& udp, shs::ByteCollectorReadIterator<>&
 
 #elif defined(SHS_SF_QT)
 
-    return sendPacket(udp, it, multicastIP, port);
+    return sendRAW(udp, it, multicastIP, port);
 
 #endif
 }
 
 
-uint8_t shs::UDP::sendMulticastRAW(UDP_t& udp, const uint8_t* data, const uint8_t size, const shs::t::shs_IP_t multicastIP = shs::settings::DEFAULT_MULTICAST_IP, const shs::t::shs_port_t port = shs::settings::DEFAULT_UDP_PORT)
+uint8_t shs::UDP::sendMulticastRAW(UDP_t& udp, const uint8_t* data, const uint8_t size, const shs::t::shs_IP_t multicastIP, const shs::t::shs_port_t port)
 {
 #ifdef SHS_SF_ARDUINO
     if (!udp.beginPacketMulticast(multicastIP, port, WiFi.getMode() == WIFI_STA ? WiFi.localIP() : WiFi.softAPIP())) return 0;
@@ -68,7 +68,7 @@ uint8_t shs::UDP::sendMulticastRAW(UDP_t& udp, const uint8_t* data, const uint8_
 
 #elif defined(SHS_SF_QT)
 
-    return sendPacket(udp, data, size, multicastIP, port);
+    return sendRAW(udp, data, size, multicastIP, port);
 
 #endif
 }
@@ -90,7 +90,7 @@ uint8_t shs::UDP::sendPacket(UDP_t& udp, const shs::DTPpacket& packet, const shs
 
 #elif defined(SHS_SF_QT)
 
-    return udp.write(packet.bc.getPtr(), backet.bc.size(), multicastIP, port);
+    return udp.write(packet.bc.getPtr(), packet.bc.size(), IP, port);
 
 #endif
 }
@@ -108,7 +108,7 @@ uint8_t shs::UDP::sendRAW(UDP_t& udp, shs::ByteCollector<>& bc, const shs::t::sh
 
 #elif defined(SHS_SF_QT)
 
-    return udp.write(bc.getPtr(), bc.size(), multicastIP, port);
+    return udp.write(bc.getPtr(), bc.size(), IP, port);
 
 #endif
 }
@@ -126,7 +126,7 @@ uint8_t shs::UDP::sendRAW(UDP_t& udp, shs::ByteCollectorReadIterator<>& it, cons
 
 #elif defined(SHS_SF_QT)
 
-    return udp.write(it.getPtr(), it.size(), multicastIP, port);
+    return udp.write(it.getPtr(), it.size(), IP, port);
 
 #endif
 }
@@ -144,7 +144,7 @@ uint8_t shs::UDP::sendRAW(UDP_t& udp, const uint8_t* data, const uint8_t size, c
 
 #elif defined(SHS_SF_QT)
 
-    return udp.write(data, size, multicastIP, port);
+    return udp.write(data, size, IP, port);
 
 #endif
 }

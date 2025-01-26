@@ -5,6 +5,7 @@
   Versions:
     v0.1.0 — created.
     v1.0.0 — release.
+    v2.0.0 —
 */
 
 
@@ -23,7 +24,7 @@
 #endif
 
 #elif defined(SHS_SF_QT)
-#include "../SHSqt_core/shs_qt_TcpSocket.h"
+#include "shs_qt_TcpSocket.h"
 #include <QObject>
 #endif
 
@@ -55,7 +56,7 @@ public:
 
 
 #define default_connect_callback ([](shs::TcpSocket& socket) \
-        { auto packet = shs::DTP_APIpackets::getInitialPacket(socket.busID); socket.client.write(packet.bc.getPtr(), packet.bc.size()); })
+        { socket.sendPacket(shs::DTP_APIpackets::getInitialPacket(socket.busID)); })
 
 #define default_disconnect_callback ([](shs::TcpSocket& socket) { socket.reconnect(); })
 
@@ -77,9 +78,10 @@ public:
     explicit TcpSocket
     (
     #ifdef SHS_SF_ARDUINO
-        const WiFiClient& other,
+        const WiFiClient& parent,
     #elif defined(SHS_SF_QT)
-       // QObject* parent,
+        QObject* parent,
+        const shs::t::shs_IP_t& hostIP, const shs::t::shs_port_t port,
     #endif
         const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25,
         const std::function<void(shs::TcpSocket&)>& connect_callback = default_connect_callback,
@@ -87,27 +89,35 @@ public:
     )
         :
         DTPbus(busID, handler, bufsize),
-        client(), m_port(0),
+    #ifdef SHS_SF_QT
+        m_hostIP(hostIP), m_port(port),
+    #endif
+        client(parent),
         m_connect_callback(connect_callback), m_disconnect_callback(disconnect_callback)
     {}
 
-    virtual ~TcpSocket() = default;
+    ~TcpSocket() = default;
 
-    // native functions
+
+    // -------------------- native functions -----------------------------------
 
     void reconnect() { m_connect(); }
 
     shs::t::shs_IP_t getIP() const { return m_hostIP; }
     shs::t::shs_port_t getPort() const { return m_port; }
 
+    void setActive(const bool flag) { m_active_flag = flag; }
 
-    // inherited from shs::Process (from shs::DTPbus)
-    void start() override { client.connect(m_hostIP, m_port); }
+
+    // -------------------- shs::Process (from shs::DTPbus) --------------------
+    void start() override { m_connect(); }
     void tick() override { if (!client.connected() && m_disconnect_callback) m_disconnect_callback(*this); }
     void stop() override { client.stop(); }
 
 
-    // inherited from shs::DTPbus
+    // -------------------- shs::DTPbus ----------------------------------------
+    bool isActive() const override { return m_active_flag; }
+
     Status checkBus() override { return shs::DTPbus::checkBus(client); }
 
     uint8_t sendPacket(const shs::DTPpacket& packet) override { return shs::DTPbus::sendPacket(client, packet); }
@@ -118,10 +128,24 @@ public:
 
 private:
     shs::t::shs_IP_t m_hostIP;
-    shs::t::shs_port_t m_port;
+    shs::t::shs_port_t m_port{};
 
     std::function<void(shs::TcpSocket& client)> m_connect_callback;
     std::function<void(shs::TcpSocket& client)> m_disconnect_callback;
 
-    void m_connect() { if (client.connect(m_hostIP, m_port) && m_connect_callback) m_connect_callback(*this); }
+    bool m_active_flag;
+
+    void m_connect()
+    {
+        if (
+        #ifdef SHS_SF_ARDUINO
+            client.connect(m_hostIP, m_port)
+        #elif defined(SHS_SF_QT)
+            client.connectToHost(m_hostIP, m_port)
+        #endif
+            && m_connect_callback)
+        {
+            m_connect_callback(*this);
+        }
+    }
 };

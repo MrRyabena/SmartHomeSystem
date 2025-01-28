@@ -43,8 +43,8 @@ debug_toolchain.cmake
 CMakeUserPresets.json
 
 # Cmake
-build/
 build*
+SHSbuild*
 
 src/libraries_path
 

@@ -98,6 +98,6 @@ public:
 
     // shs::Process
     void start() override {}
-    void tick() override {}
+    void tick() override { udp.parsePacket(); }
     void stop() override {}
 };

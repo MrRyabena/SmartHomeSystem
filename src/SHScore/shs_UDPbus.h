@@ -113,6 +113,3 @@ protected:
     shs::t::shs_port_t m_port;
     shs::t::shs_IP_t m_multicastIP;
 };
-
-#endif
-

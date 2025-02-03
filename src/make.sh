@@ -6,15 +6,52 @@
 #
 
 # Уou must specify the path to the folder in the file libraries_path:
-ArduinoLibraries=$(cat libraries_path)
 
-echo "ArduinoLibraries directory is: $ArduinoLibraries"
+source libraries_paths.sh
 
-rm -rf "${ArduinoLibraries}SHScore"
-cp -r ./SHScore/ "${ArduinoLibraries}SHScore/"
+if [[ "$1" == "--help" || "$1" == "-h" ]]; then
+    echo "Usage: make.sh [OPTION]"
+    echo
+    echo "This script transfers libraries to the specified environment."
+    echo
+    echo "Options:"
+    echo "  --qt, -q       Transfer libraries to the Qt environment."
+    echo "  --ard, -a      Transfer libraries to the Arduino environment."
+    echo "  --oth, -o      Transfer libraries to other specified environments."
+    echo "  --help, -h     Display this help message and exit."
+    echo
+    echo "You must specify the path to the folder in the file libraries_path."
+    echo
+    exit 0
 
-rm -rf  "${ArduinoLibraries}SHSlibrary"
-cp -r ./SHSlibrary/ "${ArduinoLibraries}SHSlibrary/"
+elif [ "$1" = "--qt" || "$1" = "-q"]; then
+    for dir in "${QT_PATHS[@]}"; do
+        rm -rf "$dir/SHScore"
+        rm -rf "$dir/SHSqt_core"
 
-rm -rf "${ArduinoLibraries}SHStests"
-cp -r ./SHStests/source/ "${ArduinoLibraries}SHStests/"
+        cp -r ./SHScore "$dir/SHScore"
+        cp -r ./SHSqt_core "$dir/SHSqt_core"
+    done
+elif ["$1" = "--ard" || "$1" = "-a"]; then
+    for dir in "${ARDUINO_PATHS[@]}"; do
+
+        rm -rf "${dir}SHScore"
+        rm -rf "${dir}SHSlibrary"
+        rm -rf "${dir}SHStests"
+
+        cp -r ./SHScore/ "${dir}SHScore/"
+        cp -r ./SHStests/source/ "${dir}SHStests/"
+
+        for dir_ in "$dir"*/; do
+            cp -r "$dir_" "$dir"
+        done
+    done
+elif ["$1" = "--oth" || "$1" = "-o"]; then
+    for dir in "${OTHER_PATHS[@]}"; do
+        rm -rf "$dir/SHScore"
+        rm -rf "$dir/SHSqt_core"
+
+        cp -r ./SHScore "$dir/SHScore"
+        cp -r ./SHSqt_core "$dir/SHSqt_core"
+    done
+fi

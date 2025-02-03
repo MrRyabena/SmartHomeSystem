@@ -46,7 +46,7 @@ CMakeUserPresets.json
 build*
 SHSbuild*
 
-src/libraries_path
+src/libraries_paths.sh
 
 
 # development

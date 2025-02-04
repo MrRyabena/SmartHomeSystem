@@ -11,7 +11,6 @@ namespace shs
 }
 
 
-
 class shs::UdpBus : public shs::DTPbus
 {
     explicit UdpBus(const shs::t::shs_IP_t ip, const shs::t::shs_port_t port, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
@@ -69,7 +68,8 @@ public:
     uint8_t sendRAW(shs::ByteCollector<>& bc) override { return m_udp.sendBroadcastRAW(bc, m_port); }
     uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return m_udp.sendBroadcastRAW(it, m_port); }
     uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return m_udp.sendBroadcastRAW(data, size, m_port); }
-
+    
+    shs::UDP* getUdpPtr() { return &m_udp; }
 
     // shs::Process (from DTPbus)
     void start() override { m_udp.start(); m_udp.udp.begin(m_port); }

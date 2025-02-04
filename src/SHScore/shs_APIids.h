@@ -18,6 +18,7 @@ enum class shs::constants::APIids : uint16_t
     DTP = 0x01,
     DTPbus,
     DTPserver_bus,
+    DTPdiscover,
 
     Load,
     Sensor,

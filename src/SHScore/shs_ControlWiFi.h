@@ -2,6 +2,7 @@
 
 #include "shs_settings_private.h"
 #include "shs_ID.h"
+#include "shs_types.h"
 
 #ifdef SHS_SF_ESP8266
 #include <ESP8266WiFi.h>
@@ -67,6 +68,8 @@ public:
         return esp_wifi_set_mac(WIFI_IF_STA, mac);
     #endif
     }
+
+    static shs::t::shs_IP_t localIP() { return WiFi.localIP(); }
 
     // static bool setMac(const shs::t::shs_ID_t id)
     // {

@@ -20,7 +20,7 @@ class shs::LoadVirtual : public shs::Load, public shs::API
 {
 public:
     LoadVirtual(const shs::t::shs_ID_t thisID, const shs::t::shs_ID_t virtualID, shs::DTP& dtp, const Type l_type = shs::Load::Type::UNKNOWN)
-        : Load(l_type), API(thisID), m_dtp(dtp)
+        : Load(l_type), API(thisID), m_dtp(dtp), m_virtualID(virtualID)
     {}
 
     ~LoadVirtual() = default;

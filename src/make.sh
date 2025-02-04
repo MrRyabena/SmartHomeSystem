@@ -22,9 +22,8 @@ if [[ "$1" == "--help" || "$1" == "-h" ]]; then
     echo
     echo "You must specify the path to the folder in the file libraries_path."
     echo
-    exit 0
-
-elif [ "$1" = "--qt" || "$1" = "-q"]; then
+    #exit 0
+elif [[ "$1" == "--qt" || "$1" == "-q" ]]; then
     for dir in "${QT_PATHS[@]}"; do
         rm -rf "$dir/SHScore"
         rm -rf "$dir/SHSqt_core"
@@ -32,7 +31,7 @@ elif [ "$1" = "--qt" || "$1" = "-q"]; then
         cp -r ./SHScore "$dir/SHScore"
         cp -r ./SHSqt_core "$dir/SHSqt_core"
     done
-elif ["$1" = "--ard" || "$1" = "-a"]; then
+elif [[ "$1" == "--ard" || "$1" == "-a" ]]; then
     for dir in "${ARDUINO_PATHS[@]}"; do
 
         rm -rf "${dir}SHScore"
@@ -46,7 +45,7 @@ elif ["$1" = "--ard" || "$1" = "-a"]; then
             cp -r "$dir_" "$dir"
         done
     done
-elif ["$1" = "--oth" || "$1" = "-o"]; then
+elif [[ "$1" == "--oth" || "$1" == "-o" ]]; then
     for dir in "${OTHER_PATHS[@]}"; do
         rm -rf "$dir/SHScore"
         rm -rf "$dir/SHSqt_core"

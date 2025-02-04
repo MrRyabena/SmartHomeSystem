@@ -70,7 +70,7 @@ public:
     )
         :
         DTPbus(busID, handler, bufsize),
-        m_hostIP(hostIP), m_port(port),
+        m_hostIP(hostIP), m_port(port), m_active_flag(true),
         m_connect_callback(connect_callback), m_disconnect_callback(disconnect_callback)
     {}
 
@@ -92,7 +92,7 @@ public:
     #ifdef SHS_SF_QT
         m_hostIP(hostIP), m_port(port),
     #endif
-        client(parent),
+        client(parent), m_active_flag(true),
         m_connect_callback(connect_callback), m_disconnect_callback(disconnect_callback)
     {}
 

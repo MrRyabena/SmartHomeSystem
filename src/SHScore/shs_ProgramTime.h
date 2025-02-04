@@ -22,6 +22,12 @@ class shs::ProgramTime
 public:
 
     ProgramTime() : m_started(m_init()) {}
+
+    ProgramTime(const ProgramTime& other) : m_started(other.m_started) {}
+    ProgramTime(ProgramTime&& other) : m_started(other.m_started) { other.m_started = {}; }
+
+    ProgramTime& operator=(const ProgramTime& other) { if (this != &other) m_started = other.m_started; return *this; }
+    ProgramTime& operator=(ProgramTime&& other) { if (this != &other) m_started = other.m_started; other.m_started = {}; return *this; }
     ~ProgramTime() = default;
 
 #ifdef SHS_SF_ARDUINO
@@ -34,7 +40,7 @@ public:
     static size_t s_seconds() { return millis() * 1000; }
 
 private:
-    const size_t m_started;
+    size_t m_started;
     const size_t m_init() { return micros(); }
 #else
     size_t microseconds() const { return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - m_started).count(); }
@@ -46,7 +52,7 @@ private:
     static size_t s_seconds() { return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count(); }
 
 private:
-    const decltype(std::chrono::high_resolution_clock::now())
+    decltype(std::chrono::high_resolution_clock::now())
         m_started;
 
 

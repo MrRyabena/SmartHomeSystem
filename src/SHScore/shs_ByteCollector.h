@@ -205,6 +205,7 @@ public:
     }
 
 
+    BCsize_t capacity() const { return m_capacity; }
     BCsize_t capacity_front() const { return m_pos_front; }
     BCsize_t capacity_back() const { return m_capacity - m_pos_back; }
 
@@ -222,6 +223,22 @@ public:
 
         m_pos_back = m_capacity;
         m_pos_front = 0;
+    }
+
+    void shrink_to_read()
+    {
+        if (m_pos_read == 0) return;
+        m_capacity = size() - m_pos_read;
+
+        BCbuf_t* n_buf = new BCbuf_t[m_capacity]{};
+        for (BCsize_t i = m_pos_read; i < m_pos_back; i++) n_buf[i - m_pos_read] = m_buf[i];
+
+        delete[] m_buf;
+        m_buf = n_buf;
+
+        m_pos_back = m_capacity;
+        m_pos_front = 0;
+        m_pos_read = 0;
     }
 
     void reset()
@@ -243,11 +260,12 @@ public:
     BCsize_t size() const { return m_pos_back - m_pos_front; }
     BCbuf_t& back() const { return m_buf[m_pos_back]; }
     bool empty() const { return size() == 0; }
+    BCsize_t readAvailable() const { return m_pos_back - m_pos_read; }
 
     BCbuf_t& operator[](const BCsize_t index) const { return m_buf[index]; }
 
     BCsize_t getPositionBack() const { return m_pos_back; }
-    BCsize_t getPostitionFront() const { return m_pos_front; }
+    BCsize_t getPositionFront() const { return m_pos_front; }
     BCsize_t getPositionRead() const { return m_pos_read; }
 
     shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t> getReadIt(const bool set_begin = false) const { return shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t>(m_buf, m_buf + m_pos_back, set_begin ? m_buf : (m_buf + m_pos_read)); }

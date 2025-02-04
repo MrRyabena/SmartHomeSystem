@@ -5,6 +5,7 @@
 #include "shs_types.h"
 #include "shs_ByteCollector.h"
 #include "shs_ByteCollectorIterator.h"
+#include "shs_DTPpacket.h"
 #include "shs_debug.h"
 
 
@@ -19,7 +20,7 @@ class shs::APIprint : public shs::API
 public:
     APIprint(const shs::t::shs_ID_t ID) : shs::API(ID) {}
 
-    void handle(shs::ByteCollectorReadIterator<>& it) override
+    shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override
     {
         dsep();
         doutln("DTP packet:");
@@ -30,5 +31,7 @@ public:
         }
         doutln();
         dsep();
+
+        return shs::DTPpacket();
     }
 };

@@ -50,9 +50,10 @@ public:
     virtual void update() = 0;
     virtual void updateFast() = 0;
     [[nodiscard]] virtual bool isUpdated() = 0;
+    [[nodiscard]] virtual uint8_t getStatus() = 0;
 
-    [[nodiscard]] virtual int32_t              getValueI() = 0;
-    [[nodiscard]] virtual shs::t::shs_fixed_t  getValueFx() = 0;
-    [[nodiscard]] virtual shs::t::shs_float_t  getValueF() = 0;
-    [[nodiscard]] virtual shs::t::shs_double_t getValueD() = 0;
+    [[nodiscard]] virtual int32_t              getValueI(const uint8_t metric = 0) = 0;
+    [[nodiscard]] virtual shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) = 0;
+    [[nodiscard]] virtual shs::t::shs_float_t  getValueF(const uint8_t metric = 0) = 0;
+    [[nodiscard]] virtual shs::t::shs_double_t getValueD(const uint8_t metric = 0) = 0;
 };

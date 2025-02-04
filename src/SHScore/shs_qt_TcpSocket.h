@@ -1,11 +1,10 @@
 #pragma once
 
 #include "shs_settings_private.h"
-#include "shs_types.h"
 
-#ifndef SHS_SF_QT
-#error "The class only supports the Qt platform"
-#endif
+#ifndef SHS_SF_DISABLE_QT
+
+#include "shs_types.h"
 
 
 #include <QObject>
@@ -34,26 +33,16 @@ public:
     ~TcpSocket() = default;
 
 
-    uint8_t write(const uint8_t* buf, const uint16_t size) { qDebug() << "sending data"; return m_socket.write(reinterpret_cast<const char*>(buf), size); }
-    uint8_t read() { char data{}; m_socket.read(&data, 1); return data; }
-    uint8_t read(uint8_t* buf, const uint16_t size) { return m_socket.read(reinterpret_cast<char*>(buf), size); }
-    uint8_t available() { return m_socket.bytesAvailable(); }
+    uint8_t write(const uint8_t* buf, const uint16_t size) { return m_qtcp_socket->write(reinterpret_cast<const char*>(buf), size); }
+    uint8_t read() { char data{}; m_qtcp_socket->read(&data, 1); return data; }
+    uint8_t read(uint8_t* buf, const uint16_t size) { return m_qtcp_socket->read(reinterpret_cast<char*>(buf), size); }
+    uint8_t available() { return m_qtcp_socket->bytesAvailable(); }
 
-    bool connectToHost(const shs::t::shs_IP_t ip, const shs::t::shs_port_t port)
-    {
-        m_socket.connectToHost(QHostAddress(ip), port);
-        qDebug() << m_socket.isOpen() << ' ' << m_socket.isWritable() << ' ' << m_socket.localAddress().toString();
-        if (m_socket.waitForConnected(3000))
-        {
-            qDebug() << "connected";
-            return true;
-        }
-        return false;
-    }
+    bool connectToHost(const shs::t::shs_IP_t ip, const shs::t::shs_port_t port) { m_qtcp_socket->connectToHost(QHostAddress(ip), port); return m_qtcp_socket->isOpen(); }
 
-    void disconnectFromHost() { m_socket.disconnectFromHost(); }
+    void disconnectFromHost() { m_qtcp_socket->disconnectFromHost(); }
     void stop() { disconnect(); }
-    bool connected() { return m_socket.isOpen(); }
+    bool connected() { return m_qtcp_socket->isOpen(); }
 
 signals:
     void s_connected();
@@ -68,5 +57,6 @@ private slots:
     void onReadyRead();
 
 private:
-    QTcpSocket m_socket;
+    QTcpSocket* m_qtcp_socket;
 };
+#endif  // #ifndef SHS_SF_DISABLE_QT

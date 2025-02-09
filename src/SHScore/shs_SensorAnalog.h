@@ -32,12 +32,13 @@ public:
 
     void updateFast() override { m_value = analogRead(m_pin); }
     [[nodiscard]] bool isUpdated() override { return true; }
+    [[nodiscard]] uint8_t getStatus() override { return 0; }
 
 
-    [[nodiscard]] int32_t              getValueI() override { return m_value; }
-    [[nodiscard]] shs::t::shs_fixed_t  getValueFx() override { return m_value; }
-    [[nodiscard]] shs::t::shs_float_t  getValueF() override { return static_cast<shs::t::shs_float_t>(m_value); }
-    [[nodiscard]] shs::t::shs_double_t getValueD() override { return static_cast<shs::t::shs_double_t>(m_value); }
+    [[nodiscard]] int32_t              getValueI(const uint8_t metric = 0) override { return m_value; }
+    [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) override { return m_value; }
+    [[nodiscard]] shs::t::shs_float_t  getValueF(const uint8_t metric = 0) override { return static_cast<shs::t::shs_float_t>(m_value); }
+    [[nodiscard]] shs::t::shs_double_t getValueD(const uint8_t metric = 0) override { return static_cast<shs::t::shs_double_t>(m_value); }
 
 private:
     shs::t::shs_fixed_t m_value;

@@ -1,25 +1,98 @@
 cmake_minimum_required(VERSION 3.27)
 project(SHScore VERSION 2.0.0 LANGUAGES CXX C)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-set(CMAKE_C_COMPILER "gcc-13.2.0")
-set(CMAKE_MODULE_PATH ${SHScore_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+#set(CMAKE_C_COMPILER "gcc-13.2.0")
+#set(CMAKE_MODULE_PATH ${SHScore_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
-add_library (SHScore STATIC
+set(SOURCES
+    shs_Load
+    shs_Sensor
+    shs_DTP
+    shs_Network
+
     shs_API.h
+    shs_APIids.h
+    shs_APIprint.h
     shs_ByteCollector.h
     shs_ByteCollectorIterator.h
-    shs_Stream.h
-    shs_DTPpacket.cpp
-    shs_DTPpacket.h
-    shs_DTP.cpp
-    shs_DTP.h
     shs_CRC.cpp
     shs_CRC.h
+    shs_Config.h
+    shs_ControlWiFi.h
+    shs_CreateProcess.h
+    shs_DTP.cpp
+    shs_DTP.h
+    shs_DTP_API.cpp
+    shs_DTP_API.h
+    shs_DTPbus.h
+    shs_DTPdiscover.cpp
+    shs_DTPdiscover.h
+    shs_DTPless.h
+    shs_DTPpacket.cpp
+    shs_DTPpacket.h
+    shs_DTPstreamBus.h
+    shs_EventTracker.h
     shs_ID.h
+    shs_IP.h
+    shs_Load.h
+    shs_LoadSwitch.h
+    shs_LoadVirtual.cpp
+    shs_LoadVirtual.h
+    shs_Load_API.h
+    shs_MutexSafe.h
+    shs_Process.h
+    shs_ProcessesHandler.h
+    shs_ProgramTime.h
+    shs_Sensor.h
+    shs_SensorAnalog.h
+    shs_SensorVirtual.cpp
+    shs_SensorVirtual.h
+    shs_Sensor_API.cpp
+    shs_Sensor_API.h
+    shs_SimpleFixed.h
+    shs_SortedBuf.h
+    shs_Stream.h
+    shs_TcpServer.cpp
+    shs_TcpServer.h
+    shs_TcpSocket.h
+    shs_Time.h
+    shs_Timer.h
+    shs_UDP.cpp
+    shs_UDP.h
+    shs_UDPbus.h
+    shs_algorithm.h
+    shs_debug.h
+    shs_settings_private.h
+    shs_types.h
+    shs_version.h
 )
 
+set(QT_SOURCES
+    shs_qt_TcpSocket.cpp
+    shs_qt_TcpSocket.h
+    shs_qt_Udp.cpp
+    shs_qt_Udp.h
+)
+
+if(SHS_CMF_QT)
+
+    message(STATUS "using Qt")
+    list(APPEND SOURCES ${QT_SOURCES})
+else()
+    message(FATAL_ERROR "no qt")
+endif()
+
+add_library(SHScore ${SOURCES})
+
+if(SHS_CMF_QT)
+    target_link_libraries(SHScore PRIVATE Qt5::Core Qt5::Quick)
+    target_link_libraries(SHScore PRIVATE Qt5::Core Qt5::Network)
+endif()
+
+
+target_compile_features(SHScore PRIVATE cxx_std_14)
 
 #set_target_properties (SHScore PROPERTIES COMPILE_FLAGS -m64 LINK_FLAGS -m64)
 #target_compile_options(SHScore PRIVATE -Wall -pedantic -O0)

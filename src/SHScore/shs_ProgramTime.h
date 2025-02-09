@@ -30,10 +30,12 @@ public:
     ProgramTime& operator=(ProgramTime&& other) { if (this != &other) m_started = other.m_started; other.m_started = {}; return *this; }
     ~ProgramTime() = default;
 
+    void reset() { m_started = m_init(); }
+
 #ifdef SHS_SF_ARDUINO
-    size_t microseconds() const { return m_started - micros(); }
-    size_t milliseconds() const { return m_started * 1000 - millis(); }
-    size_t seconds() const { return millis() * 1000; }
+    size_t microseconds() const { return micros() - m_started / 1000; }
+    size_t milliseconds() const { return millis() - m_started; }
+    size_t seconds() const { return (millis() - m_started) / 1000; }
 
     static size_t s_microseconds() { return micros(); }
     static size_t s_milliseconds() { return millis(); }
@@ -41,7 +43,7 @@ public:
 
 private:
     size_t m_started;
-    const size_t m_init() { return micros(); }
+    const size_t m_init() { return millis(); } // micros(); }
 #else
     size_t microseconds() const { return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - m_started).count(); }
     size_t milliseconds() const { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_started).count(); }

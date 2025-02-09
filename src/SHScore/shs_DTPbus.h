@@ -4,23 +4,25 @@
 #include <stdint.h>
 #include <memory>
 
-#if __has_include(<Arduino.h>)
+
+#include "shs_settings_private.h"
+
+#ifdef SHS_SF_ARDUINO
 #include <Arduino.h>
 #else
-#define DEBUG(value)
 #pragma message "Used shs::Stream"
 #include "shs_Stream.h"
 using Stream = shs::Stream;
 #endif
 
 
-#include "shs_settings_private.h"
 #include "shs_types.h"
 #include "shs_ByteCollector.h"
 #include "shs_ID.h"
 #include "shs_Process.h"
 #include "shs_API.h"
 #include "shs_SortedBuf.h"
+#include "shs_DTP_API.h"
 
 
 namespace shs
@@ -53,14 +55,21 @@ public:
 
     void setHandler(shs::API* handler) { m_handler = handler; }
 
+    virtual bool isActive() const = 0;
 
-    // processing incoming data
+    // processing incoming data 
     virtual Status checkBus() = 0;
+    template <class Bus> Status checkBus(Bus& bus) { status = checkBus(bus, m_bc, m_len, m_handler); return status; }  // sendPacket(m_DTPhandler());
+    template <class Bus> inline static Status checkBus(Bus& bus, ByteCollector<>& buf, uint8_t& len, shs::API* handler = nullptr);
 
+    // processing bus
     template <class Bus> Status processBus(Bus& bus) { status = processBus(bus, m_bc, m_len); return status; }
     template <class Bus> inline static Status processBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len);
-    inline Status processPacket();
-    inline static Status processPacket(shs::ByteCollector<>& bc, const Status status);
+
+    // processing packet
+    Status processPacket(shs::API& handler) { sendPacket(processPacket(m_bc, handler, status)); return status; }
+    inline static shs::DTPpacket processPacket(shs::ByteCollector<>& data, shs::API& handler, Status& status);
+
     // for additional handlers
     shs::ByteCollectorReadIterator<> getLastData() { return m_bc.getReadIt(); }
 
@@ -71,7 +80,7 @@ public:
     virtual uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) = 0;
     virtual uint8_t sendRAW(const uint8_t* data, const uint8_t size) = 0;
 
-    template <class Bus> static uint8_t sendPacket(Bus& bus, const shs::DTPpacket& packet) { return bus.write(packet.bc.getPtr(), packet.bc.size()); }
+    template <class Bus> static uint8_t sendPacket(Bus& bus, const shs::DTPpacket& packet) { return (packet.empty() ? 0 : bus.write(packet.bc.getPtr(), packet.bc.size())); }
     template <class Bus> static uint8_t sendRAW(Bus& bus, shs::ByteCollector<>& bc) { return bus.write(bc.getPtr(), bc.size()); };
     template <class Bus> static uint8_t sendRAW(Bus& bus, shs::ByteCollectorReadIterator<>& it) { return bus.write(it.getPtr(), it.size()); };
     template <class Bus> static uint8_t sendRAW(Bus& bus, const uint8_t* data, const uint8_t size) { return bus.write(data, size); };
@@ -98,8 +107,19 @@ protected:
     uint32_t m_tmr;
     uint8_t m_len;
 
-    inline void m_DTPhandler(shs::ByteCollectorReadIterator<>& it);
+    inline shs::DTPpacket m_DTPhandler();
 };
+
+
+template<class Bus>
+shs::DTPbus::Status shs::DTPbus::checkBus(Bus& bus, ByteCollector<>& buf, uint8_t& len, shs::API* handler)
+{
+    Status status = processBus(bus, buf, len);
+
+    if (handler) processPacket(buf, *handler, status);
+
+    return status;
+}
 
 
 template <class Bus>
@@ -121,30 +141,27 @@ shs::DTPbus::Status shs::DTPbus::processBus(Bus& bus, shs::ByteCollector<>& buf,
 }
 
 
-shs::DTPbus::Status shs::DTPbus::processPacket(shs::ByteCollector<>& bc, const Status status, shs::API* handler = nullptr)
+shs::DTPpacket shs::DTPbus::processPacket(shs::ByteCollector<>& data, shs::API& handler, Status& status)
 {
-    if (status != packet_received) return status;
-    auto it = m_bc.getReadIt();
+    if (status != packet_received || status != packet_processed) return std::move(shs::DTPpacket());
 
-    m_DTPhandler(it);
-
-    if (m_handler)
-    {
-        auto output = m_handler->handle(it);
-        if (!output.empty()) sendPacket(output);
-    }
+    auto it = data.getReadIt();
 
     status = Status::packet_processed;
-    return status;
+    return std::move(handler.handle(it));
 }
 
-#include <shs_debug.h>
-void shs::DTPbus::m_DTPhandler(shs::ByteCollectorReadIterator<>& it)
+
+shs::DTPpacket shs::DTPbus::m_DTPhandler()
 {
+    auto it = getLastData();
+
     switch (shs::DTPpacket::get_DTPcode(it))
     {
-        case shs::DTPpacket::INITIAL: doutln("attach module to bus"); connected_modules.attach(shs::DTPpacket::get_senderID(it).getModuleID()); break;
-        case shs::DTPpacket::DEINITIAL: doutln("deattach module to bus"); connected_modules.detach(shs::DTPpacket::get_senderID(it).getModuleID()); break;
+        case shs::DTPpacket::INITIAL: connected_modules.attach(shs::DTPpacket::get_senderID(it).getModuleID()); return shs::DTP_APIpackets::getInitialAnswerPacket(shs::DTPpacket::get_recipientID(it).getModuleID(), true); break;
+        case shs::DTPpacket::INITIAL_ANSWER: connected_modules.attach(shs::DTPpacket::get_senderID(it).getModuleID()); break;
+        case shs::DTPpacket::DEINITIAL: connected_modules.detach(shs::DTPpacket::get_senderID(it).getModuleID()); break;
         default: break;
     }
+    return shs::DTPpacket();
 }

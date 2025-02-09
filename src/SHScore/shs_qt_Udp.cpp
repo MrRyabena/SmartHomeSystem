@@ -1,6 +1,6 @@
 #include "shs_qt_Udp.h"
 
-#ifndef SHS_SF_DISABLE_QT
+#ifdef SHS_SF_QT
 
 shs::qt::UdpSocket::UdpSocket(QObject* parent) : QObject(parent), m_socket(new QUdpSocket(this))
 {
@@ -30,4 +30,4 @@ void shs::qt::UdpSocket::processDatagrams()
 
 }
 
-#endif  // #ifndef SHS_SF_DISABLE_QT
+#endif  // #ifdef SHS_SF_QT

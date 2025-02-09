@@ -2,7 +2,7 @@
 
 #include "shs_settings_private.h"
 
-#ifndef SHS_SF_DISABLE_QT
+#ifdef SHS_SF_QT
 
 #include "shs_types.h"
 #include "shs_ByteCollector.h"
@@ -58,4 +58,5 @@ private:
     QUdpSocket* m_socket;
     shs::ByteCollector<> m_buf;
 };
-#endif  // #ifndef SHS_SF_DISABLE_QT
+
+#endif  // #ifdef SHS_SF_QT

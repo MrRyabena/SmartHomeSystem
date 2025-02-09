@@ -2,7 +2,7 @@
 
 #include "shs_settings_private.h"
 
-#ifndef SHS_SF_DISABLE_QT
+#ifdef SHS_SF_QT
 
 #include "shs_types.h"
 
@@ -59,4 +59,5 @@ private slots:
 private:
     QTcpSocket* m_qtcp_socket;
 };
-#endif  // #ifndef SHS_SF_DISABLE_QT
+
+#endif  // #ifdef SHS_SF_QT

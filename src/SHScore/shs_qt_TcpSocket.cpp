@@ -1,6 +1,6 @@
 #include "shs_qt_TcpSocket.h"
 
-#ifndef SHS_SF_DISABLE_QT
+#ifdef SHS_SF_QT
 
 shs::qt::TcpSocket::TcpSocket(QObject* parent)
     : QObject(parent), m_qtcp_socket(new QTcpSocket(this))
@@ -36,4 +36,4 @@ void shs::qt::TcpSocket::onReadyRead()
     emit dataReceived();
 }
 
-#endif  // #ifndef SHS_SF_DISABLE_QT
+#endif  // #ifdef SHS_SF_QT

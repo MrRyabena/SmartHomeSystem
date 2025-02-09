@@ -16,8 +16,10 @@ void shs::DTP::tick()
 {
     for (auto& bus : m_buss)
     {
+        if (!bus->isActive()) { detachBus(bus->busID); return; }
+
         // if the data is fully received and ready for processing 
-        if (bus->checkBus() == shs::DTPbus::packet_processed)
+        if (bus->checkBus() == shs::DTPbus::packet_processed || bus->status == shs::DTPbus::packet_received)
         {
             auto it = bus->getLastData();
 
@@ -37,10 +39,8 @@ void shs::DTP::tick()
                     }
                     break;
 
-                default: [[fallthrough]]
-                case shs::DTPpacket::FAST:
-                    break;
-
+                default: [[fallthrough]];
+                case shs::DTPpacket::FAST: break;
             }
         }
         bus->tick();    // update bus

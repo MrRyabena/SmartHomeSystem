@@ -35,7 +35,6 @@
 #include "shs_DTPbus.h"
 #include "shs_DTPpacket.h"
 #include "shs_DTPless.h"
-//#include "shs_UDP.h"
 
 
 namespace shs
@@ -43,8 +42,6 @@ namespace shs
     class DTP;
 
 }
-
-
 
 
 class shs::DTP : public shs::Process

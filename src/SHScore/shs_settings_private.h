@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define SHS_SF_NETWORK
+
 #if __has_include(<Arduino.h>)
 #include <Arduino.h>
 #define SHS_SF_ARDUINO
@@ -18,6 +20,8 @@
 #elif defined(__AVR__)
 #define SHS_SF_AVR
 #define SHS_SF_UNUSE_STL
+#undef SHS_SF_NETWORK
+
 #endif 
 
 #elif defined(SHS_QT_FLAG)
@@ -25,7 +29,9 @@
 #endif
 
 
-#define DEBUG
+#if defined(DEBUG) && !defined(SHS_SF_DEBUG)
+#define SHS_SF_DEBUG
+#endif
 
 #include "shs_types.h"
 

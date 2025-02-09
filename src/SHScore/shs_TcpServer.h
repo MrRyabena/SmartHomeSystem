@@ -17,32 +17,30 @@
 
 #include "shs_settings_private.h"
 
+#ifdef SHS_SF_NETWORK
+
+
 #ifdef SHS_SF_ARDUINO
 #include <Arduino.h>
 
 #ifdef SHS_SF_ESP8266
 #include <ESP8266WiFi.h>
-#else
+#elif defined(SHS_SF_ESP32)
 #include <WiFi.h>
 #endif
 
+#ifdef SHS_SF_ESP
 #include <WiFiServer.h>
 #include <WiFiClient.h>
-
-//#elif defined(SHS_SF_QT)
-
-#else
-#define SHS_shs_TcpServer_NWF
 #endif
-
-
-#ifndef SHS_shs_TcpServer_NWF
+#endif
 
 #include "shs_Process.h"
 #include "shs_DTP.h"
 #include "shs_APIids.h"
 #include "shs_DTPpacket.h"
 #include "shs_TcpSocket.h"
+
 
 namespace shs
 {
@@ -76,4 +74,4 @@ private:
     std::unique_ptr<shs::TcpSocket> m_connecting_client{};
     size_t m_connecting_client_time{};
 };
-#endif
+#endif  // #ifdef SHS_SF_NETWORK

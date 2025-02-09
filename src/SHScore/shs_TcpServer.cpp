@@ -1,5 +1,6 @@
 #include "shs_TcpServer.h"
 
+#ifdef SHS_SF_NETWORK
 
 void shs::TcpServer::tick()
 {
@@ -15,7 +16,7 @@ void shs::TcpServer::tick()
         if (m_connecting_client->checkBus() != shs::DTPbus::packet_received && m_connecting_client->status != shs::DTPbus::packet_processed) return;
 
 
-        if (shs::DTPpacket::get_DTPcode(m_connecting_client->getLastData()) == shs::DTPpacket::DTPcode::INITIAL_ANSWER)
+        if (shs::DTPpacket::get_DTPcode(m_connecting_client->getLastData()) == shs::DTPpacket::DTPcode::INITIAL_ANSWER || shs::DTPpacket::get_DTPcode(m_connecting_client->getLastData()) == shs::DTPpacket::DTPcode::INITIAL)
         {
             auto answer = shs::DTP_APIpackets::getInitialAnswerPacket(m_dtp.moduleID, true);
 
@@ -32,7 +33,9 @@ void shs::TcpServer::tick()
 
     if (server.hasClient())
     {
-        m_connecting_client = std::make_unique<shs::TcpSocket>(server.available(), 0, nullptr, 25, nullptr, [this](shs::TcpSocket& socket) { m_dtp.detachBus(socket.busID); });
+        auto client = server.available();
+        if (!client) return;
+        m_connecting_client = std::make_unique<shs::TcpSocket>(client, m_dtp.getUniqueBusID(), nullptr, 25, nullptr, [this](shs::TcpSocket& socket) { socket.setActive(false); });
 
         m_connecting_client_time = shs::ProgramTime::s_milliseconds();
 
@@ -40,3 +43,5 @@ void shs::TcpServer::tick()
         m_connecting_client->sendPacket(mes);
     }
 }
+
+#endif  // #ifdef SHS_SF_NETWORK

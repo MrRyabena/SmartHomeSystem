@@ -34,6 +34,7 @@ public:
     {
         UNKNOWN,
         SWITCH,
+        SWITCH_REVERSED,
         PID,
         PWM,
         DIMMER,

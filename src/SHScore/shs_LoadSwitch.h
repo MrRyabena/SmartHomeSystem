@@ -18,7 +18,10 @@ namespace shs
 class shs::LoadSwitch : public shs::Load
 {
 public:
-    explicit LoadSwitch(const uint8_t pin) : Load(Load::Type::SWITCH), m_pin(pin) {}
+    explicit LoadSwitch(const uint8_t pin, const Load::Type type = Load::Type::SWITCH)
+        : Load(type), m_pin(pin)
+    {}
+
     ~LoadSwitch() override = default;
 
     void setup() override

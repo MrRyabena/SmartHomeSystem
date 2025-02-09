@@ -1,0 +1,12 @@
+#pragma once
+
+#include "shs_TcpServer.h"
+#include "shs_TcpSocket.h"
+#include "shs_UDP.h"
+#include "shs_UDPbus.h"
+
+#include "shs_settings_private.h"
+
+#ifdef SHS_SF_ESP
+#include "shs_ControlWiFi.h"
+#endif

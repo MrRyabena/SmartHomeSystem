@@ -2,5 +2,5 @@
 
 #include "shs_Sensor.h"
 #include "shs_Sensor_API.h"
-#include "shs_Sensor_Analog.h"
+#include "shs_SensorAnalog.h"
 #include "shs_SensorVirtual.h"

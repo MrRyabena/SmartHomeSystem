@@ -22,7 +22,7 @@ namespace shs
 class shs::DTP_APIhandler : public shs::API
 {
 public:
-    DTP_APIhandler(shs::t::shs_ID_t ID) : API(ID.setApiID(shs::constants::APIids::DTP)) {}
+    DTP_APIhandler(shs::t::shs_ID_t ID) : API(ID.setComponentID(shs::constants::APIids::DTP)) {}
     ~DTP_APIhandler() = default;
 
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
@@ -36,7 +36,7 @@ public:
 
     static shs::DTPpacket getInitialPacket(shs::t::shs_ID_t ID)
     {
-        ID.setApiID(static_cast<uint16_t>(DTP_API_ID));
+        ID.setComponentID(static_cast<uint16_t>(DTP_API_ID));
         shs::DTPpacket packet(ID, 0, std::move(shs::ByteCollector<>()));
         packet.set_DTPcode(shs::DTPpacket::INITIAL);
 

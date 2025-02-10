@@ -23,7 +23,7 @@ class shs::SensorVirtual : public shs::Sensor, public shs::API
 {
 public:
     explicit SensorVirtual(shs::t::shs_ID_t thisID, const shs::t::shs_ID_t virtualID, shs::DTP& dtp, const shs::Sensor::Type stype = UNKNOWN)
-        : API(thisID.setApiID(shs::constants::APIids::Sensor)), Sensor(stype), m_virtualID(virtualID), m_dtp(dtp)
+        : API(thisID.setComponentID(shs::constants::APIids::Sensor)), Sensor(stype), m_virtualID(virtualID), m_dtp(dtp)
     {}
 
     ~SensorVirtual() = default;

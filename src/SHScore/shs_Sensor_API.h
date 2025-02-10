@@ -24,7 +24,7 @@ class shs::Sensor_API : public shs::API, public shs::Process
 {
 public:
     explicit Sensor_API(shs::Sensor& sensor, shs::t::shs_ID_t id, shs::DTP& dtp) noexcept
-        : API(id.setApiID(shs::constants::APIids::Sensor)), m_sensor(sensor), m_dtp(dtp)
+        : API(id.setComponentID(shs::constants::APIids::Sensor)), m_sensor(sensor), m_dtp(dtp)
     {}
 
     enum Commands : uint8_t

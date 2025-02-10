@@ -22,36 +22,43 @@ struct shs::ID
 {
     uint32_t id{};
 
+    using ID_t = uint32_t;
+    using moduleID_t = uint8_t;
+    using deviceID_t = uint8_t;
+    using componentID_t = uint16_t;
 
-    constexpr ID(const uint8_t module_id = 0, const uint8_t device_id = 0, const uint16_t api_id = 0)
-        : id(((uint32_t)module_id << 24) | ((uint32_t)device_id << 16) | (api_id & 0xffff))
+    constexpr ID(const moduleID_t module_id = 0, const deviceID_t device_id = 0, const componentID_t component_id = 0)
+        : id(((uint32_t)module_id << 24) | ((uint32_t)device_id << 16) | (component_id & 0xffff))
     {}
+
+    constexpr ID(const ID& other) : id(other.id) {}
+    constexpr ID& operator=(const ID& other) { id = other.id; return *this; }
 
     ~ID() = default;
 
-    constexpr uint8_t getModuleID() const { return id >> 24; }
-    constexpr uint8_t getDeviceID() const { return (id >> 16) & 0xff; }
-    constexpr uint16_t getApiID() const { return id & 0xffff; }
+    constexpr moduleID_t getModuleID() const { return id >> 24; }
+    constexpr deviceID_t getDeviceID() const { return (id >> 16) & 0xff; }
+    constexpr componentID_t getComponentID() const { return id & 0xffff; }
 
-    shs::ID& setModuleID(const uint8_t module)
+    shs::ID& setModuleID(const moduleID_t module)
     {
         id |= (uint32_t)module << 24;
         return *this;
     }
 
-    shs::ID& setDeviceID(const uint8_t device)
+    shs::ID& setDeviceID(const deviceID_t device)
     {
         id |= (uint32_t)device << 16;
         return *this;
     }
 
-    shs::ID& setApiID(const uint16_t api)
+    shs::ID& setComponentID(const componentID_t api)
     {
         id |= api & 0xffff;
         return *this;
     }
 
-    shs::ID& setApiID(const shs::constants::APIids api) { return setApiID(static_cast<uint16_t>(api)); }
+    shs::ID& setComponentID(const shs::constants::APIids api) { return setComponentID(static_cast<componentID_t>(api)); }
 
 
     bool operator<(const shs::ID& other) const { return id < other.id; }

@@ -31,7 +31,7 @@ class shs::DTPdiscover : public shs::Process, public shs::API
 {
 public:
     DTPdiscover(shs::t::shs_ID_t moduleID, const shs::t::shs_port_t udp_broadcast_port = shs::settings::DEFAULT_UDP_PORT)
-        : API(moduleID.setApiID(shs::constants::APIids::DTPdiscover)), m_udp_broadcast(udp_broadcast_port, 1)
+        : API(moduleID.setComponentID(shs::constants::APIids::DTPdiscover)), m_udp_broadcast(udp_broadcast_port, 1)
     {}
 
     static constexpr uint16_t MAX_WAIT_TIME = 5000;

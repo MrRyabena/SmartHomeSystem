@@ -55,6 +55,9 @@ namespace shs
         using shs_fixed_t = shs::SimpleFixed;
 
         using shs_ID_t = shs::ID;
+        using shs_moduleID_t = shs::ID::moduleID_t;
+        using shs_deviceID_t = shs::ID::deviceID_t;
+        using shs_componentID_t = shs::ID::componentID_t;
         using shs_busID_t = uint16_t;
 
         using shs_port_t = uint16_t;

@@ -40,7 +40,7 @@ public:
         GET_VALUE, VALUE
     };
 
-    Load_API(shs::Load& load, shs::t::shs_ID_t ID) noexcept : API(ID.setApiID(shs::constants::APIids::Load)), m_load(load) {}
+    Load_API(shs::Load& load, shs::t::shs_ID_t ID) noexcept : API(ID.setComponentID(shs::constants::APIids::Load)), m_load(load) {}
     ~Load_API() = default;
 
     [[nodiscard]] shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override

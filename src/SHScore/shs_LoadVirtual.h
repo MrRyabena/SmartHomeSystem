@@ -8,6 +8,7 @@
 #include "shs_DTP.h"
 #include "shs_DTPpacket.h"
 #include "shs_Load_API.h"
+#include "shs_APIids.h"
 
 
 namespace shs
@@ -19,8 +20,8 @@ namespace shs
 class shs::LoadVirtual : public shs::Load, public shs::API
 {
 public:
-    LoadVirtual(const shs::t::shs_ID_t thisID, const shs::t::shs_ID_t virtualID, shs::DTP& dtp, const Type l_type = shs::Load::Type::UNKNOWN)
-        : Load(l_type), API(thisID), m_dtp(dtp), m_virtualID(virtualID)
+    LoadVirtual(const shs::t::shs_ID_t thisID, shs::t::shs_ID_t virtualID, shs::DTP& dtp, const Type l_type = shs::Load::Type::UNKNOWN)
+        : Load(l_type), API(thisID), m_dtp(dtp), m_virtualID(virtualID.setComponentID(shs::constants::APIids::Load))
     {}
 
     ~LoadVirtual() = default;

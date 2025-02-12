@@ -14,7 +14,7 @@
 
 #ifdef SHS_SF_ARDUINO
 #include <Arduino.h>
-#define dinit() Serial.begin(115200);
+#define dinit() ({Serial.begin(115200); Serial.println("");})
 #define dout(value) ({Serial.print(value); Serial.print(' ');})
 #define doutln(value) Serial.println(value);
 #define dsep() Serial.println("----------------------------------------");
@@ -31,7 +31,7 @@
 #endif
 
 #else
-#define dinit
+#define dinit()
 #define dout(value)
 #define doutln(value)
 #define dsep()

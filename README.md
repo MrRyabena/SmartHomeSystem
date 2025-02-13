@@ -67,13 +67,13 @@
 
 ---
 > [!NOTE]
-> Проект готовиться к релизу, документация местами недописана.
+> Проект готовиться к релизу, код оптимизируется, документация переписывается...
 
 > [!IMPORTANT]
 >
 > - Для краткого ознакомления с проектом можно посмотреть [презентацию](pitch/SmartHomeSystem.pdf).
 > - Вся документация переехала в папку [SHSdocumentation](SHSdocumentation/). Огромная статья из прошлого релиза разделена на тематические файлы и папки и дополнена.
-> - У проекта есть [блог разработки](https://t.me/SmartHomeSystem_dev), там можно наблюдать за развитием проекта.
+> - У **_SmartHomeSystem_** есть [блог разработки](https://t.me/SmartHomeSystem_dev), там можно наблюдать за развитием проекта.
 >
 
 ---
@@ -81,6 +81,9 @@
 ## Структура проекта
 
 Проект выложен в репозитории на GitHub и доступен по ссылке: <https://github.com/MrRyabena/SmartHomeSystem>.</br>
+
+<details>
+<summary>See structure</summary>
 
 - [SHSdocumentation](SHSdocumentation/) — документация к проекту.
   - [Code](SHSdocumentation/Code/) — документация к программному коду.
@@ -103,6 +106,8 @@
   - [SmartModulesAPI](src/SmartModulesAPI/) — [beta] команды устройств и модулей.
   - [synchronizer](synchronizer/) — быстро перекидывает файлы из SHSlibrary в папку с библиотеками (для удобства разработки).
 
+</details>
+
 ## Краткий обзор
 
 ## Благодарность
@@ -110,11 +115,13 @@
 ## Contacts
 
 Tg: <https://t.me/MrRyabena>
+
 Mail: <daniilrazanov82349@gmail.com>
 
 _**I will be glad to receive suggestions for improving the project, cooperation, and feedback.**_</br>
 
 Daniil Ryazanov (Даниил Рязанов)
+
 _Saint-Petersburg, 2025_
 
 # Заключение

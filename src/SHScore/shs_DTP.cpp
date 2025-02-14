@@ -4,7 +4,7 @@
 shs::DTPbus* shs::DTP::findBusFromModule(const uint8_t moduleID) const
 {
     if (moduleID == 0) return nullptr;
-    
+
     for (auto& bus : m_buss)
         if (bus->connected_modules.get(moduleID) != bus->connected_modules.end()) return bus.get();
 
@@ -35,6 +35,15 @@ void shs::DTP::tick()
                         {
                             auto output = std::move((*api)->handle(it));
                             if (!output.empty()) bus->sendPacket(output);
+                        }
+                        else
+                        {
+                            auto api = m_externalAPIs.get(id);
+                            if (api != m_externalAPIs.end())
+                            {
+                                auto output = std::move((*api)->handle(it));
+                                if (!output.empty()) bus->sendPacket(output);
+                            }
                         }
                     }
                     break;

@@ -78,7 +78,8 @@ public:
 
     // API
     void attachAPI(std::unique_ptr<shs::API>&& api) { m_APIs.attach(std::move(api)); }
-    void detachAPI(const shs::t::shs_ID_t& id) { m_APIs.detach(id); }
+    void attachAPI(shs::API* api) { m_externalAPIs.attach(api); }
+    void detachAPI(const shs::t::shs_ID_t& id) { m_APIs.detach(id); m_externalAPIs.detach(id); }
     shs::API& getAPI(const shs::t::shs_ID_t& id) const { return *(m_APIs.get(id)->get()); }
 
     // shs::Process
@@ -89,4 +90,5 @@ public:
 private:
     shs::SortedBuf<std::unique_ptr<shs::DTPbus>, DTPless::BUS> m_buss;
     shs::SortedBuf<std::unique_ptr<shs::API>, DTPless::API> m_APIs;
+    shs::SortedBuf<shs::API*, DTPless::API> m_externalAPIs;
 };

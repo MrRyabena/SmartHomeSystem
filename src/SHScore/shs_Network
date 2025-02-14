@@ -4,6 +4,7 @@
 #include "shs_TcpSocket.h"
 #include "shs_UDP.h"
 #include "shs_UDPbus.h"
+#include "shs_IP.h"
 
 #include "shs_settings_private.h"
 

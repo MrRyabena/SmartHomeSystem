@@ -22,8 +22,8 @@ namespace shs
 class shs::SensorVirtual : public shs::Sensor, public shs::API
 {
 public:
-    explicit SensorVirtual(shs::t::shs_ID_t thisID, const shs::t::shs_ID_t virtualID, shs::DTP& dtp, const shs::Sensor::Type stype = UNKNOWN)
-        : API(thisID.setComponentID(shs::constants::APIids::Sensor)), Sensor(stype), m_virtualID(virtualID), m_dtp(dtp)
+    explicit SensorVirtual(shs::t::shs_ID_t thisID, shs::t::shs_ID_t virtualID, shs::DTP& dtp, const shs::Sensor::Type stype = UNKNOWN)
+        : API(thisID.setComponentID(shs::constants::APIids::Sensor)), Sensor(stype), m_virtualID(virtualID.setComponentID(shs::constants::APIids::Sensor)), m_dtp(dtp)
     {}
 
     ~SensorVirtual() = default;
@@ -32,6 +32,7 @@ public:
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
 
     // Sensor
+    void setup() override {}
     void update() override;
     void updateFast() override;
 

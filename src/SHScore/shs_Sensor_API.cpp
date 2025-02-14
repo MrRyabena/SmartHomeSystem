@@ -42,7 +42,7 @@ shs::DTPpacket shs::Sensor_API::handle(shs::ByteCollectorReadIterator<>& it)
                 if (m_sensor.isUpdated())
                 {
                     data.push_back(Commands::DATA, 1);
-                    data.push_back(m_sensor.getValueFx(), 4);
+                    data.push_back(m_sensor.getValueFx());
                 }
 
                 else

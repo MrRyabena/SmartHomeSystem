@@ -114,15 +114,11 @@
 
 ## Contacts
 
-Tg: <https://t.me/MrRyabena>
-
-Mail: <daniilrazanov82349@gmail.com>
-
+Tg: <https://t.me/MrRyabena></br>
+Mail: <daniilrazanov82349@gmail.com></br>
 _**I will be glad to receive suggestions for improving the project, cooperation, and feedback.**_</br>
-
-Daniil Ryazanov (Даниил Рязанов)
-
-_Saint-Petersburg, 2025_
+Daniil Ryazanov (Даниил Рязанов)</br>
+_Saint-Petersburg, 2025_</br>
 
 # Заключение
 

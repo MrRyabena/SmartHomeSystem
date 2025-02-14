@@ -1,4 +1,8 @@
 #define DEBUG
+#include <WiFiUdp.h>
+WiFiUDP udp;
+
+
 #include <shs_ControlWiFi.h>
 #include <shs_TcpSocket.h>
 
@@ -61,7 +65,7 @@ void send() {
     bc.push_back(100, 1);
 
     shs::DTPpacket packet(senID, recID, std::move(bc));
-    
+
     dout("\nsended: ");
     doutln(dtp.sendPacket(packet));
     doutln();
@@ -89,9 +93,20 @@ void setup() {
   doutln("ok");
 }
 
+void broadcastUDP() {
+  static uint32_t tmr;
+  if (millis() - tmr > 10000) {
+    udp.beginPacket("192.168.1.255", 6000);
+    udp.write("test");
+    udp.endPacket();
+    tmr = millis();
+  }
+}
+
 void loop() {
   //tcp.tick();
-  send();
-  dtp.tick();
-  server.tick();
+  broadcastUDP();
+ // send();
+  //dtp.tick();
+  //server.tick();
 }

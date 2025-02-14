@@ -1,6 +1,6 @@
 #include "shs_TcpServer.h"
 
-#ifdef SHS_SF_NETWORK
+#if defined(SHS_SF_NETWORK) && defined(SHS_SF_ARDUINO)
 
 void shs::TcpServer::tick()
 {

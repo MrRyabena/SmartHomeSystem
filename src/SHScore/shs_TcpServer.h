@@ -17,7 +17,7 @@
 
 #include "shs_settings_private.h"
 
-#ifdef SHS_SF_NETWORK
+#if defined(SHS_SF_NETWORK) && defined(SHS_SF_ARDUINO)
 
 
 #ifdef SHS_SF_ARDUINO

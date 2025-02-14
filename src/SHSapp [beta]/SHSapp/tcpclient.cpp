@@ -16,7 +16,7 @@
 
 //void TCPclient::begin(uint8_t id, const char* ip, int port) {
 //    dtp = new shs::DTP(id);
-//    ID = id;
+////    ID = id;
 //    IP = ip;
 //    Port = port;
 //}
@@ -105,7 +105,7 @@
 //        col.add(shs::DTPcommands::answer, 1);
 //        qDebug() << "from: " << stc.from << "\nto: " << stc.to << "\ndatasize: " << stc.datasize;
 //        for (auto i = 0; i < stc.data->size(); i++) qDebug() << static_cast<char>(stc.data->buf[i]);
-//        //sendPacket(&col, 104);
+//        sendPacket(&col, 104);
 //        break;
 //    }
 //}

@@ -1,46 +1,70 @@
 #pragma once
 
-#include <QObject>
-//#include <shs_DTP.cpp>
-#include <shs_DTP.h>
-#include <shs_types.h>
-#include <shs_TcpSocket.h>
-#include <QDebug>
+#include <memory>
 
-//#include <memory>
-#include <shs_LoadVirtual.h>
+#include <QObject>
+#include <QDebug>
+#include <QHostAddress>
+#include <QHostInfo>
+
+#include <shs_settings_private.h>
+#include <shs_types.h>
+
+#include <shs_APIids.h>
+#include <shs_Network>
+#include <shs_DTP>
+#include <shs_Load>
+#include <shs_Sensor>
+#include "gs_config.h"
 
 class SHS : public QObject
 {
     Q_OBJECT
 public:
-    explicit SHS(QObject* parent = nullptr) : QObject(parent), m_dtp(THIS_ID), m_load(THIS_ID, LOAD_ID, m_dtp)
+    explicit SHS(QObject* parent = nullptr) : QObject(parent), m_dtp(THIS_ID),  m_discover(THIS_ID), m_load(THIS_ID, LOAD_ID, m_dtp), m_sensor(THIS_ID, SENSOR_ID, m_dtp)
     {
-       m_dtp.attachBus(std::make_unique<shs::TcpSocket>(HOST_IP, PORT, m_dtp.getUniqueBusID()));
-       start();
+         start();
     }
 
     ~SHS() = default;
 
-    Q_INVOKABLE void start() { m_dtp.start(); qDebug() << "start!"; }
-    Q_INVOKABLE void tick()  { m_dtp.tick(); }
-    Q_INVOKABLE void stop()  { m_dtp.stop(); }
+    void start();
+    void tick();
+    void stop()  {} // m_dtp.stop(); }
+
+
+    Q_INVOKABLE double getSensorValue() { return m_sensor.getValueD(); }
+
+
+signals:
+    void sensorUpdated();
 
 public slots:
     void onSwitchToggled(bool checked) {
         if (checked) {
-           m_load.on(uint8_t(255));
+            m_load.on();
         } else {
-           m_load.off();
-        }
+            m_load.off();
+       }
     }
+    void timerEvent(QTimerEvent *event) override { tick(); }
+
 
 private:
-    static constexpr shs::t::shs_ID_t THIS_ID{20};
-    static constexpr shs::t::shs_ID_t LOAD_ID{20, 1};
-    static constexpr shs::t::shs_IP_t HOST_IP{"192.168.1.22"};
-    static constexpr shs::t::shs_port_t PORT = 5000;
+    Q_PROPERTY(double sensorValue READ getSensorValue NOTIFY sensorUpdated)
 
-    shs::DTP m_dtp;
-    shs::LoadVirtual m_load;
+    static constexpr auto THIS_ID = shs::config::Module_3::MODULE_ID;
+    static constexpr auto LOAD_ID = shs::t::shs_ID_t(shs::config::Module_2::MODULE_ID, shs::config::Module_2::LOAD);
+    static constexpr auto SENSOR_ID = shs::t::shs_ID_t(shs::config::Module_1::MODULE_ID, shs::config::Module_1::THERM_SENSOR);
+
+    shs::t::shs_IP_t HOST_IP;
+    static constexpr shs::t::shs_port_t PORT = shs::settings::DEFAULT_TCP_PORT;
+
+   shs::DTP m_dtp;
+   shs::DTPdiscover m_discover;
+   shs::LoadVirtual m_load;
+   shs::SensorVirtual m_sensor;
+   shs::ProgramTime m_sens_timer;
+   bool m_sens_update;
+
 };

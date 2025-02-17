@@ -1,0 +1,4 @@
+module shs_qml_core
+WidgetBase 1.0 WidgetBase.qml
+Load 1.0 Load.qml
+Sensor 1.0 Sensor.qml

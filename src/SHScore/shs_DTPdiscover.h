@@ -34,7 +34,7 @@ public:
         : API(moduleID.setComponentID(shs::constants::APIids::DTPdiscover)), m_udp_broadcast(udp_broadcast_port, 1)
     {}
 
-    static constexpr uint16_t MAX_WAIT_TIME = 5000;
+    static constexpr uint16_t MAX_WAIT_TIME = 15000;
 
     void discover(const uint8_t id);
     shs::t::shs_IP_t discoverWait(const uint8_t id, const uint16_t max_time);

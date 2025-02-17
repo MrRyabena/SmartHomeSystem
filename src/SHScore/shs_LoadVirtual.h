@@ -21,7 +21,7 @@ class shs::LoadVirtual : public shs::Load, public shs::API
 {
 public:
     LoadVirtual(const shs::t::shs_ID_t thisID, shs::t::shs_ID_t virtualID, shs::DTP& dtp, const Type l_type = shs::Load::Type::UNKNOWN)
-        : Load(l_type), API(thisID), m_dtp(dtp), m_virtualID(virtualID.setComponentID(shs::constants::APIids::Load))
+        : Load(l_type), API(thisID), m_virtualID(virtualID.setComponentID(shs::constants::APIids::Load)), m_dtp(dtp)
     {}
 
     ~LoadVirtual() = default;
@@ -29,7 +29,7 @@ public:
     
     // -------------------- API --------------------
     using Commands = shs::Load_API::Commands;
-    shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override { return shs::DTPpacket(); }
+    shs::DTPpacket handle([[maybe_unused]]shs::ByteCollectorReadIterator<>& it) override { return shs::DTPpacket(); }
 
     
     // -------------------- Load --------------------

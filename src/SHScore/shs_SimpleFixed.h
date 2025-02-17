@@ -27,7 +27,7 @@ public:
     static constexpr auto DEFAULT_POWER_OF_TEN = 4;
 
     SimpleFixed(const double value = 0, const uint8_t power_of_ten = DEFAULT_POWER_OF_TEN) noexcept
-        : m_value((static_cast<int64_t>(value* std::pow(10, power_of_ten)) << 4) & 0xfffffffffffffff0 | power_of_ten & 0x0f)
+        : m_value(((static_cast<int64_t>(value* std::pow(10, power_of_ten)) << 4) & 0xfffffffffffffff0) | (power_of_ten & 0x0f))
     {}
 
     SimpleFixed& operator=(const int64_t value) { set(value); return *this; }
@@ -35,9 +35,9 @@ public:
     SimpleFixed& operator=(const float value) { set(value); return *this; }
     SimpleFixed& operator=(const double value) { set(value); return *this; }
 
-    void set(const int64_t value, const uint8_t power_of_ten = 0) { m_value = (value << 4) | (power_of_ten ? power_of_ten : getResolution()) & 0x0f; }
-    void set(const float   value, const uint8_t power_of_ten = 0) { m_value = (static_cast<int64_t>(value * std::pow(10, power_of_ten ? power_of_ten : getResolution())) << 4) & 0xfffffffffffffff0 | (power_of_ten ? power_of_ten : getResolution()) & 0x0f; }
-    void set(const double  value, const uint8_t power_of_ten = 0) { m_value = (static_cast<int64_t>(value * std::pow(10, power_of_ten ? power_of_ten : getResolution())) << 4) & 0xfffffffffffffff0 | (power_of_ten ? power_of_ten : getResolution()) & 0x0f; }
+    void set(const int64_t value, const uint8_t power_of_ten = 0) { m_value = (value << 4) | ((power_of_ten ? power_of_ten : getResolution()) & 0x0f); }
+    void set(const float   value, const uint8_t power_of_ten = 0) { m_value = ((static_cast<int64_t>(value * std::pow(10, power_of_ten ? power_of_ten : getResolution())) << 4) & 0xfffffffffffffff0) | ((power_of_ten ? power_of_ten : getResolution()) & 0x0f); }
+    void set(const double  value, const uint8_t power_of_ten = 0) { m_value = ((static_cast<int64_t>(value * std::pow(10, power_of_ten ? power_of_ten : getResolution())) << 4) & 0xfffffffffffffff0) | ((power_of_ten ? power_of_ten : getResolution()) & 0x0f); }
 
     int64_t getRAW() const { return m_value; }
     int64_t getRAWvalue() const { return m_value >> 4; }

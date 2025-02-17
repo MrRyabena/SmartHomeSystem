@@ -61,14 +61,14 @@ public:
     // DTPbus
     bool isActive() const override { return true; }
 
-    shs::DTPbus::Status checkBus() { return shs::DTPbus::checkBus(m_udp.udp); }
+    shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
 
     // sending data
     uint8_t sendPacket(const shs::DTPpacket& packet) override { return m_udp.sendBroadcastPacket(packet, m_port); }
     uint8_t sendRAW(shs::ByteCollector<>& bc) override { return m_udp.sendBroadcastRAW(bc, m_port); }
     uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return m_udp.sendBroadcastRAW(it, m_port); }
     uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return m_udp.sendBroadcastRAW(data, size, m_port); }
-    
+
     shs::UDP* getUdpPtr() { return &m_udp; }
 
     // shs::Process (from DTPbus)
@@ -94,7 +94,7 @@ public:
     ~UdpMulticastBus() = default;
 
     // DTPbus
-    shs::DTPbus::Status checkBus() { return shs::DTPbus::checkBus(m_udp.udp); }
+    shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
 
     // sending data
     uint8_t sendPacket(const shs::DTPpacket& packet) override { return m_udp.sendMulticastPacket(packet, m_multicastIP, m_port); }
@@ -110,6 +110,6 @@ public:
 
 protected:
     shs::UDP m_udp;
-    shs::t::shs_port_t m_port;
     shs::t::shs_IP_t m_multicastIP;
+    shs::t::shs_port_t m_port;
 };

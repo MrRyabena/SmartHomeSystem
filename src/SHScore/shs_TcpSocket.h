@@ -129,11 +129,11 @@ public:
 private:
     shs::t::shs_IP_t m_hostIP;
     shs::t::shs_port_t m_port{};
+    bool m_active_flag;
 
     std::function<void(shs::TcpSocket& client)> m_connect_callback;
     std::function<void(shs::TcpSocket& client)> m_disconnect_callback;
 
-    bool m_active_flag;
 
     void m_connect()
     {

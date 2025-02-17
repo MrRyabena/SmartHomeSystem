@@ -58,12 +58,12 @@ public:
                     bc.push_back(VALUE, 1);
                     bc.push_back(m_load.getValue(), 2);
 
-                    return std::move(shs::DTPpacket(std::move(bc)));
+                    return shs::DTPpacket(std::move(bc));
                 }
             default: break;
         }
 
-        return std::move(shs::DTPpacket());
+        return shs::DTPpacket();
     }
 
 

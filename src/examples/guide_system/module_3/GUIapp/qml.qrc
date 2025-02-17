@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>SHSbuild/SHSqt_core/SHSqml_core/qmldir</file>
+        <file>SHSbuild/SHSqt_core/SHSqml_core/WidgetBase.qml</file>
+        <file>SHSbuild/SHSqt_core/SHSqml_core/Load.qml</file>
+        <file>SHSbuild/SHSqt_core/SHSqml_core/Sensor.qml</file>
+    </qresource>
+</RCC>

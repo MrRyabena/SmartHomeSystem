@@ -7,6 +7,9 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.12
 
 
+import "./SHSbuild/SHSqt_core/SHSqml_core"
+
+
 ApplicationWindow {
     visible: true
 

@@ -11,11 +11,12 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#set(SHSCORE_PATH ../../../SHScore)
-set(SRC_PATH ../../../)
 
 set(SHS_CMF_QT ON CACHE BOOL "Enable Qt")
 add_definitions(-DSHS_QT_FLAG)
+
+set(CMAKE_IMPORT_PATH "${CMAKE_CURRENT_SOURCE_DIR}./SHSbuild/SHSqt_core/SHSqml_core")
+
 
 
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
@@ -65,6 +66,8 @@ add_subdirectory(SHSbuild/SHScore)
 
 target_link_libraries(AppDev PRIVATE SHScore)
 target_include_directories(AppDev PRIVATE SHSbuild/SHScore)
+target_include_directories(AppDev PRIVATE SHSbuild/SHSqt_core)
+target_include_directories(AppDev PRIVATE SHSbuild/SHSqt_core/SHSqml_core)
 
 
 

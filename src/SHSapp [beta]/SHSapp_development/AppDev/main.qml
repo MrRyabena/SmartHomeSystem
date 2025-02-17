@@ -4,42 +4,55 @@ import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 import SHSengine 1.0
 import QtQuick.Controls.Styles 1.4
-
-
-//import QtCharts 2.0
+import QtQuick.Layouts 1.12
 
 
 ApplicationWindow {
     visible: true
+
     width: 640
     height: 480
-    title: qsTr("Hello World")
+    property int defMargin: 20
+    minimumWidth: columnLayout.implicitWidth + 2*defMargin
+    minimumHeight: columnLayout.implicitHeight + 2*defMargin
+
+    title: qsTr("Smart Home System")
     Material.theme: Material.Dark
 
 
-
-    //Material.accent: Material.Purple
-
-
-
-    ListView {
-
+    ColumnLayout {
+        id: columnLayout
         anchors.centerIn: parent
+        anchors.fill: parent
+        spacing: defMargin / 2
+
 
         Load {
-            id: toggleSwitch
+            id: load
+            Layout.fillWidth: true
+            Layout.margins: defMargin
+
+            onChanged: shs_engine.onSwitchToggled(checked)
         }
 
-        Text {
+        Sensor {
             id: sensor
-            text: "0.0";
+            Layout.fillWidth: true
+            Layout.margins: defMargin
         }
 
-        SHSengine {
-               id: shs_engine
-               onSensorUpdated: sensor.text = "Sensor value:  " + sensorValue
-           }
+        Item {
+            Layout.fillHeight: true
+            //Layout.minimumHeight: 100
+            Layout.minimumWidth: 280
+        }
+    }
 
+    SHSengine {
+        id: shs_engine
+        onSensorUpdated: sensor.value = sensorValue
+        onSensorConnectionSignal: sensor.isConnected = sensorConnected
+        onLoadConnectionSignal: load.isConnected = loadConnected
     }
 }
 

@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
 
 
     QQuickStyle::setStyle("Material");
+    app.setWindowIcon(QIcon(":/SHSbuild/SHSlogos/logo.svg"));
 
     QQmlApplicationEngine engine;
 

@@ -46,7 +46,7 @@ signals:
 
 
 public slots:
-    void onSwitchToggled(bool checked) { m_load.on(checked); }
+    void onSwitchToggled(bool checked) { checked ? m_load.on() : m_load.off(); }
     void timerEvent([[maybe_unused]] QTimerEvent* event) override { tick(); }
 
 
@@ -60,8 +60,6 @@ private:
     static constexpr auto THIS_ID = shs::config::Module_3::MODULE_ID;
     static constexpr auto LOAD_ID = shs::t::shs_ID_t(shs::config::Module_2::MODULE_ID, shs::config::Module_2::LOAD);
     static constexpr auto SENSOR_ID = shs::t::shs_ID_t(shs::config::Module_1::MODULE_ID, shs::config::Module_1::THERM_SENSOR);
-
-    shs::t::shs_IP_t HOST_IP;
     static constexpr shs::t::shs_port_t PORT = shs::settings::DEFAULT_TCP_PORT;
 
     shs::DTP m_dtp;

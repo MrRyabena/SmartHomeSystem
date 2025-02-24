@@ -2,11 +2,10 @@ import QtQuick 2.12
 import QtQuick.Window 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
-import SHSengine 1.0
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.12
 
-
+import SHSengine 1.0
 import "./SHSbuild/SHSqt_core/SHSqml_core"
 
 
@@ -21,6 +20,7 @@ ApplicationWindow {
 
     title: qsTr("Smart Home System")
     Material.theme: Material.Dark
+    Material.background: "#001219"
 
 
     ColumnLayout {

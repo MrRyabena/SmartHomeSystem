@@ -1,6 +1,7 @@
 # Гайд по созданию системы
 
 > “In theory there is no difference between theory and practice - in practice there is” — Yogi Berra
+> “В теории, теория и практика неразделимы. На практике это не так” — Йоги Берра
 
 В этой статье представлен пример практического применения **_SmartHomeSystem_**. Перед прочтением рекомендуется изучить основную документацию проекта, однако, если вы решили начать знакомство с **_SmartHomeSystem_** именно с этого гайда, то по мере прочтения вы найдете ссылки на материалы, которые пояснят возникающие вопросы.
 
@@ -18,6 +19,9 @@
   - [Настройка DTP](#настройка-dtp)
   - [Реализация модулей](#реализация-модулей)
   - [Разработка GUI](#разработка-gui)
+    - [Backend](#backend)
+    - [Frontend](#frontend)
+    - [Скриншот приложения](#скриншот-приложения)
 
 ## Введение
 
@@ -100,7 +104,7 @@
 
 В нашем случае мы подключаем к аналоговому порту (ADC/A0) первого микроконтроллера делитель напряжения, состоящий из термистора и подтягивающего резистора, номинал которого равен номиналу термистора в нормальных условиях.
 
-<details><summary>See scheme</summary>
+<details><summary><b><u>See scheme</u></b></summary>
 
 ![scheme_Module_1](guide_data/scheme_Module_1.png)
 
@@ -116,7 +120,7 @@
 > [!WARNING]
 > Пины ESP рассчитаны только на логический сигнал. Недопустимо подключать нагрузку, потребляющую более 15 mA. Следует использовать токоограничивающие резисторы.
 
-<details><summary>See scheme</summary>
+<details><summary><b><u>See scheme</u></b></summary>
 
 ![scheme_Module_1](guide_data/scheme_Module_2.png)
 
@@ -236,15 +240,21 @@ void loop()
 
 #### `Module_1`
 
-Для считывания показаний датчика с аналогового пина предназначен класс `shs::SensorAnalog`. Сразу подключим к нему API, чтобы другие устройства могли запрашивать и получать информацию.
+Для считывания показаний датчика с аналогового пина предназначен класс `shs::SensorAnalog`. Он получает значение с АЦП, но никак его не обрабатывает. Чтобы получить из показаний АЦП температуру, нужно выполнить специальные преобразования. В [SHSlibrary](../../src/SHSlibrary) для работы с термистором есть специальная библиотека. Класс `shs::Thermistor` наследуется от `shs::SensorAnalog`, при этом он проводит все необходимые вычисления и возвращает уже готовую температуру.
+
+В коде создадим объект термистора, передав в него характеристики используемого компонента. Сразу подключим к нему API, чтобы другие устройства могли запрашивать и получать информацию.
+
+> [!NOTE]
+> В качестве датчика не обязательно использовать термистор, можно подключить цифровую микросхему или датчик. Чтобы подружить их с **_SmartHomeSystem_**, достаточно воспользоваться классом, умеющим с ними работать. Если используется не поддерживаемый **_SmartHomeSystem_** датчик, необходимо дописать класс для работы с ним самостоятельно, унаследовав его от `shs::Sensor` (или `shs::SensorAnalog`) и переопределив нужные функции.
+>
 
 ```cpp
 #include <memory>
 
-#include <shs_Sensor.h>
+#include <shs_lib_Thermistor.h>
 #include <shs_Sensor_API.h>
 
-shs::SensorAnalog temp_sensor(A0);
+shs::Thermistor temp_sensor(A0, 10'000, 3435);
     
 // in setup:
 dtp.attachAPI(shs::make_unique<shs::Sensor_API>(temp_sensor, shs::ID(THIS_ID, TEMP_SENSOR_ID), dtp));
@@ -270,8 +280,182 @@ dtp.attachAPI(std::make_unique<shs::Load_API>(load, LOAD_ID));
 
 #### `Module_3`
 
-Здесь уже все посложнее, нам предстоит написать полноценное графическое приложение. Парой строчек тут не обойдется, поэтому решению этой задачи посвящен отдельный раздел, следующий ниже.
+Создание GUI-приложения — задача посложнее. Парой строчек кода обойтись не получится, поэтому реализации третьего модуля посвящен отдельный раздел, следующий ниже.
 
 ### Разработка GUI
 
-Для этого будем использовать библиотеку Qt. Более подробно ознакомиться с ней и научиться писать приложения можно в книге Макса Шлее "Qt5.10. Профессиональное программирование на C++". В данном разделе не будут приводиться подробные объяснения кода Qt, не касающиеся **_SmartHomeSystem_**.
+Для создания приложения будем использовать библиотеку Qt и родную для нее IDE — QtCreator. Более подробно ознакомиться с Qt и научиться писать приложения можно в книге Макса Шлее "Qt5.10. Профессиональное программирование на C++". В данном разделе не будут приводиться подробные объяснения кода Qt, не касающиеся **_SmartHomeSystem_**.
+
+Приложение написано с использованием технологии QtQuick. За бэкенд отвечает класс-движок на С++. Фронтенд использует язык QML. Для удобной интеграции **_SmartHomeSystem_** и Qt разработано вспомогательное ядро [SHSqt_core](../../src/SHSqt_core).
+
+#### Backend
+
+Создадим класс-движок нашего приложения, который будет предоставлять весь необходимый функционал. Ниже приведено объявление класса с основными элементами. Подробную реализацию можно посмотреть в [GUIapp](../../src/examples/guide_system/module_3/GUIapp).
+
+---
+
+Поскольку классы **_SmartHomeSystem_** рассчитаны на работу с паттерном event loop (цикл событий), они требуют постоянного вызова метода `tick()`. Для этого настраивается встроенный в класс `QObject` таймер, по сигналу которого происходят все необходимые опросы.
+
+Для взаимодействия с **QML** в классе объявлены свойства и сигналы. Таким образом, изменения состояний управляемых объектов будут отображаться в графической части.
+
+---
+
+В классе, аналогично предыдущим модулям, созданы два объекта связи:
+
+- `m_discover` отвечает за поиск устройств в сети по ID.
+- `m_dtp` связывает шины данных (в нашем случае TCP-соединения), API и виртуальные инструменты.
+
+При запуске приложения происходит попытка найти модули в сети и подключиться к ним. Если подключение состоялось, отправляется соответствующий сигнал `sensorConnectionSignal()` или `loadConnectionSignal()`, который затем отлавливается в части фронтенда.
+
+---
+
+Для получения показаний с датчика и управления нагрузкой созданы виртуальные объекты:
+
+- `m_sensor` — объект виртуального датчика, использующий инструмент `shs::SensorVirtual`, который предоставляет удаленный доступ к датчику с интерфейсом взаимодействия, наследованным от `shs::Sensor`.
+Датчик обновляется по таймеру `m_sens_timer`. После получения данных отправляется сигнал `sensorUpdated`.
+- `m_load` — объект виртуальной нагрузки, использующий инструмент `shs::LoadVirtual`, который предоставляет удаленное управление нагрузкой с интерфейсом взаимодействия, наследованным от `shs::Load`.
+
+---
+
+<details><summary><b><u>See code</u></b></summary>
+
+```cpp
+class Engine : public QObject
+{
+    Q_OBJECT
+public:
+    explicit Engine(QObject* parent = nullptr)
+    : QObject(parent),
+    m_dtp(THIS_ID), m_discover(THIS_ID),
+    m_load(THIS_ID, LOAD_ID, m_dtp), m_sensor(THIS_ID, SENSOR_ID, m_dtp)
+    {
+        start();
+    }
+
+    ~Engine() = default;
+
+    void start();
+    void tick();
+    void stop() {}
+
+
+    Q_INVOKABLE double   getSensorValue() { return m_sensor.getValueD(); }
+    Q_INVOKABLE bool getSensorConnected() { return m_sensor_connected; }
+    Q_INVOKABLE bool   getLoadConnected() { return m_load_connected; }
+
+signals:
+    void sensorUpdated();
+    void sensorConnectionSignal();
+    void loadConnectionSignal();
+
+public slots:
+    void onSwitchToggled(bool checked) { checked ? m_load.on() : m_load.off(); }
+    void timerEvent([[maybe_unused]] QTimerEvent* event) override { tick(); }
+
+private:
+    Q_PROPERTY(double sensorValue READ getSensorValue NOTIFY sensorUpdated);
+    Q_PROPERTY(bool sensorConnected READ getSensorConnected NOTIFY sensorConnectionSignal);
+    Q_PROPERTY(bool loadConnected READ getLoadConnected NOTIFY loadConnectionSignal);
+
+    bool m_checkModuleConnection(const shs::t::shs_ID_t moduleID);
+
+    static constexpr auto THIS_ID = shs::config::Module_3::MODULE_ID;
+    static constexpr auto LOAD_ID = shs::t::shs_ID_t(shs::config::Module_2::MODULE_ID, shs::config::Module_2::LOAD);
+    static constexpr auto SENSOR_ID = shs::t::shs_ID_t(shs::config::Module_1::MODULE_ID, shs::config::Module_1::THERM_SENSOR);
+    static constexpr shs::t::shs_port_t PORT = shs::settings::DEFAULT_TCP_PORT;
+
+    shs::DTP m_dtp;
+    shs::DTPdiscover m_discover;
+
+    shs::LoadVirtual m_load;
+    bool m_load_connected{};
+
+    shs::SensorVirtual m_sensor;
+    bool m_sensor_connected{};
+
+    shs::ProgramTime m_check_connection_timer;
+    shs::ProgramTime m_sens_timer;
+    bool m_sens_update{};
+};
+
+```
+
+</details>
+
+#### Frontend
+
+Для создания виджетов в **_SmartHomeSystem_** подготовлена основа — [SHSqml_core](../../src/SHSqt_core/SHSqml_core).
+
+Для каждого виджета задаются свойства `moduleName` — имя соответствующего модуля и `isConnected` — статус соединения. При успешном подключении, виджет помечается _connected_.
+
+Помимо виджетов, создается объект класса-движка (`SHSengine`). Его слоты настраиваются на изменение виджетов.
+
+<details><summary><b><u>See code</u></b></summary>
+
+```qml
+import QtQuick 2.12
+import QtQuick.Window 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Controls.Material 2.12
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Layouts 1.12
+
+import SHSengine 1.0
+import "./SHSbuild/SHSqt_core/SHSqml_core"
+
+
+ApplicationWindow {
+    visible: true
+
+    width: 640
+    height: 480
+    property int defMargin: 20
+    minimumWidth: columnLayout.implicitWidth + 2*defMargin
+    minimumHeight: columnLayout.implicitHeight + 2*defMargin
+
+    title: qsTr("Smart Home System")
+    Material.theme: Material.Dark
+    Material.background: "#001219"
+
+
+    ColumnLayout {
+        id: columnLayout
+        anchors.centerIn: parent
+        anchors.fill: parent
+        spacing: defMargin / 2
+
+
+        Load {
+            id: load
+            Layout.fillWidth: true
+            Layout.margins: defMargin
+
+            onChanged: shs_engine.onSwitchToggled(checked)
+        }
+
+        Sensor {
+            id: sensor
+            Layout.fillWidth: true
+            Layout.margins: defMargin
+        }
+
+        Item {
+            Layout.fillHeight: true
+            Layout.minimumWidth: 280
+        }
+    }
+
+    SHSengine {
+        id: shs_engine
+        onSensorUpdated: sensor.value = sensorValue
+        onSensorConnectionSignal: sensor.isConnected = sensorConnected
+        onLoadConnectionSignal: load.isConnected = loadConnected
+    }
+}
+```
+
+</details>
+
+#### Скриншот приложения
+
+![GUIapp_screenshot](../../schemes/GUIapp_from_guide_screenshot.png)

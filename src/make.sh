@@ -41,6 +41,10 @@ elif [[ "$1" == "--ard" || "$1" == "-a" ]]; then
         cp -r ./SHScore/ "${dir}SHScore/"
         cp -r ./SHStests/source/ "${dir}SHStests/"
 
+        for lib in ./SHSlibrary/*/; do
+            cp -r "$lib" "${dir}"
+        done
+
         for dir_ in "$dir"*/; do
             cp -r "$dir_" "$dir"
         done

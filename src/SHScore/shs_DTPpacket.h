@@ -1,5 +1,12 @@
 #pragma once
 
+
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created a new component of DTP.
+*/
+
 #include "shs_settings_private.h"
 #include "shs_types.h"
 #include "shs_CRC.h"
@@ -9,20 +16,24 @@
 
 #include <memory>
 
-/*
-    0x00  1B  -- message size
-    0x01  1B  -- DTP code
-    0x02  4B  -- sender's ID     \ * may be unused
-    0x05  4B  -- recipient's ID  | *
-    0x09  xB  -- data
-    0xXX  1B  -- CRC             | *
-*/
-
 namespace shs
 {
     class DTPpacket;
 }
 
+
+/*
+  Class for creating, encrypting, and decrypting messages.
+  Scheme:
+    0x00  1B  -- message size
+    0x01  1B  -- DTP code
+    0x02  4B  -- sender's ID       *
+    0x05  4B  -- recipient's ID    *
+    0x09  xB  -- data
+    0xXX  1B  -- CRC               *
+
+   (* may be unused)
+*/
 class shs::DTPpacket
 {
 public:

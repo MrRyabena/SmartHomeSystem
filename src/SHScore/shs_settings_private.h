@@ -1,6 +1,13 @@
 #ifndef _shs_SETTINGS_PRIVATE_   // note: don't use <#pragma once> in settings files!
 #define _shs_SETTINGS_PRIVATE_
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v0.1.0 — created.
+    v2.0.0 — added a lot of compilation flags and default constants.
+*/
+
 #include <stdint.h>
 
 #define SHS_SF_NETWORK

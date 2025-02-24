@@ -9,12 +9,13 @@
 */
 
 /*
-  Last update: v1.2.0
+  Last update: v2.0.0
   Versions:
     v0.2.0 — created.
     v1.0.0 — release.
     v1.1.0 — now the function crcBuf(..) writes the result to a variable crc.
     v1.2.0 — optimized.
+    v2.0.0 — added static methods in shs::CRC8, fixed bugs.
 */
 
 namespace shs
@@ -38,10 +39,10 @@ public:
     void add(const uint8_t value) { update(crc, value); }
     void clear() { crc = CRC8_beg; }
 
-    static void update(uint8_t &crc, const uint8_t data);
-    uint8_t addBuf(const uint8_t *ptr, uint16_t size);
+    static void update(uint8_t& crc, const uint8_t data);
+    uint8_t addBuf(const uint8_t* ptr, uint16_t size);
 
-    static uint8_t crcBuf(const uint8_t *ptr, uint16_t size);
+    static uint8_t crcBuf(const uint8_t* ptr, uint16_t size);
 };
 
 /*
@@ -58,8 +59,8 @@ public:
     void add(const uint8_t value) { update(crc, value); }
     void clear() { crc = CRC16_beg; }
 
-    void update(uint16_t &crc, const uint8_t data);
-    uint16_t crcBuf(const uint8_t *ptr, uint16_t size);
+    void update(uint16_t& crc, const uint8_t data);
+    uint16_t crcBuf(const uint8_t* ptr, uint16_t size);
 };
 
 /*
@@ -76,6 +77,6 @@ public:
     void add(const uint8_t value) { update(crc, value); }
     void clear() { crc = CRC32_beg; }
 
-    void update(uint32_t &crc, uint8_t data);
-    uint32_t crcBuf(const uint8_t *ptr, uint16_t size);
+    void update(uint32_t& crc, uint8_t data);
+    uint32_t crcBuf(const uint8_t* ptr, uint16_t size);
 };

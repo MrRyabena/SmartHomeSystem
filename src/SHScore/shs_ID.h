@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-  Last update: v1.2.0
+  Last update: v2.0.0
   Versions:
     v1.2.0 — created.
     v2.0.0 — added comparison operators.

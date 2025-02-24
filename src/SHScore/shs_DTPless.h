@@ -1,5 +1,10 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created a new component of DTP.
+*/
 
 #include "shs_API.h"
 #include "shs_types.h"
@@ -16,7 +21,9 @@ namespace shs
 }
 
 
-
+/*
+  Comparison operators (for search and sorting algorithms).
+*/
 struct shs::DTPless::API
 {
     inline bool operator()(const shs::API* lhs, const shs::API* rhs) const { return *lhs < *rhs; }

@@ -1,18 +1,16 @@
 #pragma once
 
 /*
-    Last update: v1.0.0
-    Versions:
-        v0.1.0 — created.
-        v0.2.0 — corrected.
-        v1.0.0 — release.
-            - Namespaces added.
-            - Variable names have been corrected.
+  Last update: v1.0.0
+  Versions:
+    v0.1.0 — created.
+    v0.2.0 — corrected.
+    v1.0.0 — release.
+      - Namespaces added.
+      - Variable names have been corrected.
+    v2.0.0 — redesigned, debugged and tested.
 */
 
-/*
-    An abstract class describing a load (electrical device or component).
-*/
 
 #include <stdint.h>
 
@@ -26,6 +24,9 @@ namespace shs
 }
 
 
+/*
+    An abstract class describing a load (electrical device or component).
+*/
 class shs::Load
 {
 public:

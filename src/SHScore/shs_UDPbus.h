@@ -1,5 +1,12 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created.
+*/
+
+
 #include "shs_UDP.h"
 
 

@@ -1,5 +1,18 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v0.2.0 — created.
+    v1.0.0 — release.
+    v2.0.0 — moved to a separate file, redesigned, debugged and tested.
+*/
+
+/*
+  The "handler" class controls the load on the module itself.
+  The "virtual" class implements the interface on the remote device.
+*/
+
 #include <memory>
 
 #include "shs_Sensor.h"

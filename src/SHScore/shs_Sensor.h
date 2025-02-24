@@ -1,15 +1,17 @@
 #pragma once
 
 /*
-    Last update: v1.0.0
-    Versions:
-        v0.1.0 — created.
-        v0.2.0 — made purely virtual.
-        v1.0.0 — release.
-*/
-
-/*
-    Abstract class for the sensor interface.
+  Last update: v2.0.0
+  Versions:
+    v0.1.0 — created.
+    v0.2.0 — made purely virtual.
+    v1.0.0 — release.
+    v2.0.0 — redesigned, debugged and tested.
+      - The functionality has been changed
+      - update() must be called before getting the value.
+      - updateFast(), if supported by the sensor, measures less accurately, but faster.
+      - Added error status.
+      - Support for multiple metrics.
 */
 
 #include <stdint.h>
@@ -25,6 +27,9 @@ namespace shs
 }
 
 
+/*
+    Abstract class for the sensor interface.
+*/
 class shs::Sensor
 {
 public:

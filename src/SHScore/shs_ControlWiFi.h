@@ -1,6 +1,15 @@
 #pragma once
 
 #include "shs_settings_private.h"
+
+#ifdef SHS_SF_ESP
+
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created for replace shs_connectWiFi.h.
+*/
+
 #include "shs_ID.h"
 #include "shs_types.h"
 
@@ -9,9 +18,6 @@
 #elif defined(SHS_SF_ESP32)
 #include <WiFi.h>
 #include <esp_wifi.h>
-
-#else
-#error This file cannot be included! ESP only!
 
 #endif
 
@@ -81,3 +87,5 @@ public:
     // }
 
 };
+
+#endif  // #ifdef SHS_SF_ESP

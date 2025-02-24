@@ -1,10 +1,6 @@
 #pragma once
 
 /*
-  A temporary implementation of fixed-point numbers for convenience
-*/
-
-/*
   Last update: v2.0.0
   Versions:
     v2.0.0 — created.
@@ -21,6 +17,9 @@ namespace shs
 }
 
 
+/*
+  A temporary implementation of fixed-point numbers for convenience.
+*/
 class shs::SimpleFixed
 {
 public:

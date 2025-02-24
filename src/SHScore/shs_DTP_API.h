@@ -1,5 +1,14 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created.
+*/
+
+/*
+  Classes for working with DTP service data.
+*/
 
 #include <stdint.h>
 #include <memory>

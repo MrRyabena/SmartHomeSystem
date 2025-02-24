@@ -1,5 +1,20 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v0.1.0 — created.
+    v0.2.0 — made purely virtual.
+    v1.0.0 — release.
+    v2.0.0 — redesigned, debugged and tested.
+      - The functionality has been changed
+      - update() must be called before getting the value.
+      - updateFast(), if supported by the sensor, measures less accurately, but faster.
+      - Added error status.
+      - Support for multiple metrics.
+*/
+
+
 #include "shs_settings_private.h"
 
 #ifdef SHS_SF_ARDUINO
@@ -17,6 +32,9 @@ namespace shs
 }
 
 
+/*
+  A class for getting values from analog pins to which sensors are connected.
+*/
 class shs::SensorAnalog : public shs::Sensor
 {
 public:

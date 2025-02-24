@@ -1,6 +1,13 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created.
+*/
+
 #include "shs_Process.h"
+
 
 namespace shs
 {
@@ -8,6 +15,10 @@ namespace shs
     class CreateProcess;
 }
 
+
+/*
+  The class creates a process from function pointer templates.
+*/
 template <typename StartPtr, typename TickPtr, typename StopPtr>
 class shs::CreateProcess : public Process
 {

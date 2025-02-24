@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created.
+*/
+
 #include "shs_DTP_API.h"
 #include "shs_DTP.h"
 #include "shs_DTPbus.h"

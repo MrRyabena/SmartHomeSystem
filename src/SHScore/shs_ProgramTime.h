@@ -1,5 +1,14 @@
 #pragma once
 
+
+/*
+  Last update: v2.0.0
+  Versions:
+    v0.2.0 — created.
+    v1.0.0 — release.
+    v2.0.0 — function names have been changed, optimized, fixed bugs, tested.
+*/
+
 #include <stdint.h>
 #include <stddef.h>
 

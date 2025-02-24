@@ -1,6 +1,14 @@
 #pragma once
 
 /*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — moved to a separate class.
+      - It is not debugged, there are bugs.
+      - Support and development is expected in the following versions.
+*/
+
+/*
   WARNING! It is necessary to include Stream-class befor this file.
   If the <Arduino.h> is not used, you need to create your own class inherited from
   abstract class shs::Stream (SHSStream.h)

@@ -1,5 +1,15 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v0.2.0 — created.
+    v1.0.0 — release.
+      - Added inline.
+      - Corrected.
+    v2.0.0 — redesigned, debugged and tested.
+*/
+
 #include "shs_settings_private.h"
 #include "shs_Load.h"
 
@@ -15,6 +25,9 @@ namespace shs
 }
 
 
+/*
+  A class for controlling the load in SWITCH mode.
+*/
 class shs::LoadSwitch : public shs::Load
 {
 public:

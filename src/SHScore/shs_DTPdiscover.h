@@ -1,6 +1,12 @@
 #pragma once
 
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created a new component of DTP.
+*/
+
 #include <memory> 
 #include <stdint.h>
 
@@ -27,6 +33,9 @@ namespace shs
 }
 
 
+/*
+  Class for searching for devices on a local network.
+*/
 class shs::DTPdiscover : public shs::Process, public shs::API
 {
 public:

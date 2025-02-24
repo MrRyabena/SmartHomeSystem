@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created.
+*/
+
 #include <vector>
 #include <algorithm>
 #include <initializer_list>
@@ -13,6 +19,10 @@ namespace shs
     class SortedBuf;
 }
 
+
+/*
+  Container for working with ordered std::vector.
+*/
 template <typename BufT, typename Compare = std::less<BufT>>
 class shs::SortedBuf
 {

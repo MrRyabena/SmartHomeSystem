@@ -5,7 +5,10 @@
   Versions:
     v0.1.0 — created.
     v1.0.0 — release.
-    v2.0.0 —
+    v2.0.0 — updated functionality, debugged, tested.
+      - It is based on shs::DTPbus.
+      - Automatic reconnection in case of loss of connection.
+      - Qt support.
 */
 
 

@@ -1,5 +1,13 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created.
+      - It is not debugged, has bugs.
+      - Support and development is expected in the following versions.
+*/
+
 
 #include <initializer_list>
 #include <functional>
@@ -8,7 +16,7 @@
 #include "shs_Process.h"
 #include "shs_types.h"
 #include "shs_APIids.h"
-#include "shs_API"
+#include "shs_API.h"
 #include "shs_DTP.h"
 #include "shs_DTPpacket.h"
 #include "shs_ByteCollector.h"

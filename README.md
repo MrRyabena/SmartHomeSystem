@@ -63,6 +63,65 @@
 <details>
 <summary>v2.0.0 — <b>[current]</b> intermediate version.</summary>
 
+- Completed full-fledged project build system using CMake and Shell.
+- Algorithms and containers for working with ordered data have been added.
+  - Created
+
+- Разработана система сборки, использующая CMake и sheel.
+- Добавлены алгоритмы и контейнеры для работы с упорядоченными данными:
+  - shs::SortedBuf — контейнер для работы с упорядоченным std::vector.
+  - shs_algorithms — шаблонные функции для поиска, вставки и удаления элементов в контейнерах.
+- Добавлена семантика перемещений, улучшена работа с памятью
+- Global changes in SHSDTP: divided into components and expanded.
+      - Divided into component classes:
+        - shs::DTP — container class for linking data buses and API handlers.
+        - shs::DTPbus — abstract class of a data bus that accepts and sends messages.
+        - shs::DTPdiscover — class for searching for devices on a local network.
+        - shs::DTPless — comparison operators (for search and sorting algorithms).
+        - shs::DTPpacket — a class for creating, encrypting, and decrypting messages.
+      - Tested.
+- shs::ProgramTime — function names have been changed, optimized, fixed bugs, tested.
+- Создан shs::SimpleFixed — a temporary implementation of fixed-point numbers for convenience.
+- Network
+  - Обновлен и отлажен shs::ControlWiFi.
+  - Добавлен класс shs::IP для хранения и работы с IP-адресами.
+  - Созданы и протестированы классы для работы с сокетами Qt:
+    - shs::qt::TcpSocket
+    - shs::qt::UdpSocket
+  - shs::TcpServer — updated functionality, debugged, tested.
+    - Automatically attach clients to shs::DTP.
+    - Configure clients to delete when the connection is closed.
+  shs::TcpSocket — updated functionality, debugged, tested.
+    - It is based on shs::DTPbus.
+    - Automatic reconnection in case of loss of connection.
+    - Qt support.
+  - Поддержка UDP
+    - Создан класс shs::UDP, предоставляющий интерфейс для работы с UPD
+    - shs::UdpBus — работа с UDP как с shs::DTPbus.
+    - shs::UdpBroadcastBus — отправка и прием широковещательных сообщений.
+    - shs::UdpMulticastBus — отправки и прием сообщений в группе.
+
+- Load components — redesigned, debugged and tested.
+
+- shs_types — developed from shs_settings_private.h.
+
+- Sensor
+  - Redesigned, debugged and tested.
+    - The functionality has been changed
+    - update() must be called before getting the value.
+    - updateFast(), if supported by the sensor, measures less accurately, but faster.
+    - Added error status.
+    - Support for multiple metrics.
+
+- Неотлаженные компоненты:
+  - shs::StreamBus — it is not debugged, has bugs. Support and development is expected in the following versions.
+  - shs::EventTracker — has bugs and errors.
+- Неиспользуемые компоненты:
+  - shs::CreateProcess — the class creates a process from function pointer templates.
+  - shs::MutexSafe — component of an unused OS module.
+- Недоразработанные компоненты
+  - shs::Time — Unix time storage and parsing (not developed).
+
 </details>
 
 ---

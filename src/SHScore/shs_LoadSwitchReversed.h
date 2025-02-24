@@ -1,5 +1,12 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created.
+*/
+
+
 #include "shs_settings_private.h"
 #include "shs_Load.h"
 #include "shs_LoadSwitch.h"
@@ -16,6 +23,9 @@ namespace shs
 }
 
 
+/*
+  A class for reversed controlling the load in SWITCH mode.
+*/
 class shs::LoadSwitchReversed : public shs::LoadSwitch
 {
 public:

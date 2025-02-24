@@ -1,5 +1,18 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v0.2.0 — created for debugging API-handlers.
+*/
+
+/*
+  API-handlers debug
+*/
+
+#include "shs_settings_private.h"
+
+#ifdef SHS_SF_DEBUG
 
 #include "shs_API.h"
 #include "shs_types.h"
@@ -26,7 +39,7 @@ public:
         doutln("DTP packet:");
         for (auto i = 0; i < it.size(); i++)
         {
-            dout(static_cast< int >(it.read()));
+            dout(static_cast<int>(it.read()));
             dout(' ');
         }
         doutln();
@@ -35,3 +48,5 @@ public:
         return shs::DTPpacket();
     }
 };
+
+#endif  // #ifdef SHS_SF_DEBUG

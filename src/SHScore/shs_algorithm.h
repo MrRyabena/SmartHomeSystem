@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created template functions for binary search, insertion and removal of elements in containers
+*/
+
 #include <stddef.h>
 #include <functional>
 #include <memory>
@@ -41,7 +47,7 @@ namespace shs
             auto m{ left + (right - left) / 2 };
             comp(*m, value) ? left = m + 1 : right = m;
         }
-        
+
         return container.insert(left, std::forward<T>(value));
         // auto ins_it = std::inserter(container, left);
         // *ins_it = std::forward<T>(value);
@@ -64,4 +70,4 @@ namespace shs
         container.shrink_to_fit();
     }
 
-} // namespace shs
+}  // namespace shs

@@ -1,15 +1,14 @@
 #pragma once
 
 /*
-  Last update: v1.0.0
+  Last update: v2.0.0
   Versions:
     v0.1.0 — created.
     v0.2.0 — corrected.
     v1.0.0 — release.
-*/
-
-/*
-  The server class for processing clients.
+    v2.0.0 — updated functionality, debugged, tested.
+      - Automatically attach clients to shs::DTP.
+      - Configure clients to delete when the connection is closed.
 */
 
 #include <memory>
@@ -48,6 +47,9 @@ namespace shs
 };
 
 
+/*
+  The server class for processing clients.
+*/
 class shs::TcpServer : public shs::Process
 {
 public:

@@ -1,5 +1,15 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created.
+*/
+
+/*
+  
+*/
+
 #include <stdint.h>
 
 namespace shs

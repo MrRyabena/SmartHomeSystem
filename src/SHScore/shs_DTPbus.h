@@ -1,6 +1,26 @@
 #pragma once
 
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v0.1.0 — created.
+    v0.2.0
+      - Divided into two classes.
+      - A new type of handlers.
+      - Added inheritance from class shs::CallbacksKeeper.
+      - Using a new class for CRC.
+    v1.0.0 — release.
+      - Namespaces added.
+      - Variable names have been corrected.
+    v2.0.0 — divided into parts, rewritten into an abstract class.
+      - Template functions for processing different data buses.
+      - Storing the ID of connected modules.
+      - Active status.
+      - Message processing is divided into stages (separate functions).
+*/
+
+
 #include <stdint.h>
 #include <memory>
 
@@ -9,10 +29,6 @@
 
 #ifdef SHS_SF_ARDUINO
 #include <Arduino.h>
-#else
-#pragma message "Used shs::Stream"
-#include "shs_Stream.h"
-using Stream = shs::Stream;
 #endif
 
 
@@ -31,6 +47,9 @@ namespace shs
 }
 
 
+/*
+  Component DTP. Abstract class of a data bus that accepts and sends messages.
+*/
 class shs::DTPbus : public shs::Process
 {
 public:

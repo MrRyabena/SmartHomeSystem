@@ -1,5 +1,12 @@
 #pragma once
 
+/*
+  Last update: v2.0.0
+  Versions:
+    v2.0.0 — created, debugged and tested.
+*/
+
+
 #include "shs_settings_private.h"
 
 #ifdef SHS_SF_QT

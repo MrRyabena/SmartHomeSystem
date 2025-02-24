@@ -34,7 +34,7 @@ public:
     void update() override
     {
         uint32_t average{};
-        for (uint8_t i = 0; i < m_samples; i++) average += analogRead(m_pin);
+        for (auto i = 0u; i < m_samples; i++) average += analogRead(m_pin);
         m_value = shs::t::shs_float_t(average) / m_samples;
     }
 
@@ -48,7 +48,7 @@ public:
     [[nodiscard]] shs::t::shs_float_t  getValueF(const uint8_t metric = 0) override { return static_cast<shs::t::shs_float_t>(m_value); }
     [[nodiscard]] shs::t::shs_double_t getValueD(const uint8_t metric = 0) override { return static_cast<shs::t::shs_double_t>(m_value); }
 
-private:
+protected:
     shs::t::shs_fixed_t m_value;
     const uint8_t m_pin;
     uint8_t m_samples;

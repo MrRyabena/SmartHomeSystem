@@ -6,10 +6,10 @@
 #include <shs_Network.hpp>
 #include <shs_DTP.hpp>
 
-#include <shs_Sensor.hpp>
+#include <shs_lib_Thermistor.h>
+#include <shs_Sensor_API.h>
 
-shs::SensorAnalog temp_sensor(A0);
-
+shs::Thermistor temp_sensor(A0, 10'000, 3435);
 
 shs::DTP dtp(shs::config::Module_1::MODULE_ID);
 shs::TcpServer server(shs::settings::DEFAULT_TCP_PORT, dtp);

@@ -15,7 +15,7 @@ class shs::MHZ19 : public shs::Sensor
 {
 public:
     enum Metrics : uint8_t { PPM, TEMPERATURE };
-    enum Status : uint8_t { OK, CONNECTION_LOST. }
+    enum Status : uint8_t { OK, CONNECTION_LOST }
 
     MHZ19() {}
     explicit MHZ19(const uint8_t rx, const uint8_t tx) : m_mhz19(rx, tx) {}

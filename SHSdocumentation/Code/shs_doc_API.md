@@ -33,7 +33,9 @@ virtual ~API() = default;
 
 ### Methods
 
-#### `virtual shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) = 0;`
+```cpp
+virtual shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) = 0;
+```
 
 #### Description
 
@@ -41,14 +43,16 @@ A pure virtual method that must be implemented in derived classes. This method p
 
 ### Comparison Operators
 
-- **`bool operator<(const shs::API& other) const`** — compares the API identifier with another API instance.
-- **`bool operator>(const shs::API& other) const`** — compares the API identifier with another API instance.
-- **`bool operator==(const shs::API& other) const`** — checks if two API instances are equal based on their identifiers.
-- **`bool operator!=(const shs::API& other) const`** — checks if two API instances are not equal based on their identifiers.
+```cpp
+bool operator<(const shs::API& other) const; 
+bool operator>(const shs::API& other) const; 
+bool operator==(const shs::API& other) const; 
+bool operator!=(const shs::API& other) const; 
+```
 
 ### Class Members
 
-- **shs::t::shs_ID_t API_ID** — the API identifier, initialized in the constructor.
+- `shs::t::shs_ID_t API_ID` — the API identifier, initialized in the constructor.
 
 ## Example Usage
 

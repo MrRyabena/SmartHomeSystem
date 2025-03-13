@@ -20,23 +20,119 @@ The `shs::ControlWiFi` class is specifically designed to work with ESP family mi
 
 ### Methods
 
-- `static bool setHostname(const char* hostname)` — sets the hostname for the ESP device.
+- ##### `bool setHostname(hostname)`
 
-- `static void connectWiFi(const char* ssid = shs::settings::WIFI_SSID, const char* pass = shs::settings::WIFI_PASSWORD)` — initiates a connection to the specified WiFi network using the provided SSID and password.
+  ```cpp
+  static bool setHostname(const char* hostname);
+  ```
 
-- `static bool connectWiFiWait(const size_t time = 20000, const char* ssid = shs::settings::WIFI_SSID, const char* pass = shs::settings::WIFI_PASSWORD)` — connects to the specified WiFi network and waits for the connection to be established within the given time limit.
+  - ##### Description
 
-- `static void configureWiFi(const char* ssid = shs::settings::WIFI_SSID, const char* pass = shs::settings::WIFI_PASSWORD)` — configures the ESP device to connect to the specified WiFi network with auto-connect and auto-reconnect features enabled.
+    Sets the hostname for the ESP device.
 
-- `static bool disableWiFi()` — disables the WiFi functionality on the ESP device.
+  - ##### Parameters
 
-- `static bool enableWiFi()` — enables the WiFi functionality on the ESP device.
+    - `hostname` — the hostname to set for the device.
 
-- `static bool WiFiConnected()` — checks if the ESP device is currently connected to a WiFi network.
+- ##### `void connectWiFi(ssid, pass)`
 
-- `static bool setMac(uint8_t* mac)` — sets the MAC address for the ESP device.
+  ```cpp
+  static void connectWiFi(const char* ssid = shs::settings::WIFI_SSID, const char* pass = shs::settings::WIFI_PASSWORD);
+  ```
 
-- `static shs::t::shs_IP_t localIP()` — returns the local IP address assigned to the ESP device.
+  - ##### Description
+
+    Initiates a connection to the specified WiFi network using the provided SSID and password.
+
+  - ##### Parameters
+
+    - `ssid` — the SSID of the WiFi network (default is `shs::settings::WIFI_SSID`).
+    - `pass` — the password for the WiFi network (default is `shs::settings::WIFI_PASSWORD`).
+
+- ##### `bool connectWiFiWait(time, ssid, pass)`
+
+  ```cpp
+  static bool connectWiFiWait(const size_t time = 20000, const char* ssid = shs::settings::WIFI_SSID, const char* pass = shs::settings::WIFI_PASSWORD);
+  ```
+
+  - ##### Description
+
+    Connects to the specified WiFi network and waits for the connection to be established within the given time limit.
+
+  - ##### Parameters
+
+    - `time` — the maximum time to wait for connection (default is `20000` milliseconds).
+    - `ssid` — the SSID of the WiFi network (default is `shs::settings::WIFI_SSID`).
+    - `pass` — the password for the WiFi network (default is `shs::settings::WIFI_PASSWORD`).
+
+- ##### `void configureWiFi(ssid, pass)`
+
+  ```cpp
+  static void configureWiFi(const char* ssid = shs::settings::WIFI_SSID, const char* pass = shs::settings::WIFI_PASSWORD);
+  ```
+
+  - ##### Description
+
+    Configures the ESP device to connect to the specified WiFi network with auto-connect and auto-reconnect features enabled.
+
+  - ##### Parameters
+
+    - `ssid` — the SSID of the WiFi network (default is `shs::settings::WIFI_SSID`).
+    - `pass` — the password for the WiFi network (default is `shs::settings::WIFI_PASSWORD`).
+
+- ##### `bool disableWiFi()`
+
+  ```cpp
+  static bool disableWiFi();
+  ```
+
+  - ##### Description
+
+    Disables the WiFi functionality on the ESP device.
+
+- ##### `bool enableWiFi()`
+
+  ```cpp
+  static bool enableWiFi();
+  ```
+
+  - ##### Description
+
+    Enables the WiFi functionality on the ESP device.
+
+- ##### `bool WiFiConnected()`
+
+  ```cpp
+  static bool WiFiConnected();
+  ```
+
+  - ##### Description
+
+    Checks if the ESP device is currently connected to a WiFi network.
+
+- ##### `bool setMac(mac)`
+
+  ```cpp
+  static bool setMac(uint8_t* mac);
+  ```
+
+  - ##### Description
+
+    Sets the MAC address for the ESP device.
+
+  - ##### Parameters
+
+    - `mac` — pointer to the MAC address to set.
+
+- ##### `shs::t::shs_IP_t localIP()`
+
+  ```cpp
+  static shs::t::shs_IP_t localIP();
+  ```
+
+  - ##### Description
+
+    Returns the local IP address assigned to the ESP device.
 
 ### Example Usage
 

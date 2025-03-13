@@ -12,6 +12,8 @@ This file contains the definition of the `shs::ByteCollector` class, which is a 
 - **v1.1.0** — added a default value for size in the constructor; fixed a critical error in functions `get()` and `reserve()`.
 - **v2.0.0** — optimized; changed function-member `reserve_front()`; added operator `+=`; added `BCbuf_t` and `BCsize_t`; added `begin()` and `end()`; renamed functions, added `push_front`, `push_back`, `write`, and `read`; added `insert()`; added move semantics; added iterator.
 
+---
+
 ## Class `shs::ByteCollector`
 
 ### Description
@@ -24,98 +26,446 @@ This file contains the definition of the `shs::ByteCollector` class, which is a 
 
 `BCsize_t`— type used for size representation. Default is `uint8_t`.
 
+---
+
 ### Constructor
 
-#### `explicit ByteCollector(BCsize_t size = 0)`
+- ##### `ByteCollector(size)`
 
-##### Parameters
+  ```cpp
+  explicit ByteCollector(BCsize_t size = 0);
+  ```
 
-- **size** — the initial size of the buffer. Default is `0`.
+  - ##### Parameters
+
+    - **size** — the initial size of the buffer. Default is `0`.
+
+---
 
 ### Destructor
 
-#### `~ByteCollector()`
+- ##### `~ByteCollector()`
 
-- Cleans up the allocated memory for the byte buffer.
+  ```cpp
+  ~ByteCollector();
+  ```
+
+  - Cleans up the allocated memory for the byte buffer.
+
+---
 
 ### Methods
 
 #### Write Operations
 
-- `void write(const BCbuf_t* begin, const BCsize_t size)`— writes a specified number of bytes from the provided buffer to the end of the buffer.
+- ##### `void write(begin, size)`
 
-- `template <typename T> void push_back(const T& value, const BCsize_t bytes = sizeof(T))` — adds a value to the end of the buffer. The number of bytes to write can be specified.
+  ```cpp
+  void write(const BCbuf_t* begin, const BCsize_t size);
+  ```
 
-- `template <typename T> void push_front(const T& value, const BCsize_t bytes = sizeof(T))` — adds a value to the beginning of the buffer. The number of bytes to write can be specified.
+  - ##### Description
 
-- `void insert(const BCbuf_t* ptr, const BCsize_t size, const BCsize_t position)` — inserts a specified number of bytes at a given position in the buffer.
+    Writes a specified number of bytes from the provided buffer to the end of the byte collector.
 
-- `template <typename T> void insert(const T& value, const BCsize_t size, const BCsize_t position)` — inserts a value at a specified position in the buffer.
+  - ##### Parameters
+
+    - `begin` — pointer to the beginning of the data to write.
+    - `size` — the number of bytes to write.
+
+- ##### `void push_back(value, bytes)`
+
+  ```cpp
+  template <typename T> void push_back(const T& value, const BCsize_t bytes = sizeof(T));
+  ```
+
+  - ##### Description
+
+    Adds a value to the end of the buffer. The number of bytes to write can be specified.
+
+  - ##### Parameters
+
+    - `value` — the value to add to the buffer.
+    - `bytes` — the number of bytes to write (default is the size of `T`).
+
+- ##### `void push_front(value, bytes)`
+
+  ```cpp
+  template <typename T> void push_front(const T& value, const BCsize_t bytes = sizeof(T));
+  ```
+
+  - ##### Description
+
+    Adds a value to the beginning of the buffer. The number of bytes to write can be specified.
+
+  - ##### Parameters
+
+    - `value` — the value to add to the buffer.
+    - `bytes` — the number of bytes to write (default is the size of `T`).
+
+- ##### `void insert(ptr, size, position)`
+
+  ```cpp
+  void insert(const BCbuf_t* ptr, const BCsize_t size, const BCsize_t position);
+  ```
+
+  - ##### Description
+
+    Inserts a specified number of bytes at a given position in the buffer.
+
+  - ##### Parameters
+
+    - `ptr` — pointer to the data to insert.
+    - `size` — the number of bytes to insert.
+    - `position` — the position at which to insert the data.
+
+- ##### `void insert(value, size, position)`
+
+  ```cpp
+  template <typename T> void insert(const T& value, const BCsize_t size, const BCsize_t position);
+  ```
+
+  - ##### Description
+
+    Inserts a value at a specified position in the buffer.
+
+  - ##### Parameters
+
+    - `value` — the value to insert.
+    - `size` — the number of bytes to write.
+    - `position` — the position at which to insert the value.
+
+---
 
 #### Read Operations
 
-- `void read(BCbuf_t* begin, const BCsize_t size)` — reads a specified number of bytes from the buffer into the provided buffer.
+- ##### `void read(begin, size)`
 
-- `template <typename T> void get(T& var, const BCsize_t bytes = sizeof(T))` — retrieves a value from the buffer and stores it in the provided variable.
+  ```cpp
+  void read(BCbuf_t* begin, const BCsize_t size);
+  ```
 
-- `BCbuf_t& back() const` — returns a reference to the last byte in the byte collector.
+  - ##### Description
+
+    Reads a specified number of bytes from the buffer into the provided buffer.
+
+  - ##### Parameters
+
+    - `begin` — the beginning pointer of the range.
+    - `size` — the size of the range.
+
+- ##### `void get(var, bytes)`
+
+  ```cpp
+  template <typename T> void get(T& var, const BCsize_t bytes = sizeof(T));
+  ```
+
+  - ##### Description
+
+    Retrieves a value from the buffer and stores it in the provided variable.
+
+  - ##### Parameters
+
+    - `var` — the variable to store the retrieved value.
+    - `bytes` — the number of bytes to read (default is the size of `T`).
+
+- ##### `BCbuf_t& back() const`
+
+  ```cpp
+  BCbuf_t& back() const;
+  ```
+
+  - ##### Description
+
+    Returns a reference to the last byte in the byte collector.
+
+---
 
 #### Size Management
 
-- `void reserve(const BCsize_t size)` — reserves additional space in the buffer.
+- ##### `void reserve(size)`
 
-- `void reserve_front(const BCsize_t size)` — reserves additional space at the front of the buffer.
+  ```cpp
+  void reserve(const BCsize_t size);
+  ```
 
-- `BCsize_t capacity() const` — returns the total allocated size of the buffer.
+  - ##### Description
 
-- `BCsize_t capacity_front() const` — returns the amount of space available at the front of the buffer.
+    Reserves additional space in the buffer.
 
-- `BCsize_t capacity_back() const` — returns the amount of space available at the back of the buffer.
+  - ##### Parameters
 
-- `BCsize_t size() const` — returns the number of bytes currently stored in the buffer.
+    - `size` — the amount of space to reserve.
 
-- `void shrink_to_fit()` — reduces the capacity of the buffer to fit its current size.
+- ##### `void reserve_front(size)`
 
-- `void shrink_to_read()` — frees up memory from the portion of the buffer that has been read, reducing the size of the buffer to only include unread data.
+  ```cpp
+  void reserve_front(const BCsize_t size);
+  ```
+
+  - ##### Description
+
+    Reserves additional space at the front of the buffer.
+
+  - ##### Parameters
+
+    - `size` — the amount of space to reserve at the front.
+
+- ##### `BCsize_t capacity() const`
+
+  ```cpp
+  BCsize_t capacity() const;
+  ```
+
+  - ##### Description
+
+    Returns the total allocated size of the buffer.
+
+- ##### `BCsize_t capacity_front() const`
+
+  ```cpp
+  BCsize_t capacity_front() const;
+  ```
+
+  - ##### Description
+
+    Returns the amount of space available at the front of the buffer.
+
+- ##### `BCsize_t capacity_back() const`
+
+  ```cpp
+  BCsize_t capacity_back() const;
+  ```
+
+  - ##### Description
+
+    Returns the amount of space available at the back of the buffer.
+
+- ##### `BCsize_t size() const`
+
+  ```cpp
+  BCsize_t size() const;
+  ```
+
+  - ##### Description
+
+    Returns the number of bytes currently stored in the buffer.
+
+- ##### `void shrink_to_fit()`
+
+  ```cpp
+  void shrink_to_fit();
+  ```
+
+  - ##### Description
+
+    Reduces the capacity of the buffer to fit its current size.
+
+- ##### `void shrink_to_read()`
+
+  ```cpp
+  void shrink_to_read();
+  ```
+
+  - ##### Description
+
+    Frees up memory from the portion of the buffer that has been read, reducing the size of the buffer to only include unread data.
+
+---
 
 #### Position Management
 
-- `BCsize_t setPositionBack(const BCsize_t position)` — sets the current position at the back of the buffer.
+- ##### `BCsize_t setPositionBack(position)`
 
-- `BCsize_t setPositionFront(const BCsize_t position)` — sets the current position at the front of the buffer.
+  ```cpp
+  BCsize_t setPositionBack(const BCsize_t position);
+  ```
 
-- `BCsize_t setPositionRead(const BCsize_t position)` — sets the current read position in the buffer.
+  - ##### Description
 
-- `BCsize_t getPositionBack() const` — returns the current position at the back of the buffer.
+    Sets the current position at the back of the buffer.
 
-- `BCsize_t getPositionFront() const` — returns the current position at the front of the buffer.
+  - ##### Parameters
 
-- `BCsize_t getPositionRead() const` — returns the current read position in the buffer.
+    - `position` — the position to set at the back.
+
+- ##### `BCsize_t setPositionFront(position)`
+
+  ```cpp
+  BCsize_t setPositionFront(const BCsize_t position);
+  ```
+
+  - ##### Description
+
+    Sets the current position at the front of the buffer.
+
+  - ##### Parameters
+
+    - `position` — the position to set at the front.
+
+- ##### `BCsize_t setPositionRead(position)`
+
+  ```cpp
+  BCsize_t setPositionRead(const BCsize_t position);
+  ```
+
+  - ##### Description
+
+    Sets the current read position in the buffer.
+
+  - ##### Parameters
+
+    - `position` — the position to set for reading.
+
+- ##### `BCsize_t getPositionBack() const`
+
+  ```cpp
+  BCsize_t getPositionBack() const;
+  ```
+
+  - ##### Description
+
+    Returns the current position at the back of the buffer.
+
+- ##### `BCsize_t getPositionFront() const`
+
+  ```cpp
+  BCsize_t getPositionFront() const;
+  ```
+
+  - ##### Description
+
+    Returns the current position at the front of the buffer.
+
+- ##### `BCsize_t getPositionRead() const`
+
+  ```cpp
+  BCsize_t getPositionRead() const;
+  ```
+
+  - ##### Description
+
+    Returns the current read position in the buffer.
+
+---
 
 #### Utility Functions
 
-- `bool empty() const` — checks if the buffer is empty.
+- ##### `bool empty() const`
 
-- `BCbuf_t* getPtr() const` — returns a pointer to the underlying byte buffer.
+  ```cpp
+  bool empty() const;
+  ```
 
-- `shs::ByteCollectorIterator<BCbuf_t> begin() const` — returns an iterator to the beginning of the buffer.
+  - ##### Description
 
-- `shs::ByteCollectorIterator<BCbuf_t> end() const` — returns an iterator to the end of the buffer.
+    Checks if the buffer is empty.
 
-- `BCbuf_t& operator[](const BCsize_t index) const` — accesses the byte at the specified index in the buffer.
+- ##### `BCbuf_t* getPtr() const`
 
-- `void reset()`— resets the positions in the buffer to zero.
-- `void clear()` — clears the contents of the buffer and resets its positions.
+  ```cpp
+  BCbuf_t* getPtr() const;
+  ```
 
-- `BCsize_t readAvailable() const` — returns the number of bytes available for reading in the buffer.
+  - ##### Description
 
-- `shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t> getReadIt(const bool set_begin = false) const`— returns a read iterator for the buffer, optionally setting the beginning position.
+    Returns a pointer to the underlying byte buffer.
+
+- ##### `shs::ByteCollectorIterator<BCbuf_t> begin() const`
+
+  ```cpp
+  shs::ByteCollectorIterator<BCbuf_t> begin() const;
+  ```
+
+  - ##### Description
+
+    Returns an iterator to the beginning of the buffer.
+
+- ##### `shs::ByteCollectorIterator<BCbuf_t> end() const`
+
+  ```cpp
+  shs::ByteCollectorIterator<BCbuf_t> end() const;
+  ```
+
+  - ##### Description
+
+    Returns an iterator to the end of the buffer.
+
+- ##### `BCbuf_t& operator[](index)`
+
+  ```cpp
+  BCbuf_t& operator[](const BCsize_t index) const;
+  ```
+
+  - ##### Description
+
+    Accesses the byte at the specified index in the buffer.
+
+- ##### `void reset()`
+
+  ```cpp
+  void reset();
+  ```
+
+  - ##### Description
+
+    Resets the positions in the buffer to zero.
+
+- ##### `void clear()`
+
+  ```cpp
+  void clear();
+  ```
+
+  - ##### Description
+
+    Clears the contents of the buffer and resets its positions.
+
+- ##### `BCsize_t readAvailable() const`
+
+  ```cpp
+  BCsize_t readAvailable() const;
+  ```
+
+  - ##### Description
+
+    Returns the number of bytes available for reading in the buffer.
+
+- ##### `shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t> getReadIt(set_begin)`
+
+  ```cpp
+  shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t> getReadIt(const bool set_begin = false) const;
+  ```
+
+  - ##### Description
+
+    Returns a read iterator for the buffer, optionally setting the beginning position.
+
+---
 
 #### Operators
 
-- `BCbuf_t& operator[](const BCsize_t index) const` — accesses the byte at the specified index in the buffer.
+- ##### `BCbuf_t& operator[](index)`
 
-- `shs::ByteCollector<BCbuf_t, BCsize_t>& operator+=(const T& other)` — adds a value to the byte collector.
+  ```cpp
+  BCbuf_t& operator[](const BCsize_t index) const;
+  ```
+
+  - ##### Description
+
+    Accesses the byte at the specified index in the buffer.
+
+- ##### `shs::ByteCollector<BCbuf_t, BCsize_t>& operator+=(other)`
+
+  ```cpp
+  shs::ByteCollector<BCbuf_t, BCsize_t>& operator+=(const T& other);
+  ```
+
+  - ##### Description
+
+    Adds a value to the byte collector.
+
+---
 
 ### Example Usage
 
@@ -126,6 +476,8 @@ int value = 1000;
 bc.push_back(value, 2);               // Adds 2 bytes of the integer value
 bc.get(value, 2);
 ```
+
+---
 
 ## Iterators
 
@@ -141,24 +493,79 @@ bc.get(value, 2);
 
 #### Constructor
 
-##### `explicit ByteCollectorIterator(BCbuf_t* ptr)`
+- ##### `ByteCollectorIterator(ptr)`
 
-- **Parameters**:
-  - **ptr** — pointer to the buffer to iterate over.
+  ```cpp
+  explicit ByteCollectorIterator(BCbuf_t* ptr);
+  ```
+
+  - ##### Parameters
+
+    - **ptr** — pointer to the buffer to iterate over.
 
 #### Methods
 
-- `shs::ByteCollectorIterator<BCbuf_t>& operator++()` — increments the iterator to the next byte.
+- ##### `operator++()`
 
-- `BCbuf_t& operator*()` — dereferences the iterator to access the current byte.
+  ```cpp
+  shs::ByteCollectorIterator<BCbuf_t>& operator++();
+  ```
 
-- `BCbuf_t* operator&()` — returns the pointer to the current byte.
+  - ##### Description
 
-- `bool operator!=(const shs::ByteCollectorIterator<BCbuf_t>& other) const` — checks if two iterators are not equal.
+    Increments the iterator to the next byte.
 
-- `bool operator==(const shs::ByteCollectorIterator<BCbuf_t>& other) const` — checks if two iterators are equal.
+- ##### `operator*()`
 
-- `size_t operator-(const shs::ByteCollectorIterator<BCbuf_t>& right, const shs::ByteCollectorIterator<BCbuf_t>& left)` — calculates the distance between two iterators.
+  ```cpp
+  BCbuf_t& operator*();
+  ```
+
+  - ##### Description
+
+    Dereferences the iterator to access the current byte.
+
+- ##### `operator&()`
+
+  ```cpp
+  BCbuf_t* operator&();
+  ```
+
+  - ##### Description
+
+    Returns the pointer to the current byte.
+
+- ##### `operator!=(other)`
+
+  ```cpp
+  bool operator!=(const shs::ByteCollectorIterator<BCbuf_t>& other) const;
+  ```
+
+  - ##### Description
+
+    Checks if two iterators are not equal.
+
+- ##### `operator==(other)`
+
+  ```cpp
+  bool operator==(const shs::ByteCollectorIterator<BCbuf_t>& other) const;
+  ```
+
+  - ##### Description
+
+    Checks if two iterators are equal.
+
+- ##### `operator-(right, left)`
+
+  ```cpp
+  size_t operator-(const shs::ByteCollectorIterator<BCbuf_t>& right, const shs::ByteCollectorIterator<BCbuf_t>& left);
+  ```
+
+  - ##### Description
+
+    Calculates the distance between two iterators.
+
+---
 
 ### Class `shs::ByteCollectorReadIterator`
 
@@ -174,21 +581,71 @@ bc.get(value, 2);
 
 #### Constructor
 
-##### `explicit ByteCollectorReadIterator(const BCbuf_t* begin, const BCbuf_t* end, BCbuf_t* read_ptr)`
+- ##### `ByteCollectorReadIterator(begin, end, read_ptr)`
 
-- **Parameters**:
-  - **begin** — pointer to the start of the buffer.
-  - **end** — pointer to the end of the buffer.
-  - **read_ptr** — pointer to the current read position.
+  ```cpp
+  explicit ByteCollectorReadIterator(const BCbuf_t* begin, const BCbuf_t* end, BCbuf_t* read_ptr);
+  ```
+
+  - ##### Parameters
+
+    - **begin** — pointer to the start of the buffer.
+    - **end** — pointer to the end of the buffer.
+    - **read_ptr** — pointer to the current read position.
 
 #### Methods
 
-- `template <typename T> BCsize_t get(T& var, BCsize_t bytes = sizeof(T))` — retrieves a specified number of bytes from the iterator into the provided variable.
+- ##### `get(var, bytes)`
 
-- `BCbuf_t read()` — reads the next byte from the iterator.
+  ```cpp
+  template <typename T> BCsize_t get(T& var, BCsize_t bytes = sizeof(T));
+  ```
 
-- `const BCbuf_t& operator[](const BCsize_t index) const` — accesses the byte at the specified index in the read iterator.
+  - ##### Description
 
-- `BCsize_t size() const` — returns the number of bytes available for reading.
+    Retrieves a specified number of bytes from the iterator into the provided variable.
 
-- `const BCbuf_t* getPtr() const` — returns a pointer to the beginning of the read buffer.
+  - ##### Parameters
+
+    - `var` — the variable to store the retrieved value.
+    - `bytes` — the number of bytes to read (default is the size of `T`).
+
+- ##### `BCbuf_t read()`
+
+  ```cpp
+  BCbuf_t read();
+  ```
+
+  - ##### Description
+
+    Reads the next byte from the iterator.
+
+- ##### `operator[](index)`
+
+  ```cpp
+  const BCbuf_t& operator[](const BCsize_t index) const;
+  ```
+
+  - ##### Description
+
+    Accesses the byte at the specified index in the read iterator.
+
+- ##### `BCsize_t size()`
+
+  ```cpp
+  BCsize_t size() const;
+  ```
+
+  - ##### Description
+
+    Returns the number of bytes available for reading.
+
+- ##### `BCbuf_t* getPtr()`
+
+  ```cpp
+  const BCbuf_t* getPtr() const;
+  ```
+
+  - ##### Description
+
+    Returns a pointer to the beginning of the read buffer.

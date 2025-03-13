@@ -8,57 +8,7 @@
 
 # Versions
 
-<details>
-<summary>v0.1.0 — private beta-version.</summary>
-</details>
-
-<details>
-<summary>v0.2.0 — development.</summary>
-</details>
-
-<details>
-<summary>v1.0.0 — release.</summary>
-
-- [See release](https://github.com/MrRyabena/SmartHomeSystem/releases/tag/v1.x.x)
-- New core architecture.
-- New library.
-- The documentation has been completed.
-- The SHScore has not been tested.
-- The demo version is incomplete.
-- Tests and additions are expected.
-
-</details>
-
-<details>
-<summary>v1.1.0 — added tests.</summary>
-
-- Tests have been written and conducted, created the library SHStests.
-- A random number generator (shs::Random) has been created.
-- Development of a project assembly system.
-- shs::ByteCollecor: fixed a critical error in functions get() and reserve().
-- shs::CRC: now the function crcBuf(..) writes the result to a variable crc.
-- The synchronizer has been replaced with a make.sh.
-
-![SHScore-changes-v1_1_0](/schemes/SHScore-changes/SHScore-changes-v1_1_0.png)
-
-</details>
-
-<details>
-<summary>v1.2.0 — intermediate version.</summary>
-
-- A file system has been developed [beta]:
-  - shs::FSAbstract and shs::FileAbstract — interface classes.
-  - shs::FS — file system class.
-  - shs::File — file class.
-  - shs::SHSF — [beta] Smart Home System File (.shsf). It has errors now.</br>
-    _*note: The File System is poorly tested and isn't fully developed.*_
-- Developed a new ID-type SHSID.
-- Added SHSversion.h.
-- An important version for the further development of the project.
-
-![SHScore-changes-v1_2_0](/schemes/SHScore-changes/SHScore-changes-v1_2_0.png)
-
-</details>
+<!---------------------------------- v2.0.0 ----------------------------------->
 
 <details>
 <summary>v2.0.0 — <b>[current]</b> global update.</summary>
@@ -118,6 +68,70 @@
 
 </details>
 
+<!---------------------------------- v1.1.0 ----------------------------------->
+
+<details>
+<summary>v1.1.0 — added tests.</summary>
+
+- Tests have been written and conducted, created the library SHStests.
+- A random number generator (shs::Random) has been created.
+- Development of a project assembly system.
+- shs::ByteCollecor: fixed a critical error in functions get() and reserve().
+- shs::CRC: now the function crcBuf(..) writes the result to a variable crc.
+- The synchronizer has been replaced with a make.sh.
+
+![SHScore-changes-v1_1_0](/schemes/SHScore-changes/SHScore-changes-v1_1_0.png)
+
+</details>
+
+<!---------------------------------- v1.2.0 ----------------------------------->
+
+<details>
+<summary>v1.2.0 — intermediate version.</summary>
+
+- A file system has been developed [beta]:
+  - shs::FSAbstract and shs::FileAbstract — interface classes.
+  - shs::FS — file system class.
+  - shs::File — file class.
+  - shs::SHSF — [beta] Smart Home System File (.shsf). It has errors now.</br>
+    _*note: The File System is poorly tested and isn't fully developed.*_
+- Developed a new ID-type SHSID.
+- Added SHSversion.h.
+- An important version for the further development of the project.
+
+![SHScore-changes-v1_2_0](/schemes/SHScore-changes/SHScore-changes-v1_2_0.png)
+
+</details>
+
+<!---------------------------------- v1.0.0 ----------------------------------->
+
+<details>
+<summary>v1.0.0 — release.</summary>
+
+- [See release](https://github.com/MrRyabena/SmartHomeSystem/releases/tag/v1.x.x)
+- New core architecture.
+- New library.
+- The documentation has been completed.
+- The SHScore has not been tested.
+- The demo version is incomplete.
+- Tests and additions are expected.
+
+</details>
+
+<!---------------------------------- v0.2.0 ----------------------------------->
+
+<details>
+<summary>v0.2.0 — development.</summary>
+</details>
+
+<!---------------------------------- v0.1.0 ----------------------------------->
+
+<details>
+<summary>v0.1.0 — private beta-version.</summary>
+</details>
+
+<!----------------------------------------------------------------------------->
+
 ---
 > [!NOTE]
 > Проект готовиться к релизу, код оптимизируется, документация переписывается...
@@ -131,7 +145,7 @@
 
 ---
 
-## Структура проекта
+## Структура репозитория
 
 Проект выложен в репозитории на GitHub и доступен по ссылке: <https://github.com/MrRyabena/SmartHomeSystem>.</br>
 
@@ -153,11 +167,38 @@
   - [SHSlibrary](src/SHSlibrary/) — библиотека с удобными инструментами, интерфейсами датчиков и нагрузок, вычислительными алгоритмами, основанная на ядре.
   - [SmartModules](src/SmartModules/) — [beta] устройства и модули.
   - [SmartModulesAPI](src/SmartModulesAPI/) — [beta] команды устройств и модулей.
-  - [make.sh](src/make.sh) — Shell-скрипт для сборки всех исходников проекта (см. документацию по использованию: [build_manual](./SHSdocumentation/Usage/build_manual.md)). 
+  - [make.sh](src/make.sh) — Shell-скрипт для сборки всех исходников проекта (см. документацию по использованию: [build_manual](./SHSdocumentation/Usage/build_manual.md)).
 
 ## Краткий обзор
 
-## Благодарность
+**_SmartHomeSystem_** — это кроссплатформенный фреймворк, который упрощает создание автоматизированных систем для различных условий. Проект предлагает удобные инструменты для разработки модульных систем, которые могут быстро изменять свою конфигурацию. Вы можете как создавать полномасштабные автоматизированные системы, так и частично использовать алгоритмы и протоколы ядра в других проектах.
+
+### В проект <b><i>SmartHomeSystem</b></i> входят
+
+- **Аппаратные разработки**
+  - Компонентная база
+  - Схемы, платы, чертежи
+  - 3D-модели
+- **Программные разработки**
+  - Универсальное кроссплатформенное ядро
+  - Прошивки для микроконтроллеров
+  - GUI приложения
+- **Документация**
+  - Рекомендации по разработке аппаратной части
+  - Документация к коду
+  - Инструкция по сборке и использованию программной части
+  - Руководства по проектированию собственных устройств
+
+### Сферы применения
+
+- Создание систем "Умный дом": автоматизация управления освещением, климатом и бытовыми приборами для повышения комфорта и энергоэффективности.
+- Автоматизация производственных и бизнес-процессов: оптимизация работы оборудования и управление производственными линиями для повышения эффективности.
+- Разработка специализированных решений для управления и мониторинга: использование в научных исследованиях для создания систем датчиков и мониторинга.
+- Умные офисы: автоматизация управления освещением, климатом и системами безопасности для повышения комфорта и продуктивности сотрудников.
+- Сценические эффекты и выставки: управление прожекторами, дымогенераторами и создание эффектов для уникальных визуальных представлений на мероприятиях и выставках.
+- Фото и видеоиндустрия: управление системой источников света и эффектов во время съемок, что позволяет создавать профессиональные материалы.
+- Образовательные учреждения: создание интерактивных учебных лабораторных проектов, создание наборов для проведения и мониторинга экспериментов.
+- Сельское хозяйство: автоматизация процессов полива, контроля температуры и влажности воздуха и почвы для повышения урожайности.
 
 ## Contacts
 
@@ -166,13 +207,3 @@ Mail: <daniilrazanov82349@gmail.com></br>
 _**I will be glad to receive suggestions for improving the project, cooperation, and feedback.**_</br>
 Daniil Ryazanov (Даниил Рязанов)</br>
 _Saint-Petersburg, 2025_</br>
-
-# Заключение
-
-_**Smart Home System**_ — масштабный проект, предлагающий удобные решения и инструменты в современной реализации. В скором времени пользоваться разработками будет удобно и легко даже пользователю, не владеющему навыками программирования и проектирования.</br>
-
-У проекта большой простор для развития и расширения. Впереди полно работы и многие инструменты недоработаны, но уже сейчас на базе _**Smart Home System**_ можно создавать автоматизированные системы.</br>
-
-Подготовив линейку модулей и пользовательские интерфейсы, можно наладить коммерческое производство модульных систем.</br>
-
-Многие инструменты в проекте поддерживают индивидуальную работу, поэтому _**Smart Home System**_ можно использовать в отдельных проектах и устройствах, ускорив процесс их создания.

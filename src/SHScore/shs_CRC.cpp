@@ -45,7 +45,7 @@ uint8_t shs::CRC8::addBuf(const uint8_t* ptr, uint16_t size)
 
 uint8_t shs::CRC8::crcBuf(const uint8_t* ptr, uint16_t size)
 {
-    uint8_t crc = CRC8_beg;
+    uint8_t crc = CRC8_poly;
     for (uint16_t i = 0; i < size; i++) update(crc, *(ptr + i));
     return crc;
 }

@@ -120,13 +120,75 @@ This file contains the definition of the `shs::ByteCollector` class, which is a 
 ### Example Usage
 
 ```cpp
-shs::ByteCollector<uint8_t, uint8_t> bc;
+shs::ByteCollector<> bc;
 int value = 1000;
 
 bc.push_back(value, 2);               // Adds 2 bytes of the integer value
 bc.get(value, 2);
 ```
 
-## Conclusion
+## Iterators
 
-The `shs::ByteCollector` class provides a flexible and efficient way to manage byte data in memory, making it suitable for various applications in data transfer protocols and other scenarios where byte manipulation is required.
+### Class `shs::ByteCollectorIterator`
+
+#### Description
+
+`shs::ByteCollectorIterator` is a template class that provides an iterator for traversing the byte collector.
+
+#### Template Parameters
+
+`BCbuf_t` — type of the buffer used to store bytes. Default is `uint8_t`.
+
+#### Constructor
+
+##### `explicit ByteCollectorIterator(BCbuf_t* ptr)`
+
+- **Parameters**:
+  - **ptr** — pointer to the buffer to iterate over.
+
+#### Methods
+
+- `shs::ByteCollectorIterator<BCbuf_t>& operator++()` — increments the iterator to the next byte.
+
+- `BCbuf_t& operator*()` — dereferences the iterator to access the current byte.
+
+- `BCbuf_t* operator&()` — returns the pointer to the current byte.
+
+- `bool operator!=(const shs::ByteCollectorIterator<BCbuf_t>& other) const` — checks if two iterators are not equal.
+
+- `bool operator==(const shs::ByteCollectorIterator<BCbuf_t>& other) const` — checks if two iterators are equal.
+
+- `size_t operator-(const shs::ByteCollectorIterator<BCbuf_t>& right, const shs::ByteCollectorIterator<BCbuf_t>& left)` — calculates the distance between two iterators.
+
+### Class `shs::ByteCollectorReadIterator`
+
+#### Description
+
+`shs::ByteCollectorReadIterator` is a template class that extends `shs::ByteCollectorIterator` to provide read functionality for the byte collector.
+
+#### Template Parameters
+
+`BCbuf_t` — type of the buffer used to store bytes. Default is `uint8_t`.
+
+`BCsize_t` — type used for size representation. Default is `uint8_t`.
+
+#### Constructor
+
+##### `explicit ByteCollectorReadIterator(const BCbuf_t* begin, const BCbuf_t* end, BCbuf_t* read_ptr)`
+
+- **Parameters**:
+  - **begin** — pointer to the start of the buffer.
+  - **end** — pointer to the end of the buffer.
+  - **read_ptr** — pointer to the current read position.
+
+#### Methods
+
+- `template <typename T> BCsize_t get(T& var, BCsize_t bytes = sizeof(T))` — retrieves a specified number of bytes from the iterator into the provided variable.
+
+- `BCbuf_t read()` — reads the next byte from the iterator.
+
+- `const BCbuf_t& operator[](const BCsize_t index) const` — accesses the byte at the specified index in the read iterator.
+
+- `BCsize_t size() const` — returns the number of bytes available for reading.
+
+- `const BCbuf_t* getPtr() const` — returns a pointer to the beginning of the read buffer.

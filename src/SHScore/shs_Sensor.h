@@ -12,6 +12,7 @@
       - updateFast(), if supported by the sensor, measures less accurately, but faster.
       - Added error status.
       - Support for multiple metrics.
+      - Caching support.
 */
 
 #include <stdint.h>
@@ -40,7 +41,9 @@ public:
         THERMISTOR,
         PHOTORESISTOR,
         DIGITAL,
-        USER_TYPES,
+
+        LIBRARY_TYPES = 16384,
+        USER_TYPES = 32768,
     }
     const type
         ;
@@ -54,8 +57,16 @@ public:
 
     virtual void update() = 0;
     virtual void updateFast() = 0;
+    virtual void updateForced(bool fast = false) = 0;
+
     [[nodiscard]] virtual bool isUpdated() = 0;
     [[nodiscard]] virtual uint8_t getStatus() = 0;
+
+
+    virtual void clearCache() = 0;
+    virtual void setCacheExpiration(const uint32_t expiration_time) = 0;
+    virtual uint32_t getCacheExpiration() const = 0;
+
 
     [[nodiscard]] virtual int32_t              getValueI(const uint8_t metric = 0) = 0;
     [[nodiscard]] virtual shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) = 0;

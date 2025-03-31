@@ -61,5 +61,7 @@ namespace shs
         using shs_busID_t = uint16_t;
 
         using shs_port_t = uint16_t;
+
+        using shs_time_t = uint32_t;
     }
 }

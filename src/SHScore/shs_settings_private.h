@@ -8,6 +8,10 @@
     v2.0.0 — added a lot of compilation flags and default constants.
 */
 
+#if __has_include(<shs_sets.h>)
+#include <shs_sets.h>
+#endif
+
 #include <stdint.h>
 
 #define SHS_SF_NETWORK
@@ -71,6 +75,18 @@ namespace shs
     #undef SHS_SET_DEFAULT_UDP_PORT
     #undef SHS_SET_DEFAULT_MULTICAST_IP
     #undef SHS_SET_DEFAULT_BROADCAST_IP
+
+    // #ifdef SHS_SET_WIFI_SSID
+    // #define SHS_WIFI_SSID
+    // 		constexpr auto WIFI_SSID = ;
+	// 	constexpr auto WIFI_PASSWORD = ;
+
+    #ifndef SHS_SET_GMT
+    #define SHS_SET_GMT 0
+    #endif
+        constexpr auto GMT = SHS_SET_GMT;
+   
+
     }
 }
 #endif

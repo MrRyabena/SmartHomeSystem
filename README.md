@@ -150,15 +150,12 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 <!----------------------------------------------------------------------------->
 
 ---
-> [!NOTE]
-> Проект готовиться к релизу, код оптимизируется, документация переписывается...
-
 > [!IMPORTANT]
 >
 > - Для краткого ознакомления с проектом можно посмотреть [презентацию](pitch/SmartHomeSystem.pdf).
 > - Вся документация переехала в папку [SHSdocumentation](SHSdocumentation/). Огромная статья из прошлого релиза разделена на тематические файлы и папки и дополнена.
 > - У **_SmartHomeSystem_** есть [блог разработки](https://t.me/SmartHomeSystem_dev), там можно наблюдать за развитием проекта.
->
+> - Пример создания автоматизированной системы, используя фреймворк SmartHomeSystem можно посмотреть в [system_creation_guide](/SHSdocumentation/Usage/system_creation_guide.md).
 
 ---
 
@@ -285,6 +282,20 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 ---
 
+## Источники информации и литература
+
+См.: [/SHSdocumentation/ProjectOverview/2_literature.md](/SHSdocumentation/ProjectOverview/2_literature.md)
+
+---
+
+## Багодарности
+
+Автор выражает благодарность:
+
+- [AlexGyver'у](https://github.com/AlexGyver) (блогер и open source DIY разработчик), проекты которого послужили источником знаний и вдохновения для создания **_SmartHomeSystem_**.
+- [Ивану Макарову](https://github.com/i-s-m-mipt) (преподаватель и ведущий программист-разработчик лаборатории МФТИ), лекции которого дали много полезных и глубоких знаний в области языка программирования C++.
+
+---
 
 ## Contacts
 

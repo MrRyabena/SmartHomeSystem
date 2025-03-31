@@ -301,6 +301,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 Tg: <https://t.me/MrRyabena></br>
 Mail: <daniilrazanov82349@gmail.com></br>
+Development blog: <https://t.me/SmartHomeSystem_dev></br>
 _**I will be glad to receive suggestions for improving the project, cooperation, and feedback.**_</br>
 Daniil Ryazanov (Даниил Рязанов)</br>
 _Saint-Petersburg, 2025_</br>

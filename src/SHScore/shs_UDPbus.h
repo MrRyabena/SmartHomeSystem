@@ -9,6 +9,7 @@
 
 #include "shs_UDP.h"
 
+#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
 
 namespace shs
 {
@@ -120,3 +121,6 @@ protected:
     shs::t::shs_IP_t m_multicastIP;
     shs::t::shs_port_t m_port;
 };
+
+
+#endif  // #if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)

@@ -6,6 +6,7 @@
     v2.0.0 — created.
 */
 
+#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
 
 #include <stdint.h>
 #include <functional>
@@ -115,3 +116,5 @@ public:
     }
     void stop() override {}
 };
+
+#endif  // #if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)

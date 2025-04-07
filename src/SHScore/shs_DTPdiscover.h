@@ -26,6 +26,8 @@
 #include "shs_ControlWiFi.h"
 #endif
 
+#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
+
 
 namespace shs
 {
@@ -79,3 +81,5 @@ protected:
     shs::UdpBroadcastBus m_udp_broadcast;
     shs::SortedBuf<shs::DTPdiscover::m_Data, shs::DTPdiscover::m_Data_less> m_requests;
 };
+
+#endif  // defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)

@@ -1,5 +1,7 @@
 #include "shs_UDP.h"
 
+#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
+
 /* -----------------------------------------------------------------------------
    Multicast
    -----------------------------------------------------------------------------
@@ -148,3 +150,6 @@ uint8_t shs::UDP::sendRAW(UDP_t& udp, const uint8_t* data, const uint8_t size, c
 
 #endif
 }
+
+
+#endif  // #if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)

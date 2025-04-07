@@ -1,5 +1,7 @@
 #include "shs_DTPdiscover.h"
 
+#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
+
 
 void shs::DTPdiscover::discover(const uint8_t id)
 {
@@ -104,3 +106,6 @@ void shs::DTPdiscover::tick()
         m_udp_broadcast.sendPacket(answer);
     }
 }
+
+
+#endif  // #if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)

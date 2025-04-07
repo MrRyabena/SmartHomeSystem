@@ -56,13 +56,17 @@ public:
     {
         WiFi.mode(WIFI_STA);
         WiFi.persistent(true);
+#ifndef SHS_SF_ESP32
         WiFi.setAutoConnect(true);
+#endif
         WiFi.setAutoReconnect(true);
         WiFi.begin(ssid, pass);
     }
 
+#ifndef SHS_SF_ESP32
     static bool disableWiFi() { return WiFi.forceSleepBegin(); }
     static bool enableWiFi() { return WiFi.forceSleepWake(); }
+#endif
 
     static bool WiFiConnected() { return WiFi.status() == WL_CONNECTED; }
 

@@ -19,7 +19,7 @@ void shs::BME280::updateForced(bool fast)
 
 shs::t::shs_float_t shs::BME280::getValueF(const uint8_t metric)
 {
-    if (m_status != Status::OK || m_data.hasData()) return 0;
+    if (m_status != Status::OK || !m_data.hasData()) return 0;
 
     switch (metric)
     {

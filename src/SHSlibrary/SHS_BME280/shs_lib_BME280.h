@@ -28,7 +28,7 @@ public:
     enum class Metrics : uint8_t { PRESSURE_BAR, PRESSURE_MmHg, HUMIDITY, TEMPERATURE };
     enum class Status : uint8_t { OK, NO_CONNECTION, CACHE_ERROR, FAILED_READ };
 
-    explicit BME280(const uint32_t cache_expiration_time)
+    explicit BME280(const uint32_t cache_expiration_time = 2000)
         :
         shs::Sensor(static_cast<shs::Sensor::Type>(shs::lib::SensorTypes::BME280)),
         m_data(cache_expiration_time)
@@ -44,6 +44,10 @@ public:
 
     [[nodiscard]] bool isUpdated() override { return !m_data.isExpired(); }
     [[nodiscard]] uint8_t getStatus() override { return shs::etoi(m_status); }
+
+    void clearCache() override { m_data.freeExpired(); }
+    void setCacheExpiration(const uint32_t expiration_time) override { m_data.setExpiration(expiration_time); }
+    uint32_t getCacheExpiration() const override { return m_data.getExpiration(); }
 
     [[nodiscard]] int32_t              getValueI(const uint8_t metric = 0) override { return static_cast<int32_t>(getValueF(metric)); }
     [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) override { return shs::t::shs_fixed_t(getValueF(metric)); }

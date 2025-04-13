@@ -2,7 +2,6 @@
 # libraries/** linguist-vendored
 
 * text=auto
-* text eol=auto
 
 # LF normalization
 *.c text eol=lf

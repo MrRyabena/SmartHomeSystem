@@ -1,4 +1,4 @@
-![logo](/SHSlogos/PNG/SHS_com-mint.png)
+![logo](/SHSlogos/SVG/SHS_com-mint.svg)
 
 [![Static Badge](https://img.shields.io/badge/Telegram-dev%20blog-blue)](https://t.me/SmartHomeSystem_dev)
 

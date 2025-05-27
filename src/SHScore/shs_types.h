@@ -1,10 +1,11 @@
 #pragma once
 
 /*
-  Last update: v2.0.0
+  Last update: v2.1.0
   Versions:
     v1.2.0 — created.
     v2.0.0 — developed from shs_settings_private.h.
+    v2.1.0 — added shs_pin_t.
 */
 
 #include "shs_settings_private.h"
@@ -63,5 +64,7 @@ namespace shs
         using shs_port_t = uint16_t;
 
         using shs_time_t = uint32_t;
+
+        using shs_pin_t = int8_t;
     }
 }

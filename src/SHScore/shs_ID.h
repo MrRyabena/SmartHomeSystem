@@ -1,10 +1,11 @@
 #pragma once
 
 /*
-  Last update: v2.0.0
+  Last update: v2.1.0
   Versions:
     v1.2.0 — created.
     v2.0.0 — added comparison operators.
+    v2.1.0 — fixed a bug during the assignment of ID components.
 */
 
 #include <stdint.h>
@@ -42,19 +43,19 @@ struct shs::ID
 
     shs::ID& setModuleID(const moduleID_t module)
     {
-        id |= (uint32_t)module << 24;
+        id ^= (uint32_t)module << 24;
         return *this;
     }
 
     shs::ID& setDeviceID(const deviceID_t device)
     {
-        id |= (uint32_t)device << 16;
+        id ^= (uint32_t)device << 16;
         return *this;
     }
 
     shs::ID& setComponentID(const componentID_t api)
     {
-        id |= api & 0xffff;
+        id ^= api & 0xffff;
         return *this;
     }
 

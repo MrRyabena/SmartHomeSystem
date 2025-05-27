@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-  Last update: v2.0.0
+  Last update: v2.1.0
   Versions:
     v0.1.0 — created.
     v0.2.0 — edited and optimized.
@@ -17,6 +17,7 @@
            — added insert().
            — added move semantics.
            — added iterator.
+    v2.1.0 — memory optimization.
 */
 
 /*
@@ -41,27 +42,34 @@ class shs::ByteCollector
     static_assert(sizeof(BCbuf_t) == 1);
 public:
     explicit ByteCollector(BCsize_t size = 0)
-        : m_buf(new BCbuf_t[size]{}), m_capacity(size)
+        : m_buf(size ? new BCbuf_t[size]{} : nullptr), m_capacity(size)
     {}
 
     ByteCollector(const ByteCollector<BCbuf_t, BCsize_t>& other) noexcept
-        : m_buf(new BCbuf_t[other.m_capacity]), m_capacity(other.m_capacity),
-        m_pos_back(other.m_pos_back), m_pos_front(other.m_pos_front),
+        : m_buf(other.m_capacity ? new BCbuf_t[other.m_capacity] : nullptr),
+        m_capacity(other.m_capacity),
+        m_pos_back(other.m_pos_back),
+        m_pos_front(other.m_pos_front),
         m_pos_read(other.m_pos_read)
     {
-        for (BCsize_t i = 0; i < m_capacity; i++) m_buf[i] = other.m_buf[i];
+        if (m_buf && other.m_buf)
+        {
+            for (BCsize_t i = 0; i < m_capacity; i++) m_buf[i] = other.m_buf[i];
+        }
     }
 
     ByteCollector(ByteCollector<BCbuf_t, BCsize_t>&& other) noexcept
-        : m_buf(other.m_buf), m_capacity(other.m_capacity),
-        m_pos_back(other.m_pos_back), m_pos_front(other.m_pos_front),
+        : m_buf(other.m_buf),
+        m_capacity(other.m_capacity),
+        m_pos_back(other.m_pos_back),
+        m_pos_front(other.m_pos_front),
         m_pos_read(other.m_pos_read)
     {
         other.m_buf = nullptr;
-        other.m_capacity = {};
-        other.m_pos_back = {};
-        other.m_pos_front = {};
-        other.m_pos_read = {};
+        other.m_capacity = 0;
+        other.m_pos_back = 0;
+        other.m_pos_front = 0;
+        other.m_pos_read = 0;
     }
 
     ByteCollector& operator=(const ByteCollector<BCbuf_t, BCsize_t>& other) noexcept
@@ -69,17 +77,22 @@ public:
         if (this != &other)
         {
             if (m_buf) delete[] m_buf;
+            m_buf = nullptr;
 
             m_capacity = other.m_capacity;
             m_pos_back = other.m_pos_back;
             m_pos_front = other.m_pos_front;
             m_pos_read = other.m_pos_read;
 
-            m_buf = new BCbuf_t[m_capacity];
-
-            for (BCsize_t i = 0; i < m_capacity; i++) m_buf[i] = other.m_buf[i];
+            if (m_capacity)
+            {
+                m_buf = new BCbuf_t[m_capacity];
+                if (m_buf && other.m_buf)
+                {
+                    for (BCsize_t i = 0; i < m_capacity; i++) m_buf[i] = other.m_buf[i];
+                }
+            }
         }
-
         return *this;
     }
 
@@ -96,17 +109,16 @@ public:
             m_pos_read = other.m_pos_read;
 
             other.m_buf = nullptr;
-            other.m_capacity = {};
-            other.m_pos_back = {};
-            other.m_pos_front = {};
-            other.m_pos_read = {};
+            other.m_capacity = 0;
+            other.m_pos_back = 0;
+            other.m_pos_front = 0;
+            other.m_pos_read = 0;
         }
-
         return *this;
     }
 
 
-    ~ByteCollector() { delete[] m_buf; }
+    ~ByteCollector() { if (m_buf) {  delete[] m_buf;  } }
 
     /*
       The bytes argument specifies how many bytes

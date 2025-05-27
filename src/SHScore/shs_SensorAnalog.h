@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-  Last update: v2.0.0
+  Last update: v2.1.0
   Versions:
     v0.1.0 — created.
     v0.2.0 — made purely virtual.
@@ -12,6 +12,7 @@
       - updateFast(), if supported by the sensor, measures less accurately, but faster.
       - Added error status.
       - Support for multiple metrics.
+    v2.1.0 — updated according to the changes in the base class.
 */
 
 
@@ -57,9 +58,13 @@ public:
     }
 
     void updateFast() override { m_value = analogRead(m_pin); }
+    void updateForced(bool fast = false) override { fast ? updateFast() : update(); }
     [[nodiscard]] bool isUpdated() override { return true; }
     [[nodiscard]] uint8_t getStatus() override { return 0; }
 
+    void clearCache() override {}
+    void setCacheExpiration(const uint32_t expiration_time) override {}
+    uint32_t getCacheExpiration() const override {}
 
     [[nodiscard]] int32_t              getValueI(const uint8_t metric = 0) override { return m_value; }
     [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) override { return m_value; }

@@ -54,13 +54,13 @@ public:
                     bc.push_back(Commands::effect);
                     bc.push_back(m_rgb_music.effect);
 
-                    return std::move(shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), bc));
+                    return shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), bc);
                 }
                 break;
 
             default: break;
         }
-        return std::move(shs::DTPpacket(true));
+        return shs::DTPpacket();
     }
 
 private:

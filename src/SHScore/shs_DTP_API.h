@@ -1,9 +1,10 @@
 #pragma once
 
 /*
-  Last update: v2.0.0
+  Last update: v2.1.0
   Versions:
     v2.0.0 — created.
+    v2.1.0 — fixed a bug. There is a critical error that has not been fixed yet.
 */
 
 /*
@@ -46,10 +47,12 @@ public:
     static shs::DTPpacket getInitialPacket(shs::t::shs_ID_t ID)
     {
         ID.setComponentID(static_cast<uint16_t>(DTP_API_ID));
-        shs::DTPpacket packet(ID, 0, std::move(shs::ByteCollector<>()));
+        shs::ByteCollector<> bc;
+        bc.push_back(0);
+        shs::DTPpacket packet(ID, 0, std::move(bc));
         packet.set_DTPcode(shs::DTPpacket::INITIAL);
 
-        return std::move(packet);
+        return packet;
     }
 
     static shs::DTPpacket getInitialAnswerPacket(shs::t::shs_ID_t ID, bool success)
@@ -60,6 +63,6 @@ public:
         shs::DTPpacket packet(ID, 0, std::move(bc));
         packet.set_DTPcode(shs::DTPpacket::INITIAL_ANSWER);
 
-        return std::move(packet);
+        return packet;
     }
 };

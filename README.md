@@ -73,7 +73,7 @@
 <!---------------------------------- v2.0.0 ----------------------------------->
 
 <details>
-<summary>v2.0.0 — <b>[current]</b> global update.</summary>
+<summary>v2.0.0 — global update.</summary>
 
 <!-- # SmartHomeSystem v2.0.0 Release Notes -->
 
@@ -144,6 +144,24 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 ![SHScore-changes-v2_0_0.png](./schemes/SHScore-changes/SHScore-changes-v2_0_0.png)
 ![SHScore-scheme](./schemes/SHScore-scheme.png)
 ![SHSlibrary-scheme](./schemes/SHSlibrary-scheme.png)
+
+</details>
+
+<!---------------------------------- v2.0.0 ----------------------------------->
+<details>
+<summary>v2.1.0 — <b>[current]</b> The core functionality has been expanded; sensor libraries have been debugged and tested; added a new device <i>ClimateStation</i>.</summary>
+<!-- # SmartHomeSystem v2.1.0 Release Notes -->
+- **SHScore:**
+  - **Changes:**
+    - `shs::ByteCollector`: Optimization and bugs fix.
+    - `shs::ID`: Fixed a bug during the assignment of ID components.
+  - **New functional:**
+    - `shs::LoadPWM`: Returned to development, redesigned, debugged and tested.
+    - `shs::ProgramTimer`: A class has been created for timers inside the program code.
+  - **Bugs:**
+    - `shs::DTP_API`: Critical error found.
+      > [!WARNING]
+      > The error has not been fixed, the use of this class is unsafe!
 
 </details>
 

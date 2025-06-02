@@ -73,7 +73,7 @@
 <!---------------------------------- v2.0.0 ----------------------------------->
 
 <details>
-<summary>v2.0.0 — global update.</summary>
+<summary>v2.0.0 — <b>[current]</b> global update.</summary>
 
 <!-- # SmartHomeSystem v2.0.0 Release Notes -->
 
@@ -147,10 +147,12 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 </details>
 
-<!---------------------------------- v2.0.0 ----------------------------------->
+<!---------------------------------- v2.1.0 ----------------------------------->
 <details>
-<summary>v2.1.0 — <b>[current]</b> The core functionality has been expanded; sensor libraries have been debugged and tested; added a new device <i>ClimateStation</i>.</summary>
+<summary>v2.1.0 — The core functionality has been expanded; sensor libraries have been debugged and tested; added a new device <i>ClimateStation</i>.</summary>
+
 <!-- # SmartHomeSystem v2.1.0 Release Notes -->
+
 - **SHScore:**
   - **Changes:**
     - `shs::ByteCollector`: Optimization and bugs fix.

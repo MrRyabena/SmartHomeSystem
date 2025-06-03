@@ -1,7 +1,7 @@
 #pragma once
 
 /*
-  Last update: v1.0.0
+  Last update: v2.1.0
   Versions:
     v0.1.0 — created.
     v1.0.0 — release.
@@ -9,6 +9,7 @@
       - It is based on shs::DTPbus.
       - Automatic reconnection in case of loss of connection.
       - Qt support.
+    v2.1.0 — fixed bugs related to shs::DTP_API.
 */
 
 
@@ -59,9 +60,9 @@ public:
 
 
 #define default_connect_callback ([](shs::TcpSocket& socket) \
-        { socket.sendPacket(shs::DTP_APIpackets::getInitialPacket(socket.busID)); })
+        { if (socket.isActive()) socket.sendPacket(shs::DTP_APIpackets::getInitialPacket(socket.busID)); })
 
-#define default_disconnect_callback ([](shs::TcpSocket& socket) { socket.reconnect(); })
+#define default_disconnect_callback ([](shs::TcpSocket& socket) {  if (socket.isActive()) socket.reconnect(); })
 
 
     explicit TcpSocket
@@ -114,8 +115,8 @@ public:
 
     // -------------------- shs::Process (from shs::DTPbus) --------------------
     void start() override { m_connect(); }
-    void tick() override { if (!client.connected() && m_disconnect_callback) m_disconnect_callback(*this); }
-    void stop() override { client.stop(); }
+    void tick() override { if (!client.connected()) reconnect(); } //&& m_disconnect_callback) m_disconnect_callback(*this); }
+    void stop() override { if (client.connected()) client.stop(); }
 
 
     // -------------------- shs::DTPbus ----------------------------------------
@@ -140,15 +141,25 @@ private:
 
     void m_connect()
     {
-        if (
+        if (!m_active_flag) return;
+        
+        bool connected = false;
         #ifdef SHS_SF_ARDUINO
-            client.connect(m_hostIP, m_port)
+            connected = client.connect(m_hostIP, m_port);
         #elif defined(SHS_SF_QT)
-            client.connectToHost(m_hostIP, m_port)
+            connected = client.connectToHost(m_hostIP, m_port);
         #endif
-            && m_connect_callback)
-        {
-            m_connect_callback(*this);
+        
+        if (connected) //&& m_connect_callback) {
+          {
+            //sendPacket(shs::DTP_APIpackets::getInitialPacket(busID)); 
+            shs::DTPpacket packet(busID, 0, shs::ByteCollector<>(10));
+            sendPacket(packet);
+           // try {
+                //m_connect_callback(*this);
+            ///} catch (...) {
+                
+            //}
         }
     }
 };

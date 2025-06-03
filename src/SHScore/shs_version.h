@@ -3,10 +3,12 @@
 #include <cstddef>
 #include <cstdint>
 
+#include <shs_types.h>
 
-#define _shs_Project_VERSION_    "v2.0.0"
-#define _shs_SHScore_VERSION_    "v2.0.0"
-#define _shs_SHSlibrary_VERSION_ "v2.0.0"
+
+#define _shs_Project_VERSION_    "v2.1.0"
+#define _shs_SHScore_VERSION_    "v2.1.0"
+#define _shs_SHSlibrary_VERSION_ "v2.1.0"
 
 #pragma message "\n" \
 "Current Project version is:    " _shs_Project_VERSION_ "\n" \
@@ -47,6 +49,11 @@ namespace shs
             */
         struct Version
         {
+            uint8_t major;
+            uint8_t minor;
+            uint8_t patch;
+
+
             constexpr Version(uint8_t major, uint8_t minor, uint8_t patch) : major(major), minor(minor), patch(patch) {}
             constexpr Version(const char* v_str) : Version(parseVersion(v_str)) {}
 
@@ -61,9 +68,38 @@ namespace shs
             }
 
 
-            uint8_t major;
-            uint8_t minor;
-            uint8_t patch;
+            constexpr bool operator==(const Version& other) const
+            {
+                return major == other.major && minor == other.minor && patch == other.patch;
+            }
+
+            constexpr bool operator!=(const Version& other) const
+            {
+                return !(*this == other);
+            }
+
+            constexpr bool operator<(const Version& other) const
+            {
+                if (major != other.major) return major < other.major;
+                if (minor != other.minor) return minor < other.minor;
+                return patch < other.patch;
+            }
+
+            constexpr bool operator>(const Version& other) const
+            {
+                return other < *this;
+            }
+
+            constexpr bool operator<=(const Version& other) const
+            {
+                return !(other < *this);
+            }
+
+            constexpr bool operator>=(const Version& other) const
+            {
+                return !(*this < other);
+            }
+
 
             static constexpr Version parseVersion(const char* version)
             {
@@ -106,6 +142,18 @@ namespace shs
             }
         };
 
+        static shs::t::shs_string_t toString(const Version& version)
+        {
+            shs::t::shs_string_t str = "v";
+            str += version.major;
+            str += '.';
+            str += version.minor;
+            str += '.';
+            str += version.patch;
+
+            return str;
+        }
+
         /**
          * @brief
          * Version History
@@ -122,6 +170,7 @@ namespace shs
          *
          * - v2.0.0 — Upcoming version.
          *
+         * - v2.1.0 — The core components have been updated. Libraries for working with sensors have been fixed and tested.
         */
         constexpr shs::version::Version project = _shs_Project_VERSION_;
         constexpr shs::version::Version core = _shs_SHScore_VERSION_;

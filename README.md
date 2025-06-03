@@ -73,7 +73,7 @@
 <!---------------------------------- v2.0.0 ----------------------------------->
 
 <details>
-<summary>v2.0.0 — <b>[current]</b> global update.</summary>
+<summary>v2.0.0 — global update.</summary>
 
 <!-- # SmartHomeSystem v2.0.0 Release Notes -->
 
@@ -149,21 +149,36 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!---------------------------------- v2.1.0 ----------------------------------->
 <details>
-<summary>v2.1.0 — The core functionality has been expanded; sensor libraries have been debugged and tested; added a new device <i>ClimateStation</i>.</summary>
+<summary>v2.1.0 — <code><b>[current]</b></code>  The core functionality has been expanded; sensor libraries have been debugged and tested; added a new device <i>ClimateStation</i>.</summary>
 
 <!-- # SmartHomeSystem v2.1.0 Release Notes -->
 
-- **SHScore:**
-  - **Changes:**
-    - `shs::ByteCollector`: Optimization and bugs fix.
-    - `shs::ID`: Fixed a bug during the assignment of ID components.
-  - **New functional:**
-    - `shs::LoadPWM`: Returned to development, redesigned, debugged and tested.
-    - `shs::ProgramTimer`: A class has been created for timers inside the program code.
-  - **Bugs:**
-    - `shs::DTP_API`: Critical error found.
-      > [!WARNING]
-      > The error has not been fixed, the use of this class is unsafe!
+### SHScore
+
+- **Changes:**
+  - `shs::ByteCollector`: Optimization and bugs fix.
+  - `shs::ID`: Fixed a bug during the assignment of ID components.
+  - `shs::version::Version`: Added compare operators.
+  - `shs::SensorAnalog`: Updated according to the changes in the base class.
+  - `shs::SimpleFixed`: Added copy constructors and assignment operators.
+- **New functional:**
+  - `shs::LoadPWM`: Returned to development, redesigned, debugged and tested.
+  - `shs::ProgramTimer`: A class has been created for timers inside the program code.
+- **Bugs:**
+  - `shs::DTP_API`: Critical error found. The error has not been fixed, the use of this class is unsafe!
+  - `shs::TcpSocket`: It has bugs related to shs::DTP_API. Temporary fixes have been made.
+
+### SHSlibrary
+
+- **Changes:**
+  - `shs::Thermistor`: Fixed bugs, tested.
+  - `shs::GRGB_API`: Fixed bugs, tested.
+  - `shs::DS18`: Completed, but need testing.
+
+### Other
+
+- Updated logos.
+- Work on the ClimateStation project has been completed.
 
 </details>
 
@@ -284,21 +299,9 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 - [ClimateStation](https://github.com/MrRyabena/ClimateStation) — метеостанция в специально разработанном для 3D-печати корпусе с сенсорным дисплеем. Собирает информацию с внутренних и внешних (для улицы) датчиков об атмосферном давлении, уровне CO2 (углекислого газа) в помещении, влажности и температуре воздуха. Станция составит прогноз погоды, подскажет когда необходимо проветрить помещение и выведет показания и графики их изменения. Сенсорный экран позволят изменять настройки, переключать режимы работы и смотреть датчики. Устройство имеет возможность полной интеграции с системами SmartHomeSystem. Таким образом, оно может стать средством обратной связи в системах климат-контроля.
 
-## Награды проекта
+## Достижения проекта
 
-Дипломы, грамоты, фотографии и другие документы находятся в соответствующей папке [awards](./awards).
-
-### 1 место в хакатоне "Умный Петербург 2025"
-
-[SmartBank](https://github.com/MrRyabena/SmartBank), созданная на хакатоне "Умный Петербург 2025" как решение кейса от Санкт-Петербургского политехнического университета Петра Великого, заняла первое место в треке "Интернет вещей". За 2 дня были смоделирован и напечатан корпус, собрана электроника, написан программный код и отлажен механизм распознавания монет.
-
-<img src="./awards/hackathon_Smart_Petersburg_2025.jpg" alt="diploma" width="250"/>
-
-### 1 место в районной научно-практической конференции "Шаг в будущее"
-
-Проект **_SmartHomeSystem_**, по итогам конференции, был награжден грамотой за 1 место.
-
-<img src="./awards/conference_Step_into_the_future_2025.jpg" alt="diploma" width="250"/>
+Описания достижений, дипломы, грамоты, фотографии и другие документы находятся в папке [awards](./awards) и в соответствующем README.
 
 ---
 

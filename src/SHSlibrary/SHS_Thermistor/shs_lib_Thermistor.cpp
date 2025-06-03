@@ -5,20 +5,20 @@ void shs::Thermistor::update()
     uint32_t average{};
     for (uint16_t i = 0; i < m_samples; i++) average += analogRead(m_pin);
     auto value = computeTemperature(shs::t::shs_float_t(average) / m_samples, m_RES_R, m_TH_B, m_TH_TEMP, m_TH_R, m_ADC_RESOLUTION);
-    if (!std::is_nan(value)) m_value = value;
+    if (!std::isnan(value)) m_value = value;
 }
 
 void shs::Thermistor::updateFast()
 {
     auto value = computeTemperature(analogRead(m_pin), m_RES_R, m_TH_B, m_TH_TEMP, m_TH_R, m_ADC_RESOLUTION);
-    if (!std::is_nan(value)) m_value = value;
+    if (!std::isnan(value)) m_value = value;
 }
 
 uint8_t shs::Thermistor::getStatus()
 {
     auto signal = analogRead(m_pin);
     if (signal <= 0 || signal >= (1 << m_ADC_RESOLUTION) - 4) return static_cast<uint8_t>(Status::INPUT_OVERSHOOTING);
-    return static_cast<uint8_t>(Status::OK);
+    return shs::etoi(Status::OK);
 }
 
 

@@ -1,9 +1,18 @@
 #pragma once
-#define SHS_SF_ARDUINO
+
+
+/*
+  Last update: v2.1.0
+  Versions:
+    v2.0.0 — created.
+    v2.1.0 — fixed bugs, tested.
+*/
+
 
 #include <cmath>
 
 #include <shs_SensorAnalog.h>
+#include <shs_utils.h>
 
 
 namespace shs
@@ -12,12 +21,17 @@ namespace shs
 }
 
 
+/*
+  A class for getting values from thermistors.
+  The class is based on shs::SensorAnalog.
+  The class is used to get the temperature from a thermistor connected to an analog pin.
+*/
 class shs::Thermistor : public shs::SensorAnalog
 {
 public:
     static constexpr auto ABSOLUTE_ZERO = -273.15f;
 
-    explicit Thermistor(const uint8_t pin, const uint32_t res_R, const uint16_t th_B, const uint8_t th_Temp = 25, const uint32_t th_R = 10000, const uint8_t ADC_resolution = 10, const uint8_t samples = SENSOR_AVERAGE_SAMPLES)
+    explicit Thermistor(const shs::t::shs_pin_t pin, const uint32_t res_R, const uint16_t th_B, const uint8_t th_Temp = 25, const uint32_t th_R = 10000, const uint8_t ADC_resolution = 10, const uint8_t samples = SENSOR_AVERAGE_SAMPLES)
         : SensorAnalog(pin, samples), m_RES_R(res_R), m_TH_R(th_R), m_TH_B(th_B), m_TH_TEMP(th_Temp), m_ADC_RESOLUTION(ADC_resolution)
     {}
 

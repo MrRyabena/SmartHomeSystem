@@ -2,10 +2,11 @@
 #define _shs_SETTINGS_PRIVATE_
 
 /*
-  Last update: v2.0.0
+  Last update: v2.1.0
   Versions:
     v0.1.0 — created.
     v2.0.0 — added a lot of compilation flags and default constants.
+    v2.1.0 — added pragma message to debug flag.
 */
 
 #if __has_include(<shs_sets.h>)
@@ -42,6 +43,7 @@
 
 #if defined(DEBUG) && !defined(SHS_SF_DEBUG)
 #define SHS_SF_DEBUG
+#pragma message "Defined debug!"
 #endif
 
 #include "shs_types.h"

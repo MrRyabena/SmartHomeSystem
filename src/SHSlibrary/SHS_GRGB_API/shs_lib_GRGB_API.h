@@ -1,5 +1,12 @@
 #pragma once
 
+/*
+  Last update: v2.1.0
+  Versions:
+    v2.0.0 — created.
+    v2.1.0 — fixed bugs, tested.
+*/
+
 #include <memory>
 
 #include <GRGB.h>
@@ -47,7 +54,7 @@ public:
     };
 
 
-    void handle(shs::ByteCollectorReadIterator<>& it) override
+    [[nodiscard]] shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override
     {
         it.set_position(shs::DTPpacket::get_dataBeg(it));
 
@@ -65,7 +72,7 @@ public:
             default: break;
         }
 
-        return std::move(shs::DTPpacket(true));
+        return shs::DTPpacket();
     }
 
 

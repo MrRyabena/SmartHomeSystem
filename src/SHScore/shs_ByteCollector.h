@@ -18,6 +18,10 @@
            — added move semantics.
            — added iterator.
     v2.1.0 — memory optimization.
+    v2.2.0 — optimized.
+           - removed c-style casts.
+           - added private functions m_shift_right() and m_shift_left().
+           - optimized insert().
 */
 
 /*
@@ -36,13 +40,13 @@ namespace shs
     class ByteCollector;
 };
 
+
 template <typename BCbuf_t = uint8_t, typename BCsize_t = uint8_t>
 class shs::ByteCollector
 {
     static_assert(sizeof(BCbuf_t) == 1);
 public:
-    explicit ByteCollector(BCsize_t size = 0)
-        : m_buf(size ? new BCbuf_t[size]{} : nullptr), m_capacity(size)
+    explicit ByteCollector(BCsize_t size = 0) noexcept : m_buf(size ? new BCbuf_t[size]{} : nullptr), m_capacity(size)
     {}
 
     ByteCollector(const ByteCollector<BCbuf_t, BCsize_t>& other) noexcept
@@ -118,7 +122,7 @@ public:
     }
 
 
-    ~ByteCollector() { if (m_buf) {  delete[] m_buf;  } }
+    ~ByteCollector() { if (m_buf) delete[] m_buf; }
 
     /*
       The bytes argument specifies how many bytes
@@ -139,52 +143,58 @@ public:
         for (BCsize_t i = 0; i < size; i++) m_buf[m_pos_back++] = begin[i];
     }
 
-    // add to the end
+    // Add data to the end
     template <typename T>
-    void push_back(const T& value, const BCsize_t bytes = sizeof(T)) { write((BCbuf_t*)&value, bytes); }
+    void push_back(const T& value, const BCsize_t bytes = sizeof(T)) { write(reinterpret_cast<const BCbuf_t*>(&value), bytes); }
 
 
-    // add to the beginning
+    // Add data to the beginning
     template <typename T>
     void push_front(const T& value, const BCsize_t bytes = sizeof(T))
     {
         if (capacity_front() < bytes) reserve_front(bytes - capacity_front());
 
         m_pos_front -= bytes;
-        BCbuf_t* data_ptr = (BCbuf_t*)&value;
+        BCbuf_t* data_ptr = reinterpret_cast<const BCbuf_t*>(&value);
         for (BCsize_t i = 0; i < bytes; i++) m_buf[m_pos_front + i] = *data_ptr++;
     }
 
-    void insert(const BCbuf_t* ptr, const BCsize_t size, const BCsize_t position)
+
+    // Add data to the end
+    template <typename T>
+    shs::ByteCollector<BCbuf_t, BCsize_t>& operator+=(const T& other)
     {
-        m_capacity += size;
-        BCbuf_t* n_buf = new BCbuf_t[m_capacity];
-
-        BCsize_t i = m_pos_front;
-        for (i; i < position; i++) n_buf[i] = m_buf[i];
-        for (BCsize_t j = 0; j < size; j++) n_buf[i + j] = ptr[j];
-        for (i; i < m_pos_back; i++) n_buf[i + size] = m_buf[i];
-
-        delete[] m_buf;
-        m_buf = n_buf;
-
-        m_pos_back += size;
+        push_back(other);
+        return *this;
     }
 
+
+    // Insert data at the specified position
+    void insert(const BCbuf_t* ptr, const BCsize_t size, const BCsize_t position)
+    {
+        m_shift_right(position, size);
+
+        for (BCsize_t i = 0; i < size; i++) m_buf[position + i] = ptr[i];
+    }
+
+    // Insert data at the specified position
     template <typename T>
-    void insert(const T& value, const BCsize_t size, const BCsize_t position) { insert((const BCbuf_t*)&value, size, position); }
+    void insert(const T& value, const BCsize_t size, const BCsize_t position) { insert(reinterpret_cast<const BCbuf_t*>(&value), size, position); }
 
-    // unpack data
-
+    // Unpack data
     void read(BCbuf_t* begin, const BCsize_t size)
     {
         for (BCsize_t i = 0; i < size; i++) begin[i] = m_buf[m_pos_read++];
     }
 
+    // Unpack data
     template <typename T>
-    void get(T& var, const BCsize_t bytes = sizeof(T)) { read((BCbuf_t*)&var, bytes); }
+    void get(T& var, const BCsize_t bytes = sizeof(T)) { read(reinterpret_cast<BCbuf_t*>(&var), bytes); }
 
-    // reserve bytes for more size
+    // Get the element at the specified index
+    BCbuf_t& operator[](const BCsize_t index) const { return m_buf[index]; }
+
+    // Reserve bytes for more size at the end
     void reserve(const BCsize_t size)
     {
         if (!size) return;
@@ -199,6 +209,7 @@ public:
         m_buf = n_buf;
     }
 
+    // Reserve bytes for more size at the beginning
     void reserve_front(const BCsize_t size)
     {
         if (!size) return;
@@ -221,6 +232,7 @@ public:
     BCsize_t capacity_front() const { return m_pos_front; }
     BCsize_t capacity_back() const { return m_capacity - m_pos_back; }
 
+    // Shrink the capacity to the size of the data
     void shrink_to_fit()
     {
         if (!capacity_back() && !capacity_front()) return;
@@ -237,6 +249,7 @@ public:
         m_pos_front = 0;
     }
 
+    // Shrink the capacity to the size of the read data. The read data will be deleted.
     void shrink_to_read()
     {
         if (m_pos_read == 0) return;
@@ -253,6 +266,7 @@ public:
         m_pos_read = 0;
     }
 
+    // Reset the data, but not clear it (fast reset)
     void reset()
     {
         m_pos_back = 0;
@@ -260,28 +274,42 @@ public:
         m_pos_read = 0;
     }
 
+    // Clear the data (buffer will be initialized with 0)
     void clear()
     {
         for (auto& x : *this) x = 0;
         reset();
     }
 
+    // Get the pointer to the buffer
     BCbuf_t* getPtr() const { return m_buf; }
-    shs::ByteCollectorIterator<BCbuf_t> begin() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_front); }
-    shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_back + 1); }
-    BCsize_t size() const { return m_pos_back - m_pos_front; }
-    BCbuf_t& back() const { return m_buf[m_pos_back]; }
-    bool empty() const { return size() == 0; }
-    BCsize_t readAvailable() const { return m_pos_back - m_pos_read; }
 
-    BCbuf_t& operator[](const BCsize_t index) const { return m_buf[index]; }
+    // Get the iterator to the beginning of the data
+    shs::ByteCollectorIterator<BCbuf_t> begin() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_front); }
+
+    // Get the iterator to the end of the data
+    shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_back + 1); }
+
+    // Get the size of the data
+    BCsize_t size() const { return m_pos_back - m_pos_front; }
+
+    // Get the last element of the data
+    BCbuf_t& back() const { return m_buf[m_pos_back]; }
+
+    // Check if the data is empty
+    bool empty() const { return size() == 0; }
+
+    // Get the size of the data available for reading
+    BCsize_t readAvailable() const { return m_pos_back - m_pos_read; }
 
     BCsize_t getPositionBack() const { return m_pos_back; }
     BCsize_t getPositionFront() const { return m_pos_front; }
     BCsize_t getPositionRead() const { return m_pos_read; }
 
+    // Get the iterator to the beginning of the data available for reading
     shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t> getReadIt(const bool set_begin = false) const { return shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t>(m_buf, m_buf + m_pos_back, set_begin ? m_buf : (m_buf + m_pos_read)); }
 
+    // Set the position of the data at the end
     BCbuf_t setPositionBack(const BCsize_t position)
     {
         if (position > m_capacity) return 0;
@@ -289,6 +317,7 @@ public:
         return 1;
     }
 
+    // Set the position of the data at the front
     BCbuf_t setPositionFront(const BCsize_t position)
     {
         if (position > m_capacity) return 0;
@@ -296,21 +325,13 @@ public:
         return 1;
     }
 
+    // Set the position of the data available for reading
     BCbuf_t setPositionRead(const BCsize_t position)
     {
         if (position > m_capacity) return 0;
         m_pos_read = position;
         return 1;
     }
-
-
-    template <typename T>
-    shs::ByteCollector<BCbuf_t, BCsize_t>& operator+=(const T& other)
-    {
-        push_back(other);
-        return *this;
-    }
-
 
 private:
     BCbuf_t* m_buf{};          // array
@@ -320,4 +341,23 @@ private:
     BCsize_t m_pos_back{};     // current position in back
     BCsize_t m_pos_front{};    // current position in front
     BCsize_t m_pos_read{};     // read position
+
+
+    void m_shift_right(const BCsize_t start_position, const BCsize_t size)
+    {
+        if (start_position > m_pos_back) return;
+        if (size > capacity_back()) reserve(size - capacity_back());
+
+        for (BCsize_t i = m_pos_back; i > position; i--) m_buf[i + size] = m_buf[i];
+        m_pos_back += size;
+    }
+
+    void m_shift_left(const BCsize_t start_position, const BCsize_t size)
+    {
+        if (start_position > m_pos_back) return;
+        if (size < capacity_front()) reserve_front(capacity_front() - size);
+
+        for (BCsize_t i = position; i < m_pos_back; i++) m_buf[i - size] = m_buf[i];
+        m_pos_back -= size;
+    }
 };

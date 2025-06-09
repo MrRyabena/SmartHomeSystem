@@ -24,11 +24,7 @@
            - optimized insert().
 */
 
-/*
-  This is a lightweight class for packing and unpacking data into a byte array.
-  You can specify the number of bytes to be add/get to save memory or align data types.
-  The class is used in data transfer protocols.
-*/
+
 
 #include <stdint.h>
 
@@ -41,11 +37,30 @@ namespace shs
 };
 
 
+/*
+  @class shs::ByteCollector
+  @brief A class for packing and unpacking data into a byte array.
+
+  This class allows adding and retrieving data from a dynamically allocated byte array.
+  You can specify the number of bytes to add or get to save memory or align data types.
+
+  @tparam BCbuf_t The data type used for storing bytes (default is uint8_t).
+  @tparam BCsize_t The data type used for representing size (default is uint8_t).
+
+  @note The class is used in data transfer protocols and supports operations such as adding, inserting, reading, and clearing data.
+
+  @version 2.2.0
+  @date Last updated: v2.2.0
+*/
 template <typename BCbuf_t = uint8_t, typename BCsize_t = uint8_t>
 class shs::ByteCollector
 {
     static_assert(sizeof(BCbuf_t) == 1);
 public:
+    /*
+      @brief Constructs a ByteCollector with a specified size.
+      @param size The initial size of the byte buffer (default is 0).
+    */
     explicit ByteCollector(BCsize_t size = 0) noexcept : m_buf(size ? new BCbuf_t[size]{} : nullptr), m_capacity(size)
     {}
 
@@ -125,28 +140,37 @@ public:
     ~ByteCollector() { if (m_buf) delete[] m_buf; }
 
     /*
-      The bytes argument specifies how many bytes
-      to write from the passed type.
-
-      int value = 1000;       // note: sizeof(int) = 4 bytes
-      bc.add_back(value, 2);  // will add 2 bytes
-      bc.size();              // will return 2, not 4!
-
-      bc.add_back(value);     // will add sizeof(value)
-      bc.size();              // will return 6
-
+      @brief Writes a specified number of bytes from the provided buffer.
+      @param begin Pointer to the buffer containing the data to write.
+      @param size The number of bytes to write.
     */
-
     void write(const BCbuf_t* begin, const BCsize_t size)
     {
         if (capacity_back() < size) reserve(size - capacity_back());
         for (BCsize_t i = 0; i < size; i++) m_buf[m_pos_back++] = begin[i];
     }
 
-    // Add data to the end
+    /*
+      * @brief Adds data to the end of the byte array.
+      * @tparam T The type of the value to add.
+      * @param value The value to add.
+      * @param bytes The number of bytes to add (default is the size of T).
+      * @note The bytes argument specifies how many bytes to write from the passed type.
+      *
+      * @code{.cpp}
+      * int value = 1000;       // note: sizeof(int) = 4 bytes
+      *
+      * bc.add_back(value, 2);  // will add 2 bytes
+      *
+      * bc.size();              // will return 2, not 4!
+      *
+      * bc.add_back(value);     // will add sizeof(value)
+      *
+      * bc.size();              // will return 6
+      * @endcode
+    */
     template <typename T>
     void push_back(const T& value, const BCsize_t bytes = sizeof(T)) { write(reinterpret_cast<const BCbuf_t*>(&value), bytes); }
-
 
     // Add data to the beginning
     template <typename T>
@@ -159,8 +183,12 @@ public:
         for (BCsize_t i = 0; i < bytes; i++) m_buf[m_pos_front + i] = *data_ptr++;
     }
 
-
-    // Add data to the end
+    /*
+      @brief Adds another ByteCollector to this one.
+      @tparam T The type of the other ByteCollector.
+      @param other The ByteCollector to add.
+      @return A reference to this ByteCollector.
+    */
     template <typename T>
     shs::ByteCollector<BCbuf_t, BCsize_t>& operator+=(const T& other)
     {
@@ -168,8 +196,12 @@ public:
         return *this;
     }
 
-
-    // Insert data at the specified position
+    /*
+      @brief Inserts data at a specified position in the byte array.
+      @param ptr Pointer to the buffer containing the data to insert.
+      @param size The number of bytes to insert.
+      @param position The position at which to insert the data.
+    */
     void insert(const BCbuf_t* ptr, const BCsize_t size, const BCsize_t position)
     {
         m_shift_right(position, size);
@@ -177,24 +209,46 @@ public:
         for (BCsize_t i = 0; i < size; i++) m_buf[position + i] = ptr[i];
     }
 
-    // Insert data at the specified position
+    /*
+      @brief Inserts a value at a specified position in the byte array.
+      @tparam T The type of the value to insert.
+      @param value The value to insert.
+      @param size The number of bytes to insert.
+      @param position The position at which to insert the value.
+    */
     template <typename T>
     void insert(const T& value, const BCsize_t size, const BCsize_t position) { insert(reinterpret_cast<const BCbuf_t*>(&value), size, position); }
 
-    // Unpack data
+    /*
+      @brief Reads a specified number of bytes into the provided buffer.
+      @param begin Pointer to the buffer where the data will be read into.
+      @param size The number of bytes to read.
+    */
     void read(BCbuf_t* begin, const BCsize_t size)
     {
         for (BCsize_t i = 0; i < size; i++) begin[i] = m_buf[m_pos_read++];
     }
 
-    // Unpack data
+    /*
+      @brief Retrieves a value from the byte array.
+      @tparam T The type of the variable to retrieve.
+      @param var The variable to store the retrieved value.
+      @param bytes The number of bytes to read (default is the size of T).
+    */
     template <typename T>
     void get(T& var, const BCsize_t bytes = sizeof(T)) { read(reinterpret_cast<BCbuf_t*>(&var), bytes); }
 
-    // Get the element at the specified index
+    /*
+      @brief Accesses the element at a specified index.
+      @param index The index of the element to access.
+      @return A reference to the element at the specified index.
+    */
     BCbuf_t& operator[](const BCsize_t index) const { return m_buf[index]; }
 
-    // Reserve bytes for more size at the end
+    /*
+      @brief Reserves additional bytes at the end of the byte array.
+      @param size The number of bytes to reserve.
+    */
     void reserve(const BCsize_t size)
     {
         if (!size) return;
@@ -209,7 +263,10 @@ public:
         m_buf = n_buf;
     }
 
-    // Reserve bytes for more size at the beginning
+    /*
+      @brief Reserves additional bytes at the beginning of the byte array.
+      @param size The number of bytes to reserve.
+    */
     void reserve_front(const BCsize_t size)
     {
         if (!size) return;
@@ -227,12 +284,27 @@ public:
         m_buf = n_buf;
     }
 
-
+    /*
+      @brief Gets the total capacity of the byte array.
+      @return The total capacity.
+    */
     BCsize_t capacity() const { return m_capacity; }
+
+    /*
+      @brief Gets the available capacity at the front of the byte array.
+      @return The available capacity at the front.
+    */
     BCsize_t capacity_front() const { return m_pos_front; }
+
+    /*
+      @brief Gets the available capacity at the back of the byte array.
+      @return The available capacity at the back.
+    */
     BCsize_t capacity_back() const { return m_capacity - m_pos_back; }
 
-    // Shrink the capacity to the size of the data
+    /*
+      @brief Shrinks the capacity of the byte array to the size of the data.
+    */
     void shrink_to_fit()
     {
         if (!capacity_back() && !capacity_front()) return;
@@ -249,7 +321,10 @@ public:
         m_pos_front = 0;
     }
 
-    // Shrink the capacity to the size of the read data. The read data will be deleted.
+    /*
+      @brief Shrinks the capacity of the byte array to the size of the read data.
+      The read data will be deleted.
+    */
     void shrink_to_read()
     {
         if (m_pos_read == 0) return;
@@ -266,7 +341,9 @@ public:
         m_pos_read = 0;
     }
 
-    // Reset the data, but not clear it (fast reset)
+    /*
+      @brief Resets the data without clearing it (fast reset).
+    */
     void reset()
     {
         m_pos_back = 0;
@@ -274,42 +351,87 @@ public:
         m_pos_read = 0;
     }
 
-    // Clear the data (buffer will be initialized with 0)
+    /*
+      @brief Clears the data (buffer will be initialized with 0).
+    */
     void clear()
     {
         for (auto& x : *this) x = 0;
         reset();
     }
 
-    // Get the pointer to the buffer
+    /*
+      @brief Gets a pointer to the underlying buffer.
+      @return A pointer to the buffer.
+    */
     BCbuf_t* getPtr() const { return m_buf; }
 
-    // Get the iterator to the beginning of the data
+    /*
+      @brief Gets an iterator to the beginning of the data.
+      @return An iterator to the beginning.
+    */
     shs::ByteCollectorIterator<BCbuf_t> begin() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_front); }
 
-    // Get the iterator to the end of the data
+    /*
+      @brief Gets an iterator to the end of the data.
+      @return An iterator to the end.
+    */
     shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_back + 1); }
 
-    // Get the size of the data
+    /*
+      @brief Gets the size of the data.
+      @return The size of the data.
+    */
     BCsize_t size() const { return m_pos_back - m_pos_front; }
 
-    // Get the last element of the data
+    /*
+      @brief Gets the last element of the data.
+      @return A reference to the last element.
+    */
     BCbuf_t& back() const { return m_buf[m_pos_back]; }
 
-    // Check if the data is empty
+    /*
+      @brief Checks if the data is empty.
+      @return True if the data is empty, false otherwise.
+    */
     bool empty() const { return size() == 0; }
 
-    // Get the size of the data available for reading
+    /*
+      @brief Gets the size of the data available for reading.
+      @return The size of the data available for reading.
+    */
     BCsize_t readAvailable() const { return m_pos_back - m_pos_read; }
 
+    /*
+      @brief Gets the current position at the back of the data.
+      @return The current position at the back.
+    */
     BCsize_t getPositionBack() const { return m_pos_back; }
+
+    /*
+      @brief Gets the current position at the front of the data.
+      @return The current position at the front.
+    */
     BCsize_t getPositionFront() const { return m_pos_front; }
+
+    /*
+      @brief Gets the current position for reading the data.
+      @return The current position for reading.
+    */
     BCsize_t getPositionRead() const { return m_pos_read; }
 
-    // Get the iterator to the beginning of the data available for reading
+    /*
+      @brief Gets an iterator to the beginning of the data available for reading.
+      @param set_begin If true, sets the iterator to the beginning.
+      @return An iterator to the beginning of the data available for reading.
+    */
     shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t> getReadIt(const bool set_begin = false) const { return shs::ByteCollectorReadIterator<BCbuf_t, BCsize_t>(m_buf, m_buf + m_pos_back, set_begin ? m_buf : (m_buf + m_pos_read)); }
 
-    // Set the position of the data at the end
+    /*
+      @brief Sets the position at the back of the data.
+      @param position The position to set.
+      @return 1 if successful, 0 if the position is out of bounds.
+    */
     BCbuf_t setPositionBack(const BCsize_t position)
     {
         if (position > m_capacity) return 0;
@@ -317,7 +439,11 @@ public:
         return 1;
     }
 
-    // Set the position of the data at the front
+    /*
+      @brief Sets the position at the front of the data.
+      @param position The position to set.
+      @return 1 if successful, 0 if the position is out of bounds.
+    */
     BCbuf_t setPositionFront(const BCsize_t position)
     {
         if (position > m_capacity) return 0;
@@ -325,7 +451,11 @@ public:
         return 1;
     }
 
-    // Set the position of the data available for reading
+    /*
+      @brief Sets the position for reading the data.
+      @param position The position to set.
+      @return 1 if successful, 0 if the position is out of bounds.
+    */
     BCbuf_t setPositionRead(const BCsize_t position)
     {
         if (position > m_capacity) return 0;

@@ -23,6 +23,8 @@ This file contains the definition of the `shs::ByteCollector` class, which is a 
 ### Template Parameters
 
 `BCbuf_t` — type of the buffer used to store bytes. Default is `uint8_t`.
+> [!IMPORTANT]
+> sizeof(BCbut_t) must be 1 byte.
 
 `BCsize_t`— type used for size representation. Default is `uint8_t`.
 

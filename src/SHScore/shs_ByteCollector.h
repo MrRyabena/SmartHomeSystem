@@ -44,8 +44,8 @@ namespace shs
   This class allows adding and retrieving data from a dynamically allocated byte array.
   You can specify the number of bytes to add or get to save memory or align data types.
 
-  @tparam BCbuf_t The data type used for storing bytes (default is uint8_t).
-  @tparam BCsize_t The data type used for representing size (default is uint8_t).
+  @tparam BCbuf_t the data type used for storing bytes (default is uint8_t). Note: sizeof(BCbuf_t) must be 1 byte.
+  @tparam BCsize_t the data type used for representing size (default is uint8_t).
 
   @note The class is used in data transfer protocols and supports operations such as adding, inserting, reading, and clearing data.
 
@@ -139,6 +139,9 @@ public:
 
     ~ByteCollector() { if (m_buf) delete[] m_buf; }
 
+
+    // ---------------------- Write Operations ---------------------------------
+
     /*
       @brief Writes a specified number of bytes from the provided buffer.
       @param begin Pointer to the buffer containing the data to write.
@@ -150,24 +153,25 @@ public:
         for (BCsize_t i = 0; i < size; i++) m_buf[m_pos_back++] = begin[i];
     }
 
+
     /*
-      * @brief Adds data to the end of the byte array.
-      * @tparam T The type of the value to add.
-      * @param value The value to add.
-      * @param bytes The number of bytes to add (default is the size of T).
-      * @note The bytes argument specifies how many bytes to write from the passed type.
-      *
-      * @code{.cpp}
-      * int value = 1000;       // note: sizeof(int) = 4 bytes
-      *
-      * bc.add_back(value, 2);  // will add 2 bytes
-      *
-      * bc.size();              // will return 2, not 4!
-      *
-      * bc.add_back(value);     // will add sizeof(value)
-      *
-      * bc.size();              // will return 6
-      * @endcode
+      @brief Adds data to the end of the byte array.
+      @tparam T The type of the value to add.
+      @param value The value to add.
+      @param bytes The number of bytes to add (default is the size of T).
+      @note The bytes argument specifies how many bytes to write from the passed type.
+
+      @code
+      int value = 1000;       // note: sizeof(int) = 4 bytes
+
+      bc.push_back(value, 2);  // will add 2 bytes
+
+      bc.size();              // will return 2, not 4!
+
+      bc.push_back(value);     // will add sizeof(value)
+
+      bc.size();              // will return 6
+      @endcode
     */
     template <typename T>
     void push_back(const T& value, const BCsize_t bytes = sizeof(T)) { write(reinterpret_cast<const BCbuf_t*>(&value), bytes); }

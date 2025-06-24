@@ -149,7 +149,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!---------------------------------- v2.1.0 ----------------------------------->
 <details>
-<summary>v2.1.0 — <code><b>[current]</b></code>  The core functionality has been expanded; sensor libraries have been debugged and tested; added a new device <i>ClimateStation</i>.</summary>
+<summary>v2.1.0 — The core functionality has been expanded; sensor libraries have been debugged and tested; added a new device <i>ClimateStation</i>.</summary>
 
 <!-- # SmartHomeSystem v2.1.0 Release Notes -->
 
@@ -180,6 +180,21 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 - Updated logos.
 - Work on the ClimateStation project has been completed.
 
+</details>
+<!----------------------------------------------------------------------------->
+
+<!---------------------------------- v2.2.0 ----------------------------------->
+<details>
+<summary>v2.2.0 — <code><b>[current]</b></code>.</summary>
+
+<!-- # SmartHomeSystem v2.2.0 Release Notes -->
+
+### SHSdocumentation
+
+- **Changes:**
+  - Some corrections in main README.md.
+  - system_creation_guide.md has been rewritten and updated.
+  
 </details>
 
 <!----------------------------------------------------------------------------->

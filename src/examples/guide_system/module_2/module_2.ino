@@ -12,22 +12,22 @@
 shs::LoadSwitchReversed load(LED_BUILTIN);
 
 
-shs::DTP dtp(shs::config::Module_2::MODULE_ID);
+shs::DTP dtp(shs::config::Module_2_load::MODULE_ID);
 shs::TcpServer server(shs::settings::DEFAULT_TCP_PORT, dtp);
-shs::DTPdiscover discover(shs::config::Module_2::MODULE_ID);
+shs::DTPdiscover discover(shs::config::Module_2_load::MODULE_ID);
 
 
 void setup()
 {
-  Serial.begin(115200);
-doutln("");
-  
+    dinit();
+
     doutln(shs::ControlWiFi::connectWiFiWait());
 
     load.setup();
     load.off();
 
-    dtp.attachAPI(std::make_unique<shs::Load_API>(load, shs::t::shs_ID_t(shs::config::Module_2::MODULE_ID, shs::config::Module_2::LOAD)));
+    dtp.attachAPI(std::make_unique<shs::Load_API>(load,
+        shs::t::shs_ID_t(shs::config::Module_2_load::MODULE_ID, shs::config::Module_2_load::LOAD)));
 
     dtp.start();
     server.start();

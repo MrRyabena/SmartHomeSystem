@@ -57,9 +57,9 @@ private:
 
     bool m_checkModuleConnection(const shs::t::shs_ID_t moduleID);
 
-    static constexpr auto THIS_ID = shs::config::Module_3::MODULE_ID;
-    static constexpr auto LOAD_ID = shs::t::shs_ID_t(shs::config::Module_2::MODULE_ID, shs::config::Module_2::LOAD);
-    static constexpr auto SENSOR_ID = shs::t::shs_ID_t(shs::config::Module_1::MODULE_ID, shs::config::Module_1::THERM_SENSOR);
+    static constexpr auto THIS_ID = shs::config::Module_3_gui::MODULE_ID;
+    static constexpr auto LOAD_ID = shs::t::shs_ID_t(shs::config::Module_2_load::MODULE_ID, shs::config::Module_2_load::LOAD);
+    static constexpr auto SENSOR_ID = shs::t::shs_ID_t(shs::config::Module_1_sensor::MODULE_ID, shs::config::Module_1_sensor::THERM_SENSOR);
     static constexpr shs::t::shs_port_t PORT = shs::settings::DEFAULT_TCP_PORT;
 
     shs::DTP m_dtp;

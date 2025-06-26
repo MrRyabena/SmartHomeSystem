@@ -12,4 +12,4 @@ cp -r "../../SHScore" ${MODULE_3_PATH}
 cp -r "../../SHSqt_core" ${MODULE_3_PATH}
 
 mkdir -p "${MODULE_3_PATH}/SHSlogos"
-cp -r "../../../SHSlogos/logo.svg" "${MODULE_3_PATH}/SHSlogos"
+cp -r "../../../SHSlogos/SVG/SHS_logo-mint.svg" "${MODULE_3_PATH}/SHSlogos"

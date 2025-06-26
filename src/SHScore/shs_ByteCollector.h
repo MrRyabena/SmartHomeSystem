@@ -183,7 +183,7 @@ public:
         if (capacity_front() < bytes) reserve_front(bytes - capacity_front());
 
         m_pos_front -= bytes;
-        BCbuf_t* data_ptr = reinterpret_cast<const BCbuf_t*>(&value);
+        auto data_ptr = reinterpret_cast<const BCbuf_t*>(&value);
         for (BCsize_t i = 0; i < bytes; i++) m_buf[m_pos_front + i] = *data_ptr++;
     }
 
@@ -482,7 +482,7 @@ private:
         if (start_position > m_pos_back) return;
         if (size > capacity_back()) reserve(size - capacity_back());
 
-        for (BCsize_t i = m_pos_back; i > position; i--) m_buf[i + size] = m_buf[i];
+        for (BCsize_t i = m_pos_back; i > start_position; i--) m_buf[i + size] = m_buf[i];
         m_pos_back += size;
     }
 
@@ -491,7 +491,7 @@ private:
         if (start_position > m_pos_back) return;
         if (size < capacity_front()) reserve_front(capacity_front() - size);
 
-        for (BCsize_t i = position; i < m_pos_back; i++) m_buf[i - size] = m_buf[i];
+        for (BCsize_t i = start_position; i < m_pos_back; i++) m_buf[i - size] = m_buf[i];
         m_pos_back -= size;
     }
 };

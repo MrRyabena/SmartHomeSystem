@@ -189,6 +189,15 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!-- # SmartHomeSystem v2.2.0 Release Notes -->
 
+### SHScore
+
+- **Changes:**
+  - `shs::ByteCollector`:
+    - optimized.
+    - removed c-style casts.
+    - added private functions `m_shift_right()` and `m_shift_left()`.
+    - optimized `insert()`.
+
 ### SHSdocumentation
 
 - **Changes:**

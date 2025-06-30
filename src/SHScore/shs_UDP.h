@@ -1,18 +1,21 @@
 #pragma once
 
 /*
-  Last update: v2.0.0
+  Last update: v2.2.0
   Versions:
     v2.0.0 — created.
+    v2.2.0 — fixed conditional compilation bug.
 */
 
-#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
 
 #include <stdint.h>
 #include <functional>
 #include <memory>
 
 #include "shs_settings_private.h"
+
+#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
+
 
 #ifdef SHS_SF_ARDUINO
 #include <Arduino.h>

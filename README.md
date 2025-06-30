@@ -197,6 +197,13 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
     - removed c-style casts.
     - added private functions `m_shift_right()` and `m_shift_left()`.
     - optimized `insert()`.
+  - `shs::SensorVirtual`:
+    - Bug fixed: updated according to changes in the shs base class::Sensor.
+  - `shs::UDP`:
+    - Fixed conditional compilation bug.
+- **Bugs:**
+  - `shs::DTP_API`: Critical error found. The error has not been fixed, the use of this class is unsafe!
+  - `shs::TcpSocket`: It has bugs related to shs::DTP_API. Temporary fixes have been made.
 
 ### SHSdocumentation
 

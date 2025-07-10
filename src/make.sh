@@ -37,6 +37,7 @@ elif [[ "$1" == "--ard" || "$1" == "-a" ]]; then
         rm -rf "${dir}SHScore"
         rm -rf "${dir}SHSlibrary"
         rm -rf "${dir}SHStests"
+        rm -rf "${dir}SHSsettings"
 
         cp -r ./SHScore/ "${dir}SHScore/"
         cp -r ./SHStests/source/ "${dir}SHStests/"
@@ -48,6 +49,8 @@ elif [[ "$1" == "--ard" || "$1" == "-a" ]]; then
         for dir_ in "$dir"*/; do
             cp -r "$dir_" "$dir"
         done
+
+        cp -r ./SHSsettings/ "${dir}SHSsettings/"
     done
 elif [[ "$1" == "--oth" || "$1" == "-o" ]]; then
     for dir in "${OTHER_PATHS[@]}"; do

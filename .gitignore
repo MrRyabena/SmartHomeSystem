@@ -47,6 +47,7 @@ build*/
 SHSbuild*
 
 src/libraries_paths.sh
+src/SHSsettings/shs_settings.h
 
 
 # development

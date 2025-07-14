@@ -187,7 +187,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!---------------------------------- v2.2.0 ----------------------------------->
 <details>
-<summary>v2.2.0 — <code><b>[current]</b></code>.</summary>
+<summary>v2.2.0 — <code><b>[current]</b></code> SHScore has been optimized and debugged. Removed deprecated code.</summary>
 
 <!-- # SmartHomeSystem v2.2.0 Release Notes -->
 
@@ -199,7 +199,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
     - removed c-style casts.
     - added private functions `m_shift_right()` and `m_shift_left()`.
     - optimized `insert()`.
-  - `shs::ControlWiFi`: updated, functionality expanded:
+  - `shs::ControlWiFi`: updated, prepared for expansion of functionality:
       - The definition of functions is moved to the implementation file.
   - `shs::SensorVirtual`:
     - Bug fixed: updated according to changes in the shs base class::Sensor.
@@ -208,6 +208,12 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 - **Bugs:**
   - `shs::DTP_API`: Critical error found. The error has not been fixed, the use of this class is unsafe!
   - `shs::TcpSocket`: It has bugs related to shs::DTP_API. Temporary fixes have been made.
+
+### Build:
+- Added shs_settings_template for creating shs_settings.h.
+
+### Examples
+  - Created ControlWiFi-example.
 
 ### SHSdocumentation
 
@@ -220,12 +226,15 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 <!----------------------------------------------------------------------------->
 
 ---
-> [!IMPORTANT]
+> [!NOTE]
 >
-> - Для краткого ознакомления с проектом можно посмотреть [презентацию](pitch/SmartHomeSystem.pdf).
 > - Вся документация переехала в папку [SHSdocumentation](SHSdocumentation/). Единая статья из v1.X.X разделена на тематические файлы и папки и дополнена.
 > - У **_SmartHomeSystem_** есть [блог разработки](https://t.me/SmartHomeSystem_dev), там можно наблюдать за развитием проекта.
 > - Пример создания автоматизированной системы, используя фреймворк SmartHomeSystem можно посмотреть в [system_creation_guide](/SHSdocumentation/Usage/system_creation_guide.md).
+
+> [!IMPORTANT]
+> Готовится релиз v2.2.0
+> Планируемая дата релиза: 18.07.2025
 
 ---
 
@@ -244,23 +253,20 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 - [awards](./awards/) — награды проекта (дипломы, документы, фотографии).
 - [SHSdocumentation](SHSdocumentation/) — документация к проекту.
   - [Code](SHSdocumentation/Code/) — документация к программному коду.
-  - [Hardware](SHSdocumentation/Hardware/) — документация к компонентам, микроконтроллерам, техническим устройствам.
+  - [Hardware](SHSdocumentation/Hardware/) — рекомендации по подбору компонентной базы (датчики, микроконтроллеры, технические устройства).
   - [ProjectOverview](SHSdocumentation/ProjectOverview/) — обзор проекта, особенности разработки, методы и подходы.
   - [Usage](SHSdocumentation/Usage/) — руководства по сборке библиотек и использованию Smart HomeSystem, информация для пользователей и разработчиков.
-- [libraries](libraries/) — сторонние библиотеки, используемые в проекте.
 - [pitch](pitch/) — презентации проекта и вспомогательные файлы.
 - [schemes](schemes/) — картинки, схемы, чертежи...
 - [SHSlogos](SHSlogos/) — логотипы и символика проекта.
 - [src](src/) — исходный код.
-  - [debugging_sketches](src/debugging_sketches/) — наброски отладочных прошивок.
   - [examples](src/examples/) — примеры использования программного кода.
   - [SHSapp](src/SHSapp/) — разработки графических приложений.
   - [SHScore](src/SHScore/) — ядро (бизнес-логика), основная разработка.
-  - [SHSdevice](src/SHSdevice/) — устройства, которые можно добавлять в модули системы.
   - [SHSlibrary](src/SHSlibrary/) — основанная на ядре библиотека с инструментами, интерфейсами датчиков и нагрузок, вычислительными алгоритмами.
-  - [SmartModules](src/SmartModules/) — [beta] устройства и модули.
-  - [SmartModulesAPI](src/SmartModulesAPI/) — [beta] команды устройств и модулей.
   - [make.sh](src/make.sh) — Shell-скрипт для сборки всех исходников проекта (см. документацию по использованию: [build_manual](./SHSdocumentation/Usage/build_manual.md)).
+  > [!WARNING]
+  > Файл make.sh является shell-скриптом и не имеет отношения к системе сборки `make`. Чтобы не вводить пользователей в заблуждение в последующих обновлениях подобные файлы будут переименованы. 
 
 ## Краткий обзор
 
@@ -315,7 +321,8 @@ SHSlibrary содержит набор библиотек для работы с
 
 Инструкции по сборке проекта находятся в папке документации ([SHSdocumentation](/SHSdocumentation/)) в разделе [Usage](/SHSdocumentation/Usage/). Там же есть гайд по созданию систем, используя фреймворк **_SmartHomeSystem_**.
 
-Рекомендуется внимательно ознакомиться со всей [документацией](/SHSdocumentation/). В её папке в соответствующем [README](/SHSdocumentation/README.md) описан порядок чтения разделов документации.
+> [!TIP]
+> Рекомендуется внимательно ознакомиться со всей [документацией](/SHSdocumentation/). В её папке в соответствующем [README](/SHSdocumentation/README.md) описан порядок чтения разделов документации.
 
 ### Сферы применения
 

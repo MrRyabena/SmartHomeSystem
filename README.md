@@ -180,6 +180,8 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 - Updated logos.
 - Work on the ClimateStation project has been completed.
 
+![SHScore-changes-v2_1_0.png](./schemes/SHScore-changes/SHScore-changes-v2_1_0.png)
+
 </details>
 <!----------------------------------------------------------------------------->
 
@@ -197,6 +199,8 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
     - removed c-style casts.
     - added private functions `m_shift_right()` and `m_shift_left()`.
     - optimized `insert()`.
+  - `shs::ControlWiFi`: updated, functionality expanded:
+      - The definition of functions is moved to the implementation file.
   - `shs::SensorVirtual`:
     - Bug fixed: updated according to changes in the shs base class::Sensor.
   - `shs::UDP`:
@@ -219,7 +223,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 > [!IMPORTANT]
 >
 > - Для краткого ознакомления с проектом можно посмотреть [презентацию](pitch/SmartHomeSystem.pdf).
-> - Вся документация переехала в папку [SHSdocumentation](SHSdocumentation/). Единая статья из прошлого релиза разделена на тематические файлы и папки и дополнена.
+> - Вся документация переехала в папку [SHSdocumentation](SHSdocumentation/). Единая статья из v1.X.X разделена на тематические файлы и папки и дополнена.
 > - У **_SmartHomeSystem_** есть [блог разработки](https://t.me/SmartHomeSystem_dev), там можно наблюдать за развитием проекта.
 > - Пример создания автоматизированной системы, используя фреймворк SmartHomeSystem можно посмотреть в [system_creation_guide](/SHSdocumentation/Usage/system_creation_guide.md).
 

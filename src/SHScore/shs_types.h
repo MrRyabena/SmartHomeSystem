@@ -37,7 +37,7 @@ namespace shs
 {
     namespace t
     {
-    #ifndef USE_FLOAT_FOR_DOUBLE
+    #ifndef SHS_SF_USE_FLOAT_FOR_DOUBLE
         using shs_double_t = double;
     #else
         using shs_double_t = float;

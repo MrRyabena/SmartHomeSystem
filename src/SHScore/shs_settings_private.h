@@ -9,8 +9,16 @@
     v2.1.0 — added pragma message to debug flag.
 */
 
-#if __has_include(<shs_sets.h>)
-#include <shs_sets.h>
+#pragma message "shs_settings_private"
+
+
+#include "shs_settings.h"
+#define SHS_SF_SETTINGS
+
+#ifdef USE_FLOAT_FOR_DOUBLE
+#define SHS_SF_USE_FLOAT_FOR_DOUBLE
+#pragma message "Used float for double."
+#undef USE_FLOAT_FOR_DOUBLE
 #endif
 
 #include <stdint.h>
@@ -46,7 +54,6 @@
 #pragma message "Defined debug!"
 #endif
 
-#include "shs_types.h"
 
 namespace shs
 {
@@ -78,16 +85,23 @@ namespace shs
     #undef SHS_SET_DEFAULT_MULTICAST_IP
     #undef SHS_SET_DEFAULT_BROADCAST_IP
 
-    // #ifdef SHS_SET_WIFI_SSID
-    // #define SHS_WIFI_SSID
-    // 		constexpr auto WIFI_SSID = ;
-	// 	constexpr auto WIFI_PASSWORD = ;
+    #ifdef SHS_SET_WIFI_SSID
+        constexpr auto WIFI_SSID = SHS_SET_WIFI_SSID;
+    #else 
+        constexpr auto WIFI_SSID = "";
+    #endif
+
+    #ifdef SHS_SET_WIFI_PASSWORD
+        constexpr auto WIFI_PASSWORD = SHS_SET_WIFI_PASSWORD;
+    #else
+        constexpr auto WIFI_PASSWORD = "";
+    #endif
 
     #ifndef SHS_SET_GMT
     #define SHS_SET_GMT 0
     #endif
         constexpr auto GMT = SHS_SET_GMT;
-   
+
 
     }
 }

@@ -6,9 +6,9 @@
 #include <shs_types.h>
 
 
-#define _shs_Project_VERSION_    "v2.1.0"
-#define _shs_SHScore_VERSION_    "v2.1.0"
-#define _shs_SHSlibrary_VERSION_ "v2.1.0"
+#define _shs_Project_VERSION_    "v2.2.0"
+#define _shs_SHScore_VERSION_    "v2.2.0"
+#define _shs_SHSlibrary_VERSION_ "v2.2.0"
 
 #pragma message "\n" \
 "Current Project version is:    " _shs_Project_VERSION_ "\n" \
@@ -171,6 +171,8 @@ namespace shs
          * - v2.0.0 — Upcoming version.
          *
          * - v2.1.0 — The core components have been updated. Libraries for working with sensors have been fixed and tested.
+         *
+         * - v2.2.0 — SHScore has been optimized and debugged. Deprecated code has been removed. Documentation has been updated.
         */
         constexpr shs::version::Version project = _shs_Project_VERSION_;
         constexpr shs::version::Version core = _shs_SHScore_VERSION_;

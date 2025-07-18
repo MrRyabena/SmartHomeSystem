@@ -56,11 +56,11 @@
 <details>
 <summary>v1.2.0 — intermediate version.</summary>
 
-- A file system has been developed [beta]:
+- A file system has been developed `[beta]`:
   - shs::FSAbstract and shs::FileAbstract — interface classes.
   - shs::FS — file system class.
   - shs::File — file class.
-  - shs::SHSF — [beta] Smart Home System File (.shsf). It has errors now.</br>
+  - shs::SHSF — `[beta]` Smart Home System File (.shsf). It has errors now.</br>
     _*note: The File System is poorly tested and isn't fully developed.*_
 - Developed a new ID-type SHSID.
 - Added SHSversion.h.
@@ -187,7 +187,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!---------------------------------- v2.2.0 ----------------------------------->
 <details>
-<summary>v2.2.0 — <code><b>[current]</b></code> SHScore has been optimized and debugged. Removed deprecated code.</summary>
+<summary>v2.2.0 — <code><b>[current]</b></code> SHScore has been optimized and debugged. Deprecated code has been removed. Documentation has been updated.</summary>
 
 <!-- # SmartHomeSystem v2.2.0 Release Notes -->
 
@@ -204,11 +204,17 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
       - The definition of functions is moved to the implementation file.
   - `shs::SensorVirtual`:
     - Bug fixed: updated according to changes in the base class   `shs::Sensor`.
+  - `shs::SensorAnalog`:
+    - Fixed a bug in function getCacheExpiration().
   - `shs::UDP`:
     - Fixed conditional compilation bug.
+  - `shs::types`:
+    - Correct work with `shs_settings.h`.
 - **Bugs:**
   - `shs::DTP_API`: **`[from v2.1.0]`** Critical error found. The error has not been fixed, the use of this class is unsafe!
   - `shs::TcpSocket`: **`[from v2.1.0]`** It has bugs related to shs::DTP_API. Temporary fixes have been made.
+
+![SHScore-changes-v2_2_0](schemes/SHScore-changes/SHScore-changes-v2_2_0.png)
 
 ### Build:
 - Added shs_settings_template for creating shs_settings.h.
@@ -232,16 +238,12 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 >
 > - Вся документация переехала в папку [SHSdocumentation](SHSdocumentation/). Единая статья из `v1.X.X` разделена на тематические файлы и папки и дополнена.
 > - У **_SmartHomeSystem_** есть [блог разработки](https://t.me/SmartHomeSystem_dev), там можно наблюдать за развитием проекта.
-> - Пример создания автоматизированной системы, используя фреймворк SmartHomeSystem можно посмотреть в [system_creation_guide](/SHSdocumentation/Usage/system_creation_guide.md).
+> - Пример создания автоматизированной системы, используя фреймворк **_SmartHomeSystem_** можно посмотреть в [system_creation_guide](/SHSdocumentation/Usage/system_creation_guide.md).
 
 > [!IMPORTANT]
 > 
 > На основе ядра и библиотек **_SmartHomeSystem_** разработано несколько устройств, которые тоже относятся к проекту, но для удобства их разработка ведется в отдельных репозиториях. В разделе [SmartHomeSystem Projects](#smarthomesystem-projects) можно кратко ознакомиться с устройствами и посетить соответствующие репозитории.
->
-> </br>
-> Готовится релиз v2.2.0
->
-> Планируемая дата релиза: 18.07.2025
+
 
 ---
 
@@ -275,7 +277,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 - [SHSlogos](SHSlogos/) — логотипы и символика проекта.
 - [src](src/) — исходный код.
   - [examples](src/examples/) — примеры использования программного кода.
-  - [SHSapp](src/SHSapp/) — разработки графических приложений.
+  - [SHSapp](src/SHSapp%20[beta]) — разработки графических приложений.
   - [SHScore](src/SHScore/) — ядро (бизнес-логика), основная разработка.
   - [SHSlibrary](src/SHSlibrary/) — основанная на ядре библиотека с инструментами, интерфейсами датчиков и нагрузок, вычислительными алгоритмами.
   - [make.sh](src/make.sh) — Shell-скрипт для сборки всех исходников проекта (см. документацию по использованию: [build_manual](./SHSdocumentation/Usage/build_manual.md)).

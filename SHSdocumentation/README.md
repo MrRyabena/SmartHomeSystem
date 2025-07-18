@@ -8,11 +8,13 @@
 
 ## Порядок изучения документации
 
-1. Для знакомства с проектом рекомендуется ознакомиться с актуальным обзором [SmartHomeSystem_conference_report.docx](./docs/SmartHomeSystem_conference_report.docx). Он содержит наиболее полную информацию (т.к. часть файлов в [ProjectOverview](./ProjectOverview/) является устаревшей (`[deprecated]`)).
+1. Для знакомства с проектом рекомендуется посмотреть актуальный обзор [SmartHomeSystem_conference_report.docx](./docs/SmartHomeSystem_conference_report.docx). Он содержит наиболее полную информацию (т.к. часть файлов в [ProjectOverview](./ProjectOverview/) является устаревшей (`[deprecated]`)).
 
-2. Далее, для установки сборки кода следует изучить [Usage/build_manual.md](./Usage/build_manual.md).
+2. Далее, для установки и сборки кода следует изучить [Usage/build_manual.md](./Usage/build_manual.md).
 
-3. После этого, можно приступать к использованию инструментов **_SmartHomeSystem_** для создания систем автоматизации или собственных проектов, сверяясь с [документацией к программному ядру](./Code/SHScore_doc/).
+3. Рядом с build_manual сразу можно ознакомиться с руководством по созданию автоматизированной системы, используя фреймворк **_SmartHomeSystem_** — [Usage/system_creation_guide.md](Usage/system_creation_guide.md).
+
+4. После этого, можно приступать к использованию инструментов **_SmartHomeSystem_** для создания систем автоматизации или собственных проектов, сверяясь с [документацией к программному ядру](./Code/SHScore_doc/).
 
 > [!NOTE]
 > Элементы SHSlibrary не задокументированы, однако основываются на базовых классах из SHScore, поэтому их поведение соответствует документации ядра.

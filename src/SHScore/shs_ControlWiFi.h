@@ -22,8 +22,6 @@
 #include "shs_ID.h"
 #include "shs_types.h"
 
-#include <shs_settings.h>
-
 
 namespace shs
 {

@@ -13,6 +13,7 @@
       - Added error status.
       - Support for multiple metrics.
     v2.1.0 — updated according to the changes in the base class.
+    v2.2.0 — fixed a bug in function getCacheExpiration().
 */
 
 
@@ -64,7 +65,7 @@ public:
 
     void clearCache() override {}
     void setCacheExpiration(const uint32_t expiration_time) override {}
-    uint32_t getCacheExpiration() const override {}
+    uint32_t getCacheExpiration() const override { return 0; }
 
     [[nodiscard]] int32_t              getValueI(const uint8_t metric = 0) override { return m_value; }
     [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) override { return m_value; }

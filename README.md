@@ -249,9 +249,14 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 - [Структура репозитория](#структура-репозитория)
 - [Краткий обзор](#краткий-обзор)
-
+  - [В проект <b><i>SmartHomeSystem</b></i> входят](#в-проект-smarthomesystem-входят)
+    - [SHScore](#shscore)
+    - [SHSlibrary](#shslibrary)
+  - [Сборка, использование, документация](#сборка-использование-документация)
+  - [Сферы применения](#сферы-применения)
 - [SmartHomeSystem Projects](#smarthomesystem-projects)
-- [Награды проекта](#награды-проекта)
+- [Достижения проекта](#достижения-проекта)
+- [Источники информации и литература](#источники-информации-и-литература)
 - [Благодарности](#багодарности)
 - [Contacts](#contacts)
 
@@ -370,7 +375,7 @@ SHSlibrary содержит набор библиотек для работы с
 
 - [SmartBank](https://github.com/MrRyabena/SmartBank) — умная копилка, которая станет уникальным украшением в интерьере. Была создана во время хакатона "Умный Петербург 2025", по результатам которого заняла 1 место.**SmartBank** умеет распознавать номиналы монет, подсчитывать сумму, собирать статистику и выводить данные на экране и в Telegram чате. Устройство создано на основе ядра **_SmartHomeSystem_** для работы standalone или интеграции в системы умного дома.
   
-  <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/logo.png" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/SB_2.jpg" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/3D_3.jpg" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/SB_4.jpg" alt="SmartBank_photo" height="200"/> 
+  <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/logo.png" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/SB_2.jpg" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/3D_3.png" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/SB_4.jpg" alt="SmartBank_photo" height="200"/> 
 
 ## Достижения проекта
 

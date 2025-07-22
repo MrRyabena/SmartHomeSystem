@@ -187,7 +187,15 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!---------------------------------- v2.2.0 ----------------------------------->
 <details>
-<summary>v2.2.0 — <code><b>[current]</b></code> SHScore has been optimized and debugged. Deprecated code has been removed. Documentation has been updated.</summary>
+<summary>v2.2.X — <code><b>[current]</b></code> SHScore has been optimized and debugged. Deprecated code has been removed. Documentation has been updated.</summary>
+
+### Patches:
+- **v2.2.0** — basic.
+- **v2.2.1** — **`[current]`** 
+  - Fixed critical bug in `examples/guide_system/make.sh`.
+  - Updated `make.sh` for copy shs_settings.h in qt-build.
+  - Added about the settings file and dependencies in `build_manual.md`.
+  - Removed deprecated shell-script.
 
 <!-- # SmartHomeSystem v2.2.0 Release Notes -->
 
@@ -280,6 +288,8 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
   - [SHSapp](src/SHSapp%20[beta]) — разработки графических приложений.
   - [SHScore](src/SHScore/) — ядро (бизнес-логика), основная разработка.
   - [SHSlibrary](src/SHSlibrary/) — основанная на ядре библиотека с инструментами, интерфейсами датчиков и нагрузок, вычислительными алгоритмами.
+  - [SHSqt_core](src/SHSqt_core/) — ядро для фреймворка Qt.
+  - [SHSsettings](src/SHSsettings) — настройки компиляции исходников.
   - [make.sh](src/make.sh) — Shell-скрипт для сборки всех исходников проекта (см. документацию по использованию: [build_manual](./SHSdocumentation/Usage/build_manual.md)).
 > [!WARNING]
 > Файл make.sh является shell-скриптом и не имеет отношения к системе сборки `make`. Чтобы не вводить пользователей в заблуждение в последующих обновлениях подобные файлы будут переименованы. 
@@ -306,7 +316,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
   - Принципиальные электрические схемы для сборки
   - Гербер-файлы печатных плат
   - 3D-модели корпусов
-  - Дополнительная информатция по алгоритмам сборки и настройки
+  - Дополнительная информация по алгоритмам сборки и настройки
 - **Документация**
   - Рекомендации по разработке аппаратной части
   - Документация к коду ([SHSdocumentation/Code](/SHSdocumentation/Code/))

@@ -30,6 +30,8 @@ elif [[ "$1" == "--qt" || "$1" == "-q" ]]; then
 
         cp -r ./SHScore "$dir/SHScore"
         cp -r ./SHSqt_core "$dir/SHSqt_core"
+        cp -r ./SHSsettings/shs_settings.h "$dir/SHScore"
+        
     done
 elif [[ "$1" == "--ard" || "$1" == "-a" ]]; then
     for dir in "${ARDUINO_PATHS[@]}"; do

@@ -6,9 +6,9 @@
 #include <shs_types.h>
 
 
-#define _shs_Project_VERSION_    "v2.2.0"
-#define _shs_SHScore_VERSION_    "v2.2.0"
-#define _shs_SHSlibrary_VERSION_ "v2.2.0"
+#define _shs_Project_VERSION_    "v2.2.1"
+#define _shs_SHScore_VERSION_    "v2.2.1"
+#define _shs_SHSlibrary_VERSION_ "v2.2.1"
 
 #pragma message "\n" \
 "Current Project version is:    " _shs_Project_VERSION_ "\n" \

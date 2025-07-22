@@ -1,16 +1,11 @@
-# Last update: v2.0.0
-# Versions:
-#   v1.1.0 — created
-#   v2.0.0 — completed and tested
-
 
 cmake_minimum_required(VERSION 3.27)
-project(SHScore VERSION 2.0.0 LANGUAGES CXX C)
+
+project(SHScore VERSION 2.2.1 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-#set(CMAKE_C_COMPILER "gcc-13.2.0")
-#set(CMAKE_MODULE_PATH ${SHScore_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+
 
 set(SOURCES
     shs_Load
@@ -99,6 +94,3 @@ endif()
 
 
 target_compile_features(SHScore PRIVATE cxx_std_14)
-
-#set_target_properties (SHScore PROPERTIES COMPILE_FLAGS -m64 LINK_FLAGS -m64)
-#target_compile_options(SHScore PRIVATE -Wall -pedantic -O0)

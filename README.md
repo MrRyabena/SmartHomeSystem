@@ -241,6 +241,20 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!----------------------------------------------------------------------------->
 
+<!---------------------------------- v2.3.0 ----------------------------------->
+<details>
+<summary>v2.3.X — <code><b>[current]</b></code> New features.</summary>
+
+### SHScore
+
+- **New functional:**
+  - `shs::LinearApproximation`: A class for linear approximation using the least squares method.
+- **Changes:**
+
+</details>
+<!----------------------------------------------------------------------------->
+
+
 ---
 > [!NOTE]
 >

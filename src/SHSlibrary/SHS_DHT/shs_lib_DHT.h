@@ -46,7 +46,7 @@ public:
     uint32_t getCacheExpiration() const override { return m_data.getExpiration(); }
 
     [[nodiscard]] int32_t              getValueI(const uint8_t metric = 0)  override { return getValueF(metric); }
-    [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) override { return getValueF(metric); }
+    [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) override { return static_cast<shs::t::shs_fixed_t>(getValueF(metric)); }
     [[nodiscard]] shs::t::shs_float_t  getValueF(const uint8_t metric = 0)  override;
     [[nodiscard]] shs::t::shs_double_t getValueD(const uint8_t metric = 0)  override { return getValueF(metric); }
 

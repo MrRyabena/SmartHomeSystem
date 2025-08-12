@@ -41,7 +41,7 @@ public:
 
 
     [[nodiscard]] int32_t              getValueI(const uint8_t metric = shs::etoi(Metrics::PPM))  override { return metric ? m_data->co2 : m_data->temperature; }
-    [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = shs::etoi(Metrics::PPM)) override { return getValueI(metric); }
+    [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = shs::etoi(Metrics::PPM)) override { return static_cast<shs::t::shs_fixed_t>(getValueI(metric)); }
     [[nodiscard]] shs::t::shs_float_t  getValueF(const uint8_t metric = shs::etoi(Metrics::PPM))  override { return getValueI(metric); }
     [[nodiscard]] shs::t::shs_double_t getValueD(const uint8_t metric = shs::etoi(Metrics::PPM))  override { return getValueI(metric); }
 

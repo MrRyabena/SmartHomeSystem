@@ -37,29 +37,29 @@ namespace shs
 };
 
 
-/*
-  @class shs::ByteCollector
-  @brief A class for packing and unpacking data into a byte array.
+/**
+ * @class shs::ByteCollector
+ * @brief A class for packing and unpacking data into a byte array.
+ *
+ * This class allows adding and retrieving data from a dynamically allocated byte array.
+ * You can specify the number of bytes to add or get to save memory or align data types.
+ *
+ * @tparam BCbuf_t the data type used for storing bytes (default is uint8_t). Note: sizeof(BCbuf_t) must be 1 byte.
+ * @tparam BCsize_t the data type used for representing size (default is uint8_t).
+ *
+ * @note The class is used in data transfer protocols and supports operations such as adding, inserting, reading, and clearing data.
 
-  This class allows adding and retrieving data from a dynamically allocated byte array.
-  You can specify the number of bytes to add or get to save memory or align data types.
-
-  @tparam BCbuf_t the data type used for storing bytes (default is uint8_t). Note: sizeof(BCbuf_t) must be 1 byte.
-  @tparam BCsize_t the data type used for representing size (default is uint8_t).
-
-  @note The class is used in data transfer protocols and supports operations such as adding, inserting, reading, and clearing data.
-
-  @version 2.2.0
-  @date Last updated: v2.2.0
+ * @version 2.2.0
+ * @date Last updated: v2.2.0
 */
 template <typename BCbuf_t = uint8_t, typename BCsize_t = uint8_t>
 class shs::ByteCollector
 {
     static_assert(sizeof(BCbuf_t) == 1);
 public:
-    /*
-      @brief Constructs a ByteCollector with a specified size.
-      @param size The initial size of the byte buffer (default is 0).
+    /**
+     * @brief Constructs a ByteCollector with a specified size.
+     * @param size The initial size of the byte buffer (default is 0).
     */
     explicit ByteCollector(BCsize_t size = 0) noexcept : m_buf(size ? new BCbuf_t[size]{} : nullptr), m_capacity(size)
     {}
@@ -142,7 +142,7 @@ public:
 
     // ---------------------- Write Operations ---------------------------------
 
-    /*
+    /**
       @brief Writes a specified number of bytes from the provided buffer.
       @param begin Pointer to the buffer containing the data to write.
       @param size The number of bytes to write.
@@ -154,7 +154,7 @@ public:
     }
 
 
-    /*
+    /**
       @brief Adds data to the end of the byte array.
       @tparam T The type of the value to add.
       @param value The value to add.
@@ -187,7 +187,7 @@ public:
         for (BCsize_t i = 0; i < bytes; i++) m_buf[m_pos_front + i] = *data_ptr++;
     }
 
-    /*
+    /**
       @brief Adds another ByteCollector to this one.
       @tparam T The type of the other ByteCollector.
       @param other The ByteCollector to add.
@@ -234,10 +234,10 @@ public:
     }
 
     /*
-      @brief Retrieves a value from the byte array.
-      @tparam T The type of the variable to retrieve.
-      @param var The variable to store the retrieved value.
-      @param bytes The number of bytes to read (default is the size of T).
+     * @brief Retrieves a value from the byte array.
+     * @tparam T The type of the variable to retrieve.
+     * @param var The variable to store the retrieved value.
+     * @param bytes The number of bytes to read (default is the size of T).
     */
     template <typename T>
     void get(T& var, const BCsize_t bytes = sizeof(T)) { read(reinterpret_cast<BCbuf_t*>(&var), bytes); }

@@ -12,7 +12,7 @@
 #pragma message "shs_settings_private"
 
 
-#include "shs_settings.h"
+#include <shs_settings.h>
 #define SHS_SF_SETTINGS
 
 #ifdef USE_FLOAT_FOR_DOUBLE

@@ -26,7 +26,7 @@ public:
     enum class Status : uint8_t { OK, FAILED_READ, CACHE_ERROR, NO_DATA };
 
 
-    explicit DHT(const uint8_t pin, const DHTtype dht_type, const uint32_t cache_expiration_time = 10000)
+    explicit DHT(const uint8_t pin, const DHTtype dht_type, const uint32_t cache_expiration_time = 2000)
         :
         Sensor(static_cast<shs::Sensor::Type>(shs::lib::SensorTypes::DHT)),
         m_dht(pin, static_cast<uint8_t>(dht_type)), m_data(cache_expiration_time)

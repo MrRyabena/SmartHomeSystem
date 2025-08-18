@@ -14,6 +14,9 @@
 
 #include <shs_settings.h>
 #define SHS_SF_SETTINGS
+#ifdef SHS_SET_WIFI_CONFIGS
+#define SHS_SF_WIFI_CONFIGS
+#endif
 
 #ifdef USE_FLOAT_FOR_DOUBLE
 #define SHS_SF_USE_FLOAT_FOR_DOUBLE

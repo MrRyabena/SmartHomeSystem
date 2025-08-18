@@ -28,6 +28,19 @@ bool shs::ControlWiFi::connectWiFiWait(const size_t time, const char* ssid, cons
     return true;
 }
 
+void shs::ControlWiFi::connectWiFiMulti(const shs::WiFiConfig* configs, const uint8_t size)
+{
+    #ifdef SHS_SF_ESP8266
+    ESP8266WiFiMulti wifiMulti;
+    #elif defined(SHS_SF_ESP32)
+    WiFiMulti wifiMulti;
+    #endif
+    for (auto i = 0; i < size; i++)
+        wifiMulti.addAP(configs[i].ssid, configs[i].pass);
+    
+    wifiMulti.run();
+}
+
 
 void shs::ControlWiFi::configureWiFi(const char* ssid, const char* pass)
 {

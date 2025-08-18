@@ -3,7 +3,7 @@
 
 void shs::DHT::update()
 {
-    if (!m_data.hasData() || m_data.isExpired()) updateForced();
+    if (m_data.isExpired()) updateForced();
 }
 
 

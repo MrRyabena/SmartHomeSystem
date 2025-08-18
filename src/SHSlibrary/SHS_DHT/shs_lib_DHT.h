@@ -26,7 +26,7 @@ public:
     enum class Status : uint8_t { OK, FAILED_READ, CACHE_ERROR, NO_DATA };
 
 
-    explicit DHT(const uint8_t pin, const DHTtype dht_type, const uint32_t cache_expiration_time = 10000)
+    explicit DHT(const uint8_t pin, const DHTtype dht_type, const uint32_t cache_expiration_time = 2000)
         :
         Sensor(static_cast<shs::Sensor::Type>(shs::lib::SensorTypes::DHT)),
         m_dht(pin, static_cast<uint8_t>(dht_type)), m_data(cache_expiration_time)
@@ -46,7 +46,7 @@ public:
     uint32_t getCacheExpiration() const override { return m_data.getExpiration(); }
 
     [[nodiscard]] int32_t              getValueI(const uint8_t metric = 0)  override { return getValueF(metric); }
-    [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) override { return getValueF(metric); }
+    [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) override { return static_cast<shs::t::shs_fixed_t>(getValueF(metric)); }
     [[nodiscard]] shs::t::shs_float_t  getValueF(const uint8_t metric = 0)  override;
     [[nodiscard]] shs::t::shs_double_t getValueD(const uint8_t metric = 0)  override { return getValueF(metric); }
 

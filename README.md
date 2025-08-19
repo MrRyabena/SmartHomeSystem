@@ -191,11 +191,19 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 ### Patches:
 - **v2.2.0** — basic.
-- **v2.2.1** — **`[current]`** 
+- **v2.2.1** — fixed bugs in examples and build.
   - Fixed critical bug in `examples/guide_system/make.sh`.
   - Updated `make.sh` for copy shs_settings.h in qt-build.
   - Added about the settings file and dependencies in `build_manual.md`.
   - Removed deprecated shell-script.
+- **v2.2.2** — **`[current]`** fixed bugs in sensors libraries.
+  - Fixed a critical bug: added cast to shs_fixed_t:
+    - `SHS_DHT`
+    - `SHS_MHZ19`
+  - `SHS_BME280`: replaced c-style cast.
+  - `SHS_DHT`: changed default expiration time.
+  - `SHS_DS18`: fixed a critical bug, tested, added default expiration_time in constructor.
+
 
 <!-- # SmartHomeSystem v2.2.0 Release Notes -->
 

@@ -5,6 +5,7 @@
   Versions:
     v2.0.0 — development started.
     v2.1.0 — completed, but need testing.
+    v2.2.2 — fixed a critical bug, tested, added default expiration_time in constructor.
 */
 
 #include <GyverDS18.h>                 // https://github.com/GyverLibs/GyverDS18
@@ -32,7 +33,7 @@ public:
     enum class Status { OK, FAILED_READ, CACHE_ERROR, UPDATING };
     enum class Metrics { TEMPERATURE };
 
-    explicit DS18(shs::t::shs_pin_t pin, bool parasite = false);
+    explicit DS18(shs::t::shs_pin_t pin, bool parasite = true, uint32_t cache_expiration = 5000);
     ~DS18() override = default;
 
 
@@ -54,7 +55,7 @@ public:
     [[nodiscard]] int32_t              getValueI(const uint8_t metric = 0) override { return static_cast<int32_t>(getValueF()); }
     [[nodiscard]] shs::t::shs_fixed_t  getValueFx(const uint8_t metric = 0) override { return static_cast<shs::t::shs_fixed_t>(getValueF()); }
     [[nodiscard]] shs::t::shs_float_t  getValueF(const uint8_t metric = 0) override;
-    [[nodiscard]] shs::t::shs_double_t getValueD(const uint8_t metric = 0) override { return static_cast<shs::t::shs_double_t>(getValueD()); }
+    [[nodiscard]] shs::t::shs_double_t getValueD(const uint8_t metric = 0) override { return static_cast<shs::t::shs_double_t>(getValueF()); }
 
 protected:
     shs::TimedData<shs::t::shs_float_t> m_data;

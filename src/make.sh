@@ -38,11 +38,11 @@ elif [[ "$1" == "--ard" || "$1" == "-a" ]]; then
 
         rm -rf "${dir}SHScore"
         rm -rf "${dir}SHSlibrary"
-        rm -rf "${dir}SHStests"
+        # rm -rf "${dir}SHStests"
         rm -rf "${dir}SHSsettings"
 
         cp -r ./SHScore/ "${dir}SHScore/"
-        cp -r ./SHStests/source/ "${dir}SHStests/"
+        # cp -r ./SHStests/source/ "${dir}SHStests/"
 
         for lib in ./SHSlibrary/*/; do
             cp -r "$lib" "${dir}"

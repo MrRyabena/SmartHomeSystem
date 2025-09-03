@@ -1,7 +1,7 @@
 #pragma once
 
 #include <streambuf>
-#include <iostream>
+// #include <iostream>
 
 
 #include <Stream.h>
@@ -15,7 +15,7 @@ namespace shs
 
     using AStreamBuf = Basic_AStreamBuf<char, std::char_traits<char>>;
 
-    extern AStreamBuf serial_ASreamBuf;
+    // extern AStreamBuf serial_ASreamBuf;
 
     /**
      * @brief Redirects standard C++ input/output streams to Arduino Serial.
@@ -28,7 +28,7 @@ namespace shs
      * @note Should be called after Serial.begin() initialization
      * @note Uses global serial_ASreamBuf object for stream redirection
      */
-    extern void rd_cio_to_ASerial();
+    // extern void rd_cio_to_ASerial();
 }
 
 
@@ -250,7 +250,6 @@ protected:
 
 private:
     Stream& m_astream;
-    //typename Traits::char_type m_buffer; // Buffer for uflow()
 
 };
 

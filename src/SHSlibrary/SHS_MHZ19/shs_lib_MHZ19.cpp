@@ -3,13 +3,13 @@
 
 void shs::MHZ19::update()
 {
-    if (!m_data.hasData() || m_data.isExpired()) updateForced();
+    if (m_data.isExpired()) updateForced();
 }
 
 
 void shs::MHZ19::updateForced(bool fast)
 {
-    m_data.update({m_mhz19.getPPM(), m_mhz19.getPPM()});
+    m_data.update({m_mhz19.getPPM(), m_mhz19.getTemperature()});
 
     if (m_data.hasData() == false) m_status = Status::CACHE_ERROR;
 }

@@ -258,6 +258,19 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 - **New functional:**
   - `shs::LinearApproximation`: A class for linear approximation using the least squares method.
 - **Changes:**
+  - `shs::SensorAnalog`: 
+    - Separated into .h and .cpp files.
+    - Value type of protected member m_value replaced from shs::t::shs_fixed_t
+    to shs::t::shs_float_t.
+    - The class is available for compilation without the flag SHS_SF_ARDUINO, but the functions.
+        are presented as stubs, without implementing the functionality.
+    - Value type of protected member m_pin replaced from uint8_t to shs::t::shs_pin_t.
+
+### SHSlibrary
+
+- **New functional:**
+
+- **Changes:**
 
 </details>
 <!----------------------------------------------------------------------------->

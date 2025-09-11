@@ -26,6 +26,7 @@ enum class shs::lib::SensorTypes : uint16_t
     MHZ19,
     DS18,
     Thermistor,
+    Photo,
 
     USER_TYPES = shs::Sensor::Type::USER_TYPES
 };

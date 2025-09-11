@@ -1,6 +1,12 @@
 #include "shs_DTP_API.h"
 
 
+/**
+ * @brief TODO!!
+ * 
+ * @param it 
+ * @return shs::DTPpacket 
+ */
 shs::DTPpacket shs::DTP_APIhandler::handle(shs::ByteCollectorReadIterator<>& it)
 {
     switch (shs::DTPpacket::get_DTPcode(it))
@@ -10,5 +16,5 @@ shs::DTPpacket shs::DTP_APIhandler::handle(shs::ByteCollectorReadIterator<>& it)
         default: break;
     }
 
-    return std::move(shs::DTPpacket());
+    return {};
 }

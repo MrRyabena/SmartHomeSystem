@@ -11,6 +11,17 @@ namespace shs
 }
 
 
+/**
+ * @brief PhotoSensor class for processing analog data from a photoresistor.
+ *
+ * This class reads and processes light intensity values from a photoresistor.
+ * It provides methods to calibrate the sensor by setting lower and upper bounds,
+ * and allows conversion of raw sensor data to different metrics such as percentage
+ * or normalized values. The class supports flexible data representation and
+ * calibration for accurate light measurement.
+ *
+ * @note If `lower_bound == upper_bound` all Metrics (except `RAW`) returns 0.
+ */
 class shs::PhotoSensor : public shs::SensorAnalog
 {
 public:
@@ -37,6 +48,17 @@ protected:
     uint16_t m_lower_bound{};
     uint16_t m_upper_bound{};
 
+
+    /**
+     * @brief Converts the raw sensor value to the specified metric type.
+     *
+     * Returns the processed light intensity value according to the selected metric.
+     * If the bounds are not set correctly (i.e., lower_bound == upper_bound), all metrics except RAW return 0.
+     *
+     * @tparam T Output type for the metric value.
+     * @param metric Metric type to convert the value (RAW, PERCENT, NORMALIZED_255).
+     * @return Converted value in the specified metric.
+     */
     template <typename T>
     T m_getValue(const uint8_t metric) const
     {

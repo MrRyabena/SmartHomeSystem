@@ -20,6 +20,7 @@
         to shs::t::shs_float_t.
       - The class is available for compilation without the flag SHS_SF_ARDUINO, but the functions 
         are presented as stubs, without implementing the functionality.
+      - Value type of protected member m_pin replaced from uint8_t to shs::t::shs_pin_t.
 */
 
 
@@ -71,6 +72,6 @@ public:
 
 protected:
     shs::t::shs_float_t m_value;
-    const uint8_t m_pin;
+    const shs::t::shs_pin_t m_pin;
     uint8_t m_samples;
 };

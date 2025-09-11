@@ -8,20 +8,6 @@ shs::PhotoSensor::PhotoSensor(const shs::t::shs_pin_t pin, const uint8_t samples
 {}
 
 
-shs::t::shs_fixed_t shs::PhotoSensor::getValueFx(const uint8_t metric)
-{
-    switch (static_cast<Metrics>(metric))
-    {
-        case Metrics::RAW: return m_value; break;
-        case Metrics::PERCENT: /* TODO */ break;
-        case Metrics::NORMALIZE_255: /* TODO */ break;
-    }
-
-
-    return {};
-}
-
-
 void shs::PhotoSensor::setBounds(uint16_t floor_bound, uint16_t ceil_bound)
 {
     if (floor_bound >= ceil_bound)

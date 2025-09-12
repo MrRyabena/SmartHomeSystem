@@ -76,8 +76,7 @@ protected:
     {
         if (c == Traits::eof()) return Traits::eof();
 
-        m_astream.write(static_cast<CharT>(c));
-        return c;
+        return m_astream.write(static_cast<CharT>(c)) == 1 ? c : Traits::eof();
     }
 
     /**

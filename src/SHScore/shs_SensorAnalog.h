@@ -23,13 +23,13 @@
       - Value type of protected member m_pin replaced from uint8_t to shs::t::shs_pin_t.
 */
 
-
+#include "shs_Sensor.h"
 #include "shs_types.h"
 
 
 namespace shs
 {
-    class Sensor;          // declared in shs_Sensor.h
+  //  class Sensor;          // declared in shs_Sensor.h
     class SensorAnalog;
 }
 
@@ -44,9 +44,7 @@ namespace shs
 class shs::SensorAnalog : public shs::Sensor
 {
 public:
-    explicit SensorAnalog(const uint8_t pin, const uint8_t samples = SENSOR_AVERAGE_SAMPLES)
-        : Sensor(shs::Sensor::Type::ANALOG_PIN), m_pin(pin), m_samples(samples)
-    {}
+    explicit SensorAnalog(const uint8_t pin, const uint8_t samples = SENSOR_AVERAGE_SAMPLES);
 
     static constexpr uint8_t SENSOR_AVERAGE_SAMPLES = SHS_SET_SENSOR_AVERAGE_SAMPLES;
 

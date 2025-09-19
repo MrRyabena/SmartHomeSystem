@@ -6,7 +6,8 @@
 #include <Arduino.h>
 #endif 
 
-#include "shs_Sensor.h"
+
+
 
 
 void shs::SensorAnalog::setup()

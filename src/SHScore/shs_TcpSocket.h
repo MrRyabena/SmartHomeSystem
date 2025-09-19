@@ -112,10 +112,12 @@ public:
 
     void setActive(const bool flag) { m_active_flag = flag; }
 
+    bool connected() { return client.connected(); }
+
 
     // -------------------- shs::Process (from shs::DTPbus) --------------------
     void start() override { m_connect(); }
-    void tick() override { if (!client.connected()) reconnect(); } //&& m_disconnect_callback) m_disconnect_callback(*this); }
+    void tick() override { if (!client.connected() && m_disconnect_callback) m_disconnect_callback(*this); }
     void stop() override { if (client.connected()) client.stop(); }
 
 
@@ -152,9 +154,9 @@ private:
         
         if (connected) //&& m_connect_callback) {
           {
-            //sendPacket(shs::DTP_APIpackets::getInitialPacket(busID)); 
-            shs::DTPpacket packet(busID, 0, shs::ByteCollector<>(10));
-            sendPacket(packet);
+            sendPacket(shs::DTP_APIpackets::getInitialPacket(busID)); 
+            //shs::DTPpacket packet(busID, 0, shs::ByteCollector<>(10));
+           // sendPacket(packet);
            // try {
                 //m_connect_callback(*this);
             ///} catch (...) {

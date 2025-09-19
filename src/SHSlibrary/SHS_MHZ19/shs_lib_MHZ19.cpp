@@ -9,8 +9,10 @@ void shs::MHZ19::update()
 
 void shs::MHZ19::updateForced(bool fast)
 {
-    m_data.update({m_mhz19.getPPM(), m_mhz19.getTemperature()});
-
+    // error when both
+    // m_data.update({m_mhz19.getPPM(), m_mhz19.getTemperature()});
+    m_data.update({m_mhz19.getPPM(), {}});
+    
     if (m_data.hasData() == false) m_status = Status::CACHE_ERROR;
 }
 

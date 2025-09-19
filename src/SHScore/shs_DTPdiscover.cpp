@@ -48,17 +48,22 @@ shs::t::shs_IP_t shs::DTPdiscover::check(const uint8_t id)
     return 0u;
 }
 
-
+#undef SHS_SF_DEBUG
+#include <shs_debug.h>
 shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 {
+    doutln("DTPdiscover::handle");
+    dout("it.size() = "); doutln(it.size());
+    if (it.size() == 0) return shs::DTPpacket();
     if (shs::DTPpacket::get_senderID(it) == API_ID) return shs::DTPpacket();
 
     it.set_position(shs::DTPpacket::get_dataBeg(it));
-
+    doutln("switch");
     switch (it.read())
     {
         case Commands::IP:
             {
+                doutln("case Commands::IP:");
                 auto id = shs::DTPpacket::get_senderID(it);
                 shs::t::shs_IP_t ip{};
                 it.get(ip);
@@ -73,6 +78,7 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 
         case Commands::GET_IP:
             {
+                doutln("case Commands::GET_IP:");
             #ifdef SHS_SF_ESP
                 shs::ByteCollector<> bc(5);
                 bc.push_back(Commands::IP, 1);
@@ -88,6 +94,7 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 
         default: break;
     }
+    doutln("return shs::DTPpacket();");
 
     return shs::DTPpacket();
 }

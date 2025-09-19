@@ -2,6 +2,9 @@
 
 #ifdef SHS_SF_QT
 
+#define SHS_SF_DEBUG
+#include "shs_debug.h"
+
 shs::qt::TcpSocket::TcpSocket(QObject* parent)
     : QObject(parent), m_qtcp_socket(new QTcpSocket(this))
 {
@@ -14,12 +17,21 @@ shs::qt::TcpSocket::TcpSocket(QObject* parent)
 
 void shs::qt::TcpSocket::onConnected()
 {
+    doutln("QTcpSocket connected");
+
+    m_connected = true;
+    dout("connected: "); doutln(connected());
     emit s_connected();
+
 }
 
 
 void shs::qt::TcpSocket::onDisconnected()
 {
+    doutln("QTcpSocket disconnected");
+
+    m_connected = false;
+    dout("connected: "); doutln(connected())
     emit disconnected();
 }
 

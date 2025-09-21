@@ -1,6 +1,18 @@
 #include "shs_DTP.h"
 
 
+uint8_t shs::DTP::sendPacket(const shs::DTPpacket& packet)
+{
+    if (packet.empty()) return 0;
+
+    auto bus = findBusFromModule(packet.get_recipientID().getModuleID());
+    if (bus) return bus->sendPacket(packet);
+
+    m_outgoing_packets.push_back(OutgoingPacket(packet));
+    return 0;
+}
+
+
 shs::DTPbus* shs::DTP::findBusFromModule(const uint8_t moduleID) const
 {
     if (moduleID == 0) return nullptr;
@@ -16,6 +28,7 @@ void shs::DTP::tick()
 {
     for (auto& bus : m_buss)
     {
+        if (!bus) continue;
         if (!bus->isActive()) { detachBus(bus->busID); return; }
 
         // if the data is fully received and ready for processing 
@@ -53,6 +66,55 @@ void shs::DTP::tick()
             }
         }
         bus->tick();    // update bus
+    }
+
+    if (!m_outgoing_packets.empty())
+    {
+        auto it = m_outgoing_packets.begin();
+        if (it->timer.expired())
+        {
+            m_outgoing_packets.pop_front();
+            return;
+        }
+
+        switch (it->status)
+        {
+            case OutgoingPacket::BusStatus::NOT_FOUND:
+                if (m_discover) m_discover->discover(it->packet.get_recipientID().getModuleID());
+                it->status = OutgoingPacket::BusStatus::WAITING_FROM_DISCOVER;
+                break;
+
+            case OutgoingPacket::BusStatus::WAITING_FROM_DISCOVER:
+                if (m_discover)
+                {
+                    auto ip = m_discover->check(it->packet.get_recipientID().getModuleID());
+                    if (ip)
+                    {
+                        auto tcp_bus = std::make_unique<shs::TcpSocket>(ip, shs::settings::DEFAULT_TCP_PORT, getUniqueBusID());
+                        tcp_bus->connected_modules.attach(moduleID.getModuleID());
+                        attachBus(std::move(tcp_bus));
+
+                        it->status = OutgoingPacket::BusStatus::DISCOVERED;
+                    }
+                    else m_discover->discover(it->packet.get_recipientID().getModuleID());
+                }
+                break;
+
+            case OutgoingPacket::BusStatus::DISCOVERED:
+                {
+                    auto bus = findBusFromModule(it->packet.get_recipientID().getModuleID());
+                    if (bus)
+                    {
+                        bus->sendPacket(it->packet);
+                        m_outgoing_packets.pop_front();
+                    }
+                    else it->status = OutgoingPacket::BusStatus::NOT_FOUND;
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 }
 

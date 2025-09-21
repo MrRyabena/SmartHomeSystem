@@ -30,7 +30,7 @@
 
 
 #include <memory>
-#include <queue>
+#include <deque>
 
 
 #include "shs_Process.h"
@@ -42,7 +42,12 @@
 #include "shs_DTPbus.h"
 #include "shs_DTPpacket.h"
 #include "shs_DTPless.h"
+#include "shs_ProgramTimer.h"
+#include "shs_DTPdiscover.h"
+#include "shs_TcpSocket.h"
 
+#define SHS_SF_DEBUG
+#include "shs_debug.h"
 
 namespace shs
 {
@@ -74,7 +79,9 @@ public:
 	// BUS
 	shs::t::shs_busID_t attachBus(std::unique_ptr<shs::DTPbus>&& bus)
 	{
+		doutln("DTP::attachBus");
 		if (bus && (bus->busID == 0 || m_buss.get(bus) != m_buss.end())) bus->busID = getUniqueBusID();
+		doutln("set busID");
 		return (*m_buss.attach(std::move(bus)))->busID;
 	}
 
@@ -96,8 +103,20 @@ public:
 	void stop() override { for (auto& bus : m_buss) bus->stop(); }
 
 private:
+	struct OutgoingPacket
+	{
+		enum class BusStatus : uint8_t { NOT_FOUND, WAITING_FROM_DISCOVER, DISCOVERED };
+		shs::DTPpacket packet;
+		shs::ProgramTimer timer;
+		BusStatus status;
+
+		explicit OutgoingPacket(const shs::DTPpacket& pkt) : packet(pkt), status(BusStatus::NOT_FOUND), timer(20'000) {}
+		explicit OutgoingPacket(shs::DTPpacket&& pkt) : packet(std::move(pkt)), status(BusStatus::NOT_FOUND), timer(20'000) {}
+	};
+
 	shs::SortedBuf<std::unique_ptr<shs::DTPbus>, DTPless::BUS> m_buss;
 	shs::SortedBuf<std::unique_ptr<shs::API>, DTPless::API> m_APIs;
 	shs::SortedBuf<shs::API*, DTPless::API> m_externalAPIs;
-	std::queue<shs::DTPpacket> m_outgoing_packets;
+	std::deque<OutgoingPacket> m_outgoing_packets;
+	std::shared_ptr<shs::DTPdiscover> m_discover;
 };

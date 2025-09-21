@@ -54,7 +54,7 @@ class shs::DTPbus : public shs::Process
 {
 public:
 
-    enum Status : uint8_t { no_data, packet_is_expected, packet_received, packet_processed, invalid_recipient };
+    enum Status : uint8_t { no_data, packet_is_expected, packet_received, packet_processed, invalid_recipient, bus_error };
 
 
     explicit DTPbus(const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
@@ -129,12 +129,16 @@ protected:
     inline shs::DTPpacket m_DTPhandler();
 };
 
-
+#define SHS_SF_DEBUG
+#include "shs_debug.h"
 template<class Bus>
 shs::DTPbus::Status shs::DTPbus::checkBus(Bus& bus, ByteCollector<>& buf, uint8_t& len, shs::API* handler)
 {
+   // dout("static DTPbus::checkBus:  ");
+   // doutln("call processBus()");
     Status status = processBus(bus, buf, len);
-
+    
+    //doutln("processBus() done");
     if (handler) processPacket(buf, *handler, status);
 
     return status;
@@ -144,16 +148,18 @@ shs::DTPbus::Status shs::DTPbus::checkBus(Bus& bus, ByteCollector<>& buf, uint8_
 template <class Bus>
 shs::DTPbus::Status shs::DTPbus::processBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len)
 {
-    if (bus.available() == 0) return Status::no_data;
+   // dout("static DTPbus::processBus:  ");
+    if (bus.available() == 0) { /*doutln("bus.available() == 0"); */return Status::no_data; }
 
-    if (len == 0) len = bus.read();
-    if (bus.available() < len - 1) return Status::packet_is_expected;
-
+    if (len == 0) { /*doutln("len == 0");*/ len = bus.read(); }
+    if (bus.available() < len - 1) {/*doutln("bus.available() < len - 1")*/  return Status::packet_is_expected; }
+    
+   // dout("packet received, reset buf  ");
     buf.reset();
     buf.push_back(len, 1);
 
     for (uint8_t i = 0; i < len - 1; i++) buf.push_back(bus.read(), 1);
-
+   // doutln("buf filled");
     len = 0;
 
     return Status::packet_received;
@@ -162,12 +168,12 @@ shs::DTPbus::Status shs::DTPbus::processBus(Bus& bus, shs::ByteCollector<>& buf,
 
 shs::DTPpacket shs::DTPbus::processPacket(shs::ByteCollector<>& data, shs::API& handler, Status& status)
 {
-    if (status != packet_received || status != packet_processed) return std::move(shs::DTPpacket());
+    if (status != packet_received || status != packet_processed) return shs::DTPpacket();
 
     auto it = data.getReadIt();
 
     status = Status::packet_processed;
-    return std::move(handler.handle(it));
+    return handler.handle(it);
 }
 
 

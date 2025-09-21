@@ -47,11 +47,17 @@ shs::TcpSocket::TcpSocket(
 
 void shs::TcpSocket::connect(shs::t::shs_time_t connecting_timeout)
 {
-    doutln("TcpSocket::connect");
-    if (!isActive()) return;
+    dout("TcpSocket::connect:  ");
+    if (!isActive()) { doutln("inactive"); return; }
+    if (connected())
+    {
+        doutln("already connected");
+        m_status = Status::CONNECTED;
+        return;
+    }
 
     if (connecting_timeout) m_connecting_timeout = connecting_timeout;
-
+    if (m_connecting_timeout == 0) { doutln("connecting timeout = 0"); return; }
     m_timer.reset();
     m_status = Status::CONNECTING;
 
@@ -64,10 +70,16 @@ void shs::TcpSocket::connect(shs::t::shs_time_t connecting_timeout)
 
     if (connected)
     {
+        doutln("connected immediately");
         m_timer.reset();
         m_status = Status::CONNECTED;
         if (m_connect_callback) m_connect_callback(*this);
     }
+    else
+    {
+        doutln("connecting...");
+    }
+
 
 }
 
@@ -75,6 +87,13 @@ void shs::TcpSocket::reconnect(const shs::t::shs_time_t reconnecting_timeout)
 {
     doutln("TcpSocket::reconnect");
     if (reconnecting_timeout) m_reconnecting_timeout = reconnecting_timeout;
+    if (m_reconnecting_timeout == 0)
+    {
+        stop();
+        m_status = Status::DISCONNECTED;
+        return;
+    }
+
     m_timer.reset();
     m_status = Status::RECONNECTING;
 }
@@ -96,75 +115,122 @@ void shs::TcpSocket::setActive(const bool flag)
 
 void shs::TcpSocket::start()
 {
+    dout("TcpSocket::start:  ");
+    if (connected())
+    {
+        m_status = Status::CONNECTED;
+        doutln("already connected");
+        return;
+    }
     connect();
 }
 
 
 void shs::TcpSocket::tick()
 {
-    switch (m_status)
-    {
-        case Status::DISCONNECTED:
-            {
-                doutln("disconnected...");
-                if (m_timer.milliseconds() < m_connecting_timeout) connect();
-            }
-            break;
-        case Status::CONNECTING:
-            {
-                doutln("connecting...");
-                if (connected())
-                {
-                    m_timer.reset();
-                    m_status = Status::CONNECTED;
-                    if (m_connect_callback) m_connect_callback(*this);
-                    doutln("connected!");
-                }
-                if (m_timer.milliseconds() > m_connecting_timeout)
-                {
-                    doutln("connection timeout, reconnecting...");
-                    reconnect();
-                }
-            }
-            break;
+    // dout();
 
-        case Status::RECONNECTING:
-            {
-                doutln("reconnecting...");
-                if (connected())
-                {
-                    m_timer.reset();
-                    m_status = Status::CONNECTED;
-                    doutln("reconnected!");
-                }
-                if (m_timer.milliseconds() > m_reconnecting_timeout)
-                {
-                    m_timer.reset();
-                    m_status = Status::DISCONNECTED;
-                    client.stop();
-                    doutln("reconnection timeout, disconnected");
-                }
-            }
-            break;
+    //if (!connected() && m_disconnect_callback) m_disconnect_callback(*this);
 
-        case Status::CONNECTED:
-            {
-                // if (checkBus() == shs::DTPbus::packet_received || status == shs::DTPbus::packet_processed)
-                // {
-                //     doutln("data received from TcpSocket");
-                // }
+    // if (!connected())
+    // {
+    //     if (m_status == Status::CONNECTED)
+    //     {
+    //         m_status = Status::DISCONNECTED;
+    //         doutln("TcpSocket::tick:  Status::DISCONNECTED: client disconnected");
+    //         if (m_disconnect_callback)
+    //         {
+    //             m_disconnect_callback(*this);
+    //             return;
+    //         }
+    //     }
+    //     else if (m_status == Status::DI)
+    // }
 
-                if (!connected())
-                {
-                    m_status = Status::DISCONNECTED;
-                    if (m_disconnect_callback) m_disconnect_callback(*this);
-                }
-            }
-            break;
+    // switch (m_status)
+    // {
+    //     case Status::DISCONNECTED:
+    //         {
+    //             dout("TcpSocket::tick:  Status::DISCONNECTED:  ");
+    //             if (connected())
+    //             {
+    //                 doutln("error: connected while disconnected");
+    //                 m_status = Status::CONNECTED;
+    //                 return;
+    //             }
 
-        case Status::INACTIVE: [[fallthrough]];
-        default: break;
-    }
+    //             // if (m_timer.milliseconds() < m_connecting_timeout)
+    //             // {
+    //             //     doutln("call connect()");
+    //             //     connect();
+    //             //     return;
+    //             // }
+    //             // else
+    //             // {
+    //             //     doutln("disconnected");
+    //             // }
+    //         }
+    //         break;
+    //     case Status::CONNECTING:
+    //         {
+    //             dout("TcpSocket::tick:  Status::CONNECTING:  ");
+    //             if (connected())
+    //             {
+    //                 m_timer.reset();
+    //                 m_status = Status::CONNECTED;
+    //                 if (m_connect_callback) m_connect_callback(*this);
+    //                 doutln("connected!");
+    //                 return;
+    //             }
+    //             // if (m_timer.milliseconds() > m_connecting_timeout)
+    //             // {
+    //             //     doutln("connection timeout, reconnecting...");
+    //             //     reconnect();
+    //             //     return;
+    //             // }
+    //         }
+    //         break;
+
+    //     case Status::RECONNECTING:
+    //         {
+    //             dout("TcpSocket::tick:  Status::RECONNECTING:  ");
+    //             // if (connected())
+    //             // {
+    //             //     m_timer.reset();
+    //             //     m_status = Status::CONNECTED;
+    //             //     doutln("reconnected!");
+    //             //     return;
+    //             // }
+    //             // if (m_timer.milliseconds() > m_reconnecting_timeout)
+    //             // {
+    //             //     stop();
+    //             //     doutln("reconnection timeout, disconnected");
+    //             //     return;
+    //             // }
+    //         }
+    //         break;
+
+    //     case Status::CONNECTED:
+    //         {
+    //             doutln("TcpSocket::tick:  Status::CONNECTED");
+    //             if (!client.connected())//!connected())
+    //             {
+    //                 m_status = Status::DISCONNECTED;
+    //                 doutln("TcpSocket::tick:  Status::DISCONNECTED: client disconnected");
+    //                 if (m_disconnect_callback)
+    //                 {
+    //                     m_disconnect_callback(*this);
+    //                     return;
+    //                 }
+
+    //                 return;
+    //             }
+    //         }
+    //         break;
+
+    //     case Status::INACTIVE: break;
+    //     default: break;
+    // }
 
 }
 

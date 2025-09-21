@@ -6,9 +6,9 @@
 #include "shs_debug.h"
 void shs::TcpServer::tick()
 {
-    if (m_connecting_client && m_connecting_client->client.connected())
+    if (m_connecting_client)
     {
-        doutln("client connected");
+
         if (shs::ProgramTime::s_milliseconds() - m_connecting_client_time > max_connection_time)
         {
             doutln("max_connection_time exceeded");
@@ -17,7 +17,7 @@ void shs::TcpServer::tick()
         }
 
 
-        if (m_connecting_client->checkBus() != shs::DTPbus::packet_received && m_connecting_client->status != shs::DTPbus::packet_processed) 
+        if (m_connecting_client->checkBus() != shs::DTPbus::packet_received && m_connecting_client->status != shs::DTPbus::packet_processed)
         {
             doutln("waiting for INITIAL_ANSWER or INITIAL packet");
             return;
@@ -25,17 +25,23 @@ void shs::TcpServer::tick()
         else
         {
             doutln("data received from client");
+            // doutln("INITIAL_ANSWER received");
+            auto answer = shs::DTP_APIpackets::getInitialAnswerPacket(m_dtp.moduleID, true);
+            doutln("sending INITIAL_ANSWER packet");
+            m_connecting_client->sendPacket(answer);
+            doutln("INITIAL_ANSWER packet sent");
+            doutln("attaching client to DTP with busID ");
+            m_dtp.attachBus(std::move(m_connecting_client));
+            doutln("client attached to DTP");
+            //m_connecting_client->stop();
+            m_connecting_client.reset();
+            // doutln("client connection closed");
+            return;
         }
 
         // if (shs::DTPpacket::get_DTPcode(m_connecting_client->getLastData()) == shs::DTPpacket::DTPcode::INITIAL_ANSWER || shs::DTPpacket::get_DTPcode(m_connecting_client->getLastData()) == shs::DTPpacket::DTPcode::INITIAL)
         // {
-            //doutln("INITIAL_ANSWER received");
-            auto answer = shs::DTP_APIpackets::getInitialAnswerPacket(m_dtp.moduleID, true);
 
-            m_connecting_client->sendPacket(answer);
-    
-            m_dtp.attachBus(std::move(m_connecting_client));
-            doutln("client attached to DTP");
         // }
         // else
         // {
@@ -52,9 +58,14 @@ void shs::TcpServer::tick()
         doutln("new client connecting");
         auto client = server.available();
         if (!client) return;
+
         m_connecting_client = std::make_unique<shs::TcpSocket>(client, m_dtp.getUniqueBusID(), nullptr, 25, nullptr, [this](shs::TcpSocket& socket) { socket.setActive(false); doutln("client unactive"); });
+        m_connecting_client->setConnectingTimeout(max_connection_time);
+        m_connecting_client->setReconnectingTimeout(0);
 
         m_connecting_client_time = shs::ProgramTime::s_milliseconds();
+        doutln("starting client");
+        m_connecting_client->start();
 
         doutln("sending INITIAL packet");
         auto mes = shs::DTP_APIpackets::getInitialPacket(m_dtp.moduleID);

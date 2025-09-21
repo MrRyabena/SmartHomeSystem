@@ -52,18 +52,18 @@ shs::t::shs_IP_t shs::DTPdiscover::check(const uint8_t id)
 #include <shs_debug.h>
 shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 {
-    doutln("DTPdiscover::handle");
-    dout("it.size() = "); doutln(it.size());
+  //  doutln("DTPdiscover::handle");
+  //  dout("it.size() = "); doutln(it.size());
     if (it.size() == 0) return shs::DTPpacket();
     if (shs::DTPpacket::get_senderID(it) == API_ID) return shs::DTPpacket();
 
     it.set_position(shs::DTPpacket::get_dataBeg(it));
-    doutln("switch");
+   // doutln("switch");
     switch (it.read())
     {
         case Commands::IP:
             {
-                doutln("case Commands::IP:");
+             //   doutln("case Commands::IP:");
                 auto id = shs::DTPpacket::get_senderID(it);
                 shs::t::shs_IP_t ip{};
                 it.get(ip);
@@ -78,14 +78,18 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 
         case Commands::GET_IP:
             {
-                doutln("case Commands::GET_IP:");
+             //   doutln("case Commands::GET_IP: ");
             #ifdef SHS_SF_ESP
                 shs::ByteCollector<> bc(5);
+              //  dout("init bc  ");
                 bc.push_back(Commands::IP, 1);
+              //  dout("push_back command  ");
                 shs::IP ip(shs::ControlWiFi::localIP());
+             //   dout("get localIP  ");
                 bc.push_back(static_cast<uint32_t>(ip));
-
-                return shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), std::move(bc));
+             //   dout("push_back ip  ");
+             //   doutln("return shs::DTPpacket");
+                return shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), bc);
             #endif  
                 // temporarily not implemented
 
@@ -94,7 +98,7 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 
         default: break;
     }
-    doutln("return shs::DTPpacket();");
+   // doutln("return shs::DTPpacket();");
 
     return shs::DTPpacket();
 }
@@ -107,10 +111,12 @@ void shs::DTPdiscover::tick()
     m_udp_broadcast.tick();
     if (m_udp_broadcast.checkBus() == shs::DTPbus::packet_received || m_udp_broadcast.status == shs::DTPbus::packet_processed)
     {
+       // doutln("packet received or processed");
         auto it = m_udp_broadcast.getLastData();
+        //doutln("getLastData done");
         auto answer = handle(it);
-
-        m_udp_broadcast.sendPacket(answer);
+        
+        if (!answer.empty()) m_udp_broadcast.sendPacket(answer);
     }
 }
 

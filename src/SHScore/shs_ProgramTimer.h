@@ -34,6 +34,8 @@ public:
         return flag;
     }
 
+    bool expired() const { return m_check(); }
+
 
     operator bool() const { return m_check(); }
 

@@ -62,7 +62,10 @@ public:
         connected_modules.attach(0xff);
     }
 
-    UdpBroadcastBus(UdpBroadcastBus&& other) : DTPbus(std::move(other)) {}
+    UdpBroadcastBus(UdpBroadcastBus&& other) : DTPbus(std::move(other)), m_port(other.m_port)
+    {
+        other.m_port = {};
+    }
 
     ~UdpBroadcastBus() = default;
 

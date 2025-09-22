@@ -68,6 +68,7 @@ public:
     UDP() {}
     UDP(const UDP& other) : udp(other.udp) {}
     UDP& operator=(const UDP& rhs) { udp = rhs.udp; return *this; }
+    ~UDP() = default;
 #endif
 
     // -------------------- Broadcast ------------------------------------------

@@ -257,6 +257,9 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 - **New functional:**
   - `shs::LinearApproximation`: A class for linear approximation using the least squares method.
+  - `shs::AStreamBuf`
+  - `shs::AFStreamBuf`
+  - `shs::AFStreamBuf`
 - **Changes:**
   - `shs::SensorAnalog`: 
     - Separated into .h and .cpp files.

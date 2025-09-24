@@ -61,8 +61,25 @@ void shs::DTP::tick()
                     }
                     break;
 
-                default: [[fallthrough]];
-                case shs::DTPpacket::FAST: break;
+                case shs::DTPpacket::MASK:
+                    {
+                        auto id = shs::DTPpacket::get_recipientID(it);
+                        auto mask = shs::DTPpacket::get_mask(it);
+
+                        for (auto& api : m_APIs)
+                        {
+                            if ((api->API_ID & mask) == (id & mask))
+                            {
+                                auto output = std::move(api->handle(it));
+                                if (!output.empty()) bus->sendPacket(output);
+                            }
+                        }
+                    }
+                    break;
+
+                case shs::DTPpacket::FAST: [[fallthrough]];
+                default: break;
+
             }
         }
         bus->tick();    // update bus

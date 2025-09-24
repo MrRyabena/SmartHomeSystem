@@ -100,22 +100,13 @@ public:
     ~DTPpacket() noexcept = default;
 
 
-    [[nodiscard]] static uint8_t get_DTPcode(shs::ByteCollectorReadIterator<> it) { it.set_position(1); return it.read(); }
-    [[nodiscard]] static shs::t::shs_ID_t get_senderID(shs::ByteCollectorReadIterator<> it) { if (get_DTPcode(it) == FAST) return shs::t::shs_ID_t(0); shs::t::shs_ID_t id{}; it.set_position(2); it.get(id); return id; }
-    [[nodiscard]] static shs::t::shs_ID_t get_recipientID(shs::ByteCollectorReadIterator<> it) { if (get_DTPcode(it) == FAST) return shs::t::shs_ID_t(0); it.set_position(2 + sizeof(shs::t::shs_ID_t)); shs::t::shs_ID_t id{}; it.get(id); return id; }
-    [[nodiscard]] static uint8_t get_datasize(shs::ByteCollectorReadIterator<> it) { return int(it[0]) - (it[1] == STANDARD ? DTPstandard_OFFSETbeg + 1 : DTPstandard_OFFSETbeg); }
-    [[nodiscard]] static uint8_t get_dataBeg(shs::ByteCollectorReadIterator<> it) { return it[1] == STANDARD ? DTPstandard_OFFSETbeg : 2; }
+    [[nodiscard]] static uint8_t get_DTPcode(shs::ByteCollectorReadIterator<> it) { return it[1]; }
+    [[nodiscard]] static shs::t::shs_ID_t get_senderID(shs::ByteCollectorReadIterator<> it);
+    [[nodiscard]] static shs::t::shs_ID_t get_recipientID(shs::ByteCollectorReadIterator<> it);
+    [[nodiscard]] static uint8_t get_datasize(shs::ByteCollectorReadIterator<> it);
+    [[nodiscard]] static uint8_t get_dataBeg(shs::ByteCollectorReadIterator<> it);
     [[nodiscard]] static uint8_t check(shs::ByteCollectorReadIterator<> it);
-    [[nodiscard]] static shs::t::shs_ID_t get_mask(shs::ByteCollectorReadIterator<> it)
-    {
-        auto dtp_code = get_DTPcode(it);
-        if (dtp_code != DTPcode::MASK) return 0;
-        it.set_position(0x9);
-        shs::t::shs_ID_t mask{};
-        it.get(mask);
-        return mask;
-    }
-
+    [[nodiscard]] static shs::t::shs_ID_t get_mask(shs::ByteCollectorReadIterator<> it);
 
     [[nodiscard]] uint8_t          get_DTPcode()     const { return get_DTPcode(bc.getReadIt(true)); }
     [[nodiscard]] shs::t::shs_ID_t get_senderID()    const { return get_senderID(bc.getReadIt(true)); }

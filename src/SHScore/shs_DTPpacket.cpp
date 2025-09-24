@@ -131,3 +131,65 @@ uint8_t shs::DTPpacket::check() const
 }
 
 
+shs::t::shs_ID_t shs::DTPpacket::get_senderID(shs::ByteCollectorReadIterator<> it)
+{
+    shs::t::shs_ID_t id{};
+    if (get_DTPcode(it) == FAST) return id;
+
+    it.set_position(2);
+    it.get(id);
+
+    return id;
+}
+
+
+shs::t::shs_ID_t shs::DTPpacket::get_recipientID(shs::ByteCollectorReadIterator<> it)
+{
+    shs::t::shs_ID_t id{};
+    if (get_DTPcode(it) == FAST) return id;
+
+    it.set_position(2 + sizeof(shs::t::shs_ID_t));
+    it.get(id);
+
+    return id;
+}
+
+
+uint8_t shs::DTPpacket::get_datasize(shs::ByteCollectorReadIterator<> it)
+{
+    uint8_t offset_size{};
+
+    switch (get_DTPcode(it))
+    {
+        case STANDARD: offset_size = DTPstandard_OFFSETbeg + 1; break;
+        case FAST: offset_size = DTPfast_OFFSETbeg; break;
+        case MASK: offset_size = DTPstandard_OFFSETbeg + sizeof(shs::t::shs_ID_t) + 1; break;
+        default: offset_size = DTPstandard_OFFSETbeg + 1; break;
+    }
+
+    return it[0] - offset_size;
+}
+
+uint8_t shs::DTPpacket::get_dataBeg(shs::ByteCollectorReadIterator<> it)
+{
+    switch (get_DTPcode(it))
+    {
+        case STANDARD: return DTPstandard_OFFSETbeg; break;
+        case FAST: return DTPfast_OFFSETbeg; break;
+        case MASK: return DTPstandard_OFFSETbeg + sizeof(shs::t::shs_ID_t); break;
+        default: return DTPstandard_OFFSETbeg; break;
+    }
+    return DTPstandard_OFFSETbeg;
+}
+
+shs::t::shs_ID_t shs::DTPpacket::get_mask(shs::ByteCollectorReadIterator<> it)
+{
+    auto dtp_code = get_DTPcode(it);
+    if (dtp_code != DTPcode::MASK) return 0;
+    it.set_position(0x9);
+    shs::t::shs_ID_t mask{};
+    it.get(mask);
+    return mask;
+}
+
+

@@ -8,7 +8,7 @@ void shs::DTPdiscover::discover(const uint8_t id)
     shs::ByteCollector<> buf(1);
     buf.push_back(GET_IP, 1);
 
-    m_udp_broadcast.sendPacket(shs::DTPpacket(API_ID, shs::t::shs_ID_t(id), std::move(buf)));
+    m_udp_broadcast.sendPacket(shs::DTPpacket(API_ID, shs::t::shs_ID_t(id), shs::t::shs_ID_t(0xff), std::move(buf)));
     m_requests.attach(m_Data(id));
 }
 
@@ -62,6 +62,14 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 {
     if (it.size() == 0) return shs::DTPpacket();
     if (shs::DTPpacket::get_senderID(it) == API_ID) return shs::DTPpacket();
+    if (shs::DTPpacket::get_DTPcode(it) == shs::DTPpacket::MASK)
+    {
+        auto id = shs::DTPpacket::get_recipientID(it);
+        auto mask = shs::DTPpacket::get_mask(it);
+
+        if ((id & mask) != (API_ID & mask)) return shs::DTPpacket();
+    }
+    else if (shs::DTPpacket::get_recipientID(it) != API_ID) return shs::DTPpacket();
 
     it.set_position(shs::DTPpacket::get_dataBeg(it));
 
@@ -69,7 +77,8 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
     {
         case Commands::IP:
             {
-                auto id = shs::DTPpacket::get_senderID(it);
+                doutln("NEW IP!")
+                    auto id = shs::DTPpacket::get_senderID(it);
                 shs::t::shs_IP_t ip{};
                 it.get(ip);
 
@@ -83,8 +92,9 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 
         case Commands::GET_IP:
             {
-            #ifdef SHS_SF_ESP
-                shs::ByteCollector<> bc(5);
+                doutln("GET IP!")
+                #ifdef SHS_SF_ESP
+                    shs::ByteCollector<> bc(5);
 
                 bc.push_back(Commands::IP, 1);
 
@@ -99,7 +109,7 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
             }
             break;
 
-        default: break;
+        default: doutln("DEFAULT") break;
     }
 
 
@@ -114,6 +124,7 @@ void shs::DTPdiscover::tick()
     m_udp_broadcast.tick();
     if (m_udp_broadcast.checkBus() == shs::DTPbus::packet_received || m_udp_broadcast.status == shs::DTPbus::packet_processed)
     {
+        doutln("has data!");
         auto it = m_udp_broadcast.getLastData();
         auto answer = handle(it);
 

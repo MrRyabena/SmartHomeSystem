@@ -22,6 +22,24 @@ shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_
 }
 
 
+shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID, const shs::t::shs_ID_t mask, shs::ByteCollector<>&& data) noexcept
+    : bc(std::move(data))
+{
+    auto size = bc.size();
+    bc.reserve(1);
+    bc.reserve_front(DTPfast_OFFSETbeg + sizeof(mask));
+
+    // note: reversed order
+    bc.push_front(mask);
+    bc.push_front(recipientID);
+    bc.push_front(senderID);
+    bc.push_front(MASK, 1);
+    bc.push_front(size + DTPstandard_OFFSETbeg + sizeof(mask) + 1, 1);
+
+    bc.push_back(shs::CRC8::crcBuf(bc.getPtr(), bc.size() - 1), 1);
+}
+
+
 shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID, const shs::ByteCollector<>& data) noexcept
     : bc(data.size() + DTPstandard_OFFSETbeg + 1)
 {
@@ -30,6 +48,22 @@ shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_
     bc.push_back(STANDARD, 1);
     bc.push_back(senderID);
     bc.push_back(recipientID);
+
+    for (auto x : data) bc.push_back(x, 1);
+
+    bc.push_back(shs::CRC8::crcBuf(bc.getPtr(), bc.size() - 1), 1);
+}
+
+
+shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID, const shs::t::shs_ID_t mask, const shs::ByteCollector<>& data) noexcept
+    : bc(data.size() + DTPstandard_OFFSETbeg + sizeof(mask) + 1)
+{
+    // note: direct order
+    bc.push_back(data.size() + DTPstandard_OFFSETbeg + sizeof(mask) + 1, 1);
+    bc.push_back(MASK, 1);
+    bc.push_back(senderID);
+    bc.push_back(recipientID);
+    bc.push_back(mask);
 
     for (auto x : data) bc.push_back(x, 1);
 
@@ -49,6 +83,22 @@ shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_
 
     bc.push_back(shs::CRC8::crcBuf(bc.getPtr(), bc.size() - 1), 1);
 }
+
+
+shs::DTPpacket::DTPpacket(const shs::t::shs_ID_t senderID, const shs::t::shs_ID_t recipientID, const shs::t::shs_ID_t mask, const uint8_t* data, const uint8_t size) noexcept
+    : bc(size + DTPstandard_OFFSETbeg + sizeof(mask) + 1)
+{
+    bc.push_back(size + DTPstandard_OFFSETbeg + sizeof(mask) + 1, 1);
+    bc.push_back(MASK, 1);
+    bc.push_back(senderID);
+    bc.push_back(recipientID);
+    bc.push_back(mask);
+
+    bc.write(data, size);
+
+    bc.push_back(shs::CRC8::crcBuf(bc.getPtr(), bc.size() - 1), 1);
+}
+
 
 shs::DTPpacket::DTPpacket(const uint8_t* data, const uint8_t size) noexcept
     : bc(size + DTPfast_OFFSETbeg)
@@ -79,3 +129,5 @@ uint8_t shs::DTPpacket::check() const
 
     return Error::ok;
 }
+
+

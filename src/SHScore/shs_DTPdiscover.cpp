@@ -13,6 +13,15 @@ void shs::DTPdiscover::discover(const uint8_t id)
 }
 
 
+void shs::DTPdiscover::discoverAll()
+{
+    shs::ByteCollector<> buf(1);
+    buf.push_back(GET_IP, 1);
+
+    m_udp_broadcast.sendPacket(shs::DTPpacket(API_ID, 0, 0, std::move(buf)));
+}
+
+
 shs::t::shs_IP_t shs::DTPdiscover::discoverWait(const uint8_t id, const uint16_t max_time)
 {
     discover(id);
@@ -83,7 +92,7 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 
                 bc.push_back(static_cast<uint32_t>(ip));
 
-                return shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), bc);
+                return shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), std::move(bc));
             #endif  
                 // temporarily not implemented
 
@@ -107,7 +116,7 @@ void shs::DTPdiscover::tick()
     {
         auto it = m_udp_broadcast.getLastData();
         auto answer = handle(it);
-        
+
         if (!answer.empty()) m_udp_broadcast.sendPacket(answer);
     }
 }

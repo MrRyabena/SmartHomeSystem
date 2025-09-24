@@ -48,8 +48,10 @@ public:
     static constexpr uint16_t MAX_WAIT_TIME = 15000;
 
     void discover(const uint8_t id);
+    void discoverAll();
     shs::t::shs_IP_t discoverWait(const uint8_t id, const uint16_t max_time);
     shs::t::shs_IP_t check(const uint8_t id);
+    const shs::SortedBuf<shs::DTPdiscover::m_Data, shs::DTPdiscover::m_Data_less>& getAllDiscovered() const { return m_requests; }
 
     enum Commands { NOCOMMAND, GET_IP, IP };
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;

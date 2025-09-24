@@ -61,6 +61,7 @@ struct shs::ID
 
     shs::ID& setComponentID(const shs::constants::APIids api) { return setComponentID(static_cast<componentID_t>(api)); }
 
+    ID_t operator&(const shs::ID& other) const { return id & other.id; }
 
     bool operator<(const shs::ID& other) const { return id < other.id; }
     bool operator>(const shs::ID& other) const { return id > other.id; }

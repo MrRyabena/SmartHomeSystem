@@ -22,6 +22,9 @@
 #include "shs_DTPpacket.h"
 #include "shs_ByteCollector.h"
 
+#define SHS_SF_DEBUG
+#include "shs_debug.h"
+
 #ifdef SHS_SF_ESP
 #include "shs_ControlWiFi.h"
 #endif
@@ -51,7 +54,7 @@ public:
     void discoverAll();
     shs::t::shs_IP_t discoverWait(const uint8_t id, const uint16_t max_time);
     shs::t::shs_IP_t check(const uint8_t id);
-    const shs::SortedBuf<shs::DTPdiscover::m_Data, shs::DTPdiscover::m_Data_less>& getAllDiscovered() const { return m_requests; }
+    
 
     enum Commands { NOCOMMAND, GET_IP, IP };
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
@@ -60,6 +63,16 @@ public:
     void tick() override;
     void stop() override { m_udp_broadcast.stop(); }
 
+    void printAllDiscovered()
+    {
+        for (auto & data : m_requests)
+        {
+            dout("id: "); 
+            dout(data.id);
+            dout("  ip: ");
+            doutln(static_cast<uint32_t>(data.ip));
+        }
+    }
 
 protected:
     struct m_Data

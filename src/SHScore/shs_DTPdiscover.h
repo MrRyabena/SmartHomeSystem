@@ -29,7 +29,7 @@
 #include "shs_ControlWiFi.h"
 #endif
 
-#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
+#if defined(SHS_SF_NETWORK)
 
 
 namespace shs
@@ -77,7 +77,7 @@ public:
 protected:
     struct m_Data
     {
-        m_Data(const uint8_t set_id, const shs::t::shs_IP_t set_ip = 0u)
+        m_Data(const uint8_t set_id, const shs::t::shs_IP_t set_ip = {})
             : id(set_id), ip(set_ip), timer()
         {}
 

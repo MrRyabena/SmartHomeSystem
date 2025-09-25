@@ -9,7 +9,7 @@
 
 #include "shs_UDP.h"
 
-#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
+#if defined(SHS_SF_NETWORK)
 
 namespace shs
 {

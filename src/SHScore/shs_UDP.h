@@ -14,7 +14,7 @@
 
 #include "shs_settings_private.h"
 
-#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
+#if defined(SHS_SF_NETWORK)
 
 
 #ifdef SHS_SF_ARDUINO

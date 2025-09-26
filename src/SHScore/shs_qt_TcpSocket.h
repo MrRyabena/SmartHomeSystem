@@ -45,7 +45,7 @@ public:
     uint8_t read(uint8_t* buf, const uint16_t size) { return m_qtcp_socket->read(reinterpret_cast<char*>(buf), size); }
     uint8_t available() { return m_qtcp_socket->bytesAvailable(); }
 
-    bool connectToHost(const shs::t::shs_IP_t ip, const shs::t::shs_port_t port) { m_qtcp_socket->connectToHost(QHostAddress(ip), port); return m_qtcp_socket->isOpen(); }
+    bool connectToHost(const shs::t::shs_IP_t ip, const shs::t::shs_port_t port) { m_qtcp_socket->connectToHost(ip, port); return m_qtcp_socket->isOpen(); }
 
     void disconnectFromHost() { m_qtcp_socket->disconnectFromHost(); }
     void stop() { disconnect(); }

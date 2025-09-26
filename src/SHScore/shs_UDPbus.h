@@ -13,6 +13,8 @@
 
 namespace shs
 {
+    class DTPdiscover;     // declared in shs_DTPdiscover.h
+
     class UdpBus;
     class UdpBroadcastBus;
     class UdpMulticastBus;
@@ -47,6 +49,8 @@ class shs::UdpBus : public shs::DTPbus
     void stop() override { m_udp.stop(); }
 
 protected:
+    friend class shs::DTPdiscover;
+    
     shs::t::shs_IP_t m_ip;
     shs::t::shs_port_t m_port;
     shs::UDP m_udp;

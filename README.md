@@ -189,7 +189,8 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 <details>
 <summary>v2.2.X — <code><b>[current]</b></code> SHScore has been optimized and debugged. Deprecated code has been removed. Documentation has been updated.</summary>
 
-### Patches:
+### Patches
+
 - **v2.2.0** — basic.
 - **v2.2.1** — fixed bugs in examples and build.
   - Fixed critical bug in `examples/guide_system/make.sh`.
@@ -204,7 +205,6 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
   - `SHS_DHT`: changed default expiration time.
   - `SHS_DS18`: fixed a critical bug, tested, added default expiration_time in constructor.
 
-
 <!-- # SmartHomeSystem v2.2.0 Release Notes -->
 
 ### SHScore
@@ -215,9 +215,9 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
     - removed c-style casts.
     - added private functions `m_shift_right()` and `m_shift_left()`.
     - optimized `insert()`.
-  - `shs::ControlWiFi`: 
-      - Updated, prepared for expansion of functionality.
-      - The definition of functions is moved to the implementation file.
+  - `shs::ControlWiFi`:
+    - Updated, prepared for expansion of functionality.
+    - The definition of functions is moved to the implementation file.
   - `shs::SensorVirtual`:
     - Bug fixed: updated according to changes in the base class   `shs::Sensor`.
   - `shs::SensorAnalog`:
@@ -232,11 +232,13 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 ![SHScore-changes-v2_2_0](schemes/SHScore-changes/SHScore-changes-v2_2_0.png)
 
-### Build:
+### Build
+
 - Added shs_settings_template for creating shs_settings.h.
 
 ### Examples
-  - Created ControlWiFi-example.
+
+- Created ControlWiFi-example.
 
 ### SHSdocumentation
 
@@ -244,7 +246,6 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
   - Some corrections in main `README.md`.
   - `system_creation_guide.md` has been rewritten and updated.
 
-  
 </details>
 
 <!----------------------------------------------------------------------------->
@@ -261,23 +262,36 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
   - `shs::AFStreamBuf`
   - `shs::AFStreamBuf`
 - **Changes:**
-  - `shs::SensorAnalog`: 
+  - `shs::SensorAnalog`:
     - Separated into .h and .cpp files.
     - Value type of protected member m_value replaced from shs::t::shs_fixed_t
     to shs::t::shs_float_t.
     - The class is available for compilation without the flag SHS_SF_ARDUINO, but the functions.
         are presented as stubs, without implementing the functionality.
     - Value type of protected member m_pin replaced from uint8_t to shs::t::shs_pin_t.
+  - `shs::DTP_API`:
+  - `shs::DTPpacket`:
+  - `shs::TcpSocket`:
+  - `shs::TcpServer`:
+  - `shs::qt::TcpSocket`:
+  - `shs::DTPdiscover`:
+  - `shs::DTP`:
 
 ### SHSlibrary
 
 - **New functional:**
+  - `SHS_PhotoSensor`: a class for obtaining light sensor readings.
 
 - **Changes:**
+  - `SHS_MHZ19`: fixed bugs.
+  
+### Examples
 
+- **New functional:**
+  - `ConnectMulti`: created example for connect WiFi in multi APs.
+  
 </details>
 <!----------------------------------------------------------------------------->
-
 
 ---
 > [!NOTE]
@@ -287,9 +301,8 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 > - Пример создания автоматизированной системы, используя фреймворк **_SmartHomeSystem_** можно посмотреть в [system_creation_guide](/SHSdocumentation/Usage/system_creation_guide.md).
 
 > [!IMPORTANT]
-> 
+>
 > На основе ядра и библиотек **_SmartHomeSystem_** разработано несколько устройств, которые тоже относятся к проекту, но для удобства их разработка ведется в отдельных репозиториях. В разделе [SmartHomeSystem Projects](#smarthomesystem-projects) можно кратко ознакомиться с устройствами и посетить соответствующие репозитории.
-
 
 ---
 
@@ -329,8 +342,9 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
   - [SHSqt_core](src/SHSqt_core/) — ядро для фреймворка Qt.
   - [SHSsettings](src/SHSsettings) — настройки компиляции исходников.
   - [make.sh](src/make.sh) — Shell-скрипт для сборки всех исходников проекта (см. документацию по использованию: [build_manual](./SHSdocumentation/Usage/build_manual.md)).
+
 > [!WARNING]
-> Файл make.sh является shell-скриптом и не имеет отношения к системе сборки `make`. Чтобы не вводить пользователей в заблуждение в последующих обновлениях подобные файлы будут переименованы. 
+> Файл make.sh является shell-скриптом и не имеет отношения к системе сборки `make`. Чтобы не вводить пользователей в заблуждение в последующих обновлениях подобные файлы будут переименованы.
 
 ## Краткий обзор
 
@@ -418,14 +432,13 @@ SHSlibrary содержит набор библиотек для работы с
 
   <img src="https://github.com/MrRyabena/SmartSpot/blob/main/photo/spot_4.jpg" alt="SmartSpot_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartSpot/blob/main/photo/com_4.png" alt="SmartSpot_photo" height="200"/>
 
-
 - [ClimateStation](https://github.com/MrRyabena/ClimateStation) — метеостанция в специально разработанном для 3D-печати корпусе с сенсорным дисплеем. Собирает информацию с внутренних и внешних датчиков об атмосферном давлении, уровне CO2 (углекислого газа) в помещении, влажности и температуре воздуха. Станция умеет составлять прогноз погоды, подсказывать когда необходимо проветрить помещение и выводить показания с датчиков и графики их изменений. Сенсорный экран позволяет изменять настройки, переключать режимы работы и смотреть показания датчиков в реальном времени. Также устройство может обеспечивать обратную связь в системах климат-контроля **_SmartHomeSystem_**.
 
   <img src="https://github.com/MrRyabena/ClimateStation/blob/main/schemes/images/CS_front_4.jpg" alt="ClimateStation_photo" height="200"/> <img src="https://github.com/MrRyabena/ClimateStation/blob/main/schemes/images/CS_back_1.jpg" alt="ClimateStation_photo" height="200"/> <img src="https://github.com/MrRyabena/ClimateStation/blob/main/schemes/images/CS_front_off_1.jpg" alt="ClimateStation_photo" height="200"/>
 
 - [SmartBank](https://github.com/MrRyabena/SmartBank) — умная копилка, которая станет уникальным украшением в интерьере. Была создана во время хакатона "Умный Петербург 2025", по результатам которого заняла 1 место.**SmartBank** умеет распознавать номиналы монет, подсчитывать сумму, собирать статистику и выводить данные на экране и в Telegram чате. Устройство создано на основе ядра **_SmartHomeSystem_** для работы standalone или интеграции в системы умного дома.
   
-  <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/logo.png" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/SB_2.jpg" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/3D_3.png" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/SB_4.jpg" alt="SmartBank_photo" height="200"/> 
+  <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/logo.png" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/SB_2.jpg" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/3D_3.png" alt="SmartBank_photo" height="200"/> <img src="https://github.com/MrRyabena/SmartBank/blob/main/schemes/SB_4.jpg" alt="SmartBank_photo" height="200"/>
 
 ## Достижения проекта
 

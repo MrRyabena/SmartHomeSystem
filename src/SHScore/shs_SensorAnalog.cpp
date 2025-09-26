@@ -7,6 +7,9 @@
 #endif 
 
 
+shs::SensorAnalog::SensorAnalog(const uint8_t pin, const uint8_t samples)
+    : Sensor(shs::Sensor::Type::ANALOG_PIN), m_pin(pin), m_samples(samples)
+{}
 
 
 

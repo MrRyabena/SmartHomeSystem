@@ -14,6 +14,8 @@
 
 #if defined(SHS_SF_ESP8266) || defined(SHS_SF_ESP32)
 #include <IPAddress.h>
+#elif defined(SHS_SF_QT)
+#include <QHostAddress>
 #endif
 
 namespace shs
@@ -27,9 +29,12 @@ struct shs::IP
     constexpr IP(const char* ipAddress) : m_IP(ipFromStr(ipAddress)) {}
     constexpr IP(const uint32_t ipAddress = 0) : m_IP(ipAddress) {}
 
-#ifdef SHS_SF_ESP
+#if defined(SHS_SF_ESP)
     IP(const IPAddress& ipAddress) : m_IP(reverse_bytes(static_cast<uint32_t>(ipAddress))) {}
     IP& operator=(const IPAddress& ipAddress) { m_IP = reverse_bytes(static_cast<uint32_t>(ipAddress)); return *this; }
+#elif defined(SHS_SF_QT)
+    IP(const QHostAddress& qHostAddress) : IP(qHostAddress.toIPv4Address()) {}
+    IP& operator=(const QHostAddress& qHostAddress) { m_IP = qHostAddress.toIPv4Address(); return *this; }
 #endif
 
     constexpr IP& operator=(const char* ipAddress) { m_IP = ipFromStr(ipAddress); return *this; }
@@ -47,8 +52,10 @@ struct shs::IP
 
     operator uint32_t() const { return m_IP; }
 
-#ifdef SHS_SF_ESP
+#if defined(SHS_SF_ESP)
     operator IPAddress() const { return reverse_bytes(m_IP); }
+#elif defined(SHS_SF_QT)
+    operator QHostAddress() const { return QHostAddress(m_IP); }
 #endif
 
     static constexpr uint32_t reverse_bytes(const uint32_t ip) { return ((ip >> 24) & 0xFF) | ((ip << 8) & 0xFF0000) | ((ip >> 8) & 0xFF00) | ((ip << 24) & 0xFF000000); }

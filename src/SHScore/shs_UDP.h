@@ -5,6 +5,7 @@
   Versions:
     v2.0.0 — created.
     v2.2.0 — fixed conditional compilation bug.
+    v2.3.0 — added compatibility with ESP32.
 */
 
 

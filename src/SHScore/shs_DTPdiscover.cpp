@@ -44,7 +44,7 @@ shs::t::shs_IP_t shs::DTPdiscover::discoverWait(const uint8_t id, const uint16_t
     }
 #endif
 
-    return 0u;
+    return {};
 }
 
 
@@ -54,7 +54,7 @@ shs::t::shs_IP_t shs::DTPdiscover::check(const uint8_t id)
 
     if (res != m_requests.end()) return res->ip;
 
-    return 0u;
+    return {};
 }
 
 

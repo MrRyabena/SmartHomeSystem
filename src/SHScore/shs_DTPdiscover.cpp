@@ -92,20 +92,22 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 
         case Commands::GET_IP:
             {
-                doutln("GET IP!")
-                #ifdef SHS_SF_ESP
-                    shs::ByteCollector<> bc(5);
+                doutln("GET IP!");
 
+                shs::ByteCollector<> bc(5);
                 bc.push_back(Commands::IP, 1);
 
+            #if defined(SHS_SF_ESP)
                 shs::IP ip(shs::ControlWiFi::localIP());
+            #elif defined(SHS_SF_QT)
+                shs::IP ip;
+            #else
+                shs::IP ip(m_udp_broadcast.m_udp.udp.getQUdpPrt->localAddress());
+            #endif
 
                 bc.push_back(static_cast<uint32_t>(ip));
 
                 return shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), std::move(bc));
-            #endif  
-                // temporarily not implemented
-
             }
             break;
 

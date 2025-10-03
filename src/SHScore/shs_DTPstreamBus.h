@@ -3,9 +3,9 @@
 /*
   Last update: v2.0.0
   Versions:
-    v2.0.0 — moved to a separate class.
-      - It is not debugged, there are bugs.
-      - Support and development is expected in the following versions.
+	v2.0.0 — moved to a separate class.
+	  - It is not debugged, there are bugs.
+	  - Support and development is expected in the following versions.
 */
 
 /*
@@ -36,31 +36,37 @@ using Stream = shs::Stream;
 
 namespace shs
 {
-    class DTPstreamBus;
+	class DTPstreamBus;
 }
 
 class shs::DTPstreamBus : public shs::DTPbus
 {
 public:
-    explicit DTPstreamBus(Stream& bus, const shs::t::shs_ID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
-        : m_bus(bus), DTPbus(busID, handler, bufsize)
-    {}
+	explicit DTPstreamBus(Stream& stream, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
+		: m_stream(stream), DTPbus(busID, handler, bufsize)
+	{}
 
-    DTPstreamBus(DTPstreamBus&& other) : m_bus(other.m_bus), DTPbus(std::move(other)) {}
+	DTPstreamBus(DTPstreamBus&& other) : m_stream(other.m_stream), DTPbus(std::move(other)) {}
 
-    ~DTPstreamBus() = default;
+	~DTPstreamBus() = default;
 
-    void start() override {}
-    void tick() override {}
-    void stop() override {}
+	// DTPbus
+	bool isActive() const override { return true; }
 
-    uint8_t checkBus() override { checkBus(m_bus); }
-    uint8_t sendPacket(shs::DTPpacket& packet) override { return m_bus.write(packet.bc.getPtr(), packet.bc.size()); }
-    uint8_t sendRAW(shs::ByteCollector<>& bc) override { return m_bus.write(bc.getPtr(), bc.size()); }
-    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return m_bus.write(it.getPtr(), it.size()); }
-    uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return m_bus.write(data, size); }
+	shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_stream); }
+
+	// sending data
+	uint8_t sendPacket(const shs::DTPpacket& packet) override { return shs::DTPbus::sendPacket(m_stream, packet); }
+	uint8_t sendRAW(shs::ByteCollector<>& bc) override { return shs::DTPbus::sendRAW(m_stream, bc.getPtr(), bc.size()); }
+	uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return shs::DTPbus::sendRAW(m_stream, it.getPtr(), it.size()); }
+	uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return shs::DTPbus::sendRAW(m_stream, data, size); }
+
+	// shs::Process (from DTPbus)
+	void start() override {}
+	void tick() override {}
+	void stop() override {}
 
 protected:
-    Stream& m_bus;
+	Stream& m_stream;
 };
 

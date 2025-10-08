@@ -1,5 +1,6 @@
 #include "shs_SensorVirtual.h"
 
+#ifndef SHS_SF_AVR
 
 shs::SensorVirtual::SensorVirtual(shs::t::shs_ID_t thisID, shs::t::shs_ID_t virtualID, shs::DTP& dtp, const shs::Sensor::Type stype, const uint32_t expiration_time)
     : Sensor(stype), API(thisID.setComponentID(shs::constants::APIids::Sensor)),
@@ -53,3 +54,6 @@ void shs::SensorVirtual::updateForced([[maybe_unused]] const bool fast)
 
     m_data.reset();
 }
+
+
+#endif  // SHS_SF_AVR

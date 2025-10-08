@@ -22,10 +22,16 @@
 
 
 #include <stdint.h>
-#include <memory>
 
 
 #include "shs_settings_private.h"
+
+#ifdef SHS_SF_AVR
+#include <shs_lib_AVR_STD_memory.h>
+#else
+#include <memory>
+#endif 
+
 
 #ifdef SHS_SF_ARDUINO
 #include <Arduino.h>
@@ -118,8 +124,9 @@ public:
 
     shs::t::shs_busID_t busID;
     Status status;
+#ifndef SHS_SF_AVR                                // TODO: add realization for AVR
     shs::SortedBuf<uint8_t> connected_modules;
-
+#endif
 protected:
     shs::ByteCollector<> m_bc;
     shs::API* m_handler;
@@ -134,10 +141,10 @@ protected:
 template<class Bus>
 shs::DTPbus::Status shs::DTPbus::checkBus(Bus& bus, ByteCollector<>& buf, uint8_t& len, shs::API* handler)
 {
-   // dout("static DTPbus::checkBus:  ");
-   // doutln("call processBus()");
+    // dout("static DTPbus::checkBus:  ");
+    // doutln("call processBus()");
     Status status = processBus(bus, buf, len);
-    
+
     //doutln("processBus() done");
     if (handler) processPacket(buf, *handler, status);
 
@@ -148,18 +155,18 @@ shs::DTPbus::Status shs::DTPbus::checkBus(Bus& bus, ByteCollector<>& buf, uint8_
 template <class Bus>
 shs::DTPbus::Status shs::DTPbus::processBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len)
 {
-   // dout("static DTPbus::processBus:  ");
+    // dout("static DTPbus::processBus:  ");
     if (bus.available() == 0) { /*doutln("bus.available() == 0"); */return Status::no_data; }
 
     if (len == 0) { /*doutln("len == 0");*/ len = bus.read(); }
     if (bus.available() < len - 1) {/*doutln("bus.available() < len - 1")*/  return Status::packet_is_expected; }
-    
-   // dout("packet received, reset buf  ");
+
+    // dout("packet received, reset buf  ");
     buf.reset();
     buf.push_back(len, 1);
 
     for (uint8_t i = 0; i < len - 1; i++) buf.push_back(bus.read(), 1);
-   // doutln("buf filled");
+    // doutln("buf filled");
     len = 0;
 
     return Status::packet_received;
@@ -179,7 +186,9 @@ shs::DTPpacket shs::DTPbus::processPacket(shs::ByteCollector<>& data, shs::API& 
 
 shs::DTPpacket shs::DTPbus::m_DTPhandler()
 {
-    auto it = getLastData();
+#ifndef SHS_SF_AVR     
+
+    auto it = getLastData();                              // TODO: add realization for AVR
 
     switch (shs::DTPpacket::get_DTPcode(it))
     {
@@ -188,5 +197,6 @@ shs::DTPpacket shs::DTPbus::m_DTPhandler()
         case shs::DTPpacket::DEINITIAL: connected_modules.detach(shs::DTPpacket::get_senderID(it).getModuleID()); break;
         default: break;
     }
+#endif
     return shs::DTPpacket();
 }

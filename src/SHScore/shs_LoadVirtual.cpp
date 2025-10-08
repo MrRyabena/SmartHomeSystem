@@ -1,5 +1,7 @@
 #include "shs_LoadVirtual.h"
 
+#ifndef SHS_SF_AVR
+
 
 void shs::LoadVirtual::on(const uint16_t value)
 {
@@ -18,3 +20,6 @@ void shs::LoadVirtual::off()
 
     m_dtp.sendPacket(shs::DTPpacket(API_ID, m_virtualID, std::move(bc)));
 }
+
+
+#endif  // SHS_SF_AVR

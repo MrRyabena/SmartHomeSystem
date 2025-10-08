@@ -8,7 +8,17 @@
 */
 
 #include <stdint.h>
-#include <cmath>
+#include <math.h>
+
+#include "shs_settings_private.h"
+#ifdef SHS_SF_AVR
+namespace std
+{
+    static inline double c_pow(const double x, const double y) { return pow(x, y); }
+    inline double pow(const double x, const double y) { return c_pow(x, y); }
+}
+
+#endif
 
 #include "shs_types.h"
 

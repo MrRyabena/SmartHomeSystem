@@ -12,13 +12,17 @@
     v2.1.0 — fixed bugs related to shs::DTP_API.
 */
 
+#include "shs_settings_private.h"
+
+#if defined(SHS_SF_NETWORK)
+
+
 #include <stdint.h>
 #include <functional>
 
-#include "shs_settings_private.h"
-
 #ifdef SHS_SF_ARDUINO
 #include <Arduino.h>
+
 
 #ifdef SHS_SF_ESP8266
 #include <ESP8266WiFi.h>
@@ -131,3 +135,6 @@ private:
     std::function<void(shs::TcpSocket& client)> m_disconnect_callback;
 
 };
+
+
+#endif    // #if defined(SHS_SF_NETWORK)

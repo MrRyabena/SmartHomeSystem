@@ -1,5 +1,7 @@
 #include "shs_ControlWiFi.h"
 
+#ifdef SHS_SF_ESP
+
 
 bool shs::ControlWiFi::setHostname(const char* hostname)
 {
@@ -80,3 +82,6 @@ bool shs::ControlWiFi::setMac(uint8_t* mac)
     return esp_wifi_set_mac(WIFI_IF_STA, mac);
 #endif
 }
+
+
+#endif  // #ifdef SHS_SF_ESP

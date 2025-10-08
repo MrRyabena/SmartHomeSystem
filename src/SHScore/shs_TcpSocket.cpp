@@ -1,5 +1,6 @@
 #include "shs_TcpSocket.h"
 
+#if defined(SHS_SF_NETWORK)
 
 std::function<void(shs::TcpSocket&)> shs::TcpSocket::default_connect_callback =
 [](shs::TcpSocket& socket) { if (socket.isActive()) socket.sendPacket(shs::DTP_APIpackets::getInitialPacket(socket.busID)); };
@@ -175,3 +176,6 @@ void shs::TcpSocket::tick()
     }
 
 }
+
+
+#endif  // defined(SHS_SF_NETWORK)

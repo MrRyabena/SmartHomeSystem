@@ -1,5 +1,6 @@
 #include "shs_DTP.h"
 
+#ifndef SHS_SF_AVR
 
 uint8_t shs::DTP::sendPacket(const shs::DTPpacket& packet)
 {
@@ -145,3 +146,6 @@ shs::t::shs_busID_t shs::DTP::getUniqueBusID() const
 
     return newID;
 }
+
+
+#endif    // #ifndef SHS_SF_AVR

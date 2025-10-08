@@ -14,7 +14,16 @@
   The "virtual" class implements the interface on the remote device.
 */
 
+
+#include "shs_settings_private.h"
+
+#ifndef SHS_SF_AVR
+
+#ifdef SHS_SF_AVR
+#include <shs_lib_AVR_STD_memory.h>
+#else
 #include <memory>
+#endif 
 
 #include "shs_Sensor.h"
 #include "shs_Sensor_API.h"
@@ -70,3 +79,5 @@ protected:
 
     shs::TimedData<shs::t::shs_fixed_t> m_data;
 };
+
+#endif  // SHS_SF_AVR

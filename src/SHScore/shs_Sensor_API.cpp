@@ -1,5 +1,7 @@
 #include "shs_Sensor_API.h"
 
+#ifndef SHS_SF_AVR
+
 
 void shs::Sensor_API::tick()
 {
@@ -59,3 +61,6 @@ shs::DTPpacket shs::Sensor_API::handle(shs::ByteCollectorReadIterator<>& it)
 
     return std::move(shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), std::move(data)));
 }
+
+
+#endif    // #ifndef SHS_SF_AVR

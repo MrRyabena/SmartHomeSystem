@@ -9,7 +9,6 @@
 */
 
 #include <stdint.h>
-#include <memory>
 #include "shs_APIids.h"
 
 
@@ -33,7 +32,7 @@ struct shs::ID
     {}
 
     constexpr ID(const ID& other) : id(other.id) {}
-    constexpr ID& operator=(const ID& other) { id = other.id; return *this; }
+    ID& operator=(const ID& other) { id = other.id; return *this; }
 
     ~ID() = default;
 

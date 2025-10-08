@@ -28,6 +28,8 @@
 	  - Tested.
 */
 
+#include "shs_settings_private.h"
+#ifndef SHS_SF_AVR
 
 #include <memory>
 #include <deque>
@@ -120,3 +122,6 @@ private:
 	std::deque<OutgoingPacket> m_outgoing_packets;
 	std::shared_ptr<shs::DTPdiscover> m_discover;
 };
+
+
+#endif    // #ifndef SHS_SF_AVR

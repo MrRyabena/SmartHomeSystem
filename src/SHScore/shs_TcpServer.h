@@ -11,13 +11,14 @@
       - Configure clients to delete when the connection is closed.
 */
 
-#include <memory>
+
 
 
 #include "shs_settings_private.h"
 
 #if defined(SHS_SF_NETWORK) && defined(SHS_SF_ARDUINO)
 
+#include <memory>
 
 #ifdef SHS_SF_ARDUINO
 #include <Arduino.h>

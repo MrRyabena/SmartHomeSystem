@@ -9,13 +9,13 @@
 */
 
 
-#include <stdint.h>
-#include <functional>
-#include <memory>
-
 #include "shs_settings_private.h"
 
 #if defined(SHS_SF_NETWORK)
+
+#include <stdint.h>
+#include <functional>
+#include <memory>
 
 
 #ifdef SHS_SF_ARDUINO

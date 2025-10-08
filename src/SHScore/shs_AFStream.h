@@ -1,5 +1,7 @@
 #pragma once
 
+#include "shs_settings_private.h"
+#ifndef SHS_SF_AVR
 
 #include <streambuf>
 #include <fstream>
@@ -120,3 +122,6 @@ protected:
     File m_file;
     shs::Basic_AFStreamBuf<CharT, Traits> m_afs_buf;
 };
+
+
+#endif    // #ifndef SHS_SF_AVR

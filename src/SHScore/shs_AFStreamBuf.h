@@ -1,5 +1,9 @@
 #pragma once
 
+
+#include "shs_settings_private.h"
+#ifndef SHS_SF_AVR
+
 #include "shs_AFStream.h"
 
 
@@ -36,3 +40,6 @@ public:
         return (c == -1) ? Traits::eof() : Traits::to_int_type(c);
     }
 };
+
+
+#endif     // #ifndef SHS_SF_AVR

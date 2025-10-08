@@ -49,7 +49,11 @@ namespace shs
         using shs_string_t = std::string;
     #endif
 
+    #ifdef SHS_SF_NETWORK
         using shs_IP_t = shs::IP;
+    #else
+        using shs_IP_t = uint32_t;
+    #endif
 
         using shs_float_t = float;
 

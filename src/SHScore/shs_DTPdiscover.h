@@ -7,10 +7,14 @@
     v2.0.0 — created a new component of DTP.
 */
 
+#include "shs_settings_private.h"
+
+#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_AVR)
+
+
 #include <memory> 
 #include <stdint.h>
 
-#include "shs_settings_private.h"
 
 #include "shs_UDPbus.h"
 #include "shs_Process.h"
@@ -28,9 +32,6 @@
 #ifdef SHS_SF_ESP
 #include "shs_ControlWiFi.h"
 #endif
-
-#if defined(SHS_SF_NETWORK)
-
 
 namespace shs
 {

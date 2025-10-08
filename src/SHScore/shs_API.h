@@ -19,8 +19,6 @@
 #include "shs_types.h"
 #include "shs_DTPpacket.h"
 
-#include <utility>
-
 
 namespace shs
 {

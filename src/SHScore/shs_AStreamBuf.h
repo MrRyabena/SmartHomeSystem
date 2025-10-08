@@ -1,5 +1,8 @@
 #pragma once
 
+#include "shs_settings_private.h"
+#ifndef SHS_SF_AVR
+
 #include <streambuf>
 // #include <iostream>
 
@@ -252,3 +255,5 @@ private:
 
 };
 
+
+#endif     // #ifndef SHS_SF_AVR

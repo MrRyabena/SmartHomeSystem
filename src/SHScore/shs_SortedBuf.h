@@ -6,6 +6,10 @@
     v2.0.0 — created.
 */
 
+#include "shs_settings_private.h"
+
+#ifndef SHS_SF_AVR
+
 #include <vector>
 #include <algorithm>
 #include <initializer_list>
@@ -59,3 +63,5 @@ protected:
     std::vector<BufT> m_srtdbuf;
     Compare m_compare;
 };
+
+#endif    // #ifndef SHS_SF_AVR

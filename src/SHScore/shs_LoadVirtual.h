@@ -13,7 +13,16 @@
   The "virtual" class implements the interface on the remote device.
 */
 
+
+#include "shs_settings_private.h"
+
+#ifndef SHS_SF_AVR
+
+#ifdef SHS_SF_AVR
+#include <shs_lib_AVR_STD_memory.h>
+#else
 #include <memory>
+#endif 
 
 #include "shs_Load.h"
 #include "shs_API.h"
@@ -56,3 +65,5 @@ protected:
     shs::t::shs_ID_t m_virtualID;
     shs::DTP& m_dtp;
 };
+
+#endif  // SHS_SF_AVR

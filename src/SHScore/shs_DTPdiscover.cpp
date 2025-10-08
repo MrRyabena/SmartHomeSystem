@@ -1,6 +1,6 @@
 #include "shs_DTPdiscover.h"
 
-#if defined(SHS_SF_NETWORK)
+#if defined(SHS_SF_NETWORK) && !defined(SHS_SF_AVR)
 
 
 void shs::DTPdiscover::discover(const uint8_t id)

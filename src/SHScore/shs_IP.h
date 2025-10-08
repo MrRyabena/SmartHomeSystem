@@ -12,6 +12,9 @@
 #include "shs_settings_private.h"
 #include "shs_types.h"
 
+#ifdef SHS_SF_NETWORK
+
+
 #if defined(SHS_SF_ESP8266) || defined(SHS_SF_ESP32)
 #include <IPAddress.h>
 #elif defined(SHS_SF_QT)
@@ -101,3 +104,6 @@ constexpr uint32_t shs::IP::m_ipToUInt32(const char* str, size_t index)
 
     return result;
 }
+
+
+#endif  // SHS_SF_NETWORK

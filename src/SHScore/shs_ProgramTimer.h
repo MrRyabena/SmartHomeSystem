@@ -21,7 +21,7 @@ class shs::ProgramTimer : public shs::ProgramTime
 public:
     enum class Resolution : uint8_t { MICROSECONDS, MILLISECONDS, SECONDS };
 
-    ProgramTimer(const size_t timeout, const Resolution resolution = Resolution::MILLISECONDS)
+    explicit ProgramTimer(const size_t timeout, const Resolution resolution = Resolution::MILLISECONDS)
         : m_timeout(timeout), m_resolution(resolution)
     {}
 

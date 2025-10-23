@@ -23,10 +23,11 @@ void shs::Sunrise::sundown(const shs::t::shs_time_t time)
 
 void shs::Sunrise::tick()
 {
-    if (m_iteration <= 255 && m_timer.check())
+    if (m_incr && m_timer.check())
     {
         m_on_loads(m_iteration);
-        m_iteration += m_incr;        
+        m_iteration += m_incr;     
+        if (m_iteration > 255) m_incr = 0;
     }
 }
 

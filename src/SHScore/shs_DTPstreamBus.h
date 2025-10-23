@@ -63,7 +63,7 @@ public:
 
 	// shs::Process (from DTPbus)
 	void start() override {}
-	void tick() override {}
+	void tick() override { checkBus(); }
 	void stop() override {}
 
 protected:

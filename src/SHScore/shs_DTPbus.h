@@ -175,7 +175,7 @@ shs::DTPbus::Status shs::DTPbus::processBus(Bus& bus, shs::ByteCollector<>& buf,
 
 shs::DTPpacket shs::DTPbus::processPacket(shs::ByteCollector<>& data, shs::API& handler, Status& status)
 {
-    if (status != packet_received || status != packet_processed) return shs::DTPpacket();
+    if (status != packet_received && status != packet_processed) return shs::DTPpacket();
 
     auto it = data.getReadIt();
 

@@ -46,7 +46,7 @@ public:
         {
             case enable: m_rgb_music.start(); break;
             case disable: m_rgb_music.stop(); break;
-            [[likely]] case setEffect: m_rgb_music.setEffect(it.read()); break;
+            [[likely]] case setEffect: m_rgb_music.setEffect(static_cast<shs::RGBmusic::Effect>(it.read())); break;
 
             case getEffect:
                 {

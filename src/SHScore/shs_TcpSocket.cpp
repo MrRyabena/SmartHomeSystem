@@ -161,6 +161,21 @@ void shs::TcpSocket::tick()
             {
                 stop();
             }
+            else 
+            {
+                    bool connected = false;
+#ifdef SHS_SF_ARDUINO
+    connected = client.connect(m_hostIP, m_port);
+#elif defined(SHS_SF_QT)
+    connected = client.connectToHost(m_hostIP, m_port);
+#endif
+    if (connected)
+    {
+        m_timer.reset();
+        m_status = Status::CONNECTED;
+        if (m_connect_callback) m_connect_callback(*this);
+    }
+            }
             break;
 
         case Status::CONNECTED:

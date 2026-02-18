@@ -9,8 +9,6 @@
     v2.1.0 — added pragma message to debug flag.
 */
 
-#pragma message "shs_settings_private"
-
 
 #include <shs_settings.h>
 #define SHS_SF_SETTINGS
@@ -52,7 +50,7 @@
 #endif
 
 
-#if defined(DEBUG) && !defined(SHS_SF_DEBUG)
+#if defined(SHS_SET_DEBUG) && !defined(SHS_SF_DEBUG)
 #define SHS_SF_DEBUG
 #pragma message "Defined debug!"
 #endif

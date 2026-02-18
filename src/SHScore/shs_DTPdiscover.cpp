@@ -77,8 +77,8 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
     {
         case Commands::IP:
             {
-                doutln("NEW IP!")
-                    auto id = shs::DTPpacket::get_senderID(it);
+                doutln("NEW IP!");
+                auto id = shs::DTPpacket::get_senderID(it);
                 shs::t::shs_IP_t ip{};
                 it.get(ip);
 

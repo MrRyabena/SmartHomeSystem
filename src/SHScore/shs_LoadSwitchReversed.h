@@ -35,7 +35,7 @@ public:
 
     ~LoadSwitchReversed() override = default;
 
-    void on(const uint16_t value = UINT16_MAX) override { LoadSwitch::off(); }
+    void on(const uint16_t value = UINT16_MAX) override { value == 0 ? LoadSwitch::on() : LoadSwitch::off(); }
     void off() override { LoadSwitch::on(); }
 
 protected:

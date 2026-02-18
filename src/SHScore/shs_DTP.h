@@ -48,7 +48,6 @@
 #include "shs_DTPdiscover.h"
 #include "shs_TcpSocket.h"
 
-#define SHS_SF_DEBUG
 #include "shs_debug.h"
 
 namespace shs

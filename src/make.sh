@@ -61,5 +61,15 @@ elif [[ "$1" == "--oth" || "$1" == "-o" ]]; then
 
         cp -r ./SHScore "$dir/SHScore"
         cp -r ./SHSqt_core "$dir/SHSqt_core"
+
+        for lib in ./SHSlibrary/*/; do
+            cp -r "$lib" "${dir}"
+        done
+
+        for dir_ in "$dir"*/; do
+            cp -r "$dir_" "$dir"
+        done
+
+        cp -r ./SHSsettings/ "${dir}SHSsettings/"
     done
 fi

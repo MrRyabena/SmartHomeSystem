@@ -26,7 +26,6 @@
 #include "shs_DTPpacket.h"
 #include "shs_ByteCollector.h"
 
-#define SHS_SF_DEBUG
 #include "shs_debug.h"
 
 #ifdef SHS_SF_ESP

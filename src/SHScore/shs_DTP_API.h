@@ -55,7 +55,7 @@ public:
     {
         ID.setComponentID(static_cast<uint16_t>(DTP_API_ID));
         shs::ByteCollector<> bc(1);
-        bc.push_back(0);
+        bc.push_back(0, 1);
         shs::DTPpacket packet(ID, 0, std::move(bc));
         packet.set_DTPcode(shs::DTPpacket::INITIAL);
 
@@ -65,7 +65,7 @@ public:
     static shs::DTPpacket getInitialAnswerPacket(shs::t::shs_ID_t ID, bool success)
     {
         shs::ByteCollector<> bc(1);
-        bc.push_back(success);
+        bc.push_back(success, 1);
 
         shs::DTPpacket packet(ID, 0, std::move(bc));
         packet.set_DTPcode(shs::DTPpacket::INITIAL_ANSWER);

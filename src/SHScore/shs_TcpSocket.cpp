@@ -63,7 +63,6 @@ void shs::TcpSocket::connect(shs::t::shs_time_t connecting_timeout)
 #elif defined(SHS_SF_QT)
     connected = client.connectToHost(m_hostIP, m_port);
 #endif
-
     if (connected)
     {
         m_timer.reset();
@@ -161,20 +160,20 @@ void shs::TcpSocket::tick()
             {
                 stop();
             }
-            else 
+            else
             {
-                    bool connected = false;
-#ifdef SHS_SF_ARDUINO
-    connected = client.connect(m_hostIP, m_port);
-#elif defined(SHS_SF_QT)
-    connected = client.connectToHost(m_hostIP, m_port);
-#endif
-    if (connected)
-    {
-        m_timer.reset();
-        m_status = Status::CONNECTED;
-        if (m_connect_callback) m_connect_callback(*this);
-    }
+                bool connected = false;
+            #ifdef SHS_SF_ARDUINO
+                connected = client.connect(m_hostIP, m_port);
+            #elif defined(SHS_SF_QT)
+                connected = client.connectToHost(m_hostIP, m_port);
+            #endif
+                if (connected)
+                {
+                    m_timer.reset();
+                    m_status = Status::CONNECTED;
+                    if (m_connect_callback) m_connect_callback(*this);
+                }
             }
             break;
 

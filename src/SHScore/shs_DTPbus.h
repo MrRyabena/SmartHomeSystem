@@ -46,6 +46,8 @@
 #include "shs_SortedBuf.h"
 #include "shs_DTP_API.h"
 
+#include "shs_debug.h"
+
 
 namespace shs
 {
@@ -136,8 +138,7 @@ protected:
     inline shs::DTPpacket m_DTPhandler();
 };
 
-#define SHS_SF_DEBUG
-#include "shs_debug.h"
+
 template<class Bus>
 shs::DTPbus::Status shs::DTPbus::checkBus(Bus& bus, ByteCollector<>& buf, uint8_t& len, shs::API* handler)
 {

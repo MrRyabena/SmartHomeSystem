@@ -65,7 +65,7 @@ public:
 	shs::t::shs_ID_t moduleID;
 
 
-	explicit DTP(const shs::t::shs_ID_t module_id) : moduleID(module_id) {}
+	explicit DTP(const shs::t::shs_ID_t module_id) : moduleID(module_id), m_discover(std::make_shared<shs::DTPdiscover>(module_id)) {}
 
 	~DTP() override = default;
 

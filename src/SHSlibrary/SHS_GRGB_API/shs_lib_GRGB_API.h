@@ -16,8 +16,8 @@
 #include <shs_ByteCollectorIterator.h>
 #include <shs_DTPpacket.h>
 #include <shs_types.h>
-
-
+#include <shs_utils.h>
+#include <shs_lib_APIids.h>
 namespace shs
 {
     class GRGB_API;
@@ -27,7 +27,7 @@ namespace shs
 class shs::GRGB_API : public shs::API
 {
 public:
-    GRGB_API(GRGB& grgb, const shs::t::shs_ID_t ID) : shs::API(ID), m_grgb(grgb) {}
+    GRGB_API(GRGB& grgb, shs::t::shs_ID_t ID) : shs::API(ID.setComponentID(shs::etoi(shs::lib::APIids::GRGB_API))), m_grgb(grgb) {}
 
     ~GRGB_API() = default;
 
@@ -68,6 +68,16 @@ public:
             case fadeMode: m_grgb.fadeMode(it.read()); break;
             case setFadePeriod: { uint32_t t{}; it.get(t, 4); m_grgb.setFadePeriod(t); } break;
             case setWheel8: m_grgb.setWheel8(it.read(), it.read()); break;
+            case setHSVfast: m_grgb.setHSVfast(it.read(), it.read(), it.read()); break;
+            case setHSV: m_grgb.setHSV(it.read(), it.read(), it.read()); break;
+            case setWheel: { uint16_t c{}; it.get(c, 2); m_grgb.setWheel(c); } break;
+            case setKelvin: { uint16_t k{}; it.get(k, 2); m_grgb.setKelvin(k); } break;
+            case setKelvinFast: { uint16_t k{}; it.get(k, 2); m_grgb.setKelvinFast(k); } break;
+            case setHEX: { uint32_t h{}; it.get(h, 4); m_grgb.setHEX(h); } break;
+            case setHEX16: { uint16_t h{}; it.get(h, 2); m_grgb.setHEX16(h); } break;
+            case setColor: m_grgb.setColor(it.read()); break;
+            case setCRT: m_grgb.setCRT(it.read()); break;
+            case tick: m_grgb.tick(); break;
 
             default: break;
         }

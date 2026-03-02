@@ -5,11 +5,20 @@
 
 void shs::DTPdiscover::discover(const uint8_t id)
 {
-    shs::ByteCollector<> buf(1);
-    buf.push_back(GET_IP, 1);
 
-    m_udp_broadcast.sendPacket(shs::DTPpacket(API_ID, shs::t::shs_ID_t(id), shs::t::shs_ID_t(0xff), std::move(buf)));
-    m_requests.attach(m_Data(id));
+
+    // make sure we don't keep inserting the same id over and over
+    // if a request for this module is already pending, just refresh its timer
+    auto existing = m_requests.get(m_Data(id));
+    if (existing == m_requests.end())
+    {
+        dout("discovering id: "); doutln(id);
+        shs::ByteCollector<> buf(1);
+        buf.push_back(GET_IP, 1);
+        //shs::t::shs_ID_t(0xff, 0, 0) mask TODO
+        m_udp_broadcast.sendPacket(shs::DTPpacket(API_ID, shs::t::shs_ID_t(id), std::move(buf)));
+        m_requests.attach(m_Data(id));
+    }
 }
 
 
@@ -57,19 +66,31 @@ shs::t::shs_IP_t shs::DTPdiscover::check(const uint8_t id)
     return {};
 }
 
+void doitid(uint32_t id)
+{
+    dout(id >> 24); dout((id >> 16) & 0xff); dout((id >> 8) & 0xff); dout(id & 0xff);
+}
 
 shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 {
-    if (it.size() == 0) return shs::DTPpacket();
-    if (shs::DTPpacket::get_senderID(it) == API_ID) return shs::DTPpacket();
+    if (it.size() == 0) { doutln("ret 72"); return shs::DTPpacket(); }
+    if (shs::DTPpacket::get_senderID(it) == API_ID) { doutln("ret 73"); return shs::DTPpacket(); }
     if (shs::DTPpacket::get_DTPcode(it) == shs::DTPpacket::MASK)
     {
+        doutln("ret 76");
         auto id = shs::DTPpacket::get_recipientID(it);
         auto mask = shs::DTPpacket::get_mask(it);
 
-        if ((id & mask) != (API_ID & mask)) return shs::DTPpacket();
+        
+        // doitid(id); doutln();
+        // doitid(API_ID.id); doutln();
+        // doitid(mask); doutln();
+        // doitid(id & mask); doutln();
+        // doitid(API_ID.id & mask); doutln();
+        // TODO !!!!!!!!!!!!!!
+      //  if ((id & mask) != (API_ID.id & mask)) return shs::DTPpacket();
     }
-    else if (shs::DTPpacket::get_recipientID(it) != API_ID) return shs::DTPpacket();
+    else if (shs::DTPpacket::get_recipientID(it).getModuleID() != API_ID.getModuleID()) { doutln("ret 82"); return shs::DTPpacket(); }
 
     it.set_position(shs::DTPpacket::get_dataBeg(it));
 
@@ -84,8 +105,14 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 
                 auto req = m_requests.get(m_Data(id.getModuleID()));
 
+                // remove any existing entries matching this id (should be at most one,
+                // but duplicates are possible if discover was called repeatedly)
+                while (req != m_requests.end())
+                {
+                    m_requests.detach(*req);
+                    req = m_requests.get(m_Data(id.getModuleID()));
+                }
 
-                if (req != m_requests.end()) m_requests.detach(*req);
                 m_requests.attach(m_Data(id.getModuleID(), ip));
             }
             break;
@@ -97,13 +124,13 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
                 shs::ByteCollector<> bc(5);
                 bc.push_back(Commands::IP, 1);
 
-            #if defined(SHS_SF_ESP)
+#if defined(SHS_SF_ESP)
                 shs::IP ip(shs::ControlWiFi::localIP());
-            #elif defined(SHS_SF_QT)
+#elif defined(SHS_SF_QT)
                 shs::IP ip;
-            #else
+#else
                 shs::IP ip(m_udp_broadcast.m_udp.udp.getQUdpPrt->localAddress());
-            #endif
+#endif
 
                 bc.push_back(static_cast<uint32_t>(ip));
 

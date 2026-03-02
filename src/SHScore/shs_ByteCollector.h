@@ -380,7 +380,8 @@ public:
       @brief Gets an iterator to the end of the data.
       @return An iterator to the end.
     */
-    shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_back + 1); }
+    // end iterator points one past the last valid byte (m_pos_back)
+    shs::ByteCollectorIterator<BCbuf_t> end() const { return shs::ByteCollectorIterator<BCbuf_t>(m_buf + m_pos_back); }
 
     /*
       @brief Gets the size of the data.
@@ -392,7 +393,8 @@ public:
       @brief Gets the last element of the data.
       @return A reference to the last element.
     */
-    BCbuf_t& back() const { return m_buf[m_pos_back]; }
+    // return last valid byte; m_pos_back points *one past* the last element
+    BCbuf_t& back() const { return m_buf[m_pos_back ? m_pos_back - 1 : 0]; }
 
     /*
       @brief Checks if the data is empty.
@@ -407,7 +409,7 @@ public:
     BCsize_t readAvailable() const { return m_pos_back - m_pos_read; }
 
     /*
-      @brief Gets the current position at the back of the data.
+      @brief Gets the current position at the back of the data (one past last element).
       @return The current position at the back.
     */
     BCsize_t getPositionBack() const { return m_pos_back; }
@@ -479,19 +481,27 @@ private:
 
     void m_shift_right(const BCsize_t start_position, const BCsize_t size)
     {
-        if (start_position > m_pos_back) return;
+        if (start_position >= m_pos_back) return;
         if (size > capacity_back()) reserve(size - capacity_back());
 
-        for (BCsize_t i = m_pos_back; i > start_position; i--) m_buf[i + size] = m_buf[i];
+        // move existing elements [start_position .. m_pos_back-1] to the right
+        for (BCsize_t i = m_pos_back; i > start_position; i--)
+        {
+            // i-1 is last valid element index
+            m_buf[(i - 1) + size] = m_buf[i - 1];
+        }
         m_pos_back += size;
     }
 
     void m_shift_left(const BCsize_t start_position, const BCsize_t size)
     {
-        if (start_position > m_pos_back) return;
-        if (size < capacity_front()) reserve_front(capacity_front() - size);
+        if (start_position >= m_pos_back) return;
+        if (size > m_pos_front) reserve_front(size - m_pos_front);
 
-        for (BCsize_t i = start_position; i < m_pos_back; i++) m_buf[i - size] = m_buf[i];
+        for (BCsize_t i = start_position; i < m_pos_back; i++)
+        {
+            m_buf[i - size] = m_buf[i];
+        }
         m_pos_back -= size;
     }
 };

@@ -3,10 +3,19 @@
 #if defined(SHS_SF_NETWORK)
 
 std::function<void(shs::TcpSocket&)> shs::TcpSocket::default_connect_callback =
-[](shs::TcpSocket& socket) { if (socket.isActive()) socket.sendPacket(shs::DTP_APIpackets::getInitialPacket(socket.busID)); };
+[](shs::TcpSocket& socket) { 
+    doutln("TcpSocket connected");
+    if (socket.isActive()) 
+    {
+        auto pkt = shs::DTP_APIpackets::getInitialPacket(socket.busID);
+        socket.sendPacket(pkt);
+    }
+};
 
 std::function<void(shs::TcpSocket&)> shs::TcpSocket::default_disconnect_callback =
-[](shs::TcpSocket& socket) { if (socket.isActive()) socket.reconnect(); };
+[](shs::TcpSocket& socket) { 
+    if (socket.isActive()) socket.reconnect(); 
+};
 
 shs::TcpSocket::TcpSocket(
     const shs::t::shs_IP_t& hostIP, const shs::t::shs_port_t port,

@@ -36,8 +36,8 @@ namespace shs
  *  0x00  1B  -- message size
  *  0x01  1B  -- DTP code
  *  0x02  4B  -- sender's ID       *
- *  0x05  4B  -- recipient's ID    *
- *  0x09  xB  -- data
+ *  0x06  4B  -- recipient's ID    *
+ *  0x0A  xB  -- data
  *  0xXX  1B  -- CRC               *
  *
  * (* may be unused)
@@ -136,7 +136,7 @@ public:
     void set_mask(const shs::t::shs_ID_t mask)
     {
         if (get_DTPcode() != DTPcode::MASK) bc.insert(&mask, sizeof(mask), 0x9);
-        else for (auto i = 0x9; i < 0x9 + sizeof(mask); i++) bc[i] = reinterpret_cast<const uint8_t*>(&mask)[i - 0x9];
+        else for (auto i = 10; i < 10 + sizeof(mask); i++) bc[i] = reinterpret_cast<const uint8_t*>(&mask)[i - 10];
         bc.back() = shs::CRC8::crcBuf(bc.getPtr(), bc.size() - 1);
     }
 

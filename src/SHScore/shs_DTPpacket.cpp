@@ -186,7 +186,7 @@ shs::t::shs_ID_t shs::DTPpacket::get_mask(shs::ByteCollectorReadIterator<> it)
 {
     auto dtp_code = get_DTPcode(it);
     if (dtp_code != DTPcode::MASK) return 0;
-    it.set_position(0x9);
+    it.set_position(0x10);
     shs::t::shs_ID_t mask{};
     it.get(mask);
     return mask;

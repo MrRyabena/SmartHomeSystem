@@ -99,7 +99,7 @@ public:
 	shs::API& getAPI(const shs::t::shs_ID_t& id) const { return *(m_APIs.get(id)->get()); }
 
 	// shs::Process
-	void start() override { for (auto& bus : m_buss) bus->start(); }
+	void start() override { for (auto& bus : m_buss) bus->start(); if(m_discover) m_discover->start(); }
 	void tick() override;
 	void stop() override { for (auto& bus : m_buss) bus->stop(); }
 

@@ -1,5 +1,5 @@
 #include "shs_DTP.h"
-
+#include <shs_debug.h>
 #ifndef SHS_SF_AVR
 
 uint8_t shs::DTP::sendPacket(const shs::DTPpacket& packet)
@@ -9,7 +9,9 @@ uint8_t shs::DTP::sendPacket(const shs::DTPpacket& packet)
     auto bus = findBusFromModule(packet.get_recipientID().getModuleID());
     if (bus) return bus->sendPacket(packet);
 
-    m_outgoing_packets.push_back(OutgoingPacket(packet));
+    // store a copy for later delivery, but ensure proper copy semantics
+    shs::DTPpacket packet_copy(packet);
+    m_outgoing_packets.push_back(OutgoingPacket(std::move(packet_copy)));
     return 0;
 }
 
@@ -86,6 +88,8 @@ void shs::DTP::tick()
         bus->tick();    // update bus
     }
 
+    if (m_discover) m_discover->tick();
+
     if (!m_outgoing_packets.empty())
     {
         auto it = m_outgoing_packets.begin();
@@ -98,6 +102,7 @@ void shs::DTP::tick()
         switch (it->status)
         {
             case OutgoingPacket::BusStatus::NOT_FOUND:
+            doutln("discover new device");
                 if (m_discover) m_discover->discover(it->packet.get_recipientID().getModuleID());
                 it->status = OutgoingPacket::BusStatus::WAITING_FROM_DISCOVER;
                 break;
@@ -108,21 +113,26 @@ void shs::DTP::tick()
                     auto ip = m_discover->check(it->packet.get_recipientID().getModuleID());
                     if (ip)
                     {
+                        doutln("device discovered!!");
                         auto tcp_bus = std::make_unique<shs::TcpSocket>(ip, shs::settings::DEFAULT_TCP_PORT, getUniqueBusID());
-                        tcp_bus->connected_modules.attach(moduleID.getModuleID());
+                        tcp_bus->connected_modules.attach(it->packet.get_recipientID().getModuleID());
+                        tcp_bus->start();
                         attachBus(std::move(tcp_bus));
 
                         it->status = OutgoingPacket::BusStatus::DISCOVERED;
                     }
-                    else m_discover->discover(it->packet.get_recipientID().getModuleID());
+                    else { m_discover->discover(it->packet.get_recipientID().getModuleID());}
                 }
                 break;
 
             case OutgoingPacket::BusStatus::DISCOVERED:
                 {
+                    dout("try to send packet with id: ");
                     auto bus = findBusFromModule(it->packet.get_recipientID().getModuleID());
+                    doutln(it->packet.get_recipientID().getModuleID());
                     if (bus)
                     {
+                        doutln("send packet to discovered device");
                         bus->sendPacket(it->packet);
                         m_outgoing_packets.pop_front();
                     }

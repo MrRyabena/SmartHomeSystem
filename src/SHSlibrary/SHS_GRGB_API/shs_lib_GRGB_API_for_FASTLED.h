@@ -16,18 +16,26 @@
 #include <shs_ByteCollectorIterator.h>
 #include <shs_DTPpacket.h>
 #include <shs_types.h>
+#include <shs_Process.h>
+
+#include <shs_lib_APIids.h>
+#include <shs_utils.h>
 
 
 namespace shs
 {
     class GRGB_API;
+    class GRGB_API_for_FASTLED;
 };
 
 
-class shs::GRGB_API_for_FASTLED : public shs::API
+class shs::GRGB_API_for_FASTLED : public shs::API, public shs::Process
 {
 public:
-    GRGB_API_for_FASTLED(FastLED& fastLED, const shs::t::shs_ID_t ID) : API(ID), m_fastLED(fastLED) {}
+    GRGB_API_for_FASTLED(CFastLED& fastLED, shs::t::shs_ID_t ID) : API(ID.setComponentID(shs::etoi(shs::lib::APIids::GRGB_API))), m_fastLED(fastLED)
+    {
+        m_grgb.attach([this]() { this->m_update_FastLED(); });
+    }
 
     ~GRGB_API_for_FASTLED() = default;
 
@@ -39,14 +47,14 @@ public:
 
         switch (it.read())
         {
-            case enable:   m_grgb.enable();  break;
-            case disable:  m_grgb.disable(); break;
-            case setPower: m_grgb.setPower(it.read()); break;
-            [[likely]] case setRGB: m_grgb.setRGB(it.read(), it.read(), it.read(), it.read()); break;
-            [[likely]] case setBrightness: { const uint8_t br = it.read(); m_grgb.setBrightness(br); m_fastLED.setBrightness(br); } break;
-            case fadeMode: m_grgb.fadeMode(it.read()); break;
-            case setFadePeriod: { uint32_t t{}; it.get(t, 4); m_grgb.setFadePeriod(t); } break;
-            case setWheel8: m_grgb.setWheel8(it.read(), it.read()); break;
+            case Commands::enable:   m_grgb.enable();  break;
+            case Commands::disable:  m_grgb.disable(); break;
+            case Commands::setPower: m_grgb.setPower(it.read()); break;
+            [[likely]] case Commands::setRGB: m_grgb.setRGB(it.read(), it.read(), it.read(), it.read()); break;
+            [[likely]] case Commands::setBrightness: { const uint8_t br = it.read(); m_grgb.setBrightness(br); m_fastLED.setBrightness(br); } break;
+            case Commands::fadeMode: m_grgb.fadeMode(it.read()); break;
+            case Commands::setFadePeriod: { uint32_t t{}; it.get(t, 4); m_grgb.setFadePeriod(t); } break;
+            case Commands::setWheel8: m_grgb.setWheel8(it.read(), it.read()); break;
 
             default: return shs::DTPpacket(); break;
         }
@@ -55,12 +63,18 @@ public:
         return shs::DTPpacket();
     }
 
+    GRGB& getGRGB() { return m_grgb; }
+
+    void start() override {}
+    void stop() override {}
+    void tick() override { m_grgb.tick();}
+
 
 protected:
     GRGB m_grgb;
-    FastLED& m_fastLED;
+    CFastLED& m_fastLED;
 
-    m_update_FastLED()
+    void m_update_FastLED()
     {
         m_fastLED.showColor(CRGB(m_grgb.R, m_grgb.G, m_grgb.B));
     }

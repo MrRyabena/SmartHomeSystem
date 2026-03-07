@@ -13,18 +13,18 @@ class shs::GRGB_Breathing : public shs::GRGB_Effect
 {
 public:
     GRGB_Breathing(GRGB& grgb, shs::t::shs_time_t dt, int16_t increment = 1,
-        uint16_t start_brightness, uint8_t min_brightness = 0, uint8_t max_brightness = 0xff)
+        uint16_t start_brightness = 0, uint8_t min_brightness = 0, uint8_t max_brightness = 0xff)
         : GRGB_Effect(grgb), m_timer(dt),
         m_min_brightness(min_brightness), m_max_brightness(max_brightness), m_brightness(start_brightness),
         m_increment(increment)
     {}
 
-    void start() { m_timer.reset(); }
-    void tick()
+    void start() override { m_timer.reset(); }
+    void tick() override
     {
         if (m_timer.check())
         {
-            grgb.setBrightness(m_brightness);
+            m_grgb.setBrightness(m_brightness);
 
 
             m_brightness += m_increment;
@@ -40,7 +40,7 @@ public:
             }
         }
     }
-    void stop() {}
+    void stop() override {}
 
 protected:
     shs::ProgramTimer m_timer;

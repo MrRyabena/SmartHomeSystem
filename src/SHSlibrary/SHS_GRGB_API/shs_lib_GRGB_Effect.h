@@ -5,7 +5,7 @@
 #include <shs_Process.h>
 
 
-namespace
+namespace shs
 {
     class GRGB_Effect;
 }

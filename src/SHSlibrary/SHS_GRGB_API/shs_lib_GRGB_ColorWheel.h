@@ -13,22 +13,25 @@ namespace shs
 class shs::ColorWheel : public shs::GRGB_Effect
 {
 public:
-    ColorWheel(GRGB& grgb, shs::t::shs_timer_t dt, int16_t shift = 1) : GRGB_Effect(grgb), m_timer(dt), m_shift(shift) {}
-    ColorWheel(GRGB& grgb, shs::t::shs_timer_t period, int16_t shift = 1) : GRGB_Effect(grgb), m_timer(period / M_HIGH_COLOR_BOUND), m_shift(shift) {}
+    ColorWheel(GRGB& grgb, shs::t::shs_time_t dt, int16_t shift = 1) : GRGB_Effect(grgb), m_timer(dt), m_shift(shift) {}
+    // ColorWheel(GRGB& grgb, shs::t::shs_time_t period, int16_t shift = 1) : GRGB_Effect(grgb), m_timer(period / M_HIGH_COLOR_BOUND), m_shift(shift) {}
 
-    void setDt(const shs::t::shs_timer_t dt) { m_timer.setTimeout(dt); }
-    shs::t::shs_timer_t getDt() const { return m_timer.getTimeout(); }
+    void setDt(const shs::t::shs_time_t dt) { m_timer.setTimeout(dt); }
+    shs::t::shs_time_t getDt() const { return m_timer.getTimeout(); }
 
-    void setPeriod(const shs::t::shs_timer_t period) { m_timer.setTimeout(period / M_HIGH_COLOR_BOUND); }
-    shs::t::shs_timer_t getPeriod() const { return m_timer.getTimerout() * M_HIGH_COLOR_BOUND; }
+    void setPeriod(const shs::t::shs_time_t period) { m_timer.setTimeout(period / M_HIGH_COLOR_BOUND); }
+    shs::t::shs_time_t getPeriod() const { return m_timer.getTimeout() * M_HIGH_COLOR_BOUND; }
 
     void start() override { m_timer.reset(); }
     void tick() override
     {
-        if (m_timer.check()) m_grgb.setWheel(m_color);
+        if (m_timer.check())
+        {
+            m_grgb.setWheel(m_color);
 
-        m_color += shift;
-        if (m_color >= M_HIGH_COLOR_BOUND) m_color %= M_HIGH_COLOR_BOUND;
+            m_color += m_shift;
+            if (m_color >= M_HIGH_COLOR_BOUND) m_color %= M_HIGH_COLOR_BOUND;
+        }
     }
 
     void stop() override {}

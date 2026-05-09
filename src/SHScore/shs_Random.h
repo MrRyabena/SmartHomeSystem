@@ -27,19 +27,51 @@ namespace shs
     class Random;
 }
 
+/**
+ * @brief Random number generator wrapper with configurable range and seed handling.
+ * @tparam random_t Result and range type.
+ */
 template <typename random_t>
 class shs::Random
 {
 public:
+    /**
+     * @brief Current seed value used by the generator.
+     */
     random_t seed{};
 
 public:
+    /**
+     * @brief Creates a random generator with the given range and seed.
+        * @param min Lower bound of generated values.
+        * @param max Upper bound of generated values.
+        * @param setSeed Initial generator seed.
+     */
     constexpr explicit Random(const random_t min = 0, const random_t max = 0xffff, const random_t setSeed = 42);
 
+    /**
+     * @brief Sets the generator seed.
+        * @param seed Seed value to apply.
+     */
     void setSeed(const random_t seed);
+
+    /**
+     * @brief Updates the output range used by the generator.
+        * @param min New lower bound of generated values.
+        * @param max New upper bound of generated values.
+     */
     void setRange(const random_t min, const random_t max);
+
+    /**
+     * @brief Replaces the seed with a platform-provided random value.
+        * @return Applied seed value.
+     */
     random_t autoSeed();
 
+    /**
+     * @brief Returns the next pseudo-random value in the configured range.
+        * @return Generated pseudo-random value.
+     */
     random_t get();
 
 protected:
@@ -59,12 +91,11 @@ constexpr shs::Random<random_t>::Random(random_t min, random_t max, random_t set
 #ifdef ARDUINO
 
 #else
-      ,
-      m_rnd_engine(setSeed),
-      m_rnd_distribution(static_cast<double>(min), static_cast<double>(max))
+    ,
+    m_rnd_engine(setSeed),
+    m_rnd_distribution(static_cast<double>(min), static_cast<double>(max))
 #endif
-{
-}
+{}
 
 template <typename random_t>
 void shs::Random<random_t>::setSeed(random_t setSeed)

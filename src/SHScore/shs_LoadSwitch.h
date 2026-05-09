@@ -12,6 +12,7 @@
 
 #include "shs_settings_private.h"
 #include "shs_Load.h"
+#include "shs_types.h"
 
 
 #ifdef SHS_SF_ARDUINO
@@ -25,18 +26,27 @@ namespace shs
 }
 
 
-/*
-  A class for controlling the load in SWITCH mode.
-*/
+/**
+ * @brief Load implementation that controls a digital output in SWITCH mode.
+ */
 class shs::LoadSwitch : public shs::Load
 {
 public:
-    explicit LoadSwitch(const uint8_t pin, const Load::Type type = Load::Type::SWITCH)
+    /**
+     * @brief Creates a switch-mode load bound to a digital output pin.
+     */
+    explicit LoadSwitch(const shs::t::shs_pin_t pin, const Load::Type type = Load::Type::SWITCH)
         : Load(type), m_pin(pin)
     {}
 
+    /**
+     * @brief Releases the switch-mode load.
+     */
     ~LoadSwitch() override = default;
 
+    /**
+     * @brief Configures the output pin for digital output.
+     */
     void setup() override
     {
     #ifdef SHS_SF_ESP
@@ -46,11 +56,19 @@ public:
     #endif
     }
 
+    /**
+     * @brief Turns the load on by writing a logical high value.
+     * @param value Switch off if 0, switch on otherwise.
+     */
     void on(const uint16_t value = UINT16_MAX) override { gio::write(m_pin, value); m_value = static_cast<bool>(value); }
+
+    /**
+     * @brief Turns the load off by writing a logical low value.
+     */
     void off() override { gio::low(m_pin); m_value = 0; }
 
 protected:
-    const uint8_t m_pin;
+    const shs::t::shs_pin_t m_pin;
 };
 
 #endif  // #ifdef SHS_SF_ARDUINO

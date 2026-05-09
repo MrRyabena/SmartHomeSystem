@@ -39,30 +39,63 @@ namespace shs
 }
 
 
+/**
+ * @brief Virtual load implementation that proxies control to a remote device over DTP.
+ */
 class shs::LoadVirtual : public shs::Load, public shs::API
 {
 public:
+    /**
+     * @brief Creates a virtual load bound to a remote load identifier.
+     */
     LoadVirtual(const shs::t::shs_ID_t thisID, shs::t::shs_ID_t virtualID, shs::DTP& dtp, const Type l_type = shs::Load::Type::UNKNOWN)
         : Load(l_type), API(thisID), m_virtualID(virtualID.setComponentID(shs::constants::APIids::Load)), m_dtp(dtp)
     {}
 
+    /**
+     * @brief Destroys the virtual load.
+     */
     ~LoadVirtual() = default;
 
     
     // -------------------- API --------------------
+    /**
+     * @brief Load command set reused from the concrete load API.
+     */
     using Commands = shs::Load_API::Commands;
+
+    /**
+     * @brief Handles incoming DTP commands. Virtual loads do not process packets locally.
+     */
     shs::DTPpacket handle([[maybe_unused]]shs::ByteCollectorReadIterator<>& it) override { return shs::DTPpacket(); }
 
     
     // -------------------- Load --------------------
+    /**
+     * @brief Initializes the virtual load interface.
+     */
     void setup() override {}
 
+    /**
+     * @brief Sends an ON command to the remote load.
+     */
     void on(const uint16_t value = UINT16_MAX) override;
+
+    /**
+     * @brief Sends an OFF command to the remote load.
+     */
     void off() override;
 
 
 protected:
+    /**
+     * @brief Identifier of the remote load endpoint.
+     */
     shs::t::shs_ID_t m_virtualID;
+
+    /**
+     * @brief DTP transport used to send commands.
+     */
     shs::DTP& m_dtp;
 };
 

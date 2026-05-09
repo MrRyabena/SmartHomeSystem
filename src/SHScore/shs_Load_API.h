@@ -6,6 +6,7 @@
     v0.2.0 — created.
     v1.0.0 — release.
     v2.0.0 — redesigned, debugged and tested.
+    v2.3.0 — updated docs.
 */
 
 /*
@@ -36,6 +37,9 @@ namespace shs
 }
 
 
+/**
+ * @brief API for controlling a load via DTP commands.
+ */
 class shs::Load_API : public shs::API
 {
 public:
@@ -47,9 +51,23 @@ public:
         GET_VALUE, VALUE
     };
 
+    /**
+     * @brief Creates a load-control API for the given load.
+        * @param load Controlled load instance.
+        * @param ID Base ID used to construct API ID.
+     */
     Load_API(shs::Load& load, shs::t::shs_ID_t ID) noexcept : API(ID.setComponentID(shs::constants::APIids::Load)), m_load(load) {}
+
+    /**
+     * @brief Destroys the load-control API.
+     */
     ~Load_API() = default;
 
+    /**
+     * @brief Handles load control commands and builds response packets when needed.
+        * @param it Iterator over the incoming request packet bytes.
+        * @return Response packet for request/response commands or empty packet for fire-and-forget commands.
+     */
     [[nodiscard]] shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override
     {
         it.set_position(shs::DTPpacket::get_dataBeg(it));

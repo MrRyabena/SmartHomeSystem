@@ -38,9 +38,18 @@ namespace shs
 }
 
 
+/**
+ * @brief API for exposing sensor metadata and readings over DTP.
+ */
 class shs::Sensor_API : public shs::API, public shs::Process
 {
 public:
+    /**
+     * @brief Creates a sensor API bound to a concrete sensor and DTP container.
+        * @param sensor Sensor instance served by this API.
+        * @param id Base ID used to build the API endpoint ID.
+        * @param dtp DTP transport used for outgoing responses.
+     */
     explicit Sensor_API(shs::Sensor& sensor, shs::t::shs_ID_t id, shs::DTP& dtp) noexcept
         : API(id.setComponentID(shs::constants::APIids::Sensor)), m_dtp(dtp), m_sensor(sensor)
     {}
@@ -55,12 +64,28 @@ public:
 
 
     // shs::API
+    /**
+     * @brief Handles sensor metadata and value requests.
+        * @param it Iterator over incoming packet payload.
+        * @return Response packet with type or data information, or empty packet when not needed.
+     */
     [[nodiscard]] shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
 
 
     // shs::Process
+    /**
+     * @brief Starts the sensor API process.
+     */
     void start() override {}
+
+    /**
+     * @brief Periodically checks for incoming sensor requests.
+     */
     void tick() override;
+
+    /**
+     * @brief Stops the sensor API process.
+     */
     void stop() override {}
 
 private:

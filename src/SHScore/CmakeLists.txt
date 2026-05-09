@@ -89,8 +89,8 @@ endif()
 add_library(SHScore ${SOURCES})
 
 if(SHS_CMF_QT)
-    target_link_libraries(SHScore PRIVATE Qt5::Core Qt5::Quick)
-    target_link_libraries(SHScore PRIVATE Qt5::Core Qt5::Network)
+    target_link_libraries(SHScore PRIVATE Qt6::Core Qt6::Quick)
+    target_link_libraries(SHScore PRIVATE Qt6::Core Qt6::Network)
 endif()
 
 

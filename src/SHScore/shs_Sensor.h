@@ -41,6 +41,7 @@ public:
         THERMISTOR,
         PHOTORESISTOR,
         DIGITAL,
+        ANALOG_MAPPED,
 
         LIBRARY_TYPES = 16384,
         USER_TYPES = 32768,

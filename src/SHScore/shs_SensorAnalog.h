@@ -21,6 +21,7 @@
 	  - The class is available for compilation without the flag SHS_SF_ARDUINO, but the functions
 		are presented as stubs, without implementing the functionality.
 	  - Value type of protected member m_pin replaced from uint8_t to shs::t::shs_pin_t.
+	  - Added parameter 'type' to constructor.
 */
 
 #include "shs_Sensor.h"
@@ -44,7 +45,7 @@ namespace shs
 class shs::SensorAnalog : public shs::Sensor
 {
 public:
-	explicit SensorAnalog(const uint8_t pin, const uint8_t samples = SENSOR_AVERAGE_SAMPLES);
+	explicit SensorAnalog(shs::t::shs_pin_t pin, uint8_t samples = SENSOR_AVERAGE_SAMPLES, Type type = ANALOG_PIN);
 
 	static constexpr uint8_t SENSOR_AVERAGE_SAMPLES = SHS_SET_SENSOR_AVERAGE_SAMPLES;
 

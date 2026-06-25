@@ -27,6 +27,9 @@ namespace shs
 }
 
 
+/**
+ * @brief IPv4 address wrapper with parsing and platform-specific conversions.
+ */
 struct shs::IP
 {
     constexpr IP(const char* ipAddress) : m_IP(ipFromStr(ipAddress)) {}

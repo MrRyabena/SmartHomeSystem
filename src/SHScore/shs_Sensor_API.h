@@ -6,6 +6,7 @@
     v0.2.0 — created.
     v1.0.0 — release.
     v2.0.0 — redesigned, debugged and tested.
+    v2.3.0 — updated docs.
 */
 
 /*

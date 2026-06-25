@@ -8,6 +8,7 @@
       - Added inline.
       - Corrected.
     v2.0.0 — redesigned, debugged and tested.
+    v2.3.0 — used shs_pin_t for pin definitions, updated docs.
 */
 
 #include "shs_settings_private.h"

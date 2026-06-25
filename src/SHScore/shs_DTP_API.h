@@ -5,6 +5,7 @@
   Versions:
     v2.0.0 — created.
     v2.1.0 — fixed a bug. There is a critical error that has not been fixed yet.
+    v2.3.0 — updated docs.
 */
 
 /*
@@ -36,21 +37,40 @@ namespace shs
 }
 
 
+/**
+ * @brief API handler that serves built-in DTP service commands.
+ */
 class shs::DTP_APIhandler : public shs::API
 {
 public:
+    /**
+     * @brief Creates the built-in DTP API handler.
+     */
     DTP_APIhandler(shs::t::shs_ID_t ID) : API(ID.setComponentID(shs::constants::APIids::DTP)) {}
+
+    /**
+     * @brief Destroys the DTP API handler.
+     */
     ~DTP_APIhandler() = default;
 
+    /**
+     * @brief Handles built-in DTP service commands.
+     */
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
 };
 
 
+/**
+ * @brief Factory for DTP service packets used by discovery and connection setup.
+ */
 class shs::DTP_APIpackets
 {
 public:
     static constexpr auto DTP_API_ID = shs::constants::APIids::DTP;
 
+    /**
+     * @brief Builds an initial handshake packet.
+     */
     static shs::DTPpacket getInitialPacket(shs::t::shs_ID_t ID)
     {
         ID.setComponentID(static_cast<uint16_t>(DTP_API_ID));
@@ -62,6 +82,9 @@ public:
         return packet;
     }
 
+    /**
+     * @brief Builds an answer to an initial handshake.
+     */
     static shs::DTPpacket getInitialAnswerPacket(shs::t::shs_ID_t ID, bool success)
     {
         shs::ByteCollector<> bc(1);

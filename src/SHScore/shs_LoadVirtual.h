@@ -47,6 +47,10 @@ class shs::LoadVirtual : public shs::Load, public shs::API
 public:
     /**
      * @brief Creates a virtual load bound to a remote load identifier.
+     * @param thisID Local API identifier for this virtual load.
+     * @param virtualID Remote load identifier to control.
+     * @param dtp DTP transport used to send commands.
+     * @param l_type Load type to report for this virtual load.
      */
     LoadVirtual(const shs::t::shs_ID_t thisID, shs::t::shs_ID_t virtualID, shs::DTP& dtp, const Type l_type = shs::Load::Type::UNKNOWN)
         : Load(l_type), API(thisID), m_virtualID(virtualID.setComponentID(shs::constants::APIids::Load)), m_dtp(dtp)
@@ -65,7 +69,7 @@ public:
     using Commands = shs::Load_API::Commands;
 
     /**
-     * @brief Handles incoming DTP commands. Virtual loads do not process packets locally.
+     * @brief Handles incoming DTP commands.
      */
     shs::DTPpacket handle([[maybe_unused]]shs::ByteCollectorReadIterator<>& it) override { return shs::DTPpacket(); }
 

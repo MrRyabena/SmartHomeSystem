@@ -18,6 +18,7 @@
       - Storing the ID of connected modules.
       - Active status.
       - Message processing is divided into stages (separate functions).
+    v2.3.0 — updated docs.
 */
 
 
@@ -55,9 +56,9 @@ namespace shs
 }
 
 
-/*
-  Component DTP. Abstract class of a data bus that accepts and sends messages.
-*/
+/**
+ * @brief Abstract DTP transport bus that receives, processes, and sends packets.
+ */
 class shs::DTPbus : public shs::Process
 {
 public:
@@ -65,10 +66,19 @@ public:
     enum Status : uint8_t { no_data, packet_is_expected, packet_received, packet_processed, invalid_recipient, bus_error };
 
 
+    /**
+     * @brief Creates a bus wrapper with an optional handler and buffer size.
+        * @param busID Bus identifier, must be unique among buses connected to the same DTP instance.
+        * @param handler Optional API handler for incoming packets.
+        * @param bufsize Size of internal byte buffer (buffer size can be adjusted automatically).
+     */
     explicit DTPbus(const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
         : busID(busID), m_handler(handler), m_len(0), m_tmr(0), m_bc(bufsize)
     {}
 
+    /**
+     * @brief Moves a bus wrapper.
+     */
     DTPbus(DTPbus&& other) : busID(other.busID), m_handler(other.m_handler),
         m_len(other.m_len), m_tmr(other.m_tmr), m_bc(std::move(other.m_bc))
     {
@@ -77,44 +87,155 @@ public:
         other.m_tmr = {};
     }
 
+    /**
+     * @brief Destroys the bus wrapper.
+     */
     virtual ~DTPbus() = default;
 
 
+    /**
+     * @brief Replaces the packet handler.
+        * @param handler New handler pointer.
+     * @note Old handler will be lost.
+     */
     void setHandler(shs::API* handler) { m_handler = handler; }
 
+    /**
+     * @brief Reports whether the concrete bus is active.
+        * @return True when bus is active.
+     */
     virtual bool isActive() const = 0;
 
-    // processing incoming data 
+    /**
+     * @brief Polls the concrete bus for new data.
+        * @return Current bus status after polling.
+     */
     virtual Status checkBus() = 0;
+    /**
+     * @brief Polls a bus instance using the shared buffer.
+        * @tparam Bus Concrete bus type.
+        * @param bus Bus instance to poll.
+        * @return Current bus status after polling.
+     */
     template <class Bus> Status checkBus(Bus& bus) { status = checkBus(bus, m_bc, m_len, m_handler); return status; }  // sendPacket(m_DTPhandler());
+    /**
+     * @brief Polls a bus and stores incoming bytes in the given buffer.
+        * @tparam Bus Concrete bus type.
+        * @param bus Bus instance to poll.
+        * @param buf Buffer used to store incoming bytes.
+        * @param len Expected packet length cache.
+        * @param handler Optional packet handler.
+        * @return Current bus status after polling and optional processing.
+     */
     template <class Bus> inline static Status checkBus(Bus& bus, ByteCollector<>& buf, uint8_t& len, shs::API* handler = nullptr);
 
-    // processing bus
+    /**
+     * @brief Processes a bus instance using the shared buffer.
+        * @tparam Bus Concrete bus type.
+        * @param bus Bus instance to process.
+        * @return Current bus status after processing.
+     */
     template <class Bus> Status processBus(Bus& bus) { status = processBus(bus, m_bc, m_len); return status; }
+    /**
+     * @brief Processes a bus and fills a byte collector with the received packet.
+        * @tparam Bus Concrete bus type.
+        * @param bus Bus instance to process.
+        * @param buf Output packet buffer.
+        * @param len Expected packet length cache.
+        * @return Processing status.
+     */
     template <class Bus> inline static Status processBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len);
 
-    // processing packet
+    /**
+     * @brief Sends the current buffered packet to the handler.
+        * @param handler API handler for packet processing.
+        * @return Updated bus status.
+     */
     Status processPacket(shs::API& handler) { sendPacket(processPacket(m_bc, handler, status)); return status; }
+    /**
+     * @brief Decodes buffered data and passes it to the handler.
+        * @param data Buffered packet bytes.
+        * @param handler API handler to invoke.
+        * @param status Input/output status value.
+        * @return Handler response packet or empty packet.
+     */
     inline static shs::DTPpacket processPacket(shs::ByteCollector<>& data, shs::API& handler, Status& status);
 
-    // for additional handlers
+    /**
+     * @brief Returns the latest buffered bytes.
+        * @return Read iterator for the latest buffered packet.
+     */
     shs::ByteCollectorReadIterator<> getLastData() { return m_bc.getReadIt(); }
 
 
-    // sending data
+    /**
+     * @brief Sends a packet through the concrete bus.
+        * @param packet Packet to send.
+        * @return Number of sent bytes.
+     */
     virtual uint8_t sendPacket(const shs::DTPpacket& packet) = 0;
+    /**
+     * @brief Sends a byte collector through the concrete bus.
+        * @param bc payload to send.
+        * @return Number of sent bytes.
+     */
     virtual uint8_t sendRAW(shs::ByteCollector<>& bc) = 0;
+    /**
+     * @brief Sends bytes from a read iterator through the concrete bus.
+        * @param it Iterator over bytes to send.
+        * @return Number of sent bytes.
+     */
     virtual uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) = 0;
+    /**
+     * @brief Sends a raw buffer through the concrete bus.
+        * @param data Pointer to bytes to send.
+        * @param size Number of bytes to send.
+        * @return Number of sent bytes.
+     */
     virtual uint8_t sendRAW(const uint8_t* data, const uint8_t size) = 0;
 
+    /**
+     * @brief Sends a packet through a concrete bus object.
+     * @tparam Bus Concrete bus type.
+     * @param bus Bus instance used for write operation.
+     * @param packet Packet to send.
+     * @return Number of sent bytes.
+     */
     template <class Bus> static uint8_t sendPacket(Bus& bus, const shs::DTPpacket& packet) { return (packet.empty() ? 0 : bus.write(packet.bc.getPtr(), packet.bc.size())); }
+    /**
+     * @brief Sends a byte collector through a concrete bus object.
+     * @tparam Bus Concrete bus type.
+     * @param bus Bus instance used for write operation.
+     * @param bc Byte collector to send.
+     * @return Number of sent bytes.
+     */
     template <class Bus> static uint8_t sendRAW(Bus& bus, shs::ByteCollector<>& bc) { return bus.write(bc.getPtr(), bc.size()); };
+    /**
+     * @brief Sends iterator bytes through a concrete bus object.
+     * @tparam Bus Concrete bus type.
+     * @param bus Bus instance used for write operation.
+     * @param it Read iterator over bytes to send.
+     * @return Number of sent bytes.
+     */
     template <class Bus> static uint8_t sendRAW(Bus& bus, shs::ByteCollectorReadIterator<>& it) { return bus.write(it.getPtr(), it.size()); };
+    /**
+     * @brief Sends a raw byte buffer through a concrete bus object.
+     * @tparam Bus Concrete bus type.
+     * @param bus Bus instance used for write operation.
+     * @param data Pointer to bytes to send.
+     * @param size Number of bytes to send.
+     * @return Number of sent bytes.
+     */
     template <class Bus> static uint8_t sendRAW(Bus& bus, const uint8_t* data, const uint8_t size) { return bus.write(data, size); };
 
-    // shs::Process
+    /**
+     * @brief Starts the bus implementation.
+     */
     void start() override = 0;
     void tick() override = 0;
+    /**
+     * @brief Stops the bus implementation.
+     */
     void stop() override = 0;
 
 

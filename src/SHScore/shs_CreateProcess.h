@@ -16,9 +16,12 @@ namespace shs
 }
 
 
-/*
-  The class creates a process from function pointer templates.
-*/
+/**
+ * @brief Adapts three callables into a shs::Process implementation.
+ * @tparam StartPtr Callable type for start().
+ * @tparam TickPtr Callable type for tick().
+ * @tparam StopPtr Callable type for stop().
+ */
 template <typename StartPtr, typename TickPtr, typename StopPtr>
 class shs::CreateProcess : public Process
 {

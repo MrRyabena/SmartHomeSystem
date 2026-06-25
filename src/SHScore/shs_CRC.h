@@ -40,10 +40,9 @@ namespace shs
     class CRC32;
 };
 
-/*
-  CRC 8
-*/
-
+/**
+ * @brief CRC-8 calculator and helper functions.
+ */
 class shs::CRC8
 {
 public:
@@ -60,10 +59,9 @@ public:
     static uint8_t crcBuf(const uint8_t* ptr, uint16_t size);
 };
 
-/*
-  CRC 16
-*/
-
+/**
+ * @brief CRC-16 calculator and helper functions.
+ */
 class shs::CRC16
 {
 public:
@@ -78,10 +76,9 @@ public:
     uint16_t crcBuf(const uint8_t* ptr, uint16_t size);
 };
 
-/*
-  CRC 32
-*/
-
+/**
+ * @brief CRC-32 calculator and helper functions.
+ */
 class shs::CRC32
 {
 public:

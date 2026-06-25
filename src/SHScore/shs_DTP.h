@@ -26,7 +26,12 @@
 		- shs::DTPless — comparison operators (for search and sorting algorithms)
 		- shs::DTPpacket — a class for creating, encrypting, and decrypting messages
 	  - Tested.
-*/
+	v2.3.0 — updated docs, fixes.
+	   - multiple fixes and improvements — corrected data-shift logic
+	   - add DTP code `MASK`
+	   - stability and initialization fixes
+ */
+
 
 #include "shs_settings_private.h"
 #ifndef SHS_SF_AVR
@@ -55,29 +60,70 @@ namespace shs
 	class DTP;
 }
 
-/*
-  Container class for linking data buses and API handlers.
-*/
+/**
+ * @brief Container that links DTP buses, API handlers, and discovery helpers.
+ */
 class shs::DTP : public shs::Process
 {
 public:
 
 	shs::t::shs_ID_t moduleID;
 
-
+	/**
+	 * @brief Creates a DTP container for the given module ID.
+	 * @param module_id Module ID to use for this DTP instance.
+	 */
 	explicit DTP(const shs::t::shs_ID_t module_id) : moduleID(module_id), m_discover(std::make_shared<shs::DTPdiscover>(module_id)) {}
 
+	/**
+	 * @brief Destroys the DTP container.
+	 */
 	~DTP() override = default;
 
-	// sending data
+	/**
+	 * @brief Sends a packet through the bus that serves the recipient module.
+	 * @param packet Packet to route and send.
+	 * @return Number of bytes sent or 0 on failure.
+	 */
 	uint8_t sendPacket(const shs::DTPpacket& packet);
+
+	/**
+	 * @brief Sends raw bytes through the bus that serves the recipient module.
+	 * @param bc Byte collector with outgoing payload.
+	 * @param id Recipient module ID.
+	 * @return Number of bytes sent or 0 on failure.
+	 */
 	uint8_t sendRAW(shs::ByteCollector<>& bc, const uint8_t id) { auto bus = findBusFromModule(id); return (bus ? bus->sendRAW(bc) : 0); }
+
+	/**
+	 * @brief Sends raw bytes from an iterator through the bus that serves the recipient module.
+	 * @param it Read iterator over outgoing bytes.
+	 * @param id Recipient module ID.
+	 * @return Number of bytes sent or 0 on failure.
+	 */
 	uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it, const uint8_t id) { auto bus = findBusFromModule(id); return (bus ? bus->sendRAW(it) : 0); }
+
+	/**
+	 * @brief Sends a raw byte buffer through the bus that serves the recipient module.
+	 * @param data Pointer to outgoing byte buffer.
+	 * @param size Buffer size in bytes.
+	 * @param id Recipient module ID.
+	 * @return Number of bytes sent or 0 on failure.
+	 */
 	uint8_t sendRAW(const uint8_t* data, const uint8_t size, const uint8_t id) { auto bus = findBusFromModule(id); return (bus ? bus->sendRAW(data, size) : 0); }
 
+	/**
+	 * @brief Finds the bus that owns the given module ID.
+	 * @param moduleID Module ID to search for.
+	 * @return Pointer to matching bus or nullptr if not found.
+	 */
 	shs::DTPbus* findBusFromModule(const uint8_t moduleID) const;
 
-	// BUS
+	/**
+	 * @brief Attaches a new bus and assigns it a unique bus ID when needed.
+	 * @param bus Owned bus instance to attach.
+	 * @return Assigned bus ID.
+	 */
 	shs::t::shs_busID_t attachBus(std::unique_ptr<shs::DTPbus>&& bus)
 	{
 		doutln("DTP::attachBus");
@@ -86,21 +132,59 @@ public:
 		return (*m_buss.attach(std::move(bus)))->busID;
 	}
 
+	/**
+	 * @brief Detaches a bus by its bus ID.
+	 * @param id Bus ID to detach.
+	 */
 	void detachBus(const shs::t::shs_busID_t& id) { m_buss.detach(id); }
+
+	/**
+	 * @brief Returns the bus with the given ID or nullptr if it is missing.
+	 * @param id Bus ID to query.
+	 * @return Pointer to bus or nullptr when absent.
+	 */
 	shs::DTPbus* getBus(const shs::t::shs_busID_t& id) const { auto it = m_buss.get(id); return it != m_buss.end() ? it->get() : nullptr; }
 
+	/**
+	 * @brief Generates an unused bus ID.
+	 * @return Unique bus ID not currently in use.
+	 */
 	shs::t::shs_busID_t getUniqueBusID() const;
 
 
-	// API
+	/**
+	 * @brief Attaches an owned API handler.
+	 * @param api Owned API handler.
+	 */
 	void attachAPI(std::unique_ptr<shs::API>&& api) { m_APIs.attach(std::move(api)); }
+
+	/**
+	 * @brief Attaches a non-owned API handler.
+	 * @param api Non-owned API handler pointer.
+	 */
 	void attachAPI(shs::API* api) { m_externalAPIs.attach(api); }
+
+	/**
+	 * @brief Detaches both owned and external API handlers with the given ID.
+	 * @param id API ID to detach.
+	 */
 	void detachAPI(const shs::t::shs_ID_t& id) { m_APIs.detach(id); m_externalAPIs.detach(id); }
+
+	/**
+	 * @brief Returns an attached owned API handler.
+	 * @param id API ID to query.
+	 * @return Reference to attached API handler.
+	 */
 	shs::API& getAPI(const shs::t::shs_ID_t& id) const { return *(m_APIs.get(id)->get()); }
 
-	// shs::Process
-	void start() override { for (auto& bus : m_buss) bus->start(); if(m_discover) m_discover->start(); }
+	/**
+	 * @brief Starts all buses and the discovery helper.
+	 */
+	void start() override { for (auto& bus : m_buss) bus->start(); if (m_discover) m_discover->start(); }
 	void tick() override;
+	/**
+	 * @brief Stops all buses.
+	 */
 	void stop() override { for (auto& bus : m_buss) bus->stop(); }
 
 private:

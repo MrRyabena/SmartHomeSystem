@@ -18,6 +18,9 @@ namespace shs
 };
 
 
+/**
+ * @brief Packed identifier that stores module, device, and component IDs in one value.
+ */
 struct shs::ID
 {
     uint32_t id{};

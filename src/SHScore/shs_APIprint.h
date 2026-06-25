@@ -28,11 +28,20 @@ namespace shs
 }
 
 
+/**
+ * @brief Debug-only API handler that prints received DTP packets.
+ */
 class shs::APIprint : public shs::API
 {
 public:
+    /**
+     * @brief Creates a debug API printer for the given identifier.
+     */
     APIprint(const shs::t::shs_ID_t ID) : shs::API(ID) {}
 
+    /**
+     * @brief Prints the incoming packet contents to the debug output.
+     */
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override
     {
         dsep();

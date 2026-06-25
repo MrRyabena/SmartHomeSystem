@@ -16,11 +16,17 @@ namespace shs
     class DTPdiscover;     // declared in shs_DTPdiscover.h
 
     class UdpBus;
+/**
+ * @brief UDP-based DTP transport bus bound to a single remote endpoint.
+ */
     class UdpBroadcastBus;
     class UdpMulticastBus;
 }
 
 
+/**
+ * @brief UDP-based DTP transport bus bound to a single remote endpoint.
+ */
 class shs::UdpBus : public shs::DTPbus
 {
     explicit UdpBus(const shs::t::shs_IP_t ip, const shs::t::shs_port_t port, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
@@ -60,6 +66,9 @@ protected:
 class shs::UdpBroadcastBus : public shs::DTPbus
 {
 public:
+    /**
+     * @brief UDP-based broadcast DTP bus used for discovery and announcements.
+     */
     explicit UdpBroadcastBus(const shs::t::shs_port_t port, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
         : DTPbus(busID, handler, bufsize), m_port(port)
     {
@@ -100,6 +109,9 @@ protected:
 class shs::UdpMulticastBus : public DTPbus
 {
 public:
+    /**
+     * @brief UDP-based multicast DTP bus.
+     */
     explicit UdpMulticastBus(const shs::t::shs_IP_t multicastIP, shs::t::shs_port_t port, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
         : DTPbus(busID, handler, bufsize), m_multicastIP(multicastIP), m_port(port)
     {}

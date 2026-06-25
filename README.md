@@ -252,44 +252,72 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!---------------------------------- v2.3.0 ----------------------------------->
 <details>
-<summary>v2.3.X — <code><b>[current]</b></code> New features.</summary>
+<summary>v2.3.X — <code><b>[current]</b></code> Release notes (since `v2.2.0`)</summary>
 
 ### SHScore
 
 - **New functional:**
-  - `shs::LinearApproximation`: A class for linear approximation using the least squares method.
-  - `shs::AStreamBuf`
-  - `shs::AFStreamBuf`
-  - `shs::AFStreamBuf`
+  - `shs::LinearApproximation`: added a least-squares linear approximation class.
+  - `shs::AFStream`: added Arduino-to-std stream bridge (file-stream adapter).
+  - `shs::AStreamBuf`: added streambuf implementation for Arduino `Stream`.
+  - `shs::AFStreamBuf`: added adapter for Arduino file-like streams.
+
 - **Changes:**
-  - `shs::SensorAnalog`:
-    - Separated into .h and .cpp files.
-    - Value type of protected member m_value replaced from shs::t::shs_fixed_t
-    to shs::t::shs_float_t.
-    - The class is available for compilation without the flag SHS_SF_ARDUINO, but the functions.
-        are presented as stubs, without implementing the functionality.
-    - Value type of protected member m_pin replaced from uint8_t to shs::t::shs_pin_t.
-  - `shs::DTP_API`:
-  - `shs::DTPpacket`:
-  - `shs::TcpSocket`:
-  - `shs::TcpServer`:
-  - `shs::qt::TcpSocket`:
-  - `shs::DTPdiscover`:
-  - `shs::DTP`:
+  - `shs::SensorAnalog`: split into header and implementation files; `m_value` type changed from `shs::t::shs_fixed_t` to `shs::t::shs_float_t`; `m_pin` type changed to `shs::t::shs_pin_t`; made buildable without `SHS_SF_ARDUINO` (stubbed functions).
+  - `shs::DTP`: multiple fixes and improvements — corrected data-shift logic, DTP code `MASK` added, stability and initialization fixes.
+  - `shs::DTPdiscover`: initialization fixes, default callbacks adjusted, discovery handling improved, added helper `printAllDiscovered()` for debugging.
+  - `shs::DTPpacket`: clarified/updated packet handling and related helpers.
+  - `shs::DTP_API`: updated (critical issue remains noted — use with caution); API id handling improved.
+  - `shs::TcpSocket`: split implementation to `.cpp`, added `connected()` checks, pointer safety checks, outgoing-packet queue, and connection-state flags.
+  - `shs::TcpServer`: updated behavior for client attachment to `shs::DTP` and client deletion on disconnect.
+  - `shs::qt::TcpSocket`: fixed conversions with `QHostAddress`/`shs::IP`, improved Qt compatibility.
+  - `shs::UDP` / `shs::UdpMulticastBus`: fixed conditional compilation and multicast support.
+  - `shs::ControlWiFi`: moved definitions to implementation file, prepared for multi-AP and extended functionality.
+  - `shs::IP`: corrected default-return behavior and casting issues.
+  - `shs::AFStream` / `shs_AStreamBuf` (implementation tweaks): fixed overflow/return semantics and tested Arduino File compatibility.
+  - `shs::ByteCollector`: various fixes and optimizations related to buffer shifts and insert logic (stability improvements).
+  - `shs::ProgramTimer` / `shs::LoadPWM` / effects libraries: additions and fixes for timing and PWM effects support (sunrise effect library added).
+  - General:
+    - removed many C-style casts;
+    - replaced pin definitions with `shs::t::shs_pin_t` for better type safety;
+    - replaced ID definitions with `shs::t::`-id's aliases for better handling and safety;
+    - added explicit size/reserve optimizations;
+    - corrected debug/pragma flags;
+    - cleaned up temporary debug code.
 
 ### SHSlibrary
 
 - **New functional:**
-  - `SHS_PhotoSensor`: a class for obtaining light sensor readings.
+  - `SHS_PhotoSensor`: added initial implementation for light sensor readings.
+  - `shs::MQTTbus`: initial implementation and tests for MQTT bus (example/experimental).
+  - `VirtualEffectsManager`: virtual ARGB/GRGB effects manager (initial implementation).
+  - `VirtualGRGBManager`: virtual manager for GRGB effects and helpers.
 
 - **Changes:**
-  - `SHS_MHZ19`: fixed bugs.
-  
+  - `SHS_MHZ19`: fixed casting/precision bugs.
+  - `SHS_DHT`: fixed critical cast issues and adjusted default expiration time.
+  - `SHS_DS18`: fixed critical bug and added default `expiration_time` in constructor; tested.
+  - `SHS_BME280`: replaced C-style casts with safer casts.
+  - Added `library.json` for package properties and metadata.
+
 ### Examples
 
-- **New functional:**
-  - `ConnectMulti`: created example for connect WiFi in multi APs.
-  
+- **New / updated examples:**
+  - `ConnectMulti`: example demonstrating multi-AP WiFi connection.
+  - `ControlWiFi` example: updated to reflect `shs::ControlWiFi` changes.
+  - File-stream / AStream examples: `rd_cio_to_ASerial`, `shs_AFStream` examples and tests.
+  - MQTT/MQTTbus examples (experimental): basic usage and tests.
+
+### Build / docs / misc
+
+- `make.sh`: updated to copy `shs_settings.h` for qt-build workflows; documentation updated with settings/dependency notes.
+- Removed deprecated scripts and paths; updated release notes and version references (`v2.2.1`, `v2.2.2`, `v2.3.0` preparatory commits).
+
+### Developer notes
+
+- Robustness focus: explicit checks, removal of unsafe casts, sane defaults for cache expiration, and allocation optimizations.
+- Known TODOs: `shs::DTP_API` still flagged as unsafe in some scenarios; `StreamBus` and a few experimental modules require further testing.
+
 </details>
 <!----------------------------------------------------------------------------->
 

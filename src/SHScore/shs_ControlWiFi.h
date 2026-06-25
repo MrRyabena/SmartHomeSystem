@@ -32,6 +32,9 @@ namespace shs
 };
 
 
+/**
+ * @brief Static helpers for configuring and connecting Wi-Fi on supported ESP targets.
+ */
 class shs::ControlWiFi
 {
 public:

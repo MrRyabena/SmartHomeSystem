@@ -25,6 +25,10 @@ namespace shs
 };
 
 
+/**
+ * @brief Byte iterator over a raw buffer.
+ * @tparam BCbuf_t Buffer element type, expected to be one byte.
+ */
 template <typename BCbuf_t = uint8_t>
 class shs::ByteCollectorIterator
 {
@@ -62,6 +66,11 @@ size_t operator-(const shs::ByteCollectorIterator<BCbuf_t>& right, const shs::By
 }
 
 
+/**
+ * @brief Read-aware byte iterator that tracks a bounded buffer range.
+ * @tparam BCbuf_t Buffer element type, expected to be one byte.
+ * @tparam BCsize_t Type used for byte counts and positions.
+ */
 template <typename BCbuf_t = uint8_t, typename BCsize_t = uint8_t>
 class shs::ByteCollectorReadIterator : public shs::ByteCollectorIterator<BCbuf_t>
 {

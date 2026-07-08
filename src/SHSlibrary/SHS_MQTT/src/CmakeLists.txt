@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.27)
+
+project(SHS_MQTT VERSION 2.3.0 LANGUAGES CXX C)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+set(SOURCES
+    shs_lib_MQTTbus.cpp
+    shs_lib_MQTTbus.h
+    # shs_lib_qt_MQTTclient.cpp
+    # shs_lib_qt_MQTTclient.h
+)
+
+find_package(Qt6 REQUIRED COMPONENTS Mqtt)
+
+add_library(SHS_MQTT ${SOURCES})
+
+target_include_directories(SHS_MQTT
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(SHS_MQTT
+    PUBLIC SHScore
+    PUBLIC Qt6::Core
+    PUBLIC Qt6::Network
+    PUBLIC Qt6::Mqtt
+)

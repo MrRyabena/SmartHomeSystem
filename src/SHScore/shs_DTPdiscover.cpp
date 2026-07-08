@@ -161,4 +161,4 @@ void shs::DTPdiscover::tick()
 }
 
 
-#endif  // #if defined(SHS_SF_NETWORK) && !defined(SHS_SF_ESP32)
+#endif  // #if defined(SHS_SF_NETWORK) && !defined(SHS_SF_AVR)

@@ -12,7 +12,7 @@ void shs::DTPdiscover::discover(const uint8_t id)
     auto existing = m_requests.get(m_Data(id));
     if (existing == m_requests.end())
     {
-        dout("discovering id: "); doutln(id);
+        dout("discovering id: "); doutln(static_cast<int>(id));
         shs::ByteCollector<> buf(1);
         buf.push_back(GET_IP, 1);
         //shs::t::shs_ID_t(0xff, 0, 0) mask TODO
@@ -66,10 +66,6 @@ shs::t::shs_IP_t shs::DTPdiscover::check(const uint8_t id)
     return {};
 }
 
-void doitid(uint32_t id)
-{
-    dout(id >> 24); dout((id >> 16) & 0xff); dout((id >> 8) & 0xff); dout(id & 0xff);
-}
 
 shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
 {
@@ -102,6 +98,9 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
                 auto id = shs::DTPpacket::get_senderID(it);
                 shs::t::shs_IP_t ip{};
                 it.get(ip);
+                dsep();
+                dout("Module id: ");
+                doutln(id.getModuleID());
 
                 auto req = m_requests.get(m_Data(id.getModuleID()));
 

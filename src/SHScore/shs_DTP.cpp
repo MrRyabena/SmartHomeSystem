@@ -1,5 +1,5 @@
 #include "shs_DTP.h"
-#include <shs_debug.h>
+#include "shs_debug.h"
 #ifndef SHS_SF_AVR
 
 uint8_t shs::DTP::sendPacket(const shs::DTPpacket& packet)

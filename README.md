@@ -263,6 +263,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
   - `shs::AFStreamBuf`: added adapter for Arduino file-like streams.
 
 - **Changes:**
+  - `shs::ControlWiFi`: fixed critical bug in `getLocalIP()`. If WiFi.mode() is `WiFi_STA`, the WiFi.localIP() will return 0-address. It is incorrect behavior. Now the function returns the correct local IP address by WiFi.softAPIP().
   - `shs::SensorAnalog`: split into header and implementation files; `m_value` type changed from `shs::t::shs_fixed_t` to `shs::t::shs_float_t`; `m_pin` type changed to `shs::t::shs_pin_t`; made buildable without `SHS_SF_ARDUINO` (stubbed functions).
   - `shs::DTP`: multiple fixes and improvements — corrected data-shift logic, DTP code `MASK` added, stability and initialization fixes.
   - `shs::DTPdiscover`: initialization fixes, default callbacks adjusted, discovery handling improved, added helper `printAllDiscovered()` for debugging.

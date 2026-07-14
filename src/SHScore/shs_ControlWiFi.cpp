@@ -32,14 +32,14 @@ bool shs::ControlWiFi::connectWiFiWait(const size_t time, const char* ssid, cons
 
 void shs::ControlWiFi::connectWiFiMulti(const shs::WiFiConfig* configs, const uint8_t size)
 {
-    #ifdef SHS_SF_ESP8266
+#ifdef SHS_SF_ESP8266
     ESP8266WiFiMulti wifiMulti;
-    #elif defined(SHS_SF_ESP32)
+#elif defined(SHS_SF_ESP32)
     WiFiMulti wifiMulti;
-    #endif
+#endif
     for (auto i = 0; i < size; i++)
         wifiMulti.addAP(configs[i].ssid, configs[i].pass);
-    
+
     wifiMulti.run();
 }
 
@@ -70,6 +70,7 @@ bool shs::ControlWiFi::WiFiConnected()
 
 shs::t::shs_IP_t shs::ControlWiFi::getLocalIP()
 {
+    if (WiFi.getMode() == WIFI_AP) return WiFi.softAPIP();
     return WiFi.localIP();
 }
 

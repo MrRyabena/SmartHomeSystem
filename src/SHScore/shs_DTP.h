@@ -72,8 +72,12 @@ public:
 	/**
 	 * @brief Creates a DTP container for the given module ID.
 	 * @param module_id Module ID to use for this DTP instance.
+	 * @param discover Optional shared pointer to a discovery helper. If not provided,
+	 * a new instance will be created internally.
 	 */
-	explicit DTP(const shs::t::shs_ID_t module_id) : moduleID(module_id), m_discover(std::make_shared<shs::DTPdiscover>(module_id)) {}
+	explicit DTP(const shs::t::shs_ID_t module_id, std::shared_ptr<shs::DTPdiscover> discover = nullptr)
+		: moduleID(module_id), m_discover(discover ? discover : std::make_shared<shs::DTPdiscover>(module_id))
+	{}
 
 	/**
 	 * @brief Destroys the DTP container.

@@ -7,13 +7,31 @@
 */
 
 #include <stddef.h>
-#include <functional>
-#include <memory>
 
 #include "shs_settings_private.h"
 
+#if defined(SHS_SF_UNUSE_STL)
+
+#if defined(SHS_SF_ARDUINO)
+#include <Arduino.h>
+#endif
+
+#else
+
+#include <algorithm>
+#include <functional>
+#include <memory>
+
+#endif  // defined(SHS_SF_UNUSE_STL)
+
 namespace shs
 {
+    template <class T>
+    [[nodiscard]] constexpr T clamp(const T& value, const T& low, const T& high)
+    {
+        return value < low ? low : (high < value ? high : value);
+    }
+
     template <class Class>
     inline void quick_remove_at(Class& obj, const size_t ind)
     {
@@ -69,5 +87,7 @@ namespace shs
         container.erase(comp(*left, value) ? std::end(container) : left);
         container.shrink_to_fit();
     }
+
+
 
 }  // namespace shs

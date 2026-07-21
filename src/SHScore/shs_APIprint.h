@@ -12,7 +12,6 @@
 
 #include "shs_settings_private.h"
 
-#ifdef SHS_SF_DEBUG
 
 #include "shs_API.h"
 #include "shs_types.h"
@@ -46,11 +45,16 @@ public:
     {
         dsep();
         doutln("DTP packet:");
-        for (auto i = 0; i < it.size(); i++)
-        {
-            dout(static_cast<int>(it.read()));
-            dout(' ');
-        }
+        auto code = shs::DTPpacket::get_DTPcode(it);
+        dout("code: ");doutln(code);
+        auto senderID = shs::DTPpacket::get_senderID(it);
+        dout("from ID: "); doutln(senderID.getModuleID());
+        auto recipientID = shs::DTPpacket::get_recipientID(it);
+        dout("to ID: "); doutln(recipientID.getModuleID());
+        doutln("data: ");
+        it.set_position(shs::DTPpacket::get_dataBeg(it));
+        for (auto i = 0; i < shs::DTPpacket::get_datasize(it); i++) dout(static_cast<int>(it.read()));
+        
         doutln();
         dsep();
 

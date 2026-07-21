@@ -10,7 +10,7 @@
 */
 
 
-#include <shs_settings.h>
+#include "shs_settings.h"
 #define SHS_SF_SETTINGS
 #ifdef SHS_SET_WIFI_CONFIGS
 #define SHS_SF_WIFI_CONFIGS

@@ -17,4 +17,5 @@ enum class shs::lib::APIids : uint16_t
     GRGB_API,
     GRGB_EFFECTS_MANAGER_API,
     GRGB_API_FOR_FASTLED,
+    ARGB_EFFECTS_MANAGER_API,
 };

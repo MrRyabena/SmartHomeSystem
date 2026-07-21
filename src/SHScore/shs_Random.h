@@ -63,6 +63,18 @@ public:
     void setRange(const random_t min, const random_t max);
 
     /**
+     * @brief Returns the current lower bound of generated values.
+        * @return Current lower bound.
+     */
+    random_t getMin() const { return m_min; }
+
+    /**
+     * @brief Returns the current upper bound of generated values.
+        * @return Current upper bound.
+     */
+    random_t getMax() const { return m_max; }
+
+    /**
      * @brief Replaces the seed with a platform-provided random value.
         * @return Applied seed value.
      */

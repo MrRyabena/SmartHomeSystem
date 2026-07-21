@@ -28,6 +28,8 @@ public:
     void setCallback(std::function<void()> on_change_callback) { m_on_change_callback = on_change_callback; }
 
     static void rightShift(CRGB* leds, uint16_t num_leds, uint16_t step = 1);
+    static void leftShift(CRGB* leds, uint16_t num_leds, uint16_t step = 1);
+    static void centerShift(CRGB* leds, uint16_t num_leds, uint16_t step = 1);
 
 
 protected:

@@ -3,30 +3,31 @@
 #include <stdint.h>
 #include <functional>
 
+#include <shs_Process.h>
 
 class CRGB;
 
 namespace shs
 {
-    class Process;
-
     namespace argb
     {
-        class ARGBeffect;
+        class Effect;
     }
 }
 
 
-class shs::argb::ARGBeffect : public shs::Process
+class shs::argb::Effect : public shs::Process
 {
 public:
     enum class Effects : uint16_t { NO_EFFECT, RING_LOAD};
 
-    explicit ARGBeffect(CRGB* leds, uint16_t num_leds, std::function<void()> on_change_callback, Effects effect = Effects::NO_EFFECT);
+    explicit Effect(CRGB* leds, uint16_t num_leds, std::function<void()> on_change_callback, Effects effect = Effects::NO_EFFECT);
 
     Effects getEffect() const { return m_effect; }
 
     void setCallback(std::function<void()> on_change_callback) { m_on_change_callback = on_change_callback; }
+
+    static void rightShift(CRGB* leds, uint16_t num_leds, uint16_t step = 1);
 
 
 protected:

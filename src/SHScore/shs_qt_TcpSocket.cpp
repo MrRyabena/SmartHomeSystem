@@ -2,7 +2,6 @@
 
 #ifdef SHS_SF_QT
 
-#define SHS_SF_DEBUG
 #include "shs_debug.h"
 
 shs::qt::TcpSocket::TcpSocket(QObject* parent)
@@ -10,7 +9,7 @@ shs::qt::TcpSocket::TcpSocket(QObject* parent)
 {
     connect(m_qtcp_socket, &QTcpSocket::connected, this, &TcpSocket::onConnected);
     connect(m_qtcp_socket, &QTcpSocket::disconnected, this, &TcpSocket::onDisconnected);
-    connect(m_qtcp_socket, static_cast<void(QTcpSocket::*)(QAbstractSocket::SocketError)>(&QTcpSocket::error), this, &TcpSocket::onError);
+    connect(m_qtcp_socket, &QTcpSocket::errorOccurred, this, &TcpSocket::onError);
     connect(m_qtcp_socket, &QTcpSocket::readyRead, this, &TcpSocket::onReadyRead);
 }
 
@@ -21,6 +20,7 @@ void shs::qt::TcpSocket::onConnected()
 
     m_connected = true;
     dout("connected: "); doutln(connected());
+    qDebug() << m_qtcp_socket->peerAddress();
     emit s_connected();
 
 }
@@ -32,13 +32,14 @@ void shs::qt::TcpSocket::onDisconnected()
 
     m_connected = false;
     dout("connected: "); doutln(connected())
-    emit disconnected();
+        emit disconnected();
 }
 
 
 void shs::qt::TcpSocket::onError(QAbstractSocket::SocketError socketError)
 {
     qDebug() << "Socket error:" << socketError << m_qtcp_socket->errorString();
+    // qDebug() << qtcp_socket->
     emit errorOccurred(m_qtcp_socket->errorString());
 }
 

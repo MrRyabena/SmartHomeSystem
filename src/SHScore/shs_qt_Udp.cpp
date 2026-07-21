@@ -2,9 +2,11 @@
 
 #ifdef SHS_SF_QT
 
+#include <QDebug>   
+
 shs::qt::UdpSocket::UdpSocket(QObject* parent) : QObject(parent), m_socket(new QUdpSocket(this))
 {
-    connect(m_socket, static_cast<void(QUdpSocket::*)(QAbstractSocket::SocketError)>(&QUdpSocket::error), this, &UdpSocket::onError);
+    connect(m_socket, &QUdpSocket::errorOccurred, this, &UdpSocket::onError);
     connect(m_socket, &QUdpSocket::readyRead, this, &UdpSocket::onReadyRead);
 }
 

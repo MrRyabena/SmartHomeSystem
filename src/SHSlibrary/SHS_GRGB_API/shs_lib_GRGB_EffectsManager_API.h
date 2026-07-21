@@ -26,7 +26,9 @@ public:
         SET_COLOR_WHEEL,
         SET_BREATHING,
         RESET_COLOR_WHEEL,
-        RESET_BREATHING
+        RESET_BREATHING,
+        SET_RANDOM_COLOR_EFFECT,
+        RESET_RANDOM_COLOR_EFFECT
     };
 
     GRGB_EffectsManager_API(shs::GRGB_EffectsManager& em, shs::t::shs_ID_t ID)
@@ -67,15 +69,35 @@ public:
                 }
                 break;
             case Commands::RESET_COLOR_WHEEL:
-            {
-                m_em.resetColorWheel();
-            }
-            break;
+                {
+                    m_em.resetColorWheel();
+                }
+                break;
             case Commands::RESET_BREATHING:
-            {
-                m_em.resetBreathing();
-            }
-            break;
+                {
+                    m_em.resetBreathing();
+                }
+                break;
+            case Commands::SET_RANDOM_COLOR_EFFECT:
+                {
+                    shs::t::shs_time_t min_period{};
+                    shs::t::shs_time_t max_period{};
+                    uint32_t min_color{};
+                    uint32_t max_color{};
+
+                    it.get(min_period);
+                    it.get(max_period);
+                    it.get(min_color);
+                    it.get(max_color);
+
+                    m_em.setRandomColorEffect(min_period, max_period, min_color, max_color);
+                }
+                break;
+            case Commands::RESET_RANDOM_COLOR_EFFECT:
+                {
+                    m_em.resetRandomColorEffect();
+                }
+                break;
         }
 
         return {};

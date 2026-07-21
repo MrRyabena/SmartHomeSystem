@@ -50,8 +50,21 @@ public:
         m_sendPacket(std::move(bc));
     }
 
+    void setRandomColorEffect(shs::t::shs_time_t min_period, shs::t::shs_time_t max_period, uint32_t min_color = 0, uint32_t max_color = 1529)
+    {
+        shs::ByteCollector<> bc(17);
+        bc.push_back(Commands::SET_RANDOM_COLOR_EFFECT, 1);
+        bc.push_back(min_period);
+        bc.push_back(max_period);
+        bc.push_back(min_color);
+        bc.push_back(max_color);
+
+        m_sendPacket(std::move(bc));
+    }
+
     void resetColorWheel() { m_sendCommand(Commands::RESET_COLOR_WHEEL); }
     void resetBreathing() { m_sendCommand(Commands::RESET_BREATHING); }
+    void resetRandomColorEffect() { m_sendCommand(Commands::RESET_RANDOM_COLOR_EFFECT); }
 
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override { return {}; }
 

@@ -69,6 +69,7 @@ set(SOURCES
     shs_settings_private.h
     shs_types.h
     shs_version.h
+    shs_settings.h
 )
 
 set(QT_SOURCES
@@ -77,6 +78,7 @@ set(QT_SOURCES
     shs_qt_Udp.cpp
     shs_qt_Udp.h
 )
+
 
 if(SHS_CMF_QT)
 
@@ -88,10 +90,13 @@ endif()
 
 add_library(SHScore ${SOURCES})
 
+target_include_directories(SHScore
+    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
 if(SHS_CMF_QT)
     target_link_libraries(SHScore PRIVATE Qt6::Core Qt6::Quick)
     target_link_libraries(SHScore PRIVATE Qt6::Core Qt6::Network)
 endif()
-
 
 target_compile_features(SHScore PRIVATE cxx_std_14)

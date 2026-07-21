@@ -67,6 +67,22 @@ struct shs::lib::Color::RGBV8888 : public shs::lib::Color::RGB888
     }
 
     /**
+     * @brief Applies the value component to the RGB components, effectively adjusting their brightness.
+     * This method modifies the red, green, and blue components based on the value component.
+     * If the value is 255, the RGB components remain unchanged. Otherwise, each RGB component
+     * is scaled down proportionally to the value, resulting in a dimmer color.
+     * @note The value component will be set to 255 after applying the brightness.
+     */
+    void applyBrightness()
+    {
+        if (value == 255) return;
+
+        red = static_cast<uint8_t>((static_cast<uint16_t>(red) * (value + 1)) >> 8);
+        green = static_cast<uint8_t>((static_cast<uint16_t>(green) * (value + 1)) >> 8);
+        blue = static_cast<uint8_t>((static_cast<uint16_t>(blue) * (value + 1)) >> 8);
+    }
+
+    /**
      * @brief The value (intensity/brightness/white) component (0-255).
      */
     uint8_t value;

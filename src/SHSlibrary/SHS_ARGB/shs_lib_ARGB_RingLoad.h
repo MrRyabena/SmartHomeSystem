@@ -1,51 +1,54 @@
-#pragma once
+// #pragma once
 
-#include <functional>
+// #include <functional>
 
-#include <shs_types.h>
+// #include <FastLed.h>
 
-class CRGB;
+// #include <shs_types.h>
+// #include <shs_ProgramTimer.h>
 
-namespace shs
-{
-    class ProgramTimer;
-
-    namespace argb
-    {
-        class Effect;
-
-        class RingLoad;
-    }
-}
+// #include "shs_lib_ARGB_Effect.h"
 
 
-class shs::argb::RingLoad : public shs::argb::Effect
-{
-public:
-    explicit RingLoad(CRGB* leds, uint16_t num_leds, std::function<void()> on_change_callback);
 
-    void start() override;
-    void tick() override;
-    void stop() override;
+// namespace shs
+// {
+//     namespace argb
+//     {
+//         class Effect;
 
-    void setColor(const CRGB& color) { m_color = color; }       
+//         class RingLoad;
+//     }
+// }
 
-protected:
-    CRGB m_color;
-    shs::t::shs_time_t m_period;
-    shs::t::shs_time_t m_time;
-    shs::ProgramTimer m_rotation_timer;
 
-    float m_a;
-    float m_w;
+// class shs::argb::RingLoad : public shs::argb::Effect
+// {
+// public:
+//     explicit RingLoad(CRGB* leds, uint16_t num_leds, std::function<void()> on_change_callback);
+
+//     void start() override;
+//     void tick() override;
+//     void stop() override;
+
+//     void setColor(const CRGB& color) { m_color = color; }       
+
+// protected:
+//     CRGB m_color;
+//     shs::t::shs_time_t m_period;
+//     shs::t::shs_time_t m_time;
+//     shs::ProgramTimer m_rotation_timer;
+
+//     float m_a;
+//     float m_w;
     
 
-    uint16_t m_start_led;
-    uint16_t m_end_led;
-    uint16_t m_frame_size;
+//     uint16_t m_start_led;
+//     uint16_t m_end_led;
+//     uint16_t m_frame_size;
 
-    void m_calculate_a();
-    void m_fillRing(uint16_t start_pos, uint16_t end_pos, CRGB color);
-    shs::t::shs_time_t m_getTime() const;
+//     void m_calculate_a();
+//     void m_fillRing(uint16_t start_pos, uint16_t end_pos, CRGB color);
+//     shs::t::shs_time_t m_getTime() const;
 
-};
+// };

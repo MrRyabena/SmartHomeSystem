@@ -9,12 +9,14 @@ std::function<void(shs::TcpSocket&)> shs::TcpSocket::default_connect_callback =
     {
         auto pkt = shs::DTP_APIpackets::getInitialPacket(socket.busID);
         socket.sendPacket(pkt);
+        doutln("initial packet sent");
     }
 };
 
 std::function<void(shs::TcpSocket&)> shs::TcpSocket::default_disconnect_callback =
 [](shs::TcpSocket& socket) { 
-    if (socket.isActive()) socket.reconnect(); 
+   doutln("disconnect callback"); 
+   if (socket.isActive()) socket.reconnect(); 
 };
 
 shs::TcpSocket::TcpSocket(

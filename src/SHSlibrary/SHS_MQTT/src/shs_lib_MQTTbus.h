@@ -3,29 +3,47 @@
 #include <vector>
 #include <initializer_list>
 #include <stdint.h>
+
+#include <shs_settings_private.h>
+#if defined(SHS_SF_ESP)
 #include <Arduino.h>
 
 #include <PubSubClient.h>
 
-#include <shs_settings_private.h>
 #if defined(SHS_SF_ESP8266)
 #include <ESP8266WiFi.h>
 #elif defined(SHS_SF_ESP32)
 #include <WiFi.h>
 #endif
 
-#include <shs_Process.h>
+#elif defined(SHS_SF_QT)
+#include <QMqttClient>
+#include <QObject>
+#endif
+
+#include <shs_API.h>
 #include <shs_DTPbus.h>
 #include <shs_types.h>
 #include <shs_ProgramTimer.h>
 
 namespace shs
 {
-    class MQTTbus;
+namespace lib
+{
+class MQTTbus;
+}
 }
 
-class shs::MQTTbus : public shs::Process, public shs::DTPbus
+class shs::lib::MQTTbus
+    :
+#ifdef SHS_SF_QT
+      public QObject,
+#endif
+      public shs::DTPbus
 {
+#ifdef SHS_SF_QT
+    Q_OBJECT
+#endif
 public:
     struct Data
     {
@@ -39,10 +57,19 @@ public:
         uint16_t port = 1883;
     };
 
-    MQTTbus(const shs::t::shs_busID_t busID, const Data& data, shs::API* handler = nullptr, const uint8_t bufsize = 32);
+    MQTTbus(
+#ifdef SHS_SF_QT
+        QObject* parent,
+#endif
+        const shs::t::shs_busID_t busID,
+        const Data& data,
+        shs::API* handler = nullptr,
+        const uint8_t bufsize = 32);
     ~MQTTbus() override = default;
 
+#if defined(SHS_SF_ESP)
     void onCallback(const char* topic, const uint8_t* payload, const unsigned length);
+#endif
 
     bool isActive() const override { return true; } // TODO
 
@@ -57,10 +84,19 @@ public:
     void tick() override;
     void stop() override;
 
+#if defined(SHS_SF_QT)
+public slots:
+    void onCallback(const char* topic, const uint8_t* payload, const unsigned length);
+#endif
+
 private:
+#if defined(SHS_SF_ESP)
     WiFiClient m_client;
     PubSubClient m_mqtt;
-    shs::ProgramTimer m_tmr_reconnect{10000};
+#elif defined(SHS_SF_QT)
+    QMqttClient m_mqtt;
+#endif
+    shs::ProgramTimer m_tmr_reconnect{ 10000 };
     Data m_data;
     uint8_t m_available{};
 };

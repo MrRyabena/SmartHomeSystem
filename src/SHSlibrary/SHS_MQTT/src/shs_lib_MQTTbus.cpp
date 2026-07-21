@@ -1,16 +1,47 @@
-#include "shs_MQTTbus.h"
+#include "shs_lib_MQTTbus.h"
 
 #include <shs_Random.h>
-
 #include <shs_debug.h>
+#include <QByteArray>
 
-shs::MQTTbus::MQTTbus(const shs::t::shs_busID_t busID, const Data& data, shs::API* handler, const uint8_t bufsize)
-    : DTPbus(busID, handler, bufsize), m_data(data), m_mqtt(m_data.host, m_data.port, [this](const char* topic, const uint8_t* payload, const unsigned length) { this->onCallback(topic, payload, length); }, m_client)
+
+shs::lib::MQTTbus::MQTTbus(
+#ifdef SHS_SF_QT
+    QObject* parent,
+#endif
+    const shs::t::shs_busID_t busID,
+    const Data& data,
+    shs::API* handler,
+    const uint8_t bufsize)
+    :
+#ifdef SHS_SF_QT
+    QObject(parent),
+#endif 
+    DTPbus(busID, handler, bufsize),
+    m_data(data),
+#if defined(SHS_SF_ESP)
+    m_mqtt(this, m_data.host, m_data.port,
+    [this](const char* topic, const uint8_t* payload, const unsigned length) {
+        this->onCallback(topic, payload, length);
+    },
+           m_client
+)
+#elif defined(SHS_SF_QT)
+m_mqtt(this)
+#endif
 {
+#if defined(SHS_SF_ESP)
     m_mqtt.setServer(m_data.host, m_data.port);
+#elif defined(SHS_SF_QT)
+    m_mqtt.setHostname(m_data.host);
+    m_mqtt.setPort(m_data.port);
+
+    // connect(m_mqtt, &QMqttClient::connected, this, );
+    connect(m_mqtt, &QMqttClient::messageReceived, this, onCallback);
+#endif
 }
 
-void shs::MQTTbus::start()
+void shs::lib::MQTTbus::start()
 {
     doutln("starting MQTTbus...");
 
@@ -19,16 +50,23 @@ void shs::MQTTbus::start()
     shs::Random<uint16_t> rnd;
     rnd.autoSeed();
 
-    String id = "SHS_";
+
+#if defined(SHS_SF_ESP)
+    String id = F("SHS_");
     id += rnd.get();
     if (m_mqtt.connect(id.c_str()))
     {
         doutln("MQTT connected");
         if (m_mqtt.subscribe(m_data.topic, 1)) doutln("MQTT subscribed");
     }
+#elif defined(SHS_SF_QT)
+    m_mqtt.setClientId("SHS_" + QString::number(rnd.get()));
+    m_mqtt.connectToHost();
+    m_mqtt.subscribe(QMqttTopicFilter(QString(m_data.topic)), 1);
+#endif
 }
 
-void shs::MQTTbus::tick()
+void shs::lib::MQTTbus::tick()
 {
     // if (m_mqtt.connected()) 
     // {
@@ -40,64 +78,85 @@ void shs::MQTTbus::tick()
     // if (m_tmr_reconnect.expired())
     // { start(); doutln("MQTT reconnecting"); }
 
+#if !defined(SHS_SF_QT)
     if (!m_mqtt.connected()) { start(); }
 
     m_mqtt.loop();
+#endif
 }
 
-void shs::MQTTbus::stop()
+void shs::lib::MQTTbus::stop()
 {
     m_mqtt.disconnect();
 }
 
-uint8_t shs::MQTTbus::sendPacket(const shs::DTPpacket& packet)
+uint8_t shs::lib::MQTTbus::sendPacket(const shs::DTPpacket& packet)
 {
     if (packet.empty()) { /*doutln("packet empty");*/ return 0; }
     // dout("state: "); doutln(m_mqtt.state());
 
     dsep();
     dout("sending packet: ");
+        doutln("");
+    dout("packet:");
+    for (auto x : packet.bc) dout(static_cast<int>(x));
+
+    dsep();
+#if defined(SHS_SF_ESP)
     auto r = m_mqtt.beginPublish(m_data.topic, strlen(m_data.topic), 1);
     dout(r);
+
     auto result = DTPbus::sendPacket(m_mqtt, packet);
+
     r = m_mqtt.endPublish();
     dout(r);
     doutln(result);
-    dout("packet:");
-    for (auto x : packet.bc) dout(static_cast<int>(x));
-    doutln();
-    dsep();
+
+
     return result;
+#elif defined(SHS_SF_QT)
+    return sendRAW(packet.bc.getPtr(), packet.bc.size());
+#endif
 }
 
-uint8_t shs::MQTTbus::sendRAW(shs::ByteCollector<>& bc)
+uint8_t shs::lib::MQTTbus::sendRAW(shs::ByteCollector<>& bc)
 {
+#if defined(SHS_SF_ESP)
     m_mqtt.beginPublish(m_data.topic, strlen(m_data.topic), 1);
     auto result = DTPbus::sendRAW(m_mqtt, bc);
     m_mqtt.endPublish();
-
     return result;
+#elif defined(SHS_SF_QT)
+    return sendRAW(bc.getPtr(), bc.size());
+#endif
 }
 
-uint8_t shs::MQTTbus::sendRAW(shs::ByteCollectorReadIterator<>& it)
+uint8_t shs::lib::MQTTbus::sendRAW(shs::ByteCollectorReadIterator<>& it)
 {
+#if defined(SHS_SF_ESP)
     m_mqtt.beginPublish(m_data.topic, strlen(m_data.topic), 1);
     auto result = DTPbus::sendRAW(m_mqtt, it);
     m_mqtt.endPublish();
-
     return result;
+#endif
+
+    return sendRAW(&it, it.size());
+
 }
 
-uint8_t shs::MQTTbus::sendRAW(const uint8_t* data, const uint8_t size)
+uint8_t shs::lib::MQTTbus::sendRAW(const uint8_t* data, const uint8_t size)
 {
+#if defined(SHS_SF_ESP)
     m_mqtt.beginPublish(m_data.topic, strlen(m_data.topic), 1);
     auto result = DTPbus::sendRAW(m_mqtt, data, size);
     m_mqtt.endPublish();
-
     return result;
+#elif defined(SHS_SF_QT)
+    return m_mqtt.publish(QMqttTopicName(QString(m_data.topic)), QByteArray(reinterpret_cast<const char*>(data), size));
+#endif
 }
 
-void shs::MQTTbus::onCallback(const char* topic, const uint8_t* payload, const unsigned length)
+void shs::lib::MQTTbus::onCallback(const char* topic, const uint8_t* payload, const unsigned length)
 {
     //  doutln("MQTT onCallback");
     if (strcmp(topic, m_data.topic) != 0) return;
@@ -108,7 +167,7 @@ void shs::MQTTbus::onCallback(const char* topic, const uint8_t* payload, const u
 
     dout("data: ");
     for (auto i = 0; i < length; i++) dout(static_cast<int>(payload[i]));
-    doutln();
+    doutln("");
     dsep();
     m_available += length;
     if (m_len == 0)
@@ -130,7 +189,7 @@ void shs::MQTTbus::onCallback(const char* topic, const uint8_t* payload, const u
     if (m_handler) processPacket(*m_handler);
 }
 
-shs::DTPbus::Status shs::MQTTbus::checkBus()
+shs::DTPbus::Status shs::lib::MQTTbus::checkBus()
 {
     tick();
 

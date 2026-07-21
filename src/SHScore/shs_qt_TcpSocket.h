@@ -49,7 +49,7 @@ public:
 
     void disconnectFromHost() { m_qtcp_socket->disconnectFromHost(); }
     void stop() { disconnect(); }
-    bool connected() { return m_connected || (m_connected && !m_qtcp_socket->isOpen()); }
+    bool connected() { return m_connected }; //|| m_qtcp_socket->isOpen(); }
 
 signals:
     void s_connected();
@@ -66,6 +66,7 @@ private slots:
 private:
     QTcpSocket* m_qtcp_socket;
     bool m_connected{};
+    // bool m_connecting{};
 };
 
 #endif  // #ifdef SHS_SF_QT

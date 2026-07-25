@@ -21,17 +21,19 @@ shs::DTPpacket shs::argb::EffectsManager_API::handle(shs::ByteCollectorReadItera
             {
                 uint8_t min_color{};
                 uint8_t max_color{};
+                RandomMatrix::Direction direction{};
                 shs::t::shs_time_t dt{};
                 shs::t::shs_fixed_t min_line_length_ratio{};
                 shs::t::shs_fixed_t max_line_length_ratio{};
 
                 it.get(min_color, 1);
                 it.get(max_color, 1);
+                it.get(direction, 1);
                 it.get(dt);
                 it.get(min_line_length_ratio);
                 it.get(max_line_length_ratio);
 
-                m_effects_manager.setRandomMatrix(min_color, max_color, dt, min_line_length_ratio, max_line_length_ratio);
+                m_effects_manager.setRandomMatrix(min_color, max_color, direction, dt, min_line_length_ratio, max_line_length_ratio);
             }
             break;
         default:

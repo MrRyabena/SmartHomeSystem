@@ -74,7 +74,8 @@ void shs::argb::RandomMatrix::tick()
                 m_line = m_random_line.get() * 0.4;
             }
 
-            if (m_direction == Direction::CENTER) m_line <<= 2;
+            if (m_direction == Direction::CENTER) m_line >>= 1;
+            if (m_line == 0 || m_line > m_num_leds / 2) m_line = 1;
         }
 
         if (m_on_change_callback)

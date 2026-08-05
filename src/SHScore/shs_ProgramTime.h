@@ -72,17 +72,17 @@ public:
     /**
      * @brief Returns elapsed time in microseconds.
      */
-    size_t microseconds() const { return micros() - m_started / 1000; }
+    size_t microseconds() const { return micros() - m_started; }
 
     /**
      * @brief Returns elapsed time in milliseconds.
      */
-    size_t milliseconds() const { return millis() - m_started; }
+    size_t milliseconds() const { return microseconds() / 1000; }
 
     /**
      * @brief Returns elapsed time in seconds.
      */
-    size_t seconds() const { return (millis() - m_started) / 1000; }
+    size_t seconds() const { return milliseconds() / 1000; }
 
     /**
      * @brief Returns the current system time in microseconds.
@@ -92,16 +92,16 @@ public:
     /**
      * @brief Returns the current system time in milliseconds.
      */
-    static size_t s_milliseconds() { return millis(); }
+    static size_t s_milliseconds() { return millis() / 1000; }
 
     /**
      * @brief Returns the current system time in seconds.
      */
-    static size_t s_seconds() { return millis() * 1000; }
+    static size_t s_seconds() { return millis() / 1000000; }
 
 private:
     size_t m_started;
-    const size_t m_init() { return millis(); } // micros(); }
+    const size_t m_init() { return micros(); }
 #else
     /**
      * @brief Returns elapsed time in microseconds.

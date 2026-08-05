@@ -1,7 +1,8 @@
 #include "shs_lib_ARGB_Effect.h"
 
-#include <FastLED.h>
+#ifndef SHS_LIB_ARGB_NO_FASTLED
 
+#include <FastLED.h>
 #include <shs_Process.h>
 
 
@@ -98,3 +99,5 @@ void shs::argb::Effect::centerShift(CRGB* leds, uint16_t num_leds, uint16_t step
         leds[i] = CRGB::Black;
     }
 }
+
+#endif // SHS_LIB_ARGB_NO_FASTLED

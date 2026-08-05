@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef SHS_LIB_ARGB_NO_FASTLED
+
 #include <stdint.h>
 #include <functional>
 
@@ -39,3 +41,5 @@ protected:
     const uint16_t m_num_leds;
     const Effects m_effect;
 };
+
+#endif // SHS_LIB_ARGB_NO_FASTLED

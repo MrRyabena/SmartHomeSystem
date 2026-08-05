@@ -1,5 +1,7 @@
 #include "shs_lib_ARGB_EffectsManager_API.h"
 
+#ifndef SHS_LIB_ARGB_NO_FASTLED
+
 #include <shs_lib_APIids.h>
 #include <shs_DTPpacket.h>
 #include <shs_ByteCollector.h>
@@ -42,3 +44,5 @@ shs::DTPpacket shs::argb::EffectsManager_API::handle(shs::ByteCollectorReadItera
 
     return shs::DTPpacket();
 }
+
+#endif // SHS_LIB_ARGB_NO_FASTLED

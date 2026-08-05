@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef SHS_LIB_ARGB_NO_FASTLED
+
 #include <memory>
 
 #include <stdint.h>
@@ -43,4 +45,4 @@ protected:
     uint16_t m_num_leds;
 };
 
-
+#endif // SHS_LIB_ARGB_NO_FASTLED

@@ -1,11 +1,14 @@
 #pragma once
 
+#ifndef SHS_LIB_ARGB_NO_FASTLED
 
 #include <shs_API.h>
 #include <shs_ByteCollectorIterator.h>
 #include <shs_types.h>
 
 #include "shs_lib_ARGB_EffectsManager.h"
+
+#include "shs_lib_ARGB_EffectsManager_API_Commands.h"
 
 namespace shs
 {
@@ -19,12 +22,7 @@ namespace shs
 class shs::argb::EffectsManager_API : public shs::API
 {
 public:
-    enum class Commands : uint8_t
-    {
-        NO_COMMAND = 0,
-        RESET_EFFECTS = 1,
-        SET_RANDOM_MATRIX = 2,
-    };
+    using Commands = shs::argb::EffectsManager_API_Commands;
 
     EffectsManager_API(shs::argb::EffectsManager& effects_manager, shs::t::shs_ID_t id);
 
@@ -35,3 +33,5 @@ public:
 protected:
     shs::argb::EffectsManager& m_effects_manager;
 };
+
+#endif // SHS_LIB_ARGB_NO_FASTLED

@@ -1,5 +1,7 @@
 #include "shs_lib_ARGB_RandomMatrix.h"
 
+#ifndef SHS_LIB_ARGB_NO_FASTLED
+
 #include <FastLed.h>
 
 
@@ -90,3 +92,4 @@ void shs::argb::RandomMatrix::stop()
     // Clean up the random matrix effect
 }
 
+#endif // SHS_LIB_ARGB_NO_FASTLED

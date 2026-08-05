@@ -1,5 +1,6 @@
 #include "shs_lib_ARGB_EffectsManager.h"
 
+#ifndef SHS_LIB_ARGB_NO_FASTLED
 #include <FastLed.h>
 
 
@@ -21,3 +22,5 @@ void shs::argb::EffectsManager::tick()
         m_current_effect->tick();
     }
 }
+
+#endif

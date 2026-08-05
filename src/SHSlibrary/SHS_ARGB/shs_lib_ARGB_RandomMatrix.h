@@ -1,5 +1,7 @@
 #pragma once
 
+#ifndef SHS_LIB_ARGB_NO_FASTLED
+
 #include <FastLed.h>
 
 #include <shs_ProgramTimer.h>
@@ -7,7 +9,7 @@
 #include <shs_types.h>
 
 #include "shs_lib_ARGB_Effect.h"
-
+#include "shs_lib_ARGB_RandomMatrix_Direction.h"
 
 namespace shs
 {
@@ -21,7 +23,7 @@ namespace shs
 class shs::argb::RandomMatrix : public shs::argb::Effect
 {
 public:
-    enum class Direction : uint8_t { BEGIN, END, CENTER };
+    using Direction = shs::argb::RandomMatrix_Direction;
 
     RandomMatrix(CRGB* leds, uint16_t num_leds, std::function<void()> on_change_callback = nullptr,
         shs::t::shs_time_t dt = 50, uint8_t min_color = 0, uint8_t max_color = 255,
@@ -40,3 +42,5 @@ protected:
     uint8_t m_color;
     Direction m_direction;
 };
+
+#endif // SHS_LIB_ARGB_NO_FASTLED

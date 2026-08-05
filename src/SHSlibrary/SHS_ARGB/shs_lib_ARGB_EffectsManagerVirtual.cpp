@@ -12,10 +12,10 @@ shs::argb::EffectsManagerVirtual::EffectsManagerVirtual(shs::t::shs_ID_t this_id
 
 {}
 
-void shs::argb::EffectsManagerVirtual::setRandomMatrix(uint8_t min_color, uint8_t max_color, RandomMatrix::Direction direction, shs::t::shs_time_t dt, shs::t::shs_float_t min_line_length_ratio, shs::t::shs_float_t max_line_length_ratio)
+void shs::argb::EffectsManagerVirtual::setRandomMatrix(uint8_t min_color, uint8_t max_color, shs::argb::RandomMatrix_Direction direction, shs::t::shs_time_t dt, shs::t::shs_float_t min_line_length_ratio, shs::t::shs_float_t max_line_length_ratio)
 {
     shs::ByteCollector<> bc(11);
-    bc.push_back(EffectsManager_API::Commands::SET_RANDOM_MATRIX, 1);
+    bc.push_back(Commands::SET_RANDOM_MATRIX, 1);
     bc.push_back(min_color, 1);
     bc.push_back(max_color, 1);
     bc.push_back(direction, 1);
@@ -29,7 +29,7 @@ void shs::argb::EffectsManagerVirtual::setRandomMatrix(uint8_t min_color, uint8_
 void shs::argb::EffectsManagerVirtual::resetEffects()
 {
     shs::ByteCollector<> bc(1);
-    bc.push_back(EffectsManager_API::Commands::RESET_EFFECTS, 1);
+    bc.push_back(Commands::RESET_EFFECTS, 1);
 
     m_dtp.sendPacket(shs::DTPpacket(m_this_id, m_remote_id, std::move(bc)));
 }

@@ -2,8 +2,6 @@
 
 #ifndef SHS_LIB_ARGB_NO_FASTLED
 
-#include <FastLed.h>
-
 
 shs::argb::RandomMatrix::RandomMatrix(CRGB* leds, uint16_t num_leds, std::function<void()> on_change_callback,
     shs::t::shs_time_t dt, uint8_t min_color, uint8_t max_color, Direction direction,
@@ -38,17 +36,13 @@ void shs::argb::RandomMatrix::tick()
         {
             case Direction::BEGIN:
                 rightShift(m_leds, m_num_leds);
-                if (m_color != 0)
-                {
-                    m_leds[0] = CHSV(m_color, 255, 255);
-                }
+                if (m_color != 0) m_leds[0] = CHSV(m_color, 255, 255);
+                else m_leds[0] = CRGB::Black;
                 break;
             case Direction::END:
                 leftShift(m_leds, m_num_leds);
-                if (m_color != 0)
-                {
-                    m_leds[m_num_leds - 1] = CHSV(m_color, 255, 255);
-                }
+                if (m_color != 0) m_leds[m_num_leds - 1] = CHSV(m_color, 255, 255);
+                else m_leds[m_num_leds - 1] = CRGB::Black;
                 break;
             case Direction::CENTER:
                 centerShift(m_leds, m_num_leds);
@@ -73,11 +67,15 @@ void shs::argb::RandomMatrix::tick()
             else
             {
                 m_color = 0;
-                m_line = m_random_line.get() * 0.4;
+                m_line = m_random_line.get() * 0.6;
             }
 
-            if (m_direction == Direction::CENTER) m_line >>= 1;
-            if (m_line == 0 || m_line > m_num_leds / 2) m_line = 1;
+            if (m_direction == Direction::CENTER)
+            {
+                m_line >>= 1;
+            }
+
+            if (m_line == 0 || m_line > m_num_leds) m_line = 4;
         }
 
         if (m_on_change_callback)

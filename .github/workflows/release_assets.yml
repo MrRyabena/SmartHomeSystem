@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  package-and-upload:
+  package_and_upload:
     runs-on: ubuntu-latest
 
     steps:

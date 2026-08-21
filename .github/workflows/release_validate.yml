@@ -1,0 +1,55 @@
+name: Validate release version
+
+on:
+  push:
+    tags:
+      - v*
+
+permissions:
+  contents: write
+
+jobs:
+  validate_version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate tag against versioned files
+        id: validate
+        uses: ./.github/actions/validate_release_version
+        with:
+          tag: ${{ github.ref_name }}
+          workspace: ${{ github.workspace }}
+
+      - name: Stop invalid release tag
+        if: ${{ steps.validate.outputs.valid != 'true' }}
+        run: exit 1
+
+      - name: Create GitHub release
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tag = context.ref.replace('refs/tags/', '');
+
+            const existing = await github.rest.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag,
+            }).catch(() => null);
+
+            if (existing) {
+              core.info(`Release already exists for ${tag}; skipping creation.`);
+              return;
+            }
+
+            await github.rest.repos.createRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag_name: tag,
+              name: tag,
+              draft: true,
+              prerelease: false,
+              generate_release_notes: false,
+            });

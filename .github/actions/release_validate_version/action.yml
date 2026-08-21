@@ -1,0 +1,90 @@
+name: Validate release version
+description: Validate a release tag against versioned project files and required release notes assets.
+
+inputs:
+  tag:
+    description: Release tag to validate.
+    required: true
+  workspace:
+    description: Repository root directory.
+    required: true
+
+outputs:
+  valid:
+    description: Whether the tag matches all expected versioned files.
+    value: ${{ steps.validate.outputs.valid }}
+
+runs:
+  using: composite
+  steps:
+    - name: Validate tag against versioned files
+      id: validate
+      shell: bash
+      working-directory: ${{ inputs.workspace }}
+      env:
+        RELEASE_TAG: ${{ inputs.tag }}
+      run: |
+        set -euo pipefail
+
+        python3 - <<'PY'
+        import json
+        import os
+        import pathlib
+        import re
+        import sys
+
+        tag = os.environ["RELEASE_TAG"]
+        expected_version = tag[1:] if tag.startswith("v") else tag
+        errors = []
+
+        if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
+            errors.append(f"tag must use vX.Y.Z format, got {tag!r}")
+
+        def read_text(path: str) -> str:
+            return pathlib.Path(path).read_text(encoding="utf-8")
+
+        def fail(message: str) -> None:
+            errors.append(message)
+
+        version_h = read_text("src/SHScore/shs_version.h")
+        for macro in ("_shs_Project_VERSION_", "_shs_SHScore_VERSION_", "_shs_SHSlibrary_VERSION_"):
+            match = re.search(rf'#define\s+{re.escape(macro)}\s+"([^"]+)"', version_h)
+            if not match:
+                fail(f"missing {macro} in src/SHScore/shs_version.h")
+            elif match.group(1) != tag:
+                fail(f"{macro} in src/SHScore/shs_version.h is {match.group(1)!r}, expected {tag!r}")
+
+        cmake_files = os.popen("git ls-files -- 'src/**/CMakeLists.txt' 'src/**/CmakeLists.txt'").read().splitlines()
+        for path in cmake_files:
+            content = read_text(path)
+            project_match = re.search(r'project\s*\((.*?)\)', content, re.IGNORECASE | re.DOTALL)
+            if not project_match:
+                continue
+            version_match = re.search(r'\bVERSION\s+([0-9]+\.[0-9]+\.[0-9]+)\b', project_match.group(1), re.IGNORECASE)
+            if version_match and version_match.group(1) != expected_version:
+                fail(f"{path} has VERSION {version_match.group(1)!r}, expected {expected_version!r}")
+
+        library_json_files = os.popen("git ls-files -- 'src/**/library.json'").read().splitlines()
+        for path in library_json_files:
+            data = json.loads(read_text(path))
+            version = data.get("version")
+            if version != expected_version:
+                fail(f"{path} has version {version!r}, expected {expected_version!r}")
+
+        change_glob = pathlib.Path("schemes/SHScore-changes").glob(f"SHScore-changes-{tag.replace('.', '_')}.*")
+        if not any(True for _ in change_glob):
+            fail(f"missing SHScore-changes artifact for {tag!r}")
+
+        if errors:
+            print("Version validation failed:\n- " + "\n- ".join(errors), file=sys.stderr)
+            with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+                summary.write("### Release version validation failed\n\n")
+                for error in errors:
+                    summary.write(f"- {error}\n")
+            with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+                output.write("valid=false\n")
+            sys.exit(0)
+
+        with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+            output.write("valid=true\n")
+        PY

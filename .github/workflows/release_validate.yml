@@ -18,7 +18,7 @@ jobs:
 
       - name: Validate tag against versioned files
         id: validate
-        uses: ./.github/actions/validate_release_version
+        uses: ./.github/actions/release_validate_version
         with:
           tag: ${{ github.ref_name }}
           workspace: ${{ github.workspace }}

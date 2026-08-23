@@ -187,7 +187,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!---------------------------------- v2.2.0 ----------------------------------->
 <details>
-<summary>v2.2.X — <code><b>[current]</b></code> SHScore has been optimized and debugged. Deprecated code has been removed. Documentation has been updated.</summary>
+<summary>v2.2.X — SHScore has been optimized and debugged. Deprecated code has been removed. Documentation has been updated.</summary>
 
 ### Patches
 
@@ -261,22 +261,29 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
   - `shs::AFStream`: added Arduino-to-std stream bridge (file-stream adapter).
   - `shs::AStreamBuf`: added streambuf implementation for Arduino `Stream`.
   - `shs::AFStreamBuf`: added adapter for Arduino file-like streams.
+  - `shs::DTPlogger`: added a simple logger for DTP messages (for debugging), not completed.
+  - `shs_math`: automatic choice cmath or math.h depending on the platform.
+  - `shs::WiFiConfig`: created a struct for storing WiFi configuration (SSID and password).
+  - `shs::SensorAnalogMapped`: created a class for working with analog inputs with mapping to a specific range.
 
 - **Changes:**
+  - `shs_algorithm`: added `shs::clamp()`.
   - `shs::ControlWiFi`: fixed critical bug in `getLocalIP()`. If WiFi.mode() is `WiFi_STA`, the WiFi.localIP() will return 0-address. It is incorrect behavior. Now the function returns the correct local IP address by WiFi.softAPIP().
   - `shs::SensorAnalog`: split into header and implementation files; `m_value` type changed from `shs::t::shs_fixed_t` to `shs::t::shs_float_t`; `m_pin` type changed to `shs::t::shs_pin_t`; made buildable without `SHS_SF_ARDUINO` (stubbed functions).
   - `shs::DTP`: multiple fixes and improvements — corrected data-shift logic, DTP code `MASK` added, stability and initialization fixes.
   - `shs::DTPdiscover`: initialization fixes, default callbacks adjusted, discovery handling improved, added helper `printAllDiscovered()` for debugging.
   - `shs::DTPpacket`: clarified/updated packet handling and related helpers.
   - `shs::DTP_API`: updated (critical issue remains noted — use with caution); API id handling improved.
+  - `shs::ProgramTimer`: basic resolution changed to microseconds (from milliseconds). It's a temporary change and this class will be redesigned and separated into `ProgramTimer` and `HighResolutionProgramTimer` in future versions.
   - `shs::TcpSocket`: split implementation to `.cpp`, added `connected()` checks, pointer safety checks, outgoing-packet queue, and connection-state flags.
   - `shs::TcpServer`: updated behavior for client attachment to `shs::DTP` and client deletion on disconnect.
-  - `shs::qt::TcpSocket`: fixed conversions with `QHostAddress`/`shs::IP`, improved Qt compatibility.
+  - `shs::qt::TcpSocket`: fixed conversions with `QHostAddress`/`shs::IP`, improved Qt compatibility; changed connection error-slots; change connection-state logic.
   - `shs::UDP` / `shs::UdpMulticastBus`: fixed conditional compilation and multicast support.
   - `shs::ControlWiFi`: moved definitions to implementation file, prepared for multi-AP and extended functionality.
   - `shs::IP`: corrected default-return behavior and casting issues.
   - `shs::AFStream` / `shs_AStreamBuf` (implementation tweaks): fixed overflow/return semantics and tested Arduino File compatibility.
   - `shs::ByteCollector`: various fixes and optimizations related to buffer shifts and insert logic (stability improvements).
+  - `shs::Random`: added functions for get min/max bounds.
   - `shs::ProgramTimer` / `shs::LoadPWM` / effects libraries: additions and fixes for timing and PWM effects support (sunrise effect library added).
   - General:
     - removed many C-style casts;
@@ -289,7 +296,10 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 ### SHSlibrary
 
 - **New functional:**
+  - `SHS_ARGB`: start development of ARGB effects library (initial implementation).
+  - `SHS_Color`: start development of color management library (initial implementation).
   - `SHS_PhotoSensor`: added initial implementation for light sensor readings.
+  - `SHS_SoilMoistureSensor`: added initial implementation for soil moisture sensor readings.
   - `shs::MQTTbus`: initial implementation and tests for MQTT bus (example/experimental).
   - `VirtualEffectsManager`: virtual ARGB/GRGB effects manager (initial implementation).
   - `VirtualGRGBManager`: virtual manager for GRGB effects and helpers.
@@ -300,6 +310,9 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
   - `SHS_DS18`: fixed critical bug and added default `expiration_time` in constructor; tested.
   - `SHS_BME280`: replaced C-style casts with safer casts.
   - Added `library.json` for package properties and metadata.
+
+- **Deleted / deprecated:**
+  - Remove deprecated developments `SHSNeuralNet` and `SHSVoiceRecognition`
 
 ### Examples
 
@@ -313,11 +326,22 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 - `make.sh`: updated to copy `shs_settings.h` for qt-build workflows; documentation updated with settings/dependency notes.
 - Removed deprecated scripts and paths; updated release notes and version references (`v2.2.1`, `v2.2.2`, `v2.3.0` preparatory commits).
+- Add doxygen documentation for all classes in SHScore.
+
+### CI/CD
+
+- Start development of CI/CD pipelines for automated builds, validation, and testing.
+- Create workflows for release validation and asset packaging.
 
 ### Developer notes
 
 - Robustness focus: explicit checks, removal of unsafe casts, sane defaults for cache expiration, and allocation optimizations.
 - Known TODOs: `shs::DTP_API` still flagged as unsafe in some scenarios; `StreamBus` and a few experimental modules require further testing.
+
+### Known bugs / issues
+
+- `shs::TcpSocket`/`shs::TcpServer` has problems with connections after many disconnects; will be fixed in future.
+- `SHScore` has many compilation warnings on different platforms; will be fixed in future versions.
 
 </details>
 <!----------------------------------------------------------------------------->

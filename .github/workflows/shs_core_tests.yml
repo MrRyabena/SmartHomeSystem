@@ -17,7 +17,11 @@ jobs:
             - name: Set up CMake
               uses: lukka/get-cmake@v3
 
-            - name: Build and run tests
+            - name: Run build-test for ShsCore
+              run: cd src/SHScore
+                  chmod +x build_shs_core.sh
+                  ./build_shs_core.sh
+            - name: Build and run ShsCore tests
               run: cd src/SHStests/ShsCoreTests
                   chmod +x build_shs_core_tests.sh
                   ./build_shs_core_tests.sh -r

@@ -50,8 +50,11 @@
 #include "shs_DTPpacket.h"
 #include "shs_DTPless.h"
 #include "shs_ProgramTimer.h"
+
+#ifdef SHS_SF_NETWORK
 #include "shs_DTPdiscover.h"
 #include "shs_TcpSocket.h"
+#endif    // #ifdef SHS_SF_NETWORK
 
 #include "shs_debug.h"
 
@@ -75,8 +78,17 @@ public:
 	 * @param discover Optional shared pointer to a discovery helper. If not provided,
 	 * a new instance will be created internally.
 	 */
-	explicit DTP(const shs::t::shs_ID_t module_id, std::shared_ptr<shs::DTPdiscover> discover = nullptr)
-		: moduleID(module_id), m_discover(discover ? discover : std::make_shared<shs::DTPdiscover>(module_id))
+	explicit DTP(const shs::t::shs_ID_t module_id
+	#ifdef SHS_SF_NETWORK
+		,
+		std::shared_ptr<shs::DTPdiscover> discover = nullptr
+	#endif
+	)
+		: moduleID(module_id)
+	#ifdef SHS_SF_NETWORK
+		,
+		m_discover(discover ? discover : std::make_shared<shs::DTPdiscover>(module_id))
+	#endif
 	{}
 
 	/**
@@ -184,7 +196,7 @@ public:
 	/**
 	 * @brief Starts all buses and the discovery helper.
 	 */
-	void start() override { for (auto& bus : m_buss) bus->start(); if (m_discover) m_discover->start(); }
+	void start() override;
 	void tick() override;
 	/**
 	 * @brief Stops all buses.
@@ -207,7 +219,9 @@ private:
 	shs::SortedBuf<std::unique_ptr<shs::API>, DTPless::API> m_APIs;
 	shs::SortedBuf<shs::API*, DTPless::API> m_externalAPIs;
 	std::deque<OutgoingPacket> m_outgoing_packets;
+#ifdef SHS_SF_NETWORK
 	std::shared_ptr<shs::DTPdiscover> m_discover;
+#endif
 };
 
 

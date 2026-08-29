@@ -27,6 +27,15 @@ shs::DTPbus* shs::DTP::findBusFromModule(const uint8_t moduleID) const
 }
 
 
+void shs::DTP::start()
+{
+    for (auto& bus : m_buss) bus->start();
+#ifdef SHS_SF_NETWORK
+    if (m_discover) m_discover->start();
+#endif
+}
+
+
 void shs::DTP::tick()
 {
     for (auto& bus : m_buss)
@@ -88,7 +97,9 @@ void shs::DTP::tick()
         bus->tick();    // update bus
     }
 
+#ifdef SHS_SF_NETWORK
     if (m_discover) m_discover->tick();
+#endif
 
     if (!m_outgoing_packets.empty())
     {
@@ -102,12 +113,15 @@ void shs::DTP::tick()
         switch (it->status)
         {
             case OutgoingPacket::BusStatus::NOT_FOUND:
-            doutln("discover new device");
+                doutln("discover new device");
+            #ifdef SHS_SF_NETWORK
                 if (m_discover) m_discover->discover(it->packet.get_recipientID().getModuleID());
                 it->status = OutgoingPacket::BusStatus::WAITING_FROM_DISCOVER;
+            #endif
                 break;
 
             case OutgoingPacket::BusStatus::WAITING_FROM_DISCOVER:
+            #ifdef SHS_SF_NETWORK
                 if (m_discover)
                 {
                     auto ip = m_discover->check(it->packet.get_recipientID().getModuleID());
@@ -121,8 +135,9 @@ void shs::DTP::tick()
 
                         it->status = OutgoingPacket::BusStatus::DISCOVERED;
                     }
-                    else { m_discover->discover(it->packet.get_recipientID().getModuleID());}
-                }
+                    else { m_discover->discover(it->packet.get_recipientID().getModuleID()); }
+        }
+            #endif
                 break;
 
             case OutgoingPacket::BusStatus::DISCOVERED:
@@ -142,8 +157,8 @@ void shs::DTP::tick()
 
             default:
                 break;
-        }
     }
+}
 }
 
 
@@ -158,4 +173,4 @@ shs::t::shs_busID_t shs::DTP::getUniqueBusID() const
 }
 
 
-#endif    // #ifndef SHS_SF_AVR
+#endif    // #ifdef SHS_SF_AVR

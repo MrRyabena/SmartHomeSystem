@@ -39,6 +39,7 @@
 #include "shs_types.h"
 #include "shs_DTP_API.h"
 #include "shs_DTPbus.h"
+#include "shs_DTPbusReceiveContext.h"
 #include "shs_types.h"
 #include "shs_API.h"
 #include "shs_ProgramTime.h"
@@ -72,7 +73,7 @@ public:
 
     explicit TcpSocket(
         const shs::t::shs_IP_t& hostIP, shs::t::shs_port_t port,
-        shs::t::shs_busID_t busID, shs::API* handler = nullptr, uint8_t bufsize = 25,
+        shs::t::shs_busID_t busID, shs::API* handler = nullptr, uint8_t bufsize = shs::DTPbusReceiveContext::DEFAULT_BUFFER_SIZE,
         const std::function<void(shs::TcpSocket&)>& connect_callback = default_connect_callback,
         const std::function<void(shs::TcpSocket&)>& disconnect_callback = default_disconnect_callback);
 
@@ -83,7 +84,7 @@ public:
         QObject* parent,
         const shs::t::shs_IP_t& hostIP, const shs::t::shs_port_t port,
     #endif
-        shs::t::shs_busID_t busID, shs::API* handler = nullptr, uint8_t bufsize = 25,
+        shs::t::shs_busID_t busID, shs::API* handler = nullptr, uint8_t bufsize = shs::DTPbusReceiveContext::DEFAULT_BUFFER_SIZE,
         const std::function<void(shs::TcpSocket&)>& connect_callback = default_connect_callback,
         const std::function<void(shs::TcpSocket&)>& disconnect_callback = default_disconnect_callback);
 

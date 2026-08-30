@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(SHS_CMF_UNUSE_SHS_SETTINGS ON)
 add_compile_definitions(
     SHS_SF_UNUSE_SHS_SETTINGS
+    SHS_SF_DEBUG
 )
 
 enable_testing()

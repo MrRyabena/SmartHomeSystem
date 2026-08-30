@@ -37,6 +37,7 @@
 #ifndef SHS_SF_AVR
 
 #include <memory>
+#include <vector>
 #include <deque>
 
 
@@ -50,6 +51,7 @@
 #include "shs_DTPpacket.h"
 #include "shs_DTPless.h"
 #include "shs_ProgramTimer.h"
+#include "shs_DTPbusController.h"
 
 #ifdef SHS_SF_NETWORK
 #include "shs_DTPdiscover.h"
@@ -137,16 +139,18 @@ public:
 
 	/**
 	 * @brief Attaches a new bus and assigns it a unique bus ID when needed.
+	 * @param bus Shared pointer to the bus instance to attach.
+	 * @return Assigned bus ID.
+	 */
+	shs::t::shs_busID_t attachBus(std::shared_ptr<shs::DTPbus> bus);
+
+	/**
+	 * @brief Attaches a new bus and assigns it a unique bus ID when needed.
 	 * @param bus Owned bus instance to attach.
 	 * @return Assigned bus ID.
 	 */
-	shs::t::shs_busID_t attachBus(std::unique_ptr<shs::DTPbus>&& bus)
-	{
-		doutln("DTP::attachBus");
-		if (bus && (bus->busID == 0 || m_buss.get(bus) != m_buss.end())) bus->busID = getUniqueBusID();
-		doutln("set busID");
-		return (*m_buss.attach(std::move(bus)))->busID;
-	}
+	[[deprecated("Use attachBus(std::shared_ptr<shs::DTPbus>) instead")]]
+	shs::t::shs_busID_t attachBus(std::unique_ptr<shs::DTPbus>&& bus) { return attachBus(std::shared_ptr<shs::DTPbus>(std::move(bus))); }
 
 	/**
 	 * @brief Detaches a bus by its bus ID.
@@ -159,7 +163,7 @@ public:
 	 * @param id Bus ID to query.
 	 * @return Pointer to bus or nullptr when absent.
 	 */
-	shs::DTPbus* getBus(const shs::t::shs_busID_t& id) const { auto it = m_buss.get(id); return it != m_buss.end() ? it->get() : nullptr; }
+	std::shared_ptr<shs::DTPbus> getBus(const shs::t::shs_busID_t& id) const { auto it = m_buss.get(id); return it != m_buss.end() ? it->get() : nullptr; }
 
 	/**
 	 * @brief Generates an unused bus ID.
@@ -215,9 +219,10 @@ private:
 		explicit OutgoingPacket(shs::DTPpacket&& pkt) : packet(std::move(pkt)), status(BusStatus::NOT_FOUND), timer(20'000) {}
 	};
 
-	shs::SortedBuf<std::unique_ptr<shs::DTPbus>, DTPless::BUS> m_buss;
+	shs::SortedBuf<std::shared_ptr<shs::DTPbus>, DTPless::BUS> m_buss;
 	shs::SortedBuf<std::unique_ptr<shs::API>, DTPless::API> m_APIs;
 	shs::SortedBuf<shs::API*, DTPless::API> m_externalAPIs;
+	std::vector<shs::DTPbusController> m_bus_controllers;
 	std::deque<OutgoingPacket> m_outgoing_packets;
 #ifdef SHS_SF_NETWORK
 	std::shared_ptr<shs::DTPdiscover> m_discover;

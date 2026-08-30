@@ -2,6 +2,8 @@
 #include "shs_debug.h"
 #ifndef SHS_SF_AVR
 
+#include "shs_DTPbusStatus.h"
+
 uint8_t shs::DTP::sendPacket(const shs::DTPpacket& packet)
 {
     if (packet.empty()) return 0;
@@ -13,6 +15,15 @@ uint8_t shs::DTP::sendPacket(const shs::DTPpacket& packet)
     shs::DTPpacket packet_copy(packet);
     m_outgoing_packets.push_back(OutgoingPacket(std::move(packet_copy)));
     return 0;
+}
+
+
+shs::t::shs_busID_t shs::DTP::attachBus(std::shared_ptr<shs::DTPbus> bus)
+{
+    doutln("DTP::attachBus");
+    if (bus && (bus->busID == 0 || m_buss.get(bus) != m_buss.end())) bus->busID = getUniqueBusID();
+    doutln("set busID");
+    return (*m_buss.attach(std::move(bus)))->busID;
 }
 
 
@@ -44,7 +55,8 @@ void shs::DTP::tick()
         if (!bus->isActive()) { detachBus(bus->busID); return; }
 
         // if the data is fully received and ready for processing 
-        if (bus->checkBus() == shs::DTPbus::packet_processed || bus->status == shs::DTPbus::packet_received)
+        using BusStatus = shs::DTPbusStatus;
+        if (bus->checkBus() == BusStatus::packet_processed || bus->status == BusStatus::packet_received)
         {
             auto it = bus->getLastData();
 
@@ -136,7 +148,7 @@ void shs::DTP::tick()
                         it->status = OutgoingPacket::BusStatus::DISCOVERED;
                     }
                     else { m_discover->discover(it->packet.get_recipientID().getModuleID()); }
-        }
+                }
             #endif
                 break;
 
@@ -157,8 +169,8 @@ void shs::DTP::tick()
 
             default:
                 break;
+        }
     }
-}
 }
 
 

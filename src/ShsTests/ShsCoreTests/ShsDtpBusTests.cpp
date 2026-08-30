@@ -5,6 +5,8 @@
 
 #include <shs_API.h>
 #include <shs_DTPbus.h>
+#include <shs_DTPbusReceiveContext.h>
+#include <shs_DTPbusStatus.h>
 #include <shs_ByteCollector.h>
 #include <shs_Random.h>
 
@@ -18,6 +20,7 @@ public:
 
     size_t available() const { return m_buf.readAvailable(); }
     uint8_t read() { uint8_t value; m_buf.get(value); return value; }
+    uint8_t write([[maybe_unused]] const uint8_t* data, const size_t size) { return static_cast<uint8_t>(size); }
 
 protected:
     shs::ByteCollector<> m_buf;
@@ -40,25 +43,6 @@ public:
     shs::ByteCollector<> data;
 };
 
-namespace shs
-{
-    std::ostream& operator<<(std::ostream& os, const shs::DTPbus::Status& status)
-    {
-        using Status = shs::DTPbus::Status;
-        switch (status)
-        {
-            case Status::no_data: return os << "no_data";
-            case Status::packet_is_expected: return os << "packet_is_expected";
-            case Status::packet_received: return os << "packet_received";
-            case Status::packet_processed: return os << "packet_processed";
-            case Status::invalid_recipient: return os << "invalid_recipient";
-            case Status::bus_error: return os << "bus_error";
-            case Status::receive_timeout_error: return os << "receive_timeout_error";
-            default: return os << "unknown_status";
-        }
-    }
-}
-
 /**
  * @brief Test fixture for DtpBus tests.
  */
@@ -67,11 +51,12 @@ class DtpBusTests : public testing::Test
 protected:
     shs::ByteCollector<> message_buf;
 
-    shs::ByteCollector<> buf;
-    shs::ProgramTimer receive_timer;
-    uint8_t len;
+    shs::DTPbusReceiveContext context;
 
-    DtpBusTests() : receive_timer(10), len(0) {}
+    DtpBusTests()
+    {
+        context.receive_timer.setTimeout(10);
+    }
 };
 
 /**
@@ -80,11 +65,12 @@ protected:
 class DtpBusRandomTest : public testing::TestWithParam<shs::ByteCollector<>>
 {
 protected:
-    shs::ByteCollector<> buf;
-    shs::ProgramTimer receive_timer;
-    uint8_t len;
+    shs::DTPbusReceiveContext context;
 
-    DtpBusRandomTest() : receive_timer(10), len(0) {}
+    DtpBusRandomTest()
+    {
+        context.receive_timer.setTimeout(10);
+    }
 
 public:
     static std::vector<shs::ByteCollector<>> GenerateRandomInputs()
@@ -117,9 +103,9 @@ TEST_F(DtpBusTests, processBusEmptyInputTest)
     message_buf.reserve(10);
     TestBus testBus(std::move(message_buf));
 
-    auto status = shs::DTPbus::processBus(testBus, buf, len, receive_timer);
+    auto status = shs::DTPbus::processBus(testBus, context);
     EXPECT_EQ(status, shs::DTPbus::Status::no_data);
-    EXPECT_EQ(len, 0);
+    EXPECT_EQ(context.receive_length, 0);
     EXPECT_EQ(testBus.available(), 0);
 
 }
@@ -133,20 +119,20 @@ TEST_F(DtpBusTests, processBusResetTimerTest)
     {
         TestBus testBus(std::move(message_buf));
 
-        auto status = shs::DTPbus::processBus(testBus, buf, len, receive_timer);
+        auto status = shs::DTPbus::processBus(testBus, context);
         EXPECT_EQ(status, shs::DTPbus::Status::packet_is_expected);
-        EXPECT_EQ(len, 100);
+        EXPECT_EQ(context.receive_length, 100);
         EXPECT_EQ(testBus.available(), 9);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(15));
-        status = shs::DTPbus::processBus(testBus, buf, len, receive_timer);
+        status = shs::DTPbus::processBus(testBus, context);
         EXPECT_EQ(status, shs::DTPbus::Status::receive_timeout_error);
     }
 
     message_buf.clear();
     for (auto i = 0; i < 10; i++) message_buf.push_back(10, 1);
     TestBus testBus(std::move(message_buf));
-    auto status = shs::DTPbus::processBus(testBus, buf, len, receive_timer);
+    auto status = shs::DTPbus::processBus(testBus, context);
     EXPECT_EQ(status, shs::DTPbus::Status::packet_received);
 }
 
@@ -157,7 +143,9 @@ TEST_F(DtpBusTests, checkBusProcessPacketTest)
     TestBus testBus(message_buf);
     TestHandler testHandler;
 
-    auto status = shs::DTPbus::checkBus(testBus, buf, len, receive_timer, &testHandler);
+    context.handler = &testHandler;
+
+    auto status = shs::DTPbus::checkBus(testBus, context);
     EXPECT_EQ(status, shs::DTPbus::Status::packet_processed);
 
 
@@ -183,6 +171,6 @@ TEST_P(DtpBusRandomTest, processBusRandomTest)
     auto result = input.size() == 1 && input[0] < 2 ? Status::invalid_recipient : Status::packet_received;
     TestBus testBus(std::move(input));
 
-    auto status = shs::DTPbus::processBus(testBus, buf, len, receive_timer);
+    auto status = shs::DTPbus::processBus(testBus, context);
     EXPECT_EQ(status, result);
 }

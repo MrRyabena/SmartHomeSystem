@@ -23,76 +23,59 @@
 #endif 
 
 #include "shs_API.h"
-#include "shs_APIids.h"
 #include "shs_types.h"
 #include "shs_DTPpacket.h"
-#include "shs_ByteCollector.h"
-#include "shs_ByteCollectorIterator.h"
 
 
 namespace shs
 {
-    class DTP_APIhandler;
-    class DTP_APIpackets;
+    class DTP_API;
 }
 
 
 /**
  * @brief API handler that serves built-in DTP service commands.
  */
-class shs::DTP_APIhandler : public shs::API
+class shs::DTP_API : public shs::API
 {
 public:
     /**
      * @brief Creates the built-in DTP API handler.
      */
-    DTP_APIhandler(shs::t::shs_ID_t ID) : API(ID.setComponentID(shs::constants::APIids::DTP)) {}
+    DTP_API(shs::t::shs_ID_t ID);
 
     /**
      * @brief Destroys the DTP API handler.
      */
-    ~DTP_APIhandler() = default;
+    ~DTP_API() = default;
 
     /**
      * @brief Handles built-in DTP service commands.
      */
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
-};
 
-
-/**
- * @brief Factory for DTP service packets used by discovery and connection setup.
- */
-class shs::DTP_APIpackets
-{
-public:
-    static constexpr auto DTP_API_ID = shs::constants::APIids::DTP;
+    /**
+     * @brief Handles built-in DTP service commands (static version).
+     */
+    static shs::DTPpacket static_handle(shs::ByteCollectorReadIterator<>& it);
 
     /**
      * @brief Builds an initial handshake packet.
      */
-    static shs::DTPpacket getInitialPacket(shs::t::shs_ID_t ID)
-    {
-        ID.setComponentID(static_cast<uint16_t>(DTP_API_ID));
-        shs::ByteCollector<> bc(1);
-        bc.push_back(0, 1);
-        shs::DTPpacket packet(ID, 0, std::move(bc));
-        packet.set_DTPcode(shs::DTPpacket::INITIAL);
-
-        return packet;
-    }
+    static shs::DTPpacket getInitialPacket(shs::t::shs_ID_t ID = 0);
 
     /**
      * @brief Builds an answer to an initial handshake.
      */
-    static shs::DTPpacket getInitialAnswerPacket(shs::t::shs_ID_t ID, bool success)
-    {
-        shs::ByteCollector<> bc(1);
-        bc.push_back(success, 1);
+    static shs::DTPpacket getInitialAnswerPacket(shs::t::shs_ID_t ID = 0, bool success = true);
 
-        shs::DTPpacket packet(ID, 0, std::move(bc));
-        packet.set_DTPcode(shs::DTPpacket::INITIAL_ANSWER);
+    /**
+     * @brief Builds a connection request packet.
+     */
+    static shs::DTPpacket getConnectionRequestPacket(shs::t::shs_ID_t ID = 0);
 
-        return packet;
-    }
+    /**
+     * @brief Builds an answer to a connection request.
+     */
+    static shs::DTPpacket getConnectionRequestAnswerPacket(shs::t::shs_ID_t ID = 0, bool success = true);
 };

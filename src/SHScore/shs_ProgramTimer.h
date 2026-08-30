@@ -29,6 +29,8 @@ public:
      */
     enum class Resolution : uint8_t { MICROSECONDS, MILLISECONDS, SECONDS };
 
+    static constexpr auto MAX_TIMEOUT = std::numeric_limits<size_t>::max();
+
     /**
      * @brief Constructs a program timer with the specified timeout and resolution.
      * @param timeout Timeout value.
@@ -37,6 +39,11 @@ public:
     explicit ProgramTimer(const size_t timeout, const Resolution resolution = Resolution::MILLISECONDS)
         : m_timeout(timeout), m_resolution(resolution)
     {}
+
+    explicit ProgramTimer(const ProgramTimer& other) = default;
+    ProgramTimer& operator=(const ProgramTimer& other) = default;
+    explicit ProgramTimer(ProgramTimer&& other) noexcept = default;
+    ProgramTimer& operator=(ProgramTimer&& other) noexcept = default;
 
     ~ProgramTimer() = default;
 
@@ -82,7 +89,7 @@ public:
 
 private:
     size_t m_timeout;
-    const Resolution m_resolution;
+    Resolution m_resolution;
 
     /**
      * @brief Checks if the timer has expired based on the current resolution.

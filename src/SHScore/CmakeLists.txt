@@ -27,6 +27,12 @@ set(SOURCES
     shs_DTP_API.cpp
     shs_DTP_API.h
     shs_DTPbus.h
+    shs_DTPbusController.h
+    shs_DTPbusController.cpp
+    shs_DTPbusPolicy.h
+    shs_DTPbusReceiveContext.h
+    shs_DTPbusReceiveContext.cpp
+    shs_DTPbusStatus.h
     shs_DTPdiscover.cpp
     shs_DTPdiscover.h
     shs_DTPless.h

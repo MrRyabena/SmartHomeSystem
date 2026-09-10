@@ -1,5 +1,13 @@
 #include "shs_DTPbusReceiveContext.h"
 
+#include "shs_settings_private.h"
+
+#ifdef SHS_SF_AVR
+#include <shs_lib_AVR_STD_memory.h>
+#else
+#include <memory>
+#endif
+
 shs::DTPbusReceiveContext::DTPbusReceiveContext(const DtpBusSize_t bufsize, shs::API* handler, shs::t::shs_time_t receive_timeout)
     : buffer(bufsize), receive_length(0), receive_timer(receive_timeout), handler(handler)
 {}

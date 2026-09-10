@@ -1,8 +1,9 @@
 {
     "name": "SHScore",
-    "version": "2.3.0",
+    "version": "2.4.0",
     "dependencies": {
         "GyverIO": "https://github.com/GyverLibs/GyverIO.git",
-        "Random16": "https://github.com/GyverLibs/Random16.git"
+        "Random16": "https://github.com/GyverLibs/Random16.git",
+        "GyverPWM": "https://github.com/GyverLibs/GyverPWM.git"
     }
 }

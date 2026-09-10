@@ -14,14 +14,14 @@ void shs::TcpServer::tick()
             return;
         }
 
-
-        if (m_connecting_client->checkBus() != shs::DTPbus::packet_received && m_connecting_client->status != shs::DTPbus::packet_processed)
+        using BusStatus = shs::DTPbusStatus;
+        if (m_connecting_client->checkBus() != BusStatus::packet_received && m_connecting_client->status != BusStatus::packet_processed)
         {
             return;
         }
         else
         {
-            auto answer = shs::DTP_APIpackets::getInitialAnswerPacket(m_dtp.moduleID, true);
+            auto answer = shs::DTP_API::getInitialAnswerPacket(m_dtp.moduleID, true);
             m_connecting_client->sendPacket(answer);
 
             m_dtp.attachBus(std::move(m_connecting_client));
@@ -44,7 +44,7 @@ void shs::TcpServer::tick()
         m_connecting_client_time = shs::ProgramTime::s_milliseconds();
         m_connecting_client->start();
 
-        auto mes = shs::DTP_APIpackets::getInitialPacket(m_dtp.moduleID);
+        auto mes = shs::DTP_API::getInitialPacket(m_dtp.moduleID);
         m_connecting_client->sendPacket(mes);
     }
 }

@@ -30,6 +30,7 @@ using Stream = shs::Stream;
 #include "shs_Process.h"
 #include "shs_API.h"
 #include "shs_DTPbus.h"
+#include "shs_DTPbusPolicy.h"
 
 #include <stdint.h>
 
@@ -43,7 +44,7 @@ class shs::DTPstreamBus : public shs::DTPbus
 {
 public:
 	explicit DTPstreamBus(Stream& stream, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
-		: m_stream(stream), DTPbus(busID, handler, bufsize)
+		: m_stream(stream), DTPbus(busID, shs::DTPbusPolicy::STATIC_BUS, handler, bufsize)
 	{}
 
 	DTPstreamBus(DTPstreamBus&& other) : m_stream(other.m_stream), DTPbus(std::move(other)) {}
@@ -52,6 +53,7 @@ public:
 
 	// DTPbus
 	bool isActive() const override { return true; }
+	void setActive([[maybe_unused]] const bool flag) override {}
 
 	shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_stream); }
 

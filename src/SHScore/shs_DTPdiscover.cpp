@@ -2,6 +2,7 @@
 
 #if defined(SHS_SF_NETWORK) && !defined(SHS_SF_AVR)
 
+#include "shs_DTPbusStatus.h"
 
 void shs::DTPdiscover::discover(const uint8_t id)
 {
@@ -77,7 +78,7 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
         auto id = shs::DTPpacket::get_recipientID(it);
         auto mask = shs::DTPpacket::get_mask(it);
 
-        
+
         // doitid(id); doutln();
         // doitid(API_ID.id); doutln();
         // doitid(mask); doutln();
@@ -123,13 +124,13 @@ shs::DTPpacket shs::DTPdiscover::handle(shs::ByteCollectorReadIterator<>& it)
                 shs::ByteCollector<> bc(5);
                 bc.push_back(Commands::IP, 1);
 
-#if defined(SHS_SF_ESP)
+            #if defined(SHS_SF_ESP)
                 shs::IP ip(shs::ControlWiFi::localIP());
-#elif defined(SHS_SF_QT)
+            #elif defined(SHS_SF_QT)
                 shs::IP ip;
-#else
+            #else
                 shs::IP ip(m_udp_broadcast.m_udp.udp.getQUdpPrt->localAddress());
-#endif
+            #endif
 
                 bc.push_back(static_cast<uint32_t>(ip));
 
@@ -150,7 +151,8 @@ void shs::DTPdiscover::tick()
     for (auto& x : m_requests) if (x.timer.milliseconds() > MAX_WAIT_TIME) m_requests.detach(x);
 
     m_udp_broadcast.tick();
-    if (m_udp_broadcast.checkBus() == shs::DTPbus::packet_received || m_udp_broadcast.status == shs::DTPbus::packet_processed)
+    using BusStatus = shs::DTPbusStatus;
+    if (m_udp_broadcast.checkBus() == BusStatus::packet_received || m_udp_broadcast.status == BusStatus::packet_processed)
     {
         doutln("has data!");
         auto it = m_udp_broadcast.getLastData();

@@ -2,22 +2,25 @@
 
 #if defined(SHS_SF_NETWORK)
 
+#include "shs_DTPbusPolicy.h"
+
+
 std::function<void(shs::TcpSocket&)> shs::TcpSocket::default_connect_callback =
-[](shs::TcpSocket& socket) { 
+[](shs::TcpSocket& socket) {
     doutln("TcpSocket connected");
-    if (socket.isActive()) 
+    if (socket.isActive())
     {
-        auto pkt = shs::DTP_APIpackets::getInitialPacket(socket.busID);
+        auto pkt = shs::DTP_API::getInitialPacket(socket.busID);
         socket.sendPacket(pkt);
         doutln("initial packet sent");
     }
-};
+    };
 
 std::function<void(shs::TcpSocket&)> shs::TcpSocket::default_disconnect_callback =
-[](shs::TcpSocket& socket) { 
-   doutln("disconnect callback"); 
-   if (socket.isActive()) socket.reconnect(); 
-};
+[](shs::TcpSocket& socket) {
+    doutln("disconnect callback");
+    if (socket.isActive()) socket.reconnect();
+    };
 
 shs::TcpSocket::TcpSocket(
     const shs::t::shs_IP_t& hostIP, const shs::t::shs_port_t port,
@@ -25,7 +28,7 @@ shs::TcpSocket::TcpSocket(
     const std::function<void(shs::TcpSocket&)>& connect_callback,
     const std::function<void(shs::TcpSocket&)>& disconnect_callback
 )
-    : DTPbus(busID, handler, bufsize),
+    : DTPbus(busID, shs::DTPbusPolicy::TEMPORARY_IF_DISCONNECTED, handler, bufsize),
     m_hostIP(hostIP), m_port(port),
     m_connect_callback(connect_callback),
     m_disconnect_callback(disconnect_callback)
@@ -42,7 +45,7 @@ shs::TcpSocket::TcpSocket(
     const shs::t::shs_busID_t busID, shs::API* handler,
     const uint8_t bufsize, const std::function<void(shs::TcpSocket&)>& connect_callback,
     const std::function<void(shs::TcpSocket&)>& disconnect_callback)
-    : DTPbus(busID, handler, bufsize),
+    : DTPbus(busID, shs::DTPbusPolicy::TEMPORARY_IF_DISCONNECTED, handler, bufsize),
 #ifdef SHS_SF_QT
     m_hostIP(hostIP), m_port(port),
 #endif

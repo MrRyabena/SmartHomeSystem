@@ -18,14 +18,15 @@ jobs:
               uses: lukka/get-cmake@latest
 
             - name: Run build-test for ShsCore
+              working-directory: src/SHScore
               run: |
-                  cd src/SHScore
                   mkdir -p build
                   cd build
                   cmake -DSHS_CMF_QT=OFF -DSHS_CMF_UNUSE_SHS_SETTINGS=ON -DCMAKE_CXX_FLAGS="-Wall" ..
                   cmake --build .
+                  
             - name: Build and run ShsCore tests
+              working-directory: src/SHStests/ShsCoreTests
               run: |
-                  cd src/SHStests/ShsCoreTests
                   chmod +x build_shs_core_tests.sh
                   ./build_shs_core_tests.sh -r

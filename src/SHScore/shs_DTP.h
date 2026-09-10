@@ -51,7 +51,7 @@
 #include "shs_DTPpacket.h"
 #include "shs_DTPless.h"
 #include "shs_ProgramTimer.h"
-#include "shs_DTPbusController.h"
+#include "shs_DTPbusGeneralController.h"
 
 #ifdef SHS_SF_NETWORK
 #include "shs_DTPdiscover.h"
@@ -145,14 +145,6 @@ public:
 	shs::t::shs_busID_t attachBus(std::shared_ptr<shs::DTPbus> bus);
 
 	/**
-	 * @brief Attaches a new bus and assigns it a unique bus ID when needed.
-	 * @param bus Owned bus instance to attach.
-	 * @return Assigned bus ID.
-	 */
-	[[deprecated("Use attachBus(std::shared_ptr<shs::DTPbus>) instead")]]
-	shs::t::shs_busID_t attachBus(std::unique_ptr<shs::DTPbus>&& bus) { return attachBus(std::shared_ptr<shs::DTPbus>(std::move(bus))); }
-
-	/**
 	 * @brief Detaches a bus by its bus ID.
 	 * @param id Bus ID to detach.
 	 */
@@ -163,7 +155,7 @@ public:
 	 * @param id Bus ID to query.
 	 * @return Pointer to bus or nullptr when absent.
 	 */
-	std::shared_ptr<shs::DTPbus> getBus(const shs::t::shs_busID_t& id) const { auto it = m_buss.get(id); return it != m_buss.end() ? it->get() : nullptr; }
+	std::shared_ptr<shs::DTPbus> getBus(const shs::t::shs_busID_t& id) const { auto it = m_buss.get(id); return it != m_buss.end() ? *it : nullptr; }
 
 	/**
 	 * @brief Generates an unused bus ID.
@@ -222,7 +214,7 @@ private:
 	shs::SortedBuf<std::shared_ptr<shs::DTPbus>, DTPless::BUS> m_buss;
 	shs::SortedBuf<std::unique_ptr<shs::API>, DTPless::API> m_APIs;
 	shs::SortedBuf<shs::API*, DTPless::API> m_externalAPIs;
-	std::vector<shs::DTPbusController> m_bus_controllers;
+	shs::DTPbusGeneralController m_bus_general_controller;
 	std::deque<OutgoingPacket> m_outgoing_packets;
 #ifdef SHS_SF_NETWORK
 	std::shared_ptr<shs::DTPdiscover> m_discover;

@@ -52,7 +52,10 @@ void shs::DTP::tick()
     for (auto& bus : m_buss)
     {
         if (!bus) continue;
+
+        m_bus_general_controller.controlBus(bus);
         if (!bus->isActive()) { detachBus(bus->busID); return; }
+
 
         // if the data is fully received and ready for processing 
         using BusStatus = shs::DTPbusStatus;
@@ -148,7 +151,7 @@ void shs::DTP::tick()
                         it->status = OutgoingPacket::BusStatus::DISCOVERED;
                     }
                     else { m_discover->discover(it->packet.get_recipientID().getModuleID()); }
-                }
+        }
             #endif
                 break;
 
@@ -169,8 +172,8 @@ void shs::DTP::tick()
 
             default:
                 break;
-        }
     }
+}
 }
 
 

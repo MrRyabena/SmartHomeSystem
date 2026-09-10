@@ -4,6 +4,9 @@ BUILD_DIR="build"
 
 set -e
 
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "$SCRIPT_DIR"
+
 show_help() {
     echo "Usage: $0 [options]"
     echo ""

@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <shs_API.h>
+#include <shs_DTP_API.h>
 #include <shs_DTPbus.h>
 #include <shs_DTPbusReceiveContext.h>
 #include <shs_DTPbusStatus.h>
@@ -20,11 +21,15 @@ public:
 
     size_t available() const { return m_buf.readAvailable(); }
     uint8_t read() { uint8_t value; m_buf.get(value); return value; }
-    uint8_t write([[maybe_unused]] const uint8_t* data, const size_t size) { return static_cast<uint8_t>(size); }
+    uint8_t write([[maybe_unused]] const uint8_t* data, const size_t size) { m_output.write(data, size); return size; }
 
+    shs::ByteCollectorReadIterator<> getOutput() { return m_output.getReadIt(); }
+    auto getOutputBegin() { return m_output.begin(); }
+    auto getOutputEnd() { return m_output.end(); }
+
+    shs::ByteCollector<> m_output;
 protected:
     shs::ByteCollector<> m_buf;
-
 };
 
 /**
@@ -173,4 +178,37 @@ TEST_P(DtpBusRandomTest, processBusRandomTest)
 
     auto status = shs::DTPbus::processBus(testBus, context);
     EXPECT_EQ(status, result);
+}
+
+TEST_F(DtpBusTests, handleDtpApiInitialPacketTest)
+{
+    auto packet = shs::DTP_API::getInitialPacket();
+    auto answer_packet = shs::DTP_API::getInitialAnswerPacket(0, true);
+    TestBus testBus(std::move(packet.bc));
+
+    auto status = shs::DTPbus::checkBus(testBus, context);
+    EXPECT_EQ(status, shs::DTPbus::Status::packet_received);
+
+    bool elements_are_equal = std::equal(
+        testBus.getOutputBegin(), testBus.getOutputEnd(),
+        answer_packet.bc.begin()
+    );
+
+    EXPECT_TRUE(elements_are_equal);
+}
+
+TEST_F(DtpBusTests, handleDtpApiConnectionRequestPacketTest)
+{
+    auto packet = shs::DTP_API::getConnectionRequestPacket();
+    auto answer_packet = shs::DTP_API::getConnectionRequestAnswerPacket(0, true);
+    TestBus testBus(std::move(packet.bc));
+
+    auto status = shs::DTPbus::checkBus(testBus, context);
+    EXPECT_EQ(status, shs::DTPbus::Status::packet_received);
+
+    bool elements_are_equal = std::equal(
+        testBus.getOutputBegin(), testBus.getOutputEnd(),
+        answer_packet.bc.begin()
+    );
+    EXPECT_TRUE(elements_are_equal);
 }

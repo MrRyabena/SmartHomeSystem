@@ -18,10 +18,12 @@ jobs:
               uses: lukka/get-cmake@latest
 
             - name: Run build-test for ShsCore
-              run: cd src/SHScore
+              run: |
+                  cd src/SHScore
                   chmod +x build_shs_core.sh
                   ./build_shs_core.sh
             - name: Build and run ShsCore tests
-              run: cd src/SHStests/ShsCoreTests
+              run: |
+                  cd src/SHStests/ShsCoreTests
                   chmod +x build_shs_core_tests.sh
                   ./build_shs_core_tests.sh -r

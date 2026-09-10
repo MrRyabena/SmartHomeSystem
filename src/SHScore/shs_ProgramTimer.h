@@ -29,7 +29,11 @@ public:
      */
     enum class Resolution : uint8_t { MICROSECONDS, MILLISECONDS, SECONDS };
 
+#ifdef SHS_SF_UNUSE_STL
+    static constexpr auto MAX_TIMEOUT = UINT64_MAX;
+#else
     static constexpr auto MAX_TIMEOUT = std::numeric_limits<size_t>::max();
+#endif
 
     /**
      * @brief Constructs a program timer with the specified timeout and resolution.

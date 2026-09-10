@@ -20,8 +20,10 @@ jobs:
             - name: Run build-test for ShsCore
               run: |
                   cd src/SHScore
-                  chmod +x build_shs_core.sh
-                  ./build_shs_core.sh
+                  mkdir -p build
+                  cd build
+                  cmake -DSHS_CMF_QT=OFF -DSHS_CMF_UNUSE_SHS_SETTINGS=ON -DCMAKE_CXX_FLAGS="-Wall" ..
+                  cmake --build .
             - name: Build and run ShsCore tests
               run: |
                   cd src/SHStests/ShsCoreTests

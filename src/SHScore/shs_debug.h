@@ -17,6 +17,7 @@
 #define dinit() ({Serial.begin(115200); Serial.println("");})
 #define dout(value) ({Serial.print(value); Serial.print(' ');})
 #define doutln(value) Serial.println(value);
+#define dfunc() dout(__PRETTY_FUNCTION__);
 #define dsep() Serial.println("----------------------------------------");
 
 
@@ -25,6 +26,7 @@
 #define dinit()
 #define dout(value) std::cout << value << ' ';
 #define doutln(value) std::cout << value << std::endl;
+#define dfunc() std::cout << __PRETTY_FUNCTION__ << std::endl;
 #define dsep() std::cout << "----------------------------------------" << std::endl;
 
 
@@ -34,5 +36,6 @@
 #define dinit()
 #define dout(value)
 #define doutln(value)
+#define dfunc()
 #define dsep()
 #endif

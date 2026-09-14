@@ -29,6 +29,8 @@ set(SOURCES
     shs_DTPbus.h
     shs_DTPbusController.h
     shs_DTPbusController.cpp
+    shs_DTPbusGeneralController.h
+    shs_DTPbusGeneralController.cpp
     shs_DTPbusPolicy.h
     shs_DTPbusReceiveContext.h
     shs_DTPbusReceiveContext.cpp

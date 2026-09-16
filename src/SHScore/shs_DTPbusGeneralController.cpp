@@ -2,6 +2,8 @@
 
 #ifndef SHS_SF_AVR
 
+#include "shs_DTPbusReceiveStatus.h"
+
 shs::DTPbusGeneralController::DTPbusGeneralController(shs::t::shs_time_t request_timeout,
     shs::t::shs_time_t offline_timeout,
     shs::t::shs_time_t unused_timeout)
@@ -16,7 +18,7 @@ void shs::DTPbusGeneralController::controlBus(std::shared_ptr<shs::DTPbus> bus)
 
 void shs::DTPbusGeneralController::s_controlBus(std::shared_ptr<shs::DTPbus> bus, shs::t::shs_time_t offline_timeout, shs::t::shs_time_t request_timeout, shs::t::shs_time_t unused_timeout, shs::DTPbusPolicy policy)
 {
-    using BusStatus = shs::DTPbusStatus;
+    using BusReceiveStatus = shs::DTPbusReceiveStatus;
     using Policy = shs::DTPbusPolicy;
 
     if (!bus) return;
@@ -24,7 +26,7 @@ void shs::DTPbusGeneralController::s_controlBus(std::shared_ptr<shs::DTPbus> bus
     auto current_policy = m_getPolicy(bus, policy);
     if (current_policy == Policy::UNKNOWN_POLICY || current_policy == Policy::STATIC_BUS) return;
 
-    if (bus->status == BusStatus::packet_received || bus->status == BusStatus::packet_processed)
+    if (bus->getReceiveStatus() == BusReceiveStatus::packet_received || bus->getReceiveStatus() == BusReceiveStatus::packet_processed)
     {
         switch (current_policy)
         {
@@ -41,7 +43,6 @@ void shs::DTPbusGeneralController::s_controlBus(std::shared_ptr<shs::DTPbus> bus
                         {
                             case shs::DTPbusPolicy::TEMPORARY_IF_NO_ANSWERS:
                                 bus->stop();
-                                bus->status = BusStatus::bus_error;
                                 bus->setActive(false);
                                 break;
                         }
@@ -53,7 +54,6 @@ void shs::DTPbusGeneralController::s_controlBus(std::shared_ptr<shs::DTPbus> bus
                     if (bus->millisecondsSinceLastReceive() > unused_timeout)
                     {
                         bus->stop();
-                        bus->status = BusStatus::bus_error;
                         bus->setActive(false);
                     }
                 }

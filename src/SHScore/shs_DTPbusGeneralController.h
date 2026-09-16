@@ -7,7 +7,6 @@
 #include <memory>
 
 #include "shs_DTPbus.h"
-#include "shs_DTPbusStatus.h"
 #include "shs_Process.h"
 #include "shs_ProgramTimer.h"
 #include "shs_types.h"

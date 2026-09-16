@@ -2,14 +2,30 @@
 #include "shs_debug.h"
 #ifndef SHS_SF_AVR
 
-#include "shs_DTPbusStatus.h"
+#include "shs_DTPbusReceiveStatus.h"
 
 uint8_t shs::DTP::sendPacket(const shs::DTPpacket& packet)
 {
     if (packet.empty()) return 0;
 
+    dfunc();
+
     auto bus = findBusFromModule(packet.get_recipientID().getModuleID());
-    if (bus) return bus->sendPacket(packet);
+    if (bus)
+    {
+        dout("send packet to bus with id: ");
+        doutln(bus->busID);
+        doutln("Packet: ");
+        dsep();
+        doutln(packet.get_debug());
+        dsep();
+        return bus->sendPacket(packet);
+    }
+    else
+    {
+        dout("bus not found for module id: ");
+        doutln(packet.get_recipientID().getModuleID());
+    }
 
     // store a copy for later delivery, but ensure proper copy semantics
     shs::DTPpacket packet_copy(packet);
@@ -53,15 +69,27 @@ void shs::DTP::tick()
     {
         if (!bus) continue;
 
-        m_bus_general_controller.controlBus(bus);
-        if (!bus->isActive()) { detachBus(bus->busID); return; }
+        // m_bus_general_controller.controlBus(bus);
+        // if (!bus->isActive()) { detachBus(bus->busID); return; }
 
 
         // if the data is fully received and ready for processing 
-        using BusStatus = shs::DTPbusStatus;
-        if (bus->checkBus() == BusStatus::packet_processed || bus->status == BusStatus::packet_received)
+        using BusReceiveStatus = shs::DTPbusReceiveStatus;
+        if (bus->checkBus() != BusReceiveStatus::no_data)
+        {
+            dfunc();
+            dout("Bus status: ");
+            doutln(to_string(bus->getReceiveStatus()));
+        }
+        if (bus->getReceiveStatus() == BusReceiveStatus::packet_processed || bus->getReceiveStatus() == BusReceiveStatus::packet_received)
         {
             auto it = bus->getLastData();
+
+            dfunc();
+            doutln("Packet: ");
+            dsep();
+            doutln(shs::DTPpacket::get_debug(it));
+            dsep();
 
             // processing of DTP-code
             switch (shs::DTPpacket::get_DTPcode(it))
@@ -74,17 +102,28 @@ void shs::DTP::tick()
                         if (api != m_APIs.end())
                         {
                             auto output = std::move((*api)->handle(it));
-                            if (!output.empty()) bus->sendPacket(output);
+                            if (!output.empty())
+                            {
+                                bus->sendPacket(output);
+                                doutln("Success, answer sent");
+                            }
+                            else { doutln("Success, no answer"); }
                         }
                         else
                         {
                             auto api = m_externalAPIs.get(id);
                             if (api != m_externalAPIs.end())
                             {
+                                doutln("Success with external APIs");
                                 auto output = std::move((*api)->handle(it));
                                 if (!output.empty()) bus->sendPacket(output);
                             }
+                            else
+                            {
+                                doutln("ERROR: API not found");
+                            }
                         }
+                        dsep();
                     }
                     break;
 
@@ -151,7 +190,7 @@ void shs::DTP::tick()
                         it->status = OutgoingPacket::BusStatus::DISCOVERED;
                     }
                     else { m_discover->discover(it->packet.get_recipientID().getModuleID()); }
-        }
+                }
             #endif
                 break;
 
@@ -172,8 +211,8 @@ void shs::DTP::tick()
 
             default:
                 break;
+        }
     }
-}
 }
 
 

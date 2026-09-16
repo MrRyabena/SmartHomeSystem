@@ -25,7 +25,7 @@
 #include "shs_SortedBuf.h"
 #include "shs_ProgramTimer.h"
 #include "shs_DTP_API.h"
-#include "shs_DTPbusStatus.h"
+#include "shs_DTPbusReceiveStatus.h"
 #include "shs_DTPbusReceiveContext.h"
 #include "shs_DTPbusPolicy.h"
 
@@ -45,7 +45,7 @@ class shs::DTPbus : public shs::Process
 {
 public:
 
-    using Status = shs::DTPbusStatus;
+    using ReceiveStatus = shs::DTPbusReceiveStatus;
 
     /**
      * @brief Creates a bus wrapper with an optional handler and buffer size.
@@ -91,6 +91,8 @@ public:
 
     shs::DTPbusPolicy getPolicy() const noexcept { return m_policy; }
 
+    ReceiveStatus getReceiveStatus() const noexcept { return m_context.status; }
+
     /**
      * @brief Reports whether the concrete bus is active.
         * @return True when bus is active.
@@ -108,14 +110,14 @@ public:
      * @brief Polls the concrete bus for new data.
         * @return Current bus status after polling.
      */
-    virtual Status checkBus() = 0;
+    virtual ReceiveStatus checkBus() = 0;
     /**
      * @brief Polls a bus instance using the shared buffer.
         * @tparam Bus Concrete bus type.
         * @param bus Bus instance to poll.
         * @return Current bus status after polling.
      */
-    template <class Bus> Status checkBus(Bus& bus) { status = checkBus(bus, m_context); return status; }
+    template <class Bus> ReceiveStatus checkBus(Bus& bus) { checkBus(bus, m_context); return m_context.status; }
     /**
      * @brief Polls a bus instance using the specified context.
         * @tparam Bus Concrete bus type.
@@ -124,19 +126,7 @@ public:
         * @return Current bus status after polling.
      */
     template <class Bus>
-    static Status checkBus(Bus& bus, shs::DTPbusReceiveContext& context) { return checkBus(bus, context.buffer, context.receive_length, context.receive_timer, context.handler); }
-    /**
-     * @brief Polls a bus and stores incoming bytes in the given buffer.
-        * @tparam Bus Concrete bus type.
-        * @param bus Bus instance to poll.
-        * @param buf Buffer used to store incoming bytes.
-        * @param len Expected packet length cache.
-        * @param receive_timer Timer for tracking receive time.
-        * @param handler Optional packet handler.
-        * @return Current bus status after polling and optional processing.
-     */
-    template <class Bus>
-    inline static Status checkBus(Bus& bus, ByteCollector<>& buf, uint8_t& len, shs::ProgramTimer& receive_timer, shs::API* handler = nullptr);
+    static ReceiveStatus checkBus(Bus& bus, shs::DTPbusReceiveContext& context);
 
     /**
      * @brief Processes a bus instance using the shared buffer.
@@ -145,48 +135,29 @@ public:
         * @return Current bus status after processing.
      */
     template <class Bus>
-    Status processBus(Bus& bus) { status = processBus(bus, m_context.buffer, m_context.receive_length); return status; }
-    /**
-     * @brief Processes a bus instance using the specified context.
-        * @tparam Bus Concrete bus type.
-        * @param bus Bus instance to process.
-        * @param context Context to use for processing.
-        * @return Current bus status after processing.
-     */
-    template <class Bus>
-    inline static Status processBus(Bus& bus, shs::DTPbusReceiveContext& context) { return processBus(bus, context.buffer, context.receive_length, context.receive_timer); }
+    inline ReceiveStatus processBus(Bus& bus) { return processBus(bus, m_context); }
     /**
      * @brief Processes a bus and fills a byte collector with the received packet.
         * @tparam Bus Concrete bus type.
         * @param bus Bus instance to process.
-        * @param buf Output packet buffer.
-        * @param len Expected packet length cache.
-        * @param receive_timer Timer for tracking receive time.
+        * @param context Context to use for processing.
         * @return Processing status.
      */
     template <class Bus>
-    inline static Status processBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len, shs::ProgramTimer& receive_timer);
+    inline static ReceiveStatus processBus(Bus& bus, shs::DTPbusReceiveContext& context);
 
     /**
      * @brief Sends the current buffered packet to the handler.
         * @param handler API handler for packet processing.
         * @return Updated bus status.
      */
-    Status processPacket(shs::API& handler) { sendPacket(processPacket(m_context.buffer, handler, status)); return status; }
+    inline ReceiveStatus processPacket(shs::API& handler) { sendPacket(processPacket(handler, m_context)); return m_context.status; }
     /**
      * @brief Sends the current buffered packet to the handler.
         * @param context Context containing the buffer and handler.
         * @return Updated bus status.
      */
-    inline static shs::DTPpacket processPacket(shs::DTPbusReceiveContext& context, Status& status) { return processPacket(context.buffer, *context.handler, status); }
-    /**
-     * @brief Decodes buffered data and passes it to the handler.
-        * @param data Buffered packet bytes.
-        * @param handler API handler to invoke.
-        * @param status Input/output status value.
-        * @return Handler response packet or empty packet.
-     */
-    inline static shs::DTPpacket processPacket(shs::ByteCollector<>& data, shs::API& handler, Status& status);
+    inline static shs::DTPpacket processPacket(shs::API& handler, shs::DTPbusReceiveContext& context);
 
     /**
      * @brief Returns the latest buffered bytes.
@@ -275,7 +246,6 @@ public:
     shs::SortedBuf<uint8_t> connected_modules;
 #endif
     shs::t::shs_busID_t busID;
-    Status status;
 protected:
     shs::DTPbusPolicy m_policy;
     shs::DTPbusReceiveContext m_context;
@@ -287,58 +257,72 @@ protected:
 
 
 template<class Bus>
-shs::DTPbus::Status shs::DTPbus::checkBus(Bus& bus, ByteCollector<>& buf, uint8_t& len, shs::ProgramTimer& receive_timer, shs::API* handler)
+shs::DTPbus::ReceiveStatus shs::DTPbus::checkBus(Bus& bus, shs::DTPbusReceiveContext& context)
 {
-    Status status = processBus(bus, buf, len, receive_timer);
+    processBus(bus, context);
 
-    if (handler) processPacket(buf, *handler, status);
+    if (context.handler) processPacket(*context.handler, context);
 
-    return status;
+    return context.status;
 }
 
 
 template <class Bus>
-shs::DTPbus::Status shs::DTPbus::processBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len, shs::ProgramTimer& receive_timer)
+shs::DTPbus::ReceiveStatus shs::DTPbus::processBus(Bus& bus, shs::DTPbusReceiveContext& context)
 {
-    if (bus.available() == 0) { return Status::no_data; }
-
-    if (len == 0)
+    if (bus.available() == 0)
     {
-        len = bus.read();
-        receive_timer.reset();
-
-        if (len < 2) { return Status::invalid_recipient; }
+        context.status = ReceiveStatus::no_data;
+        return context.status;
     }
-    if (receive_timer.expired())
+
+    if (context.receive_length == 0)
     {
-        len = 0;
+        context.receive_length = bus.read();
+        context.receive_timer.reset();
+
+        if (context.receive_length < 2)
+        {
+            context.status = ReceiveStatus::invalid_recipient;
+            return context.status;
+        }
+    }
+    if (context.receive_timer.expired())
+    {
+        context.receive_length = 0;
         while (bus.available()) bus.read();  // clear bus
-        return Status::receive_timeout_error;
+        context.status = ReceiveStatus::receive_timeout_error;
+        return context.status;
     }
-    if (bus.available() < len - 1) { return Status::packet_is_expected; }
+    if (bus.available() < context.receive_length - 1)
+    {
+        context.status = ReceiveStatus::packet_is_expected;
+        return context.status;
+    }
 
-    buf.reset();
-    buf.push_back(len, 1);
+    context.buffer.reset();
+    context.buffer.push_back(context.receive_length, 1);
 
-    for (uint8_t i = 0; i < len - 1; i++) buf.push_back(bus.read(), 1);
-    len = 0;
+    for (uint8_t i = 0; i < context.receive_length - 1; i++) context.buffer.push_back(bus.read(), 1);
+    context.receive_length = 0;
 
-    receive_timer.reset();    // start counting time since last receive
+    context.receive_timer.reset();    // start counting time since last receive
 
-    auto packet = m_DTPhandler(bus, buf.getReadIt());
+    auto packet = m_DTPhandler(bus, context.buffer.getReadIt());
     if (!packet.empty()) sendPacket(bus, packet);
 
-    return Status::packet_received;
+    context.status = ReceiveStatus::packet_received;
+    return context.status;
 }
 
 
-shs::DTPpacket shs::DTPbus::processPacket(shs::ByteCollector<>& data, shs::API& handler, Status& status)
+shs::DTPpacket shs::DTPbus::processPacket(shs::API& handler, shs::DTPbusReceiveContext& context)
 {
-    if (status != Status::packet_received && status != Status::packet_processed) return shs::DTPpacket();
+    if (context.status != ReceiveStatus::packet_received && context.status != ReceiveStatus::packet_processed) return shs::DTPpacket();
 
-    auto it = data.getReadIt();
+    auto it = context.buffer.getReadIt();
 
-    status = Status::packet_processed;
+    context.status = ReceiveStatus::packet_processed;
     return handler.handle(it);
 }
 

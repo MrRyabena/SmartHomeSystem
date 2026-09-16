@@ -7,7 +7,7 @@
 #include <shs_DTP_API.h>
 #include <shs_DTPbus.h>
 #include <shs_DTPbusReceiveContext.h>
-#include <shs_DTPbusStatus.h>
+#include <shs_DTPbusReceiveStatus.h>
 #include <shs_ByteCollector.h>
 #include <shs_Random.h>
 
@@ -109,7 +109,8 @@ TEST_F(DtpBusTests, processBusEmptyInputTest)
     TestBus testBus(std::move(message_buf));
 
     auto status = shs::DTPbus::processBus(testBus, context);
-    EXPECT_EQ(status, shs::DTPbus::Status::no_data);
+    EXPECT_EQ(status, shs::DTPbus::ReceiveStatus::no_data);
+    EXPECT_EQ(context.status, status);
     EXPECT_EQ(context.receive_length, 0);
     EXPECT_EQ(testBus.available(), 0);
 
@@ -125,20 +126,23 @@ TEST_F(DtpBusTests, processBusResetTimerTest)
         TestBus testBus(std::move(message_buf));
 
         auto status = shs::DTPbus::processBus(testBus, context);
-        EXPECT_EQ(status, shs::DTPbus::Status::packet_is_expected);
+        EXPECT_EQ(status, shs::DTPbus::ReceiveStatus::packet_is_expected);
+        EXPECT_EQ(context.status, status);
         EXPECT_EQ(context.receive_length, 100);
         EXPECT_EQ(testBus.available(), 9);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(15));
         status = shs::DTPbus::processBus(testBus, context);
-        EXPECT_EQ(status, shs::DTPbus::Status::receive_timeout_error);
+        EXPECT_EQ(status, shs::DTPbus::ReceiveStatus::receive_timeout_error);
+        EXPECT_EQ(context.status, status);
     }
 
     message_buf.clear();
     for (auto i = 0; i < 10; i++) message_buf.push_back(10, 1);
     TestBus testBus(std::move(message_buf));
     auto status = shs::DTPbus::processBus(testBus, context);
-    EXPECT_EQ(status, shs::DTPbus::Status::packet_received);
+    EXPECT_EQ(status, shs::DTPbus::ReceiveStatus::packet_received);
+    EXPECT_EQ(context.status, status);
 }
 
 TEST_F(DtpBusTests, checkBusProcessPacketTest)
@@ -151,8 +155,8 @@ TEST_F(DtpBusTests, checkBusProcessPacketTest)
     context.handler = &testHandler;
 
     auto status = shs::DTPbus::checkBus(testBus, context);
-    EXPECT_EQ(status, shs::DTPbus::Status::packet_processed);
-
+    EXPECT_EQ(status, shs::DTPbus::ReceiveStatus::packet_processed);
+    EXPECT_EQ(context.status, status);
 
     bool elements_are_equal = std::equal(
         testHandler.data.begin(), testHandler.data.end(),
@@ -172,12 +176,13 @@ INSTANTIATE_TEST_SUITE_P(DtpBusRandomTest,
 TEST_P(DtpBusRandomTest, processBusRandomTest)
 {
     auto input = GetParam();
-    using Status = shs::DTPbus::Status;
+    using Status = shs::DTPbus::ReceiveStatus;
     auto result = input.size() == 1 && input[0] < 2 ? Status::invalid_recipient : Status::packet_received;
     TestBus testBus(std::move(input));
 
     auto status = shs::DTPbus::processBus(testBus, context);
     EXPECT_EQ(status, result);
+    EXPECT_EQ(context.status, status);
 }
 
 TEST_F(DtpBusTests, handleDtpApiInitialPacketTest)
@@ -187,7 +192,8 @@ TEST_F(DtpBusTests, handleDtpApiInitialPacketTest)
     TestBus testBus(std::move(packet.bc));
 
     auto status = shs::DTPbus::checkBus(testBus, context);
-    EXPECT_EQ(status, shs::DTPbus::Status::packet_received);
+    EXPECT_EQ(status, shs::DTPbus::ReceiveStatus::packet_received);
+    EXPECT_EQ(context.status, status);
 
     bool elements_are_equal = std::equal(
         testBus.getOutputBegin(), testBus.getOutputEnd(),
@@ -204,7 +210,8 @@ TEST_F(DtpBusTests, handleDtpApiConnectionRequestPacketTest)
     TestBus testBus(std::move(packet.bc));
 
     auto status = shs::DTPbus::checkBus(testBus, context);
-    EXPECT_EQ(status, shs::DTPbus::Status::packet_received);
+    EXPECT_EQ(status, shs::DTPbus::ReceiveStatus::packet_received);
+    EXPECT_EQ(context.status, status);
 
     bool elements_are_equal = std::equal(
         testBus.getOutputBegin(), testBus.getOutputEnd(),

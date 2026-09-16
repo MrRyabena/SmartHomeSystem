@@ -5,6 +5,7 @@
 #include "shs_API.h"
 #include "shs_ByteCollector.h"
 #include "shs_ProgramTimer.h"
+#include "shs_DTPbusReceiveStatus.h"
 
 namespace shs
 {
@@ -50,4 +51,8 @@ struct shs::DTPbusReceiveContext
      * @brief The API handler for processing incoming packets.
      */
     shs::API* handler{};
+    /**
+     * @brief The current status of the receiving.
+     */
+    shs::DTPbusReceiveStatus status{};
 };

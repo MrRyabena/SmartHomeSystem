@@ -34,7 +34,7 @@ set(SOURCES
     shs_DTPbusPolicy.h
     shs_DTPbusReceiveContext.h
     shs_DTPbusReceiveContext.cpp
-    shs_DTPbusStatus.h
+    shs_DTPbusReceiveStatus.h
     shs_DTPdiscover.cpp
     shs_DTPdiscover.h
     shs_DTPless.h

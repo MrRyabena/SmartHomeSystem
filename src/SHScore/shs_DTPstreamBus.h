@@ -55,7 +55,7 @@ public:
 	bool isActive() const override { return true; }
 	void setActive([[maybe_unused]] const bool flag) override {}
 
-	shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_stream); }
+	shs::DTPbus::ReceiveStatus checkBus() override { return shs::DTPbus::checkBus(m_stream); }
 
 	// sending data
 	uint8_t sendPacket(const shs::DTPpacket& packet) override { return shs::DTPbus::sendPacket(m_stream, packet); }

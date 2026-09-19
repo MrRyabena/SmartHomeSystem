@@ -115,7 +115,7 @@ public:
     // -------------------- shs::DTPbus ----------------------------------------
     bool isActive() const override { return m_status != Status::INACTIVE; }
 
-    shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(client); }
+    shs::DTPbus::ReceiveStatus checkBus() override { return shs::DTPbus::checkBus(client); }
 
     uint8_t sendPacket(const shs::DTPpacket& packet) override { return shs::DTPbus::sendPacket(client, packet); }
     uint8_t sendRAW(shs::ByteCollector<>& bc) override { return shs::DTPbus::sendRAW(client, bc); }

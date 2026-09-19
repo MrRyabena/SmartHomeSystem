@@ -2,6 +2,9 @@
 
 #if defined(SHS_SF_NETWORK) && defined(SHS_SF_ARDUINO)
 
+#include "shs_DTPbusReceiveStatus.h"
+#include "shs_debug.h"
+
 
 void shs::TcpServer::tick()
 {
@@ -11,12 +14,14 @@ void shs::TcpServer::tick()
         if (shs::ProgramTime::s_milliseconds() - m_connecting_client_time > max_connection_time)
         {
             m_connecting_client->stop();
+            doutln("Connection timeout, closing client");
             return;
         }
 
-        using BusStatus = shs::DTPbusStatus;
-        if (m_connecting_client->checkBus() != BusStatus::packet_received && m_connecting_client->status != BusStatus::packet_processed)
+        using ReceiveStatus = shs::DTPbusReceiveStatus;
+        if (m_connecting_client->checkBus() != ReceiveStatus::packet_received && m_connecting_client->getReceiveStatus() != ReceiveStatus::packet_processed)
         {
+            doutln("Waiting for initial packet from client...");
             return;
         }
         else
@@ -24,7 +29,9 @@ void shs::TcpServer::tick()
             auto answer = shs::DTP_API::getInitialAnswerPacket(m_dtp.moduleID, true);
             m_connecting_client->sendPacket(answer);
 
-            m_dtp.attachBus(std::move(m_connecting_client));
+            auto id = m_dtp.attachBus(std::move(m_connecting_client));
+            dout("Client connected, bus ID: ");
+            doutln(static_cast<int>(id));
 
             m_connecting_client.reset();
 
@@ -46,6 +53,11 @@ void shs::TcpServer::tick()
 
         auto mes = shs::DTP_API::getInitialPacket(m_dtp.moduleID);
         m_connecting_client->sendPacket(mes);
+
+        dfunc();
+        dout("New client connected, waiting for initial packet, IP: ");
+        doutln(m_connecting_client->getIP().toString());
+
     }
 }
 

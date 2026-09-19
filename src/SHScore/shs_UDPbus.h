@@ -42,7 +42,9 @@ class shs::UdpBus : public shs::DTPbus
 
 
     // DTPbus
-    shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
+    bool isActive() const override { return true; }
+    void setActive([[maybe_unused]] const bool flag) override {}
+    shs::DTPbus::ReceiveStatus checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
 
 
     // sending data
@@ -89,7 +91,7 @@ public:
     bool isActive() const override { return true; }
     void setActive([[maybe_unused]] const bool flag) override {}
 
-    shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
+    shs::DTPbus::ReceiveStatus checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
 
     // sending data
     uint8_t sendPacket(const shs::DTPpacket& packet) override { return m_udp.sendBroadcastPacket(packet, m_port); }
@@ -128,7 +130,7 @@ public:
     bool isActive() const override { return true; }
     void setActive([[maybe_unused]] const bool flag) override {}
 
-    shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
+    shs::DTPbus::ReceiveStatus checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
 
     // sending data
     uint8_t sendPacket(const shs::DTPpacket& packet) override { return m_udp.sendMulticastPacket(packet, m_multicastIP, m_port); }

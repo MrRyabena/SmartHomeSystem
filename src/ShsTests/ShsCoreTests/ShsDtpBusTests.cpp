@@ -8,6 +8,7 @@
 #include <shs_DTPbus.h>
 #include <shs_DTPbusReceiveContext.h>
 #include <shs_DTPbusReceiveStatus.h>
+#include <shs_DTPbusPolicy.h>
 #include <shs_ByteCollector.h>
 #include <shs_Random.h>
 
@@ -30,6 +31,31 @@ public:
     shs::ByteCollector<> m_output;
 protected:
     shs::ByteCollector<> m_buf;
+};
+
+class DtpTestBus : public shs::DTPbus
+{
+public:
+    explicit DtpTestBus(TestBus bus)
+        : DTPbus(0, shs::DTPbusPolicy::STATIC_BUS),
+        m_bus(std::move(bus))
+    {}
+
+    bool isActive() const override { return true; }
+    void setActive([[maybe_unused]] const bool active) override {}
+
+    ReceiveStatus checkBus() override { return shs::DTPbus::checkBus(m_bus); }
+
+    void start() override {}
+    void tick() override {}
+    void stop() override {}
+
+    uint8_t sendPacket(const shs::DTPpacket& packet) override { return shs::DTPbus::sendPacket(m_bus, packet); }
+    uint8_t sendRAW(shs::ByteCollector<>& bc) override { return shs::DTPbus::sendRAW(m_bus, bc); }
+    uint8_t sendRAW(shs::ByteCollectorReadIterator<>& it) override { return shs::DTPbus::sendRAW(m_bus, it); }
+    uint8_t sendRAW(const uint8_t* data, const uint8_t size) override { return shs::DTPbus::sendRAW(m_bus, data, size); }
+protected:
+    TestBus m_bus;
 };
 
 /**
@@ -116,6 +142,17 @@ TEST_F(DtpBusTests, processBusEmptyInputTest)
 
 }
 
+TEST_F(DtpBusTests, busEmptyInputTest)
+{
+    TestBus testBus{shs::ByteCollector<>{}};
+    DtpTestBus dtp_bus(std::move(testBus));
+
+    auto status = dtp_bus.checkBus();
+    EXPECT_EQ(status, shs::DTPbus::ReceiveStatus::no_data);
+    EXPECT_EQ(dtp_bus.getReceiveStatus(), status);
+    EXPECT_EQ(dtp_bus.getLastData().size(), 0);
+}
+
 TEST_F(DtpBusTests, processBusResetTimerTest)
 {
     message_buf.reserve(10);
@@ -169,7 +206,8 @@ TEST_F(DtpBusTests, checkBusProcessPacketTest)
 /**
  * @brief Instantiate the DtpBusRandomTest test suite.
  */
-INSTANTIATE_TEST_SUITE_P(DtpBusRandomTest,
+INSTANTIATE_TEST_SUITE_P(
+    DtpBusRandomInputs,
     DtpBusRandomTest,
     testing::ValuesIn(DtpBusRandomTest::GenerateRandomInputs()));
 
@@ -183,6 +221,19 @@ TEST_P(DtpBusRandomTest, processBusRandomTest)
     auto status = shs::DTPbus::processBus(testBus, context);
     EXPECT_EQ(status, result);
     EXPECT_EQ(context.status, status);
+}
+
+TEST_P(DtpBusRandomTest, busRandomTest)
+{
+    auto input = GetParam();
+    using Status = shs::DTPbus::ReceiveStatus;
+    auto result = input.size() == 1 && input[0] < 2 ? Status::invalid_recipient : Status::packet_received;
+    TestBus testBus(std::move(input));
+    DtpTestBus dtp_bus(std::move(testBus));
+
+    auto status = dtp_bus.checkBus();
+    EXPECT_EQ(status, result);
+    EXPECT_EQ(dtp_bus.getReceiveStatus(), status);
 }
 
 TEST_F(DtpBusTests, handleDtpApiInitialPacketTest)

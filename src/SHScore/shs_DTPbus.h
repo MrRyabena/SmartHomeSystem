@@ -117,7 +117,7 @@ public:
         * @param bus Bus instance to poll.
         * @return Current bus status after polling.
      */
-    template <class Bus> ReceiveStatus checkBus(Bus& bus) { checkBus(bus, m_context); return m_context.status; }
+    template <class Bus> ReceiveStatus checkBus(Bus& bus) { return checkBus(bus, m_context); }
     /**
      * @brief Polls a bus instance using the specified context.
         * @tparam Bus Concrete bus type.

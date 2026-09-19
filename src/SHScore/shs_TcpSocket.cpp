@@ -19,7 +19,7 @@ std::function<void(shs::TcpSocket&)> shs::TcpSocket::default_connect_callback =
 std::function<void(shs::TcpSocket&)> shs::TcpSocket::default_disconnect_callback =
 [](shs::TcpSocket& socket) {
     doutln("disconnect callback");
-    if (socket.isActive()) socket.reconnect();
+   // if (socket.isActive()) socket.reconnect();
     };
 
 shs::TcpSocket::TcpSocket(
@@ -66,6 +66,14 @@ void shs::TcpSocket::connect(shs::t::shs_time_t connecting_timeout)
         return;
     }
 
+#ifdef SHS_SF_QT
+    if (client.isConnecting())
+    {
+        m_status = Status::CONNECTING;
+        return;
+    }
+#endif
+
     if (connecting_timeout) m_connecting_timeout = connecting_timeout;
     if (m_connecting_timeout == 0)  return;
     m_timer.reset();
@@ -95,6 +103,14 @@ void shs::TcpSocket::reconnect(const shs::t::shs_time_t reconnecting_timeout)
         m_status = Status::DISCONNECTED;
         return;
     }
+
+#ifdef SHS_SF_QT
+    if (client.isConnecting())
+    {
+        m_status = Status::RECONNECTING;
+        return;
+    }
+#endif
 
     m_timer.reset();
     m_status = Status::RECONNECTING;
@@ -146,7 +162,13 @@ void shs::TcpSocket::tick()
     {
         case Status::DISCONNECTED:
             if (connected()) m_status = Status::CONNECTED;
-            if (m_timer.milliseconds() < m_connecting_timeout) connect();
+            if (m_timer.milliseconds() < m_connecting_timeout)
+            {
+#ifdef SHS_SF_QT
+                if (!client.isConnecting())
+#endif
+                connect();
+            }
             break;
 
         case Status::CONNECTING:

@@ -45,11 +45,18 @@ public:
     uint8_t read(uint8_t* buf, const uint16_t size) { return m_qtcp_socket->read(reinterpret_cast<char*>(buf), size); }
     uint8_t available() { return m_qtcp_socket->bytesAvailable(); }
 
-    bool connectToHost(const shs::t::shs_IP_t ip, const shs::t::shs_port_t port) { m_qtcp_socket->connectToHost(ip, port); return m_qtcp_socket->isOpen(); }
+    bool connectToHost(const shs::t::shs_IP_t ip, const shs::t::shs_port_t port)
+    {
+        if (isConnecting() || connected()) return false;
+
+        m_qtcp_socket->connectToHost(ip, port);
+        return connected();
+    }
 
     void disconnectFromHost() { m_qtcp_socket->disconnectFromHost(); }
-    void stop() { disconnect(); }
-    bool connected() { return m_connected }; //|| m_qtcp_socket->isOpen(); }
+    void stop() { m_connected = false; m_qtcp_socket->disconnectFromHost(); }
+    bool connected() { return m_connected || m_qtcp_socket->state() == QAbstractSocket::ConnectedState; }; //|| m_qtcp_socket->isOpen(); }
+    bool isConnecting() const { return m_qtcp_socket->state() == QAbstractSocket::ConnectingState; }
 
 signals:
     void s_connected();

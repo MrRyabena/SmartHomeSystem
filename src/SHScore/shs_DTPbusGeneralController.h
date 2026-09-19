@@ -21,9 +21,9 @@ namespace shs
 class shs::DTPbusGeneralController
 {
 public:
-    static constexpr auto DEFAULT_REQUEST_TIMEOUT = 30'000;   // ms
-    static constexpr auto DEFAULT_OFFLINE_TIMEOUT = 180'000;  // ms
-    static constexpr auto DEFAULT_UNUSED_TIMEOUT = 600'000;   // ms, 10 minutes
+    static constexpr auto DEFAULT_REQUEST_TIMEOUT = 30000;   // ms
+    static constexpr auto DEFAULT_OFFLINE_TIMEOUT = 180000;  // ms
+    static constexpr auto DEFAULT_UNUSED_TIMEOUT = 600000;   // ms, 10 minutes
 
     /**
      * @brief Creates a new DTP bus controller.

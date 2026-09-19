@@ -22,7 +22,7 @@ struct shs::DTPbusReceiveContext
     */
     using DtpBusSize_t = uint8_t;
 
-    static constexpr auto RECEIVE_TIMEOUT = 10'000;  // ms
+    static constexpr auto RECEIVE_TIMEOUT = 10000;  // ms
     static constexpr auto DEFAULT_BUFFER_SIZE = 32;  // bytes
 
 

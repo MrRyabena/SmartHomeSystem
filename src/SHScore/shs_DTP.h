@@ -148,7 +148,7 @@ public:
 	 * @brief Detaches a bus by its bus ID.
 	 * @param id Bus ID to detach.
 	 */
-	void detachBus(const shs::t::shs_busID_t& id) { m_buss.detach(id); }
+	void detachBus(const shs::t::shs_busID_t& id) { m_buss.detach(id); dfunc(); dout("detach bus with id: "); doutln(id); }
 
 	/**
 	 * @brief Returns the bus with the given ID or nullptr if it is missing.
@@ -207,8 +207,8 @@ private:
 		shs::ProgramTimer timer;
 		BusStatus status;
 
-		explicit OutgoingPacket(const shs::DTPpacket& pkt) : packet(pkt), status(BusStatus::NOT_FOUND), timer(20'000) {}
-		explicit OutgoingPacket(shs::DTPpacket&& pkt) : packet(std::move(pkt)), status(BusStatus::NOT_FOUND), timer(20'000) {}
+		explicit OutgoingPacket(const shs::DTPpacket& pkt) : packet(pkt), status(BusStatus::NOT_FOUND), timer(20000) {}
+		explicit OutgoingPacket(shs::DTPpacket&& pkt) : packet(std::move(pkt)), status(BusStatus::NOT_FOUND), timer(20000) {}
 	};
 
 	shs::SortedBuf<std::shared_ptr<shs::DTPbus>, DTPless::BUS> m_buss;

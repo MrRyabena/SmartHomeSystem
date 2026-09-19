@@ -42,6 +42,7 @@ public:
     void stop() { m_socket->close(); }
 
     uint8_t write(const uint8_t* buf, const uint16_t size, const shs::t::shs_IP_t ip, const shs::t::shs_port_t port) { return m_socket->writeDatagram(reinterpret_cast<const char*>(buf), size, QHostAddress(static_cast<uint32_t>(ip)), port); }
+    uint8_t write(const uint8_t* buf, const uint16_t size) { return write(buf, size, m_last_sender_address, m_last_sender_port); }
     uint8_t read() { uint8_t value{}; read(&value, 1); return value; }
     uint8_t read(uint8_t* buf, const uint16_t size) { m_buf.read(buf, size); return size; }
     uint8_t available() { return m_buf.readAvailable(); }
@@ -64,6 +65,8 @@ private slots:
 private:
     QUdpSocket* m_socket;
     shs::ByteCollector<> m_buf;
+    shs::t::shs_IP_t m_last_sender_address;
+    shs::t::shs_port_t m_last_sender_port;
 };
 
 #endif  // #ifdef SHS_SF_QT

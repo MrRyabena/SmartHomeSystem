@@ -69,8 +69,8 @@ void shs::DTP::tick()
     {
         if (!bus) continue;
 
-        // m_bus_general_controller.controlBus(bus);
-        // if (!bus->isActive()) { detachBus(bus->busID); return; }
+        m_bus_general_controller.controlBus(bus);
+        if (!bus->isActive()) { detachBus(bus->busID); return; }
 
 
         // if the data is fully received and ready for processing 

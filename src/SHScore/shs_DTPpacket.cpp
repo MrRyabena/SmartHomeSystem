@@ -193,3 +193,50 @@ shs::t::shs_ID_t shs::DTPpacket::get_mask(shs::ByteCollectorReadIterator<> it)
 }
 
 
+#ifdef SHS_SF_DEBUG
+shs::t::shs_string_t shs::DTPpacket::get_debug(shs::ByteCollectorReadIterator<> it)
+{
+    shs::t::shs_string_t str;
+#ifdef SHS_SF_ARDUINO
+    str += "DTP code: ";
+    str += static_cast<int>(get_DTPcode(it));
+    str += "\nSender ID: ";
+    str += get_senderID(it).toDebug();
+    str += "\nRecipient ID: ";
+    str += get_recipientID(it).toDebug();
+    str += "\nData size: ";
+    int data_size = get_datasize(it);
+    str += data_size;
+    str += "\nData: ";
+    it.set_position(get_dataBeg(it));
+    for (auto i = 0; i < data_size; i++)
+    {
+        str += static_cast<int>(it.read());
+        str += ' ';
+    }
+#else
+    str += "DTP code: ";
+    str += std::to_string(static_cast<int>(get_DTPcode(it)));
+    str += "\nSender ID: ";
+    str += get_senderID(it).toDebug();
+    str += "\nRecipient ID: ";
+    str += get_recipientID(it).toDebug();
+    str += "\nData size: ";
+    int data_size = get_datasize(it);
+    str += std::to_string(data_size);
+    str += "\nData: ";
+    it.set_position(get_dataBeg(it));
+    for (auto i = 0; i < data_size; i++)
+    {
+        str += std::to_string(static_cast<int>(it.read()));
+        str += ' ';
+    }
+#endif
+    return str;
+}
+
+shs::t::shs_string_t shs::DTPpacket::get_debug() const
+{
+    return get_debug(bc.getReadIt(true));
+}
+#endif

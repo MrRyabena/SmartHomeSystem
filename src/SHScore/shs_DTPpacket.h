@@ -235,6 +235,11 @@ public:
      */
     [[nodiscard]] static shs::t::shs_ID_t get_mask(shs::ByteCollectorReadIterator<> it);
 
+#ifdef SHS_SF_DEBUG
+    [[nodiscard]] static shs::t::shs_string_t get_debug(shs::ByteCollectorReadIterator<> it);
+    [[nodiscard]] shs::t::shs_string_t get_debug() const;
+#endif
+
     /**
      * @brief Returns the packet DTP code.
         * @return Packet DTP code.

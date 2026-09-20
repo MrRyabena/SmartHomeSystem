@@ -21,6 +21,8 @@
 #include <chrono>    
 #endif
 
+#include "shs_types.h"
+
 namespace shs
 {
     class ProgramTime;
@@ -72,66 +74,66 @@ public:
     /**
      * @brief Returns elapsed time in microseconds.
      */
-    size_t microseconds() const { return micros() - m_started; }
+    shs::t::shs_time_t microseconds() const { return micros() - m_started; }
 
     /**
      * @brief Returns elapsed time in milliseconds.
      */
-    size_t milliseconds() const { return microseconds() / 1000; }
+    shs::t::shs_time_t milliseconds() const { return microseconds() / 1000; }
 
     /**
      * @brief Returns elapsed time in seconds.
      */
-    size_t seconds() const { return milliseconds() / 1000; }
+    shs::t::shs_time_t seconds() const { return milliseconds() / 1000; }
 
     /**
      * @brief Returns the current system time in microseconds.
      */
-    static size_t s_microseconds() { return micros(); }
+    static shs::t::shs_time_t s_microseconds() { return micros(); }
 
     /**
      * @brief Returns the current system time in milliseconds.
      */
-    static size_t s_milliseconds() { return millis() / 1000; }
+    static shs::t::shs_time_t s_milliseconds() { return millis() / 1000; }
 
     /**
      * @brief Returns the current system time in seconds.
      */
-    static size_t s_seconds() { return millis() / 1000000; }
+    static shs::t::shs_time_t s_seconds() { return millis() / 1000000; }
 
 private:
-    size_t m_started;
-    const size_t m_init() { return micros(); }
+    shs::t::shs_time_t m_started;
+    const shs::t::shs_time_t m_init() { return micros(); }
 #else
     /**
      * @brief Returns elapsed time in microseconds.
      */
-    size_t microseconds() const { return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - m_started).count(); }
+    shs::t::shs_time_t microseconds() const { return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now() - m_started).count(); }
 
     /**
      * @brief Returns elapsed time in milliseconds.
      */
-    size_t milliseconds() const { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_started).count(); }
+    shs::t::shs_time_t milliseconds() const { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_started).count(); }
 
     /**
      * @brief Returns elapsed time in seconds.
      */
-    size_t seconds() const { return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - m_started).count(); }
+    shs::t::shs_time_t seconds() const { return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now() - m_started).count(); }
 
     /**
      * @brief Returns the current system time in microseconds.
      */
-    static size_t s_microseconds() { return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count(); }
+    static shs::t::shs_time_t s_microseconds() { return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count(); }
 
     /**
      * @brief Returns the current system time in milliseconds.
      */
-    static size_t s_milliseconds() { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count(); }
+    static shs::t::shs_time_t s_milliseconds() { return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count(); }
 
     /**
      * @brief Returns the current system time in seconds.
      */
-    static size_t s_seconds() { return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count(); }
+    static shs::t::shs_time_t s_seconds() { return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::high_resolution_clock::now().time_since_epoch()).count(); }
 
 private:
     decltype(std::chrono::high_resolution_clock::now())

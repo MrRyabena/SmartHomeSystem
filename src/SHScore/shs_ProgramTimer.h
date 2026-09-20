@@ -8,8 +8,7 @@
 */
 
 #include "shs_ProgramTime.h"
-
-
+#include "shs_types.h"
 
 namespace shs
 {
@@ -32,7 +31,7 @@ public:
 #ifdef SHS_SF_UNUSE_STL
     static constexpr auto MAX_TIMEOUT = UINT64_MAX;
 #else
-    static constexpr auto MAX_TIMEOUT = std::numeric_limits<size_t>::max();
+    static constexpr auto MAX_TIMEOUT = std::numeric_limits<shs::t::shs_time_t>::max();
 #endif
 
     /**
@@ -40,7 +39,7 @@ public:
      * @param timeout Timeout value.
      * @param resolution Timer resolution. Default is milliseconds.
      */
-    explicit ProgramTimer(const size_t timeout, const Resolution resolution = Resolution::MILLISECONDS)
+    explicit ProgramTimer(const shs::t::shs_time_t timeout, const Resolution resolution = Resolution::MILLISECONDS)
         : m_timeout(timeout), m_resolution(resolution)
     {}
 
@@ -83,16 +82,16 @@ public:
      * @brief Sets the timeout value.
      * @param timeout Timeout value.
      */
-    void setTimeout(const size_t timeout) { m_timeout = timeout; }
+    void setTimeout(const shs::t::shs_time_t timeout) { m_timeout = timeout; }
 
     /**
      * @brief Returns the current timeout value.
      * @return Timeout value.
      */
-    size_t getTimeout() const { return m_timeout; }
+    shs::t::shs_time_t getTimeout() const { return m_timeout; }
 
 private:
-    size_t m_timeout;
+    shs::t::shs_time_t m_timeout;
     Resolution m_resolution;
 
     /**

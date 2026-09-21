@@ -8,9 +8,18 @@
     v2.1.0 — fixed a bug during the assignment of ID components.
 */
 
-#include <stdint.h>
-#include "shs_APIids.h"
+#include "shs_settings_private.h"
 
+#include <stdint.h>
+
+#ifdef SHS_SF_ARDUINO
+#include <Arduino.h>
+#else
+#include <string>
+#endif
+
+#include "shs_APIids.h"
+#include "shs_debug.h"
 
 namespace shs
 {
@@ -45,19 +54,19 @@ struct shs::ID
 
     shs::ID& setModuleID(const moduleID_t module)
     {
-        id ^= (uint32_t)module << 24;
+        id = (id & 0x00FFFFFFu) | ((uint32_t)module << 24);
         return *this;
     }
 
     shs::ID& setDeviceID(const deviceID_t device)
     {
-        id ^= (uint32_t)device << 16;
+        id = (id & 0xFF00FFFFu) | ((uint32_t)device << 16);
         return *this;
     }
 
     shs::ID& setComponentID(const componentID_t api)
     {
-        id ^= api & 0xffff;
+        id = (id & 0xFFFF0000u) | (api & 0xffffu);
         return *this;
     }
 
@@ -69,4 +78,28 @@ struct shs::ID
     bool operator>(const shs::ID& other) const { return id > other.id; }
     bool operator==(const shs::ID& other) const { return id == other.id; }
     bool operator!=(const shs::ID& other) const { return id != other.id; }
+
+private:
+#ifdef SHS_SF_ARDUINO
+    using m_string_t = String;
+#else
+    using m_string_t = std::string;
+#endif
+
+public:
+
+#ifdef SHS_SF_DEBUG
+    m_string_t toDebug() const
+    {
+    #ifdef SHS_SF_ARDUINO
+        return m_string_t(static_cast<uint32_t>(getModuleID())) + ' ' +
+            static_cast<uint32_t>(getDeviceID()) + ' ' +
+            static_cast<uint32_t>(getComponentID());
+    #else
+        return std::to_string(static_cast<uint32_t>(getModuleID())) + ' ' +
+            std::to_string(static_cast<uint32_t>(getDeviceID())) + ' ' +
+            std::to_string(static_cast<uint32_t>(getComponentID()));
+    #endif
+    }
+#endif
 };

@@ -1,0 +1,30 @@
+name: SHS core tests
+on:
+    push:
+
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v4
+
+            - name: Set up CMake
+              uses: lukka/get-cmake@latest
+
+            - name: Run build-test for ShsCore
+              working-directory: src/SHScore
+              run: |
+                  chmod +x build_shs_core.sh
+                  ./build_shs_core.sh
+
+            - name: Build and run ShsCore tests
+              working-directory: src/ShsTests/ShsCoreTests
+              run: |
+                  chmod +x build_shs_core_tests.sh
+                  ./build_shs_core_tests.sh -r

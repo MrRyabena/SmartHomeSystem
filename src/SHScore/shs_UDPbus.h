@@ -6,19 +6,22 @@
     v2.0.0 — created.
 */
 
-
-#include "shs_UDP.h"
+#include "shs_settings_private.h"
 
 #if defined(SHS_SF_NETWORK)
 
+#include "shs_DTPbusPolicy.h"
+#include "shs_DTPbus.h"
+
+#include "shs_UDP.h"
 namespace shs
 {
     class DTPdiscover;     // declared in shs_DTPdiscover.h
 
     class UdpBus;
-/**
- * @brief UDP-based DTP transport bus bound to a single remote endpoint.
- */
+    /**
+     * @brief UDP-based DTP transport bus bound to a single remote endpoint.
+     */
     class UdpBroadcastBus;
     class UdpMulticastBus;
 }
@@ -30,7 +33,7 @@ namespace shs
 class shs::UdpBus : public shs::DTPbus
 {
     explicit UdpBus(const shs::t::shs_IP_t ip, const shs::t::shs_port_t port, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
-        : DTPbus(busID, handler, bufsize), m_ip(ip), m_port(port)
+        : DTPbus(busID, shs::DTPbusPolicy::STATIC_BUS, handler, bufsize), m_ip(ip), m_port(port)
     {}
 
     UdpBus(UdpBus&& other) : DTPbus(std::move(other)), m_ip(other.m_ip), m_port(other.m_port) {}
@@ -39,7 +42,9 @@ class shs::UdpBus : public shs::DTPbus
 
 
     // DTPbus
-    shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
+    bool isActive() const override { return true; }
+    void setActive([[maybe_unused]] const bool flag) override {}
+    shs::DTPbus::ReceiveStatus checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
 
 
     // sending data
@@ -56,7 +61,7 @@ class shs::UdpBus : public shs::DTPbus
 
 protected:
     friend class shs::DTPdiscover;
-    
+
     shs::t::shs_IP_t m_ip;
     shs::t::shs_port_t m_port;
     shs::UDP m_udp;
@@ -70,7 +75,7 @@ public:
      * @brief UDP-based broadcast DTP bus used for discovery and announcements.
      */
     explicit UdpBroadcastBus(const shs::t::shs_port_t port, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
-        : DTPbus(busID, handler, bufsize), m_port(port)
+        : DTPbus(busID, shs::DTPbusPolicy::STATIC_BUS, handler, bufsize), m_port(port)
     {
         connected_modules.attach(0xff);
     }
@@ -84,8 +89,9 @@ public:
 
     // DTPbus
     bool isActive() const override { return true; }
+    void setActive([[maybe_unused]] const bool flag) override {}
 
-    shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
+    shs::DTPbus::ReceiveStatus checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
 
     // sending data
     uint8_t sendPacket(const shs::DTPpacket& packet) override { return m_udp.sendBroadcastPacket(packet, m_port); }
@@ -113,7 +119,7 @@ public:
      * @brief UDP-based multicast DTP bus.
      */
     explicit UdpMulticastBus(const shs::t::shs_IP_t multicastIP, shs::t::shs_port_t port, const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
-        : DTPbus(busID, handler, bufsize), m_multicastIP(multicastIP), m_port(port)
+        : DTPbus(busID, shs::DTPbusPolicy::STATIC_BUS, handler, bufsize), m_multicastIP(multicastIP), m_port(port)
     {}
 
     UdpMulticastBus(UdpMulticastBus&& other) : DTPbus(std::move(other)) {}
@@ -121,7 +127,10 @@ public:
     ~UdpMulticastBus() = default;
 
     // DTPbus
-    shs::DTPbus::Status checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
+    bool isActive() const override { return true; }
+    void setActive([[maybe_unused]] const bool flag) override {}
+
+    shs::DTPbus::ReceiveStatus checkBus() override { return shs::DTPbus::checkBus(m_udp.udp); }
 
     // sending data
     uint8_t sendPacket(const shs::DTPpacket& packet) override { return m_udp.sendMulticastPacket(packet, m_multicastIP, m_port); }

@@ -2,17 +2,44 @@
 #include "shs_debug.h"
 #ifndef SHS_SF_AVR
 
+#include "shs_DTPbusReceiveStatus.h"
+
 uint8_t shs::DTP::sendPacket(const shs::DTPpacket& packet)
 {
     if (packet.empty()) return 0;
 
+    dfunc();
+
     auto bus = findBusFromModule(packet.get_recipientID().getModuleID());
-    if (bus) return bus->sendPacket(packet);
+    if (bus)
+    {
+        dout("send packet to bus with id: ");
+        doutln(bus->busID);
+        doutln("Packet: ");
+        dsep();
+        doutln(packet.get_debug());
+        dsep();
+        return bus->sendPacket(packet);
+    }
+    else
+    {
+        dout("bus not found for module id: ");
+        doutln(packet.get_recipientID().getModuleID());
+    }
 
     // store a copy for later delivery, but ensure proper copy semantics
     shs::DTPpacket packet_copy(packet);
     m_outgoing_packets.push_back(OutgoingPacket(std::move(packet_copy)));
     return 0;
+}
+
+
+shs::t::shs_busID_t shs::DTP::attachBus(std::shared_ptr<shs::DTPbus> bus)
+{
+    doutln("DTP::attachBus");
+    if (bus && (bus->busID == 0 || m_buss.get(bus) != m_buss.end())) bus->busID = getUniqueBusID();
+    doutln("set busID");
+    return (*m_buss.attach(std::move(bus)))->busID;
 }
 
 
@@ -27,17 +54,42 @@ shs::DTPbus* shs::DTP::findBusFromModule(const uint8_t moduleID) const
 }
 
 
+void shs::DTP::start()
+{
+    for (auto& bus : m_buss) bus->start();
+#ifdef SHS_SF_NETWORK
+    if (m_discover) m_discover->start();
+#endif
+}
+
+
 void shs::DTP::tick()
 {
     for (auto& bus : m_buss)
     {
         if (!bus) continue;
+
+        m_bus_general_controller.controlBus(bus);
         if (!bus->isActive()) { detachBus(bus->busID); return; }
 
+
         // if the data is fully received and ready for processing 
-        if (bus->checkBus() == shs::DTPbus::packet_processed || bus->status == shs::DTPbus::packet_received)
+        using BusReceiveStatus = shs::DTPbusReceiveStatus;
+        if (bus->checkBus() != BusReceiveStatus::no_data)
+        {
+            dfunc();
+            dout("Bus status: ");
+            doutln(to_string(bus->getReceiveStatus()));
+        }
+        if (bus->getReceiveStatus() == BusReceiveStatus::packet_processed || bus->getReceiveStatus() == BusReceiveStatus::packet_received)
         {
             auto it = bus->getLastData();
+
+            dfunc();
+            doutln("Packet: ");
+            dsep();
+            doutln(shs::DTPpacket::get_debug(it));
+            dsep();
 
             // processing of DTP-code
             switch (shs::DTPpacket::get_DTPcode(it))
@@ -50,17 +102,28 @@ void shs::DTP::tick()
                         if (api != m_APIs.end())
                         {
                             auto output = std::move((*api)->handle(it));
-                            if (!output.empty()) bus->sendPacket(output);
+                            if (!output.empty())
+                            {
+                                bus->sendPacket(output);
+                                doutln("Success, answer sent");
+                            }
+                            else { doutln("Success, no answer"); }
                         }
                         else
                         {
                             auto api = m_externalAPIs.get(id);
                             if (api != m_externalAPIs.end())
                             {
+                                doutln("Success with external APIs");
                                 auto output = std::move((*api)->handle(it));
                                 if (!output.empty()) bus->sendPacket(output);
                             }
+                            else
+                            {
+                                doutln("ERROR: API not found");
+                            }
                         }
+                        dsep();
                     }
                     break;
 
@@ -88,7 +151,9 @@ void shs::DTP::tick()
         bus->tick();    // update bus
     }
 
+#ifdef SHS_SF_NETWORK
     if (m_discover) m_discover->tick();
+#endif
 
     if (!m_outgoing_packets.empty())
     {
@@ -102,12 +167,15 @@ void shs::DTP::tick()
         switch (it->status)
         {
             case OutgoingPacket::BusStatus::NOT_FOUND:
-            doutln("discover new device");
+                doutln("discover new device");
+            #ifdef SHS_SF_NETWORK
                 if (m_discover) m_discover->discover(it->packet.get_recipientID().getModuleID());
                 it->status = OutgoingPacket::BusStatus::WAITING_FROM_DISCOVER;
+            #endif
                 break;
 
             case OutgoingPacket::BusStatus::WAITING_FROM_DISCOVER:
+            #ifdef SHS_SF_NETWORK
                 if (m_discover)
                 {
                     auto ip = m_discover->check(it->packet.get_recipientID().getModuleID());
@@ -121,8 +189,9 @@ void shs::DTP::tick()
 
                         it->status = OutgoingPacket::BusStatus::DISCOVERED;
                     }
-                    else { m_discover->discover(it->packet.get_recipientID().getModuleID());}
+                    else { m_discover->discover(it->packet.get_recipientID().getModuleID()); }
                 }
+            #endif
                 break;
 
             case OutgoingPacket::BusStatus::DISCOVERED:
@@ -158,4 +227,4 @@ shs::t::shs_busID_t shs::DTP::getUniqueBusID() const
 }
 
 
-#endif    // #ifndef SHS_SF_AVR
+#endif    // #ifdef SHS_SF_AVR

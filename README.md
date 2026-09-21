@@ -252,7 +252,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!---------------------------------- v2.3.0 ----------------------------------->
 <details>
-<summary>v2.3.X — <code><b>[current]</b></code> Release notes (since `v2.2.0`)</summary>
+<summary>v2.3.X — Release notes (since `v2.2.0`)</summary>
 
 ### SHScore
 
@@ -342,6 +342,75 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 - `shs::TcpSocket`/`shs::TcpServer` has problems with connections after many disconnects; will be fixed in future.
 - `SHScore` has many compilation warnings on different platforms; will be fixed in future versions.
+
+</details>
+<!----------------------------------------------------------------------------->
+
+<!---------------------------------- v2.4.0 ----------------------------------->
+<details>
+<summary>v2.4.X — <code><b>[current]</b></code> Fix bugs with TCP disconnects, upgrade DTPbus, add tests </summary>
+
+### Main Features
+
+- Fixed critical bugs with `shs::TcpSocket` and `shs::TcpServer` related to connection state and disconnect handling.
+- Upgraded `shs::DTPbus` to support bus policies (static vs temporary) and added receive_timer with timeout for skipping broken packets and rubbish data.
+- Created `shs::DTPbusGeneralController` and `shs::DTPbusController` for managing buses by their policies.
+- Added possibility not to use `shs_settings.h`.
+- Fix compilation errors for AVR.
+
+### SHScore
+
+- **New functional:**
+  - `shs::DTPbusPolicy`: add enum for bus policies (static or temporary that can be removed).
+  - `shs::DTPbusReceiveStatus`: Bus status move to separate file.
+  - `shs::DTPbusReceiveContext`: Bus internal variables moved to incapsulated struct for safety and convenience.
+  - `shs::DTPbusGeneralController`: add general controller for managing buses by their policies.
+  - `shs::DTPbusController`: add controller for specific managing one bus by policy.
+- **Changes:**
+  - `shs::DTP`: add `shs::DTPbusGeneralController`, update with changed `DTPbus` API, `DTPbusReceiveStatus` and `DTPbusReceiveContext`, replace `std::unique_ptr` with `std::shared_ptr` for bus management.
+  - `shs::DTPbus`: move internal variables and status to `DTPbusReceiveContext` and `DTPbusReceiveStatus`, add `DTPbusPolicy`, update functions, add receive timer with timeout for skipping broken packets, correct `DTP_API` package handling.
+  - `shs::DTPstream_bus`: update with changed `DTPbus` API, fix bugs.
+  - `shs::DTPdiscover`: update with changed `DTPbus` API and new `DTPbusReceiveStatus`.
+  - `shs::DTPpacket`: add function to get debug packet info.
+  - `shs::DTPless`: add comparison operators for `std::shared_ptr<shs::DTPbus>`.
+  - `shs::UDP`: add possibility to use `write()` without ip address and port (will used last used values (from last receive or send)), *
+  - `shs::UdpBus`: *
+  - `shs::UdpBroadcastBus`: *
+  - `shs::UdpMulticastBus`: *
+  - `shs::TcpSocket`: (* update with changed `DTPbus` API and new `DTPbusReceiveStatus` and `DTPbusReceiveContext`.)
+  - `shs::TcpServer`: update with new `DTPbusReceiveStatus`.
+  - `shs::qt::TcpSocket`: fix bugs with Qt socket connection state.
+  - `shs::IP`: add `toString()` function.
+  - `shs::ID`: add `toDebug()` function for debugging.
+  - `shs::ProgramTimer`: fix bug with size_t (on AVR it's small), now uses shs_time_t.
+  - `shs::ProgramTimer`: add `MAX_TIMEOUT` constant, add copy and move constructors and operators, Fix bug with size_t (on AVR it's small), now uses shs_time_t.
+  - `shs_settings_private.h`: add possibility to unuse `shs_settings.h`.
+  - `shs::SensorVirtual`: add compatibility with AVR (fix `100'000` format without `).
+
+### SHSlibrary
+
+No changes.
+
+### Examples
+
+No changes.
+
+### Tests
+
+- **Changes:**
+  - `ShsDtpBusTests`: add tests for `shs::DTPbus` implementation.
+
+### Build / docs / misc
+
+No changes but they need to be updated.
+
+### Developer notes
+
+Need to update documentation and examples.
+
+### Known bugs / issues
+
+- `shs::DTP` sends the packet without waiting for new bus is connected. The first packet usually lost.
 
 </details>
 <!----------------------------------------------------------------------------->

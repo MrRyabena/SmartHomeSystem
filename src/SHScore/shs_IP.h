@@ -10,10 +10,14 @@
 #include <stdint.h>
 
 #include "shs_settings_private.h"
-#include "shs_types.h"
 
 #ifdef SHS_SF_NETWORK
 
+#ifdef SHS_SF_ARDUINO
+#include <Arduino.h>
+#else
+#include <string>
+#endif
 
 #if defined(SHS_SF_ESP8266) || defined(SHS_SF_ESP32)
 #include <IPAddress.h>
@@ -32,6 +36,14 @@ namespace shs
  */
 struct shs::IP
 {
+private:
+#ifdef SHS_SF_ARDUINO
+    using m_string_t = String;
+#else
+    using m_string_t = std::string;
+#endif
+
+public:
     constexpr IP(const char* ipAddress) : m_IP(ipFromStr(ipAddress)) {}
     constexpr IP(const uint32_t ipAddress = 0) : m_IP(ipAddress) {}
 
@@ -54,8 +66,7 @@ struct shs::IP
 
 
     static constexpr uint32_t ipFromStr(const char* m_IP);
-    // shs::t::shs_string_t toString() { return shs::t::shs_string_t(m_IP >> 24) + '.' + (m_IP >> 16) & 0xff + '.' + (m_IP >> 8) & 0xff + '.' + m_IP & 0xff; }
-
+    m_string_t toString() const;
     operator uint32_t() const { return m_IP; }
 
 #if defined(SHS_SF_ESP)
@@ -106,6 +117,21 @@ constexpr uint32_t shs::IP::m_ipToUInt32(const char* str, size_t index)
     }
 
     return result;
+}
+
+inline shs::IP::m_string_t shs::IP::toString() const
+{
+#ifdef SHS_SF_ARDUINO
+    return shs::IP::m_string_t(m_IP >> 24) + '.' +
+        ((m_IP >> 16) & 0xff) + '.' +
+        ((m_IP >> 8) & 0xff) + '.' +
+        (m_IP & 0xff);
+#else
+    return std::to_string(m_IP >> 24) + '.' +
+        std::to_string((m_IP >> 16) & 0xff) + '.' +
+        std::to_string((m_IP >> 8) & 0xff) + '.' +
+        std::to_string(m_IP & 0xff);
+#endif
 }
 
 

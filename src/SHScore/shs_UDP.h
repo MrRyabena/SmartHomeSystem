@@ -63,7 +63,7 @@ public:
 
     UDP_t udp;
 
-    using DTPstatus = shs::DTPbus::Status;
+    using DTPstatus = shs::DTPbus::ReceiveStatus;
 
 #ifndef SHS_SF_QT
     UDP() {}

@@ -52,7 +52,7 @@ public:
   /**
    * @brief Creates a virtual sensor that reads values from a remote module.
    */
-    explicit SensorVirtual(shs::t::shs_ID_t thisID, shs::t::shs_ID_t virtualID, shs::DTP& dtp, shs::Sensor::Type stype = UNKNOWN, uint32_t expiration_time = 10'000);
+    explicit SensorVirtual(shs::t::shs_ID_t thisID, shs::t::shs_ID_t virtualID, shs::DTP& dtp, shs::Sensor::Type stype = UNKNOWN, uint32_t expiration_time = 10000);
 
   /**
    * @brief Releases the virtual sensor.

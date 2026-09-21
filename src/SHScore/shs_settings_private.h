@@ -10,7 +10,10 @@
 */
 
 
+#if !defined(SHS_SF_UNUSE_SHS_SETTINGS)
 #include "shs_settings.h"
+#endif
+
 #define SHS_SF_SETTINGS
 #ifdef SHS_SET_WIFI_CONFIGS
 #define SHS_SF_WIFI_CONFIGS
@@ -24,29 +27,28 @@
 
 #include <stdint.h>
 
-#define SHS_SF_NETWORK
-
 #if __has_include(<Arduino.h>)
 #include <Arduino.h>
 #define SHS_SF_ARDUINO
+#endif 
 
 #if defined(ESP8266)
 #define SHS_SF_ESP8266
 #define SHS_SF_ESP
+#define SHS_SF_NETWORK
 
 #elif defined(ESP32)
 #define SHS_SF_ESP32
 #define SHS_SF_ESP
+#define SHS_SF_NETWORK
 
 #elif defined(__AVR__)
 #define SHS_SF_AVR
 #define SHS_SF_UNUSE_STL
-#undef SHS_SF_NETWORK
-
-#endif 
 
 #elif defined(SHS_QT_FLAG)
 #define SHS_SF_QT
+#define SHS_SF_NETWORK
 #endif
 
 

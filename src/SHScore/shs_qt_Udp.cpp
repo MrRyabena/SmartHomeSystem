@@ -23,10 +23,16 @@ void shs::qt::UdpSocket::processDatagrams()
     m_buf.shrink_to_read();
     do
     {
+        QHostAddress sender_address;
+        quint16 sender_port;
         auto size = m_socket->pendingDatagramSize();
         m_buf.reserve(size);
-        m_socket->readDatagram(reinterpret_cast<char*>(m_buf.getPtr() + m_buf.getPositionBack()), size);
+
+        m_socket->readDatagram(reinterpret_cast<char*>(m_buf.getPtr() + m_buf.getPositionBack()), size, &sender_address, &sender_port);
         m_buf.setPositionBack(m_buf.getPositionBack() + size);
+
+        m_last_sender_address = sender_address;
+        m_last_sender_port = sender_port;
 
     } while (m_socket->hasPendingDatagrams());
 

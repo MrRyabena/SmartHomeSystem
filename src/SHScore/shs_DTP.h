@@ -37,6 +37,7 @@
 #ifndef SHS_SF_AVR
 
 #include <memory>
+#include <vector>
 #include <deque>
 
 
@@ -50,8 +51,12 @@
 #include "shs_DTPpacket.h"
 #include "shs_DTPless.h"
 #include "shs_ProgramTimer.h"
+#include "shs_DTPbusGeneralController.h"
+
+#ifdef SHS_SF_NETWORK
 #include "shs_DTPdiscover.h"
 #include "shs_TcpSocket.h"
+#endif    // #ifdef SHS_SF_NETWORK
 
 #include "shs_debug.h"
 
@@ -75,8 +80,17 @@ public:
 	 * @param discover Optional shared pointer to a discovery helper. If not provided,
 	 * a new instance will be created internally.
 	 */
-	explicit DTP(const shs::t::shs_ID_t module_id, std::shared_ptr<shs::DTPdiscover> discover = nullptr)
-		: moduleID(module_id), m_discover(discover ? discover : std::make_shared<shs::DTPdiscover>(module_id))
+	explicit DTP(const shs::t::shs_ID_t module_id
+	#ifdef SHS_SF_NETWORK
+		,
+		std::shared_ptr<shs::DTPdiscover> discover = nullptr
+	#endif
+	)
+		: moduleID(module_id)
+	#ifdef SHS_SF_NETWORK
+		,
+		m_discover(discover ? discover : std::make_shared<shs::DTPdiscover>(module_id))
+	#endif
 	{}
 
 	/**
@@ -125,29 +139,23 @@ public:
 
 	/**
 	 * @brief Attaches a new bus and assigns it a unique bus ID when needed.
-	 * @param bus Owned bus instance to attach.
+	 * @param bus Shared pointer to the bus instance to attach.
 	 * @return Assigned bus ID.
 	 */
-	shs::t::shs_busID_t attachBus(std::unique_ptr<shs::DTPbus>&& bus)
-	{
-		doutln("DTP::attachBus");
-		if (bus && (bus->busID == 0 || m_buss.get(bus) != m_buss.end())) bus->busID = getUniqueBusID();
-		doutln("set busID");
-		return (*m_buss.attach(std::move(bus)))->busID;
-	}
+	shs::t::shs_busID_t attachBus(std::shared_ptr<shs::DTPbus> bus);
 
 	/**
 	 * @brief Detaches a bus by its bus ID.
 	 * @param id Bus ID to detach.
 	 */
-	void detachBus(const shs::t::shs_busID_t& id) { m_buss.detach(id); }
+	void detachBus(const shs::t::shs_busID_t& id) { m_buss.detach(id); dfunc(); dout("detach bus with id: "); doutln(id); }
 
 	/**
 	 * @brief Returns the bus with the given ID or nullptr if it is missing.
 	 * @param id Bus ID to query.
 	 * @return Pointer to bus or nullptr when absent.
 	 */
-	shs::DTPbus* getBus(const shs::t::shs_busID_t& id) const { auto it = m_buss.get(id); return it != m_buss.end() ? it->get() : nullptr; }
+	std::shared_ptr<shs::DTPbus> getBus(const shs::t::shs_busID_t& id) const { auto it = m_buss.get(id); return it != m_buss.end() ? *it : nullptr; }
 
 	/**
 	 * @brief Generates an unused bus ID.
@@ -184,7 +192,7 @@ public:
 	/**
 	 * @brief Starts all buses and the discovery helper.
 	 */
-	void start() override { for (auto& bus : m_buss) bus->start(); if (m_discover) m_discover->start(); }
+	void start() override;
 	void tick() override;
 	/**
 	 * @brief Stops all buses.
@@ -199,15 +207,18 @@ private:
 		shs::ProgramTimer timer;
 		BusStatus status;
 
-		explicit OutgoingPacket(const shs::DTPpacket& pkt) : packet(pkt), status(BusStatus::NOT_FOUND), timer(20'000) {}
-		explicit OutgoingPacket(shs::DTPpacket&& pkt) : packet(std::move(pkt)), status(BusStatus::NOT_FOUND), timer(20'000) {}
+		explicit OutgoingPacket(const shs::DTPpacket& pkt) : packet(pkt), status(BusStatus::NOT_FOUND), timer(20000) {}
+		explicit OutgoingPacket(shs::DTPpacket&& pkt) : packet(std::move(pkt)), status(BusStatus::NOT_FOUND), timer(20000) {}
 	};
 
-	shs::SortedBuf<std::unique_ptr<shs::DTPbus>, DTPless::BUS> m_buss;
+	shs::SortedBuf<std::shared_ptr<shs::DTPbus>, DTPless::BUS> m_buss;
 	shs::SortedBuf<std::unique_ptr<shs::API>, DTPless::API> m_APIs;
 	shs::SortedBuf<shs::API*, DTPless::API> m_externalAPIs;
+	shs::DTPbusGeneralController m_bus_general_controller;
 	std::deque<OutgoingPacket> m_outgoing_packets;
+#ifdef SHS_SF_NETWORK
 	std::shared_ptr<shs::DTPdiscover> m_discover;
+#endif
 };
 
 

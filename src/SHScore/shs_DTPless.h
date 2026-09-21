@@ -6,6 +6,8 @@
     v2.0.0 — created a new component of DTP.
 */
 
+#include <memory>
+
 #include "shs_API.h"
 #include "shs_types.h"
 #include "shs_DTPbus.h"
@@ -47,5 +49,9 @@ struct shs::DTPless::BUS
 
     inline bool operator()(const std::unique_ptr<shs::DTPbus>& lhs, const shs::t::shs_busID_t rhs) const { return lhs->busID < rhs; }
     inline bool operator()(const shs::t::shs_busID_t lhs, const std::unique_ptr<shs::DTPbus>& rhs) const { return lhs < rhs->busID; }
+
+    inline bool operator()(const std::shared_ptr<shs::DTPbus>& lhs, const shs::t::shs_busID_t rhs) const { return lhs->busID < rhs; }
+    inline bool operator()(const shs::t::shs_busID_t lhs, const std::shared_ptr<shs::DTPbus>& rhs) const { return lhs < rhs->busID; }
+    inline bool operator()(const std::shared_ptr<shs::DTPbus>& lhs, const std::shared_ptr<shs::DTPbus>& rhs) const { return lhs->busID < rhs->busID; }
 };
 

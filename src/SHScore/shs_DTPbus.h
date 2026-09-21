@@ -1,27 +1,5 @@
 #pragma once
 
-
-/*
-  Last update: v2.0.0
-  Versions:
-    v0.1.0 — created.
-    v0.2.0
-      - Divided into two classes.
-      - A new type of handlers.
-      - Added inheritance from class shs::CallbacksKeeper.
-      - Using a new class for CRC.
-    v1.0.0 — release.
-      - Namespaces added.
-      - Variable names have been corrected.
-    v2.0.0 — divided into parts, rewritten into an abstract class.
-      - Template functions for processing different data buses.
-      - Storing the ID of connected modules.
-      - Active status.
-      - Message processing is divided into stages (separate functions).
-    v2.3.0 — updated docs.
-*/
-
-
 #include <stdint.h>
 
 
@@ -45,7 +23,11 @@
 #include "shs_Process.h"
 #include "shs_API.h"
 #include "shs_SortedBuf.h"
+#include "shs_ProgramTimer.h"
 #include "shs_DTP_API.h"
+#include "shs_DTPbusReceiveStatus.h"
+#include "shs_DTPbusReceiveContext.h"
+#include "shs_DTPbusPolicy.h"
 
 #include "shs_debug.h"
 
@@ -63,28 +45,26 @@ class shs::DTPbus : public shs::Process
 {
 public:
 
-    enum Status : uint8_t { no_data, packet_is_expected, packet_received, packet_processed, invalid_recipient, bus_error };
-
+    using ReceiveStatus = shs::DTPbusReceiveStatus;
 
     /**
      * @brief Creates a bus wrapper with an optional handler and buffer size.
         * @param busID Bus identifier, must be unique among buses connected to the same DTP instance.
         * @param handler Optional API handler for incoming packets.
+        * @param policy DTP bus policy.
         * @param bufsize Size of internal byte buffer (buffer size can be adjusted automatically).
      */
-    explicit DTPbus(const shs::t::shs_busID_t busID, shs::API* handler = nullptr, const uint8_t bufsize = 25)
-        : busID(busID), m_handler(handler), m_len(0), m_tmr(0), m_bc(bufsize)
+    explicit DTPbus(const shs::t::shs_busID_t busID, const shs::DTPbusPolicy policy, shs::API* handler = nullptr, const uint8_t bufsize = DTPbusReceiveContext::DEFAULT_BUFFER_SIZE)
+        : busID(busID), m_context(bufsize, handler), m_policy(policy)
     {}
 
     /**
      * @brief Moves a bus wrapper.
      */
-    DTPbus(DTPbus&& other) : busID(other.busID), m_handler(other.m_handler),
-        m_len(other.m_len), m_tmr(other.m_tmr), m_bc(std::move(other.m_bc))
+    DTPbus(DTPbus&& other) : busID(other.busID), m_context(std::move(other.m_context))
     {
         other.busID = {};
-        other.m_len = {};
-        other.m_tmr = {};
+        other.m_context = {};
     }
 
     /**
@@ -98,7 +78,20 @@ public:
         * @param handler New handler pointer.
      * @note Old handler will be lost.
      */
-    void setHandler(shs::API* handler) { m_handler = handler; }
+    void setHandler(shs::API* handler) { m_context.handler = handler; }
+
+    void setReceiveTimeout(const shs::t::shs_time_t timeout) noexcept { m_context.receive_timer.setTimeout(timeout); }
+    shs::t::shs_time_t getReceiveTimeout() const { return m_context.receive_timer.getTimeout(); }
+    void resetReceiveTimer() noexcept { m_context.receive_timer.reset(); }
+
+    /**
+        * @return Number of milliseconds since the last receive.
+     */
+    shs::t::shs_time_t millisecondsSinceLastReceive() const noexcept { return m_context.receive_timer.milliseconds(); }
+
+    shs::DTPbusPolicy getPolicy() const noexcept { return m_policy; }
+
+    ReceiveStatus getReceiveStatus() const noexcept { return m_context.status; }
 
     /**
      * @brief Reports whether the concrete bus is active.
@@ -107,27 +100,33 @@ public:
     virtual bool isActive() const = 0;
 
     /**
+     * @brief Sets the active state of the concrete bus.
+        * @param active New active state.
+        * @note May be unworking for some bus implementations, in which case it should be overridden.
+     */
+    virtual void setActive(const bool active) = 0;
+
+    /**
      * @brief Polls the concrete bus for new data.
         * @return Current bus status after polling.
      */
-    virtual Status checkBus() = 0;
+    virtual ReceiveStatus checkBus() = 0;
     /**
      * @brief Polls a bus instance using the shared buffer.
         * @tparam Bus Concrete bus type.
         * @param bus Bus instance to poll.
         * @return Current bus status after polling.
      */
-    template <class Bus> Status checkBus(Bus& bus) { status = checkBus(bus, m_bc, m_len, m_handler); return status; }  // sendPacket(m_DTPhandler());
+    template <class Bus> ReceiveStatus checkBus(Bus& bus) { return checkBus(bus, m_context); }
     /**
-     * @brief Polls a bus and stores incoming bytes in the given buffer.
+     * @brief Polls a bus instance using the specified context.
         * @tparam Bus Concrete bus type.
         * @param bus Bus instance to poll.
-        * @param buf Buffer used to store incoming bytes.
-        * @param len Expected packet length cache.
-        * @param handler Optional packet handler.
-        * @return Current bus status after polling and optional processing.
+        * @param context Context to use for polling.
+        * @return Current bus status after polling.
      */
-    template <class Bus> inline static Status checkBus(Bus& bus, ByteCollector<>& buf, uint8_t& len, shs::API* handler = nullptr);
+    template <class Bus>
+    static ReceiveStatus checkBus(Bus& bus, shs::DTPbusReceiveContext& context);
 
     /**
      * @brief Processes a bus instance using the shared buffer.
@@ -135,37 +134,36 @@ public:
         * @param bus Bus instance to process.
         * @return Current bus status after processing.
      */
-    template <class Bus> Status processBus(Bus& bus) { status = processBus(bus, m_bc, m_len); return status; }
+    template <class Bus>
+    inline ReceiveStatus processBus(Bus& bus) { return processBus(bus, m_context); }
     /**
      * @brief Processes a bus and fills a byte collector with the received packet.
         * @tparam Bus Concrete bus type.
         * @param bus Bus instance to process.
-        * @param buf Output packet buffer.
-        * @param len Expected packet length cache.
+        * @param context Context to use for processing.
         * @return Processing status.
      */
-    template <class Bus> inline static Status processBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len);
+    template <class Bus>
+    inline static ReceiveStatus processBus(Bus& bus, shs::DTPbusReceiveContext& context);
 
     /**
      * @brief Sends the current buffered packet to the handler.
         * @param handler API handler for packet processing.
         * @return Updated bus status.
      */
-    Status processPacket(shs::API& handler) { sendPacket(processPacket(m_bc, handler, status)); return status; }
+    inline ReceiveStatus processPacket(shs::API& handler) { sendPacket(processPacket(handler, m_context)); return m_context.status; }
     /**
-     * @brief Decodes buffered data and passes it to the handler.
-        * @param data Buffered packet bytes.
-        * @param handler API handler to invoke.
-        * @param status Input/output status value.
-        * @return Handler response packet or empty packet.
+     * @brief Sends the current buffered packet to the handler.
+        * @param context Context containing the buffer and handler.
+        * @return Updated bus status.
      */
-    inline static shs::DTPpacket processPacket(shs::ByteCollector<>& data, shs::API& handler, Status& status);
+    inline static shs::DTPpacket processPacket(shs::API& handler, shs::DTPbusReceiveContext& context);
 
     /**
      * @brief Returns the latest buffered bytes.
         * @return Read iterator for the latest buffered packet.
      */
-    shs::ByteCollectorReadIterator<> getLastData() { return m_bc.getReadIt(); }
+    shs::ByteCollectorReadIterator<> getLastData() { return m_context.buffer.getReadIt(); }
 
 
     /**
@@ -244,81 +242,92 @@ public:
     bool operator==(const shs::DTPbus& other) const { return busID == other.busID; }
     bool operator!=(const shs::DTPbus& other) const { return busID != other.busID; }
 
-
-    shs::t::shs_busID_t busID;
-    Status status;
 #ifndef SHS_SF_AVR                                // TODO: add realization for AVR
     shs::SortedBuf<uint8_t> connected_modules;
 #endif
+    shs::t::shs_busID_t busID;
 protected:
-    shs::ByteCollector<> m_bc;
-    shs::API* m_handler;
-    uint32_t m_tmr;
-    uint8_t m_len;
+    shs::DTPbusPolicy m_policy;
+    shs::DTPbusReceiveContext m_context;
+    shs::ProgramTime m_last_send_time;
 
-    inline shs::DTPpacket m_DTPhandler();
+    template <class Bus>
+    static inline shs::DTPpacket m_DTPhandler(Bus& bus, shs::ByteCollectorReadIterator<> it);
 };
 
 
 template<class Bus>
-shs::DTPbus::Status shs::DTPbus::checkBus(Bus& bus, ByteCollector<>& buf, uint8_t& len, shs::API* handler)
+shs::DTPbus::ReceiveStatus shs::DTPbus::checkBus(Bus& bus, shs::DTPbusReceiveContext& context)
 {
-    // dout("static DTPbus::checkBus:  ");
-    // doutln("call processBus()");
-    Status status = processBus(bus, buf, len);
+    processBus(bus, context);
 
-    //doutln("processBus() done");
-    if (handler) processPacket(buf, *handler, status);
+    if (context.handler) processPacket(*context.handler, context);
 
-    return status;
+    return context.status;
 }
 
 
 template <class Bus>
-shs::DTPbus::Status shs::DTPbus::processBus(Bus& bus, shs::ByteCollector<>& buf, uint8_t& len)
+shs::DTPbus::ReceiveStatus shs::DTPbus::processBus(Bus& bus, shs::DTPbusReceiveContext& context)
 {
-    // dout("static DTPbus::processBus:  ");
-    if (bus.available() == 0) { /*doutln("bus.available() == 0"); */return Status::no_data; }
+    if (bus.available() == 0)
+    {
+        context.status = ReceiveStatus::no_data;
+        return context.status;
+    }
 
-    if (len == 0) { /*doutln("len == 0");*/ len = bus.read(); }
-    if (bus.available() < len - 1) {/*doutln("bus.available() < len - 1")*/  return Status::packet_is_expected; }
+    if (context.receive_length == 0)
+    {
+        context.receive_length = bus.read();
+        context.receive_timer.reset();
 
-    // dout("packet received, reset buf  ");
-    buf.reset();
-    buf.push_back(len, 1);
+        if (context.receive_length < 2)
+        {
+            context.status = ReceiveStatus::invalid_recipient;
+            return context.status;
+        }
+    }
+    if (context.receive_timer.expired())
+    {
+        context.receive_length = 0;
+        while (bus.available()) bus.read();  // clear bus
+        context.status = ReceiveStatus::receive_timeout_error;
+        return context.status;
+    }
+    if (bus.available() < context.receive_length - 1)
+    {
+        context.status = ReceiveStatus::packet_is_expected;
+        return context.status;
+    }
 
-    for (uint8_t i = 0; i < len - 1; i++) buf.push_back(bus.read(), 1);
-    // doutln("buf filled");
-    len = 0;
+    context.buffer.reset();
+    context.buffer.push_back(context.receive_length, 1);
 
-    return Status::packet_received;
+    for (uint8_t i = 0; i < context.receive_length - 1; i++) context.buffer.push_back(bus.read(), 1);
+    context.receive_length = 0;
+
+    context.receive_timer.reset();    // start counting time since last receive
+
+    auto packet = m_DTPhandler(bus, context.buffer.getReadIt());
+    if (!packet.empty()) sendPacket(bus, packet);
+
+    context.status = ReceiveStatus::packet_received;
+    return context.status;
 }
 
 
-shs::DTPpacket shs::DTPbus::processPacket(shs::ByteCollector<>& data, shs::API& handler, Status& status)
+shs::DTPpacket shs::DTPbus::processPacket(shs::API& handler, shs::DTPbusReceiveContext& context)
 {
-    if (status != packet_received && status != packet_processed) return shs::DTPpacket();
+    if (context.status != ReceiveStatus::packet_received && context.status != ReceiveStatus::packet_processed) return shs::DTPpacket();
 
-    auto it = data.getReadIt();
+    auto it = context.buffer.getReadIt();
 
-    status = Status::packet_processed;
+    context.status = ReceiveStatus::packet_processed;
     return handler.handle(it);
 }
 
-
-shs::DTPpacket shs::DTPbus::m_DTPhandler()
+template<class Bus>
+shs::DTPpacket shs::DTPbus::m_DTPhandler(Bus& bus, shs::ByteCollectorReadIterator<> it)
 {
-#ifndef SHS_SF_AVR     
-
-    auto it = getLastData();                              // TODO: add realization for AVR
-
-    switch (shs::DTPpacket::get_DTPcode(it))
-    {
-        case shs::DTPpacket::INITIAL: connected_modules.attach(shs::DTPpacket::get_senderID(it).getModuleID()); return shs::DTP_APIpackets::getInitialAnswerPacket(shs::DTPpacket::get_recipientID(it).getModuleID(), true); break;
-        case shs::DTPpacket::INITIAL_ANSWER: connected_modules.attach(shs::DTPpacket::get_senderID(it).getModuleID()); break;
-        case shs::DTPpacket::DEINITIAL: connected_modules.detach(shs::DTPpacket::get_senderID(it).getModuleID()); break;
-        default: break;
-    }
-#endif
-    return shs::DTPpacket();
+    return shs::DTP_API::static_handle(it);
 }

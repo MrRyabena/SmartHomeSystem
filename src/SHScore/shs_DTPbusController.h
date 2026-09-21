@@ -20,7 +20,11 @@ namespace shs
 }
 
 
-
+/**
+ * @brief A controller for managing a single DTP bus with a specific policy.
+ * @note If the policy is set to UNKNOWN_POLICY, the bus policy will be used.
+ * Otherwise, this policy will be more important and used for controlling the bus.
+ */
 class shs::DTPbusController : public shs::DTPbusGeneralController, public shs::Process
 {
 public:
@@ -29,6 +33,8 @@ public:
      * @brief Creates a new DTP bus controller.
      * @param bus Weak pointer to the bus instance to control.
      * @param policy Policy to use for handling connection issues.
+     * If it is set to UNKNOWN_POLICY, the bus policy will be used.
+     * Otherwise, this policy will be more important and used for controlling the bus.
      * @param offline_timeout Timeout for considering a bus offline.
      * @param request_timeout Timeout for waiting for a response from the bus.
      * @param unused_timeout Timeout for considering a bus unused.
@@ -40,8 +46,18 @@ public:
         shs::DTPbusPolicy policy = shs::DTPbusPolicy::UNKNOWN_POLICY
     );
 
+    /**
+     * @brief Checks the status of the controlled DTP bus and return false
+     * if the controller has no bus to control and can be removed.
+     * @return True if the controller is still active, false if it has no bus to control.
+     */
     bool isActive() const noexcept { return !m_bus.expired(); }
 
+    /**
+     * @brief Sets the bus policy. This policy will more important that the bus policy
+     * and will be used for controlling the bus.
+     * @param policy The new policy to set.
+     */
     void setPolicy(shs::DTPbusPolicy policy) noexcept { m_policy = policy; }
 
     shs::DTPbusPolicy getPolicy() const noexcept { return m_getPolicy(m_bus.lock(), m_policy); }

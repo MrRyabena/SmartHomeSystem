@@ -17,12 +17,33 @@ namespace shs
 }
 
 
-
+/**
+ * @brief A general controller for managing many DTP buses.
+ * This class is responsible for monitoring the states of multiple DTP buses and
+ * applying the appropriate policies based on their current state.
+ *
+ * This class can check bus timers, send connection requests and set the active state
+ * of buses based on their policies and timeouts:
+ *
+ * TEMPORARY_IF_NO_ANSWERS: If no packets are received within the request timeout,
+ * a connection request is sent. If still no packets are received within the offline
+ * timeout, the bus is stopped and set to inactive.
+ *
+ * TEMPORARY_IF_DISCONNECTED: Similar to TEMPORARY_IF_NO_ANSWERS, but also considers
+ * the case where the bus is disconnected.
+ *
+ * TEMPORARY_IF_UNUSED: If the bus is not used (no packets are received or sent) within the
+ * unused timeout, the bus is stopped and set to inactive.
+ *
+ * @note This class is designed to be used as default controller for DTP busses. If
+ * need the specific controller for a bus, needed to use the shs::DTPbusController class
+ * or implement your own controller class that inherits from this one.
+ */
 class shs::DTPbusGeneralController
 {
 public:
-    static constexpr auto DEFAULT_REQUEST_TIMEOUT = 30000;   // ms
-    static constexpr auto DEFAULT_OFFLINE_TIMEOUT = 180000;  // ms
+    static constexpr auto DEFAULT_REQUEST_TIMEOUT = 30000;   // ms, 30 seconds
+    static constexpr auto DEFAULT_OFFLINE_TIMEOUT = 180000;  // ms, 3 minutes (REQUEST_TIMEOUT * 6)
     static constexpr auto DEFAULT_UNUSED_TIMEOUT = 600000;   // ms, 10 minutes
 
     /**

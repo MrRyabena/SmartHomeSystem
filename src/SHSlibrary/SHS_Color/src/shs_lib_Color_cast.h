@@ -301,7 +301,7 @@ namespace shs
                 };
 
                 template<>
-                struct ColorCastImpl<Wheel256, RGB888, cast_policy::Default>
+                struct ColorCastImpl<RGB888, Wheel256, cast_policy::Default>
                 {
                     static RGB888 cast(const Wheel256& color)
                     {
@@ -338,7 +338,7 @@ namespace shs
                 };
 
                 template<>
-                struct ColorCastImpl<Wheel1530, RGB888, cast_policy::Default>
+                struct ColorCastImpl<RGB888, Wheel1530, cast_policy::Default>
                 {
                     static RGB888 cast(const Wheel1530& color)
                     {
@@ -353,6 +353,8 @@ namespace shs
                             case 1021 ... 1275: return RGB888(col - 1020, 0, 255); break;
                             case 1276 ... 1530: return RGB888(255, 0, 1530 - col); break;
                         }
+
+                        return RGB888{};
                     }
                 };
 
@@ -414,8 +416,9 @@ namespace shs
 
             /**
              * @brief Casts a color from one type to another.
-             * @tparam T The target color type.
-             * @tparam U The source color type.
+             * @tparam To The target color type.
+             * @tparam From The source color type.
+             * @tparam Policy The conversion policy (default, fast or other).
              * @param color The source color to cast.
              * @return The casted color of type T.
              */

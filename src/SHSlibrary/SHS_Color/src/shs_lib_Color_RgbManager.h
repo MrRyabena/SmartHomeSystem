@@ -6,7 +6,8 @@
 #include <shs_Process.h>
 
 #include "shs_lib_Color_RGBV8888.h"
-#include "shs_lib_Color_RgbDriverInterface.h"
+#include "shs_lib_Color_RgbController.h"
+#include "shs_lib_Color_RgbEffect.h"
 
 
 namespace shs
@@ -27,13 +28,11 @@ namespace shs
 class shs::lib::Color::RgbManager : public shs::Process
 {
 public:
-    RgbManager(std::unique_ptr<RgbDriverInterface> driver);
+    RgbManager(std::shared_ptr<RgbController> controller);
 
-    void start() override;
-    void tick() override;
-    void stop() override;
-
-    
+    void start() override {}
+    void tick() override {}
+    void stop() override {}
 
     void pushEffect(std::unique_ptr<RgbEffect> effect) { m_effects.push_back(std::move(effect)); }
     void popEffect() { if (!m_effects.empty()) m_effects.pop_back(); }
@@ -42,6 +41,6 @@ public:
 protected:
     std::vector<std::unique_ptr<RgbEffect>> m_effects;
 
-    std::unique_ptr<RgbDriverInterface> m_driver;
+    std::shared_ptr<RgbController> m_controller;
     RGBV8888 m_color;
 };

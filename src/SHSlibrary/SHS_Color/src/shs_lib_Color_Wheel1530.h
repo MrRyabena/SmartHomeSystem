@@ -29,7 +29,7 @@ struct shs::lib::Color::Wheel1530
         wheel = shs::clamp(value, static_cast<uint16_t>(0), static_cast<uint16_t>(1530));
     }
 
-    Wheel1530& operator++(int)
+    Wheel1530 operator++(int)
     {
         Wheel1530 temp = *this;
         ++wheel;
@@ -39,23 +39,20 @@ struct shs::lib::Color::Wheel1530
 
     Wheel1530& operator++()
     {
-        ++wheel;
-        if (wheel > 1530) wheel = 0;
+        if (++wheel > 1530) wheel = 0;
         return *this;
     }
 
-    Wheel1530& operator--(int)
+    Wheel1530 operator--(int)
     {
         Wheel1530 temp = *this;
-        --wheel;
-        if (wheel > 1530) wheel = 1530;
+        if (--wheel > 1530) wheel = 1530;
         return temp;
     }
 
     Wheel1530& operator--()
     {
-        --wheel;
-        if (wheel > 1530) wheel = 1530;
+        if (--wheel > 1530) wheel = 1530;
         return *this;
     }
 

@@ -11,6 +11,7 @@
 #include <shs_LoadPWM.h>
 
 #include "shs_lib_Color_RGBV8888.h"
+#include "shs_lib_Color_RgbController.h"
 
 
 namespace shs
@@ -27,7 +28,7 @@ namespace shs
 }
 
 
-class shs::lib::Color::RgbDriver : public shs::lib::Color::RgbDriverInterface
+class shs::lib::Color::RgbDriver : public shs::lib::Color::RgbController
 {
 public:
     enum class LedType : uint8_t

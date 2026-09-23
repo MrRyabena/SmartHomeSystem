@@ -2,8 +2,8 @@
 
 #include "shs_lib_Color_cast.h"
 
-shs::lib::Color::Wheel1530Effect::Wheel1530Effect(const shs::t::shs_time_t period, Effect::callback_t callback, const Wheel1530 start_value)
-    : shs::lib::Color::Effect(period / 1530, callback), m_value(start_value)
+shs::lib::Color::Wheel1530Effect::Wheel1530Effect(const shs::t::shs_time_t period, RgbEffect::callback_t callback, const Wheel1530 start_value)
+    : shs::lib::Color::RgbEffect(period / 1530, callback), m_value(start_value)
 {}
 
 void shs::lib::Color::Wheel1530Effect::setPeriod(shs::t::shs_time_t period) noexcept

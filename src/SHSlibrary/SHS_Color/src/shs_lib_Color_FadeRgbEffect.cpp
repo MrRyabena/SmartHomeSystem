@@ -10,7 +10,7 @@ shs::lib::Color::FadeRgbEffect::FadeRgbEffect(const shs::t::shs_time_t period, c
 
 void shs::lib::Color::FadeRgbEffect::setTargetColor(const RGB888& target_color, const RGB888& current_color)
 {
-    if (m_active && m_callback) callback(color_cast<RGBV8888>(m_color));
+    if (m_active && m_callback) m_callback(color_cast<RGBV8888>(m_color));
 
     m_target_color = target_color;
     m_color = current_color;

@@ -24,7 +24,7 @@ class shs::lib::Color::RgbEffect : public shs::Process
 {
 public:
 
-    using callback_t = std::function<void(RGBV8888&)>;
+    using callback_t = std::function<void(RGBV8888)>;
 
     explicit RgbEffect(const shs::t::shs_time_t dt, const callback_t callback)
         : m_timer(dt), m_callback(callback)

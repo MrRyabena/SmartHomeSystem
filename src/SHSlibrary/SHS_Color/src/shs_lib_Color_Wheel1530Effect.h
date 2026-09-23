@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "shs_lib_Color_Effect.h"
+#include "shs_lib_Color_RgbEffect.h"
 #include "shs_lib_Color_Wheel1530.h"
 #include <shs_types.h>
 
@@ -16,10 +16,10 @@ namespace shs
     }
 }
 
-class shs::lib::Color::Wheel1530Effect : public shs::lib::Color::Effect
+class shs::lib::Color::Wheel1530Effect : public shs::lib::Color::RgbEffect
 {
 public:
-    Wheel1530Effect(const shs::t::shs_time_t period, Effect::callback_t callback, const Wheel1530 start_value = Wheel1530{});
+    Wheel1530Effect(const shs::t::shs_time_t period, RgbEffect::callback_t callback, const Wheel1530 start_value = Wheel1530{});
 
     void setPeriod(shs::t::shs_time_t period) noexcept override;
     shs::t::shs_time_t getPeriod() const noexcept override;

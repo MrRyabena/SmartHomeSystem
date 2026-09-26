@@ -24,8 +24,6 @@ set(SOURCES
     shs_lib_Color_RGB888.h
     shs_lib_Color_RgbController.cpp
     shs_lib_Color_RgbController.h
-    shs_lib_Color_RgbDriver.cpp
-    shs_lib_Color_RgbDriver.h
     shs_lib_Color_RgbEffect.h
     shs_lib_Color_RgbFilter.h
     shs_lib_Color_RgbFilterType.h

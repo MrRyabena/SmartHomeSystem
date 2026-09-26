@@ -10,21 +10,13 @@
 #include <shs_types.h>
 #include <shs_LoadPWM.h>
 
-#include "shs_lib_Color_RGBV8888.h"
-#include "shs_lib_Color_RgbController.h"
+#include <shs_lib_Color_RGBV8888.h>
+#include <shs_lib_Color_RgbController.h>
 
 
-namespace shs
+namespace shs::lib
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            struct RGBV8888;
-            struct RGB888;
-            class RgbDriver;
-        }
-    }
+    class RgbDriver;
 }
 
 

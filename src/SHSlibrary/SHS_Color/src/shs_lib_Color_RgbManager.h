@@ -28,14 +28,18 @@ namespace shs
 class shs::lib::Color::RgbManager : public shs::Process
 {
 public:
+
+    using effect_id_t = uint16_t;
+
     RgbManager(std::shared_ptr<RgbController> controller);
 
-    void start() override {}
-    void tick() override {}
-    void stop() override {}
+    void start() override { m_active = true; }
+    void tick() override;
+    void stop() override { m_active = false; }
 
-    void pushEffect(std::unique_ptr<RgbEffect> effect) { m_effects.push_back(std::move(effect)); }
-    void popEffect() { if (!m_effects.empty()) m_effects.pop_back(); }
+    [[nodiscard]] effect_id_t pushEffect(std::unique_ptr<RgbEffect> effect) { m_effects.push_back(std::move(effect)); return m_effects.size() - 1; }
+    effect_id_t popEffect() { if (!m_effects.empty()) m_effects.pop_back();  return m_effects.size(); }
+    void removeEffect(const effect_id_t id) { if (id < m_effects.size()) m_effects.erase(m_effects.begin() + id); }
     void clearEffects() { m_effects.clear(); }
 
 protected:
@@ -43,4 +47,6 @@ protected:
 
     std::shared_ptr<RgbController> m_controller;
     RGBV8888 m_color;
+
+    bool m_active;
 };

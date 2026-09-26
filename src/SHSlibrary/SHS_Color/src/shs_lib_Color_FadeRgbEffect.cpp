@@ -2,16 +2,14 @@
 
 #include <shs_lib_Color_cast.h>
 
-shs::lib::Color::FadeRgbEffect::FadeRgbEffect(const shs::t::shs_time_t period, callback_t callback, const RGB888& start_color, const RGB888& end_color)
-    : m_color(start_color), m_target_color(end_color), m_period(period), RgbEffect(period, callback), m_active(true), m_step(0)
+shs::lib::Color::FadeRgbEffect::FadeRgbEffect(const shs::t::shs_time_t period, const RGB888& start_color, const RGB888& end_color)
+    : m_color(start_color), m_target_color(end_color), m_period(period), RgbEffect(period), m_active(true), m_step(0)
 {
     m_update();
 }
 
 void shs::lib::Color::FadeRgbEffect::setTargetColor(const RGB888& target_color, const RGB888& current_color)
 {
-    if (m_active && m_callback) m_callback(color_cast<RGBV8888>(m_color));
-
     m_target_color = target_color;
     m_color = current_color;
 
@@ -29,17 +27,16 @@ shs::t::shs_time_t shs::lib::Color::FadeRgbEffect::getPeriod() const noexcept
     return m_period;
 }
 
-void shs::lib::Color::FadeRgbEffect::tick()
+std::optional<shs::lib::Color::RGBV8888> shs::lib::Color::FadeRgbEffect::getColor()
 {
-    if (!m_active) return;
+    if (!m_active) return std::nullopt;
 
     if (m_timer.check())
     {
         if (m_step + 1 == (1 << m_n))
         {
             m_timer.setTimeout(0);
-            if (m_callback) m_callback(color_cast<RGBV8888>(m_target_color));
-            return;
+            return std::make_optional(color_cast<RGBV8888>(m_target_color));
         }
         ++m_step;
 
@@ -49,8 +46,9 @@ void shs::lib::Color::FadeRgbEffect::tick()
             m_target_color.blue + (((static_cast<int32_t>(m_target_color.blue) - m_color.blue) * m_step) >> m_n)
         );
 
-        if (m_callback) m_callback(color_cast<RGBV8888>(m_color));
+        return std::make_optional(color_cast<RGBV8888>(m_color));
     }
+    return std::nullopt;
 }
 
 void shs::lib::Color::FadeRgbEffect::m_update()
@@ -84,6 +82,3 @@ void shs::lib::Color::FadeRgbEffect::m_update()
 
     m_timer.setTimeout(m_period / (1 << m_n));
 }
-
-
-

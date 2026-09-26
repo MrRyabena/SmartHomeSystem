@@ -2,8 +2,8 @@
 
 #include "shs_lib_Color_cast.h"
 
-shs::lib::Color::Wheel1530Effect::Wheel1530Effect(const shs::t::shs_time_t period, RgbEffect::callback_t callback, const Wheel1530 start_value)
-    : shs::lib::Color::RgbEffect(period / 1530, callback), m_value(start_value)
+shs::lib::Color::Wheel1530Effect::Wheel1530Effect(const shs::t::shs_time_t period, const Wheel1530 start_value)
+    : shs::lib::Color::RgbEffect(period / 1530), m_value(start_value)
 {}
 
 void shs::lib::Color::Wheel1530Effect::setPeriod(shs::t::shs_time_t period) noexcept
@@ -16,15 +16,16 @@ shs::t::shs_time_t shs::lib::Color::Wheel1530Effect::getPeriod() const noexcept
     return m_timer.getTimeout() * 1530;
 }
 
-void shs::lib::Color::Wheel1530Effect::tick()
+std::optional<shs::lib::Color::RGBV8888> shs::lib::Color::Wheel1530Effect::getColor()
 {
     if (m_timer.check())
     {
         ++m_value;
         
         using namespace shs::lib::Color;
-        if (m_callback) m_callback(color_cast<RGBV8888>(m_value));
+        return std::make_optional(color_cast<RGBV8888>(m_value));
     }
+    return std::nullopt;
 }
 
 

@@ -22,7 +22,9 @@ public:
 
     static constexpr auto FADER_MIN_PERIOD = 20u;  // Minimum period for the fade effect in milliseconds
 
-    FadeRgbEffect(const shs::t::shs_time_t period, callback_t callback, const RGB888& start_color = RGB888{}, const RGB888& end_color = RGB888{});
+    FadeRgbEffect(const shs::t::shs_time_t period, const RGB888& start_color = RGB888{}, const RGB888& end_color = RGB888{});
+
+    [[nodiscard]] std::optional<RGBV8888> getColor() override;
 
     void setTargetColor(const RGB888& target_color, const RGB888& current_color);
     void setPeriod(shs::t::shs_time_t period) noexcept override;
@@ -31,10 +33,6 @@ public:
     void enable() noexcept { m_active = true; }
     void disable() noexcept { m_active = false; }
     bool isActive() const noexcept { return m_active; }
-
-    void start() override {}
-    void tick() override;
-    void stop() override {}
 
 protected:
     RGB888 m_color;

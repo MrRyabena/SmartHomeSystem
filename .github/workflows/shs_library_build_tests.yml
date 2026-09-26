@@ -1,4 +1,4 @@
-name: SHS core tests
+name: SHS library tests
 on:
     push:
 
@@ -18,13 +18,8 @@ jobs:
               uses: lukka/get-cmake@latest
 
             - name: Run build-test for ShsLibrary
-              working-directory: src/SHSlibrary
+              working-directory: src/SHSlibrary/tests
               run: |
-                  chmod +x build_shs_core.sh
-                  ./build_shs_core.sh
+                  chmod +x build_libraries_test.sh
+                  ./build_libraries_test.sh
 
-            - name: Build and run ShsCore tests
-              working-directory: src/ShsTests/ShsCoreTests
-              run: |
-                  chmod +x build_shs_core_tests.sh
-                  ./build_shs_core_tests.sh -r

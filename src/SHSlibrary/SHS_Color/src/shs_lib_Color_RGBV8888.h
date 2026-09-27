@@ -80,6 +80,8 @@ struct shs::lib::Color::RGBV8888 : public shs::lib::Color::RGB888
         red = static_cast<uint8_t>((static_cast<uint16_t>(red) * (value + 1)) >> 8);
         green = static_cast<uint8_t>((static_cast<uint16_t>(green) * (value + 1)) >> 8);
         blue = static_cast<uint8_t>((static_cast<uint16_t>(blue) * (value + 1)) >> 8);
+
+        value = 255;
     }
 
     /**

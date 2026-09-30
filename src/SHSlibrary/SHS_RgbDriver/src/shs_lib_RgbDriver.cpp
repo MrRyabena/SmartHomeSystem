@@ -1,4 +1,4 @@
-#include "shs_lib_Color_RgbDriver.h"
+#include "shs_lib_RgbDriver.h"
 
 #if defined(SHS_SF_AVR) || defined(SHS_SF_ESP)
 
@@ -7,10 +7,10 @@
 
 shs::lib::Color::RgbDriver::RgbDriver(const shs::t::shs_pin_t red_pin, const shs::t::shs_pin_t green_pin, const shs::t::shs_pin_t blue_pin,
     const LedType led_type) noexcept
-    : m_red(red_pin), m_green(green_pin), m_blue(blue_pin), m_led_type(led_type)
+    : m_red(red_pin), m_green(green_pin), m_blue(blue_pin), m_led_type(led_type), m_brightness(0)
 {}
 
-void shs::lib::Color::RgbDriver::start()
+void shs::lib::Color::RgbDriver::setup()
 {
     m_red.setup();
     m_green.setup();
@@ -18,7 +18,7 @@ void shs::lib::Color::RgbDriver::start()
 }
 
 
-void shs::lib::Color::RgbDriver::setColor(const RGBV8888& color) noexcept
+void shs::lib::Color::RgbDriver::setColor(const RGB888 color)
 {
     if (m_led_type == LedType::COMMON_ANODE)
     {
@@ -35,7 +35,7 @@ void shs::lib::Color::RgbDriver::setColor(const RGBV8888& color) noexcept
 }
 
 
-shs::lib::Color::RGB888 shs::lib::Color::RgbDriver::getColor() const noexcept
+shs::lib::Color::RGB888 shs::lib::Color::RgbDriver::getColor() const
 {
     if (m_led_type == LedType::COMMON_ANODE)
     {

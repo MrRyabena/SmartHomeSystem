@@ -5,15 +5,9 @@
 #include "shs_lib_Color_RGB888.h"
 
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            struct RGBV8888;
-        }
-    }
+    struct RGBV8888;
 }
 
 
@@ -55,6 +49,21 @@ struct shs::lib::Color::RGBV8888 : public shs::lib::Color::RGB888
     {}
 
     /**
+     * @brief Assigns the values of an RGB888 color to the RGBV8888 color.
+     * @param rgb The RGB888 color to copy the red, green, and blue components from.
+     * @return A reference to the assigned RGBV8888 color.
+     * @note The value component of the RGBV8888 color remains unchanged during this assignment.
+     */
+    RGBV8888& operator=(const shs::lib::Color::RGB888& rgb)
+    {
+        if (this == &rgb) return *this;  // Self-assignment check
+
+        setRgb(rgb);  // Copy RGB components from the RGB888 color
+
+        return *this;
+    }
+
+    /**
      * @brief Converts the RGBV8888 color to a 32-bit integer representation.
      * The format is 0xRRGGBBVV, where RR is red, GG is green, BB is blue, and VV is value.
      * @return The 32-bit integer representing the color.
@@ -82,6 +91,36 @@ struct shs::lib::Color::RGBV8888 : public shs::lib::Color::RGB888
         blue = static_cast<uint8_t>((static_cast<uint16_t>(blue) * (value + 1)) >> 8);
 
         value = 255;
+    }
+
+    RGB888 getNormalized() const
+    {
+        RGB888 normalized_color(red, green, blue);
+        normalized_color.red = static_cast<uint8_t>((static_cast<uint16_t>(normalized_color.red) * (value + 1)) >> 8);
+        normalized_color.green = static_cast<uint8_t>((static_cast<uint16_t>(normalized_color.green) * (value + 1)) >> 8);
+        normalized_color.blue = static_cast<uint8_t>((static_cast<uint16_t>(normalized_color.blue) * (value + 1)) >> 8);
+
+        return normalized_color;
+    }
+
+    /**
+     * @brief Sets the RGB components of the color.
+     * @param rgb The RGB color to copy the red, green, and blue components from.
+     */
+    void setRgb(const RGB888& rgb)
+    {
+        red = rgb.red;
+        green = rgb.green;
+        blue = rgb.blue;
+    }
+
+    /**
+     * @brief Retrieves the RGB components of the color as an RGB888 structure.
+     * @return An RGB888 structure containing the red, green, and blue components.
+     */
+    RGB888 getRgb() const
+    {
+        return RGB888{ red, green, blue };
     }
 
     /**

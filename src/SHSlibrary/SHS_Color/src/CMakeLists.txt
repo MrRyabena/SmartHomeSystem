@@ -22,7 +22,6 @@ set(SOURCES
     shs_lib_Color_Kelvin.h
     shs_lib_Color_RfbEffectType.h
     shs_lib_Color_RGB888.h
-    shs_lib_Color_RgbController.cpp
     shs_lib_Color_RgbController.h
     shs_lib_Color_RgbControllerApi.cpp
     shs_lib_Color_RgbControllerApi.h

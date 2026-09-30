@@ -48,7 +48,7 @@ namespace shs
                 {
                     static RGB888 cast(const RGBV8888& color)
                     {
-                        return RGB888(color.red, color.green, color.blue);
+                        return color.getNormalized();
                     }
                 };
 

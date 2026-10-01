@@ -44,13 +44,13 @@ add_library(SHS_Color ${SOURCES})
 
 add_subdirectory(../../../SHScore SHScore)
 
-target_link_libraries(SHS_Color PRIVATE
-    SHScore
-)
-target_include_directories(SHS_Color PRIVATE ../../../SHScore)
+target_link_libraries(SHS_Color PRIVATE SHScore)
 
-target_include_directories(SHS_Color
-    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+target_include_directories(
+    SHS_Color PRIVATE ../../../SHScore
+    SHS_Color PRIVATE ../../SHS_APIids
 )
+
+target_include_directories(SHS_Color PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_compile_features(SHS_Color PRIVATE cxx_std_17)

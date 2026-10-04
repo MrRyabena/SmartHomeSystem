@@ -350,6 +350,11 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 <details>
 <summary>v2.4.X — <code><b>[current]</b></code> Fix bugs with TCP disconnects, upgrade DTPbus, add tests </summary>
 
+### Patches
+
+- **v2.4.0** — basic.
+- **v2.4.1** — add blink example.
+
 ### Main Features
 
 - Fixed critical bugs with `shs::TcpSocket` and `shs::TcpServer` related to connection state and disconnect handling.

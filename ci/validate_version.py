@@ -128,9 +128,23 @@ def git_previous_release_tag(tag: str, repo_root: pathlib.Path) -> str | None:
     return None
 
 
-def validate(tag: str, repo_root: pathlib.Path) -> List[str]:
-    expected_version = tag[1:] if tag.startswith("v") else tag
-    expected_current_version = f"v{expected_version.rsplit('.', 1)[0]}.X"
+def release_requires_change_artifacts(tag: str, previous_tag: str | None) -> bool:
+    current_match = re.fullmatch(r"v(\d+)\.(\d+)\.(\d+)", tag)
+    if not current_match or previous_tag is None:
+        return True
+
+    previous_match = re.fullmatch(r"v(\d+)\.(\d+)\.(\d+)", previous_tag)
+    if not previous_match:
+        return True
+
+    current_version = tuple(int(part) for part in current_match.groups())
+    previous_version = tuple(int(part) for part in previous_match.groups())
+    return current_version[:2] != previous_version[:2]
+
+
+def validate_change_artifacts(
+    tag: str, repo_root: pathlib.Path, previous_tag: str | None
+) -> List[str]:
     errors: List[str] = []
     target_scheme_paths = [
         "schemes/SHScore-scheme.pdf",
@@ -141,14 +155,88 @@ def validate(tag: str, repo_root: pathlib.Path) -> List[str]:
         "schemes/SHSlibrary.xmind",
     ]
 
-    LOGGER.info("Validating release tag %s", tag)
+    changes_dir = repo_root / "schemes/SHScore-changes"
+    change_pattern = f"SHScore-changes-{tag.replace('.', '_')}.*"
+    if not any(changes_dir.glob(change_pattern)):
+        message = f"missing SHScore-changes artifact for {tag!r}"
+        LOGGER.error(message)
+        errors.append(message)
+    else:
+        LOGGER.info("Found SHScore-changes artifact for %s", tag)
 
+    current_revision = tag if git_revision_exists(tag, repo_root) else "HEAD"
+    if current_revision != tag:
+        LOGGER.info("Tag %s is not available locally; using %s as the upper range bound", tag, current_revision)
+    if previous_tag is None:
+        LOGGER.warning("No previous release tag found for %s; checking full history for scheme commit", tag)
+        scheme_commit_hashes = git_commit_hashes_for_paths(target_scheme_paths, repo_root)
+    else:
+        LOGGER.info("Limiting scheme commit search to range %s..%s", previous_tag, current_revision)
+        range_filter_args = [
+            "git",
+            "log",
+            "--format=%H",
+            "--no-renames",
+            f"{previous_tag}..{current_revision}",
+            "--",
+            *target_scheme_paths,
+        ]
+        try:
+            out = subprocess.check_output(range_filter_args, cwd=str(repo_root), text=True)
+        except subprocess.CalledProcessError:
+            LOGGER.warning(
+                "Git range %s..%s is not resolvable locally; falling back to full history",
+                previous_tag,
+                current_revision,
+            )
+            scheme_commit_hashes = git_commit_hashes_for_paths(target_scheme_paths, repo_root)
+        else:
+            range_hashes: List[str] = []
+            seen_hashes = set()
+            for line in out.splitlines():
+                commit_hash = line.strip()
+                if commit_hash and commit_hash not in seen_hashes:
+                    seen_hashes.add(commit_hash)
+                    range_hashes.append(commit_hash)
+            scheme_commit_hashes = range_hashes
+
+    matching_commit_hash = None
+    ref_pattern = re.compile(rf"(?im)^Ref:\s*{re.escape(tag)}\s*$")
+    for commit_hash in scheme_commit_hashes:
+        changed_paths = set(git_changed_paths(commit_hash, target_scheme_paths, repo_root))
+        if not set(target_scheme_paths).issubset(changed_paths):
+            continue
+        commit_body = git_commit_body(commit_hash, repo_root)
+        if ref_pattern.search(commit_body):
+            matching_commit_hash = commit_hash
+            break
+
+    if matching_commit_hash is None:
+        message = (
+            f"no commit found that updates all scheme files together and includes 'Ref: {tag}' in the commit body"
+        )
+        LOGGER.error(message)
+        errors.append(message)
+    else:
+        LOGGER.info("Found scheme commit %s with Ref: %s", matching_commit_hash[:7], tag)
+
+    return errors
+
+
+def validate_tag(tag: str) -> List[str]:
+    errors: List[str] = []
     if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
         message = f"tag must use vX.Y.Z format, got {tag!r}"
         LOGGER.error(message)
         errors.append(message)
     else:
         LOGGER.info("Tag format is valid")
+    return errors
+
+
+def validate_versions(tag: str, repo_root: pathlib.Path) -> List[str]:
+    expected_version = tag[1:] if tag.startswith("v") else tag
+    errors: List[str] = []
 
     version_h_path = repo_root / "src/SHScore/shs_version.h"
     LOGGER.debug("Checking %s", version_h_path.relative_to(repo_root).as_posix())
@@ -195,15 +283,13 @@ def validate(tag: str, repo_root: pathlib.Path) -> List[str]:
             errors.append(message)
         else:
             LOGGER.info("%s matches %s", rel_path, expected_version)
+    return errors
 
-    changes_dir = repo_root / "schemes/SHScore-changes"
-    change_pattern = f"SHScore-changes-{tag.replace('.', '_')}.*"
-    if not any(changes_dir.glob(change_pattern)):
-        message = f"missing SHScore-changes artifact for {tag!r}"
-        LOGGER.error(message)
-        errors.append(message)
-    else:
-        LOGGER.info("Found SHScore-changes artifact for %s", tag)
+
+def validate_readme(tag: str, repo_root: pathlib.Path) -> List[str]:
+    expected_version = tag[1:] if tag.startswith("v") else tag
+    expected_current_version = f"v{expected_version.rsplit('.', 1)[0]}.X"
+    errors: List[str] = []
 
     readme_path = repo_root / "README.md"
     LOGGER.debug("Checking %s", readme_path.relative_to(repo_root).as_posix())
@@ -240,55 +326,6 @@ def validate(tag: str, repo_root: pathlib.Path) -> List[str]:
         else:
             LOGGER.info("README.md marks %s as the only current version", expected_current_version)
 
-        LOGGER.debug("Checking release scheme commit for %s", tag)
-        previous_tag = git_previous_release_tag(tag, repo_root)
-        current_revision = tag if git_revision_exists(tag, repo_root) else "HEAD"
-        if current_revision != tag:
-            LOGGER.info("Tag %s is not available locally; using %s as the upper range bound", tag, current_revision)
-        if previous_tag is None:
-            LOGGER.warning("No previous release tag found for %s; checking full history for scheme commit", tag)
-            scheme_commit_hashes = git_commit_hashes_for_paths(target_scheme_paths, repo_root)
-        else:
-            LOGGER.info("Limiting scheme commit search to range %s..%s", previous_tag, current_revision)
-            range_filter_args = ["git", "log", "--format=%H", "--no-renames", f"{previous_tag}..{current_revision}", "--", *target_scheme_paths]
-            try:
-                out = subprocess.check_output(range_filter_args, cwd=str(repo_root), text=True)
-            except subprocess.CalledProcessError:
-                LOGGER.warning(
-                    "Git range %s..%s is not resolvable locally; falling back to full history",
-                    previous_tag,
-                    current_revision,
-                )
-                scheme_commit_hashes = git_commit_hashes_for_paths(target_scheme_paths, repo_root)
-            else:
-                range_hashes: List[str] = []
-                seen_hashes = set()
-                for line in out.splitlines():
-                    commit_hash = line.strip()
-                    if commit_hash and commit_hash not in seen_hashes:
-                        seen_hashes.add(commit_hash)
-                        range_hashes.append(commit_hash)
-                scheme_commit_hashes = range_hashes
-        matching_commit_hash = None
-        ref_pattern = re.compile(rf"(?im)^Ref:\s*{re.escape(tag)}\s*$")
-        for commit_hash in scheme_commit_hashes:
-            changed_paths = set(git_changed_paths(commit_hash, target_scheme_paths, repo_root))
-            if not set(target_scheme_paths).issubset(changed_paths):
-                continue
-            commit_body = git_commit_body(commit_hash, repo_root)
-            if ref_pattern.search(commit_body):
-                matching_commit_hash = commit_hash
-                break
-
-        if matching_commit_hash is None:
-            message = (
-                f"no commit found that updates all scheme files together and includes 'Ref: {tag}' in the commit body"
-            )
-            LOGGER.error(message)
-            errors.append(message)
-        else:
-            LOGGER.info("Found scheme commit %s with Ref: %s", matching_commit_hash[:7], tag)
-
     if not versions_section_match:
         pass
     elif not re.search(
@@ -303,6 +340,26 @@ def validate(tag: str, repo_root: pathlib.Path) -> List[str]:
         LOGGER.error(message)
         errors.append(message)
 
+    return errors
+
+
+def validate(tag: str, repo_root: pathlib.Path) -> List[str]:
+    LOGGER.info("Validating release tag %s", tag)
+    errors: List[str] = []
+    errors.extend(validate_tag(tag))
+    errors.extend(validate_versions(tag, repo_root))
+
+    previous_tag = git_previous_release_tag(tag, repo_root)
+    if release_requires_change_artifacts(tag, previous_tag):
+        errors.extend(validate_change_artifacts(tag, repo_root, previous_tag))
+    else:
+        LOGGER.info(
+            "Skipping scheme and SHScore-changes checks: %s is a patch release after %s",
+            tag,
+            previous_tag,
+        )
+
+    errors.extend(validate_readme(tag, repo_root))
     return errors
 
 

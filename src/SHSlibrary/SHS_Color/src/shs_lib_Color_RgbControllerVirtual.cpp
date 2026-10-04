@@ -11,7 +11,7 @@
 
 shs::lib::Color::RgbControllerVirtual::RgbControllerVirtual(shs::DTP& dtp, shs::t::shs_ID_t id, shs::t::shs_ID_t remote_id)
     : API(id.setComponentID(shs::etoi(shs::lib::APIids::COLOR_RGB_CONTROLLER_API))),
-    m_remote_id(remote_id), m_dtp(dtp)
+    m_dtp(dtp), m_remote_id(remote_id)
 {}
 
 

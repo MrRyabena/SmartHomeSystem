@@ -307,24 +307,18 @@ namespace shs
                     {
                         uint8_t shift;
 
-                        switch (color.wheel)
+                        if (color.wheel <= 85)
                         {
-                            case 0 ... 85:
-                                shift = color.wheel * 3;
-                                return RGB888(255 - shift, shift, 0);
-                                break;
-
-                            case 86 ... 170:
-                                shift = (color.wheel - 85) * 3;
-                                return RGB888(0, 255 - shift, shift);
-                                break;
-
-                            case 171 ... 255:
-                                shift = (color.wheel - 170) * 3;
-                                return RGB888(shift, 0, 255 - shift);
-                                break;
+                            shift = color.wheel * 3;
+                            return RGB888(255 - shift, shift, 0);
                         }
-
+                        if (color.wheel <= 170)
+                        {
+                            shift = (color.wheel - 85) * 3;
+                            return RGB888(0, 255 - shift, shift);
+                        }
+                        shift = (color.wheel - 170) * 3;
+                        return RGB888(shift, 0, 255 - shift);
                     }
                 };
 
@@ -344,15 +338,13 @@ namespace shs
                     {
                         uint16_t col = color.wheel;
                         col = (col * 1530ul) >> 16;
-                        switch (col)
-                        {
-                            case 0 ... 255: return RGB888(255, col, 0); break;
-                            case 256 ... 510: return RGB888(510 - col, 255, 0); break;
-                            case 511 ... 765: return RGB888(0, 255, col - 510); break;
-                            case 766 ... 1020: return RGB888(0, 1020 - col, 255); break;
-                            case 1021 ... 1275: return RGB888(col - 1020, 0, 255); break;
-                            case 1276 ... 1530: return RGB888(255, 0, 1530 - col); break;
-                        }
+
+                        if (col <= 255) return RGB888(255, col, 0);
+                        if (col <= 510) return RGB888(510 - col, 255, 0);
+                        if (col <= 765) return RGB888(0, 255, col - 510);
+                        if (col <= 1020) return RGB888(0, 1020 - col, 255);
+                        if (col <= 1275) return RGB888(col - 1020, 0, 255);
+                        if (col <= 1530) return RGB888(255, 0, 1530 - col);
 
                         return RGB888{};
                     }

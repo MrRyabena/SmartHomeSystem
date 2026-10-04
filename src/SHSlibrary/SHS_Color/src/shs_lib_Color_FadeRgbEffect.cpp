@@ -3,7 +3,7 @@
 #include <shs_lib_Color_cast.h>
 
 shs::lib::Color::FadeRgbEffect::FadeRgbEffect(const shs::t::shs_time_t period, const RGB888& start_color, const RGB888& end_color)
-    : m_color(start_color), m_target_color(end_color), m_period(period), RgbEffect(period), m_active(true), m_step(0)
+    : RgbEffect(period), m_color(start_color), m_target_color(end_color), m_period(period), m_step(0), m_active(true)
 {
     m_update();
 }

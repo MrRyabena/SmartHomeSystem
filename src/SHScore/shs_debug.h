@@ -1,12 +1,5 @@
 #pragma once
 
-/*
-  Last update: v2.0.0
-  Versions:
-    v1.1.0 — created.
-    v2.0.0 — Added a space in dout(), changed the debug-flag
-*/
-
 #include "shs_settings_private.h"
 
 
@@ -14,20 +7,20 @@
 
 #ifdef SHS_SF_ARDUINO
 #include <Arduino.h>
-#define dinit() ({Serial.begin(115200); Serial.println("");})
-#define dout(value) ({Serial.print(value); Serial.print(' ');})
-#define doutln(value) Serial.println(value);
-#define dfunc() dout(__PRETTY_FUNCTION__);
-#define dsep() Serial.println("----------------------------------------");
+#define dinit() do { Serial.begin(115200); Serial.println(""); } while(0)
+#define dout(value) do { Serial.print(value); Serial.print(' '); } while(0)
+#define doutln(value) do { Serial.println(value); } while (0)
+#define dfunc() do { dout(__PRETTY_FUNCTION__); } while (0)
+#define dsep() do { Serial.println("----------------------------------------"); } while (0)
 
 
 #else
 #include <iostream>
 #define dinit()
-#define dout(value) std::cout << value << ' ';
-#define doutln(value) std::cout << value << std::endl;
-#define dfunc() std::cout << __PRETTY_FUNCTION__ << std::endl;
-#define dsep() std::cout << "----------------------------------------" << std::endl;
+#define dout(value) do { std::cout << value << ' '; } while(0)
+#define doutln(value) do { std::cout << value << std::endl; } while(0)
+#define dfunc() do { std::cout << __PRETTY_FUNCTION__ << std::endl; } while(0)
+#define dsep() do { std::cout << "----------------------------------------" << std::endl; } while(0)
 
 
 #endif

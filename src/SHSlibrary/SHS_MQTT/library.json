@@ -1,6 +1,6 @@
 {
     "name": "SHS_MQTT",
-    "version": "2.4.1",
+    "version": "2.4.2",
     "dependencies": {
         "pubsubclient": "https://github.com/knolleary/pubsubclient.git"
     }

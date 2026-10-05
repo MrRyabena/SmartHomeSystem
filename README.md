@@ -354,6 +354,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 - **v2.4.0** — basic.
 - **v2.4.1** — add blink example.
+- **v2.4.2** — fix bug with `shs_debug.h` when it is used without brackets, update `controlWiFi` example.
 
 ### Main Features
 

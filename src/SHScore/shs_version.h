@@ -7,9 +7,9 @@
 
 
 
-#define _shs_Project_VERSION_    "v2.4.1"
-#define _shs_SHScore_VERSION_    "v2.4.1"
-#define _shs_SHSlibrary_VERSION_ "v2.4.1"
+#define _shs_Project_VERSION_    "v2.4.2"
+#define _shs_SHScore_VERSION_    "v2.4.2"
+#define _shs_SHSlibrary_VERSION_ "v2.4.2"
 
 #pragma message "\n" \
 "Current Project version is:    " _shs_Project_VERSION_ "\n" \

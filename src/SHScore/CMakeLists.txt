@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.27)
 
-project(SHScore VERSION 2.4.0 LANGUAGES CXX C)
+project(SHScore VERSION 2.4.2 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

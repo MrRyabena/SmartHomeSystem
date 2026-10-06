@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(ShsCoreTests VERSION 2.4.0 LANGUAGES CXX C)
+project(ShsCoreTests VERSION 2.4.2 LANGUAGES CXX C)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

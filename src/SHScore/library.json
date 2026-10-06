@@ -1,8 +1,9 @@
 {
     "name": "SHScore",
-    "version": "2.4.0",
+    "version": "2.4.2",
     "dependencies": {
         "GyverIO": "https://github.com/GyverLibs/GyverIO.git",
-        "Random16": "https://github.com/GyverLibs/Random16.git"
+        "Random16": "https://github.com/GyverLibs/Random16.git",
+        "SHS_AVR_STD": "https://github.com/MrRyabena/SmartHomeSystem/releases/latest/download/SHSlibrary-SHS_AVR_STD.zip"
     }
 }

@@ -32,7 +32,7 @@ public:
     void setTarget(const RGB888 target_color);
     [[nodiscard]] RGB888 getTarget() const noexcept { return m_target_color; }
 
-    void setPeriod(const shs::t::shs_time_t period);
+    void setPeriod(const shs::t::shs_time_t period) noexcept;
     [[nodiscard]] shs::t::shs_time_t getPeriod() const noexcept { return m_period; }
 
 

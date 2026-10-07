@@ -14,7 +14,7 @@ void shs::lib::Color::FadeRgbFilter::setTarget(const RGB888 target_color)
     m_resetRunning();
 }
 
-void shs::lib::Color::FadeRgbFilter::setPeriod(shs::t::shs_time_t period) noexcept
+void shs::lib::Color::FadeRgbFilter::setPeriod(const shs::t::shs_time_t period) noexcept
 {
     m_period = period;
 
@@ -23,7 +23,15 @@ void shs::lib::Color::FadeRgbFilter::setPeriod(shs::t::shs_time_t period) noexce
 
 bool shs::lib::Color::FadeRgbFilter::apply(RGB888& color)
 {
-    if (!isActive()) return false;
+    if (!isActive())
+    {
+        if (color != m_target_color)
+        {
+            color = m_target_color;
+            return true;
+        }
+        return false;
+    }
 
     if (!m_isRunning())
     {

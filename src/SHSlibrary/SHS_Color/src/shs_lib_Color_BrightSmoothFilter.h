@@ -17,7 +17,7 @@ namespace shs::lib::Color
 class shs::lib::Color::BrightSmoothFilter : public VFilter
 {
 public:
-    BrightSmoothFilter(const shs::t::shs_time_t step_timeout, const uint8_t target_brightness = 0, const uint8_t step = 1);
+    explicit BrightSmoothFilter(const shs::t::shs_time_t step_timeout = 50, const uint8_t target_brightness = 0, const uint8_t step = 1);
 
     /**
      * @brief Apply the filter to the given value.

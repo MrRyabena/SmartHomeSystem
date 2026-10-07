@@ -7,15 +7,9 @@
 #include "shs_lib_Color_RGB888.h"
 
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            class FadeRgbFilter;
-        }
-    }
+    class FadeRgbFilter;
 }
 
 
@@ -25,7 +19,7 @@ public:
 
     static constexpr auto FADER_MIN_PERIOD = 20u;  // Minimum period for the fade effect in milliseconds
 
-    FadeRgbFilter(const shs::t::shs_time_t period);
+    explicit FadeRgbFilter(const shs::t::shs_time_t period = 2000);
 
     [[nodiscard]] bool apply(RGB888& color) override;
 

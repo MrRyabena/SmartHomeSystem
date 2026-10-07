@@ -2,15 +2,9 @@
 
 #include <stdint.h>
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            struct Wheel256;
-        }
-    }
+    struct Wheel256;
 }
 
 /**

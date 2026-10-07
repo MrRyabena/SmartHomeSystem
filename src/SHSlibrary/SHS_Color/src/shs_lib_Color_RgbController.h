@@ -7,16 +7,10 @@
 #include "shs_lib_Color_RGB888.h"
 #include "shs_lib_Color_RGBV8888.h"
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            class RgbFilter;
-            class RgbController;
-        }
-    }
+    class RgbFilter;
+    class RgbController;
 }
 
 

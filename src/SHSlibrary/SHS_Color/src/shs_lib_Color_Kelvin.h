@@ -6,15 +6,9 @@
 #include <assert.h>
 
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            struct Kelvin;
-        }
-    }
+    struct Kelvin;
 }
 
 

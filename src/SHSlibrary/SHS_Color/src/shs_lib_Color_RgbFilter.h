@@ -1,16 +1,10 @@
 #pragma once
 
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            struct RGB888;
-            class RgbFilter;
-        }
-    }
+    struct RGB888;
+    class RgbFilter;
 }
 
 

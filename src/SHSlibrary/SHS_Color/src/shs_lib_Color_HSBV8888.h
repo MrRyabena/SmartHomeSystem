@@ -3,15 +3,9 @@
 #include <stdint.h>
 #include "shs_lib_Color_HSB888.h"
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            struct HSBV8888;
-        }
-    }
+    struct HSBV8888;
 }
 
 /**

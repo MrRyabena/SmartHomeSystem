@@ -2,18 +2,12 @@
 
 #include <stdint.h>
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
+    enum class RgbFilterType : uint8_t
     {
-        namespace Color
-        {
-            enum class RgbFilterType : uint8_t
-            {
-                NONE = 0,
-                GAMMA = 1,
-                COLOR_CORRECTION = 2
-            };
-        }
-    }
+        NONE = 0,
+        GAMMA = 1,
+        COLOR_CORRECTION = 2
+    };
 }

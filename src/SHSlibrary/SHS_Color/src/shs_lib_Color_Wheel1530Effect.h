@@ -7,15 +7,9 @@
 #include "shs_lib_Color_RgbEffect.h"
 #include "shs_lib_Color_Wheel1530.h"
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            class Wheel1530Effect;
-        }
-    }
+    class Wheel1530Effect;
 }
 
 class shs::lib::Color::Wheel1530Effect : public shs::lib::Color::RgbEffect
@@ -27,7 +21,7 @@ public:
     shs::t::shs_time_t getPeriod() const noexcept override;
 
     [[nodiscard]] std::optional<RGBV8888> getColor() override;
-    
+
 protected:
     Wheel1530 m_value;
 };

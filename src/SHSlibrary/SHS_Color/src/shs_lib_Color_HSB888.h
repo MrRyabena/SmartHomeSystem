@@ -2,15 +2,9 @@
 
 #include <stdint.h>
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            struct HSB888;
-        }
-    }
+    struct HSB888;
 }
 
 /**

@@ -9,16 +9,10 @@
 
 #include "shs_lib_Color_RGB888.h"
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            struct RGBV8888;
-            class RgbEffect;
-        }
-    }
+    struct RGBV8888;
+    class RgbEffect;
 }
 
 

@@ -1,17 +1,12 @@
 #pragma once
 
+#include "shs_lib_Color_RgbFilter.h"
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            struct RGB888;
-            class RgbFilter;
-            class GammaRgbFilter;
-        }
-    }
+    struct RGB888;
+    class RgbFilter;
+    class GammaRgbFilter;
 }
 
 
@@ -22,9 +17,7 @@ public:
     ~GammaRgbFilter() override = default;
 
 
-    void apply(Color::RGB888& color);
+    bool apply(Color::RGB888& color);
 
 private:
-
-
 };

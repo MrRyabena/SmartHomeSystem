@@ -3,15 +3,9 @@
 #include <stdint.h>
 #include <shs_algorithm.h>
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            struct Wheel1530;
-        }
-    }
+    struct Wheel1530;
 }
 
 /**

@@ -11,18 +11,12 @@
 #include "shs_lib_Color_BrightSmoothFilter.h"
 
 
-namespace shs
+namespace shs::lib::Color
 {
-    namespace lib
-    {
-        namespace Color
-        {
-            class RgbFilter;
-            class RgbEffect;
+    class RgbFilter;
+    class RgbEffect;
 
-            class RgbManager;
-        }
-    }
+    class RgbManager;
 }
 
 

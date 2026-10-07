@@ -13,9 +13,11 @@ add_compile_definitions(
 )
 
 set(SOURCES
+    shs_lib_Color_BrightSmoothFilter.cpp
+    shs_lib_Color_BrightSmoothFilter.h
     shs_lib_Color_cast.h
-    shs_lib_Color_FadeRgbEffect.cpp
-    shs_lib_Color_FadeRgbEffect.h
+    shs_lib_Color_FadeRgbFilter.cpp
+    shs_lib_Color_FadeRgbFilter.h
     shs_lib_Color_GammaRgbFilter.h
     shs_lib_Color_HSB888.h
     shs_lib_Color_HSBV8888.h
@@ -33,6 +35,8 @@ set(SOURCES
     shs_lib_Color_RgbFilterType.h
     shs_lib_Color_RgbManager.cpp
     shs_lib_Color_RgbManager.h
+    shs_lib_Color_RgbManagerLayer.cpp
+    shs_lib_Color_RgbManagerLayer.h
     shs_lib_Color_RGBV8888.h
     shs_lib_Color_Wheel1530Effect.cpp
     shs_lib_Color_Wheel1530Effect.h

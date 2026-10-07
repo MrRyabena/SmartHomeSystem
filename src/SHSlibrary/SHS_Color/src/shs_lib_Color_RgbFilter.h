@@ -19,6 +19,11 @@ class shs::lib::Color::RgbFilter
 public:
     virtual ~RgbFilter() = default;
 
-    virtual void apply(shs::lib::Color::RGB888& color) = 0;
+    /**
+     * @brief Apply the filter to the given color.
+     * @param color The color to apply the filter to.
+     * @return true if the color was changed, false otherwise.
+     */
+    [[nodiscard]] virtual bool apply(shs::lib::Color::RGB888& color) = 0;
 
 };

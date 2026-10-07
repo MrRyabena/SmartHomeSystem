@@ -26,8 +26,8 @@ class shs::lib::Color::RgbManagerLayer : public shs::lib::Color::RgbController, 
 public:
     using effect_id_t = uint16_t;
 
-    RgbManagerLayer(std::vector<std::unique_ptr<RgbEffect>> effects = {});
-    RgbManagerLayer(BrightSmoothFilter bright_filter, FadeRgbFilter fade_filter, std::vector<std::unique_ptr<RgbEffect>> effects = {});
+    RgbManagerLayer(RGBV8888 base_color = RGBV8888(0, 0, 0, 0), std::vector<std::unique_ptr<RgbEffect>> effects = {});
+    RgbManagerLayer(BrightSmoothFilter bright_filter, FadeRgbFilter fade_filter, RGBV8888 base_color, std::vector<std::unique_ptr<RgbEffect>> effects = {});
 
     /**
      * @brief Apply the the layer filters and effects.
@@ -53,7 +53,7 @@ public:
     void disableBrightSmooth() { m_brightness_filter.disable(); }
 
     void enableFade() { m_fade_filter.enable(); }
-    [[nodiscard]] const FadeRgbFilter& getFadeFilter() { return m_fade_filter; }
+    [[nodiscard]] FadeRgbFilter& getFadeFilter() { return m_fade_filter; }
     void disableFade() { m_fade_filter.disable(); }
 
 protected:

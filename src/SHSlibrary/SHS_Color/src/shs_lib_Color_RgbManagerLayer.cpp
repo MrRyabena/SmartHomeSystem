@@ -1,6 +1,12 @@
 #include "shs_lib_Color_RgbManagerLayer.h"
 
-shs::lib::Color::RgbManagerLayer::RgbManagerLayer()
+
+shs::lib::Color::RgbManagerLayer::RgbManagerLayer(RGBV8888 base_color, std::vector<std::unique_ptr<RgbEffect>> effects)
+    : m_effects(std::move(effects)), m_color(base_color), m_fade_filter(FadeRgbFilter::FADER_MIN_PERIOD), m_brightness_filter(BrightSmoothFilter(100, 255, 1)), m_active(true)
+{}
+
+shs::lib::Color::RgbManagerLayer::RgbManagerLayer(BrightSmoothFilter bright_filter, FadeRgbFilter fade_filter, RGBV8888 base_color, std::vector<std::unique_ptr<RgbEffect>> effects)
+    : m_effects(std::move(effects)), m_color(base_color), m_fade_filter(std::move(fade_filter)), m_brightness_filter(std::move(bright_filter)), m_active(true)
 {}
 
 bool shs::lib::Color::RgbManagerLayer::apply(RGBV8888& color)

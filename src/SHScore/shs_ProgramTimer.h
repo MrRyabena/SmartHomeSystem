@@ -29,7 +29,7 @@ public:
     enum class Resolution : uint8_t { MICROSECONDS, MILLISECONDS, SECONDS };
 
 #ifdef SHS_SF_UNUSE_STL
-    static constexpr auto MAX_TIMEOUT = UINT64_MAX;
+    static constexpr auto MAX_TIMEOUT = UINT32_MAX;
 #else
     static constexpr auto MAX_TIMEOUT = std::numeric_limits<shs::t::shs_time_t>::max();
 #endif

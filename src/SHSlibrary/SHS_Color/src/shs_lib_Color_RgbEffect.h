@@ -11,7 +11,6 @@
 
 namespace shs::lib::Color
 {
-    struct RGBV8888;
     class RgbEffect;
 }
 
@@ -25,6 +24,8 @@ public:
 
     virtual ~RgbEffect() = default;
 
+    using result_t = std::pair<std::optional<RGB888>, std::optional<uint8_t>>;
+
     /**
      * @brief Updates the effect and returns the new color and brightness.
      * @return A pair containing the new RGB888 color and the new brightness value (0-255).
@@ -32,7 +33,7 @@ public:
      * @note This method should be called frequently in a loop to update the effect over time.
      *       The effect will automatically manage its timing based on the specified dt.
      */
-    [[nodiscard]] virtual std::pair<std::optional<RGB888>, std::optional<uint8_t>> update() = 0;
+    [[nodiscard]] virtual result_t update() = 0;
 
     virtual void setPeriod(const shs::t::shs_time_t period) noexcept = 0;
     virtual shs::t::shs_time_t getPeriod() const noexcept = 0;

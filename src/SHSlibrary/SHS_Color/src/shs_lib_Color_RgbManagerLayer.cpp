@@ -17,7 +17,7 @@ bool shs::lib::Color::RgbManagerLayer::apply(RGBV8888& color)
 
     for (auto& effect : m_effects)
     {
-        auto value = effect->getColor();
+        auto value = effect->update();
         if (value.first)
         {
             setColor(*value.first);

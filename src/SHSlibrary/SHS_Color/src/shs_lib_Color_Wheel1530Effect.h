@@ -20,7 +20,7 @@ public:
     void setPeriod(shs::t::shs_time_t period) noexcept override;
     shs::t::shs_time_t getPeriod() const noexcept override;
 
-    [[nodiscard]] std::optional<RGBV8888> getColor() override;
+    [[nodiscard]] result_t update() override;
 
 protected:
     Wheel1530 m_value;

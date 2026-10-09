@@ -33,4 +33,6 @@ public:
     virtual void setBrightness(const uint8_t brightness) = 0;
     virtual uint8_t getBrightness() const = 0;
 
+    virtual void setValue(const RGBV8888 color) { setColor(color.getRgb()); setBrightness(color.value); }
+    virtual RGBV8888 getValue() const { return RGBV8888(getColor(), getBrightness()); }
 };

@@ -10,6 +10,7 @@ namespace shs::lib::Color
         WHEEL1530 = 1,
         FADE = 2,
         PULSE = 3,
-        STROBE = 4
+        STROBE = 4,
+        FIRE = 5,
     };
 }

@@ -11,7 +11,7 @@
 #include "shs_lib_Color_RgbController.h"
 #include "shs_lib_Color_RgbEffect.h"
 #include "shs_lib_Color_BrightSmoothFilter.h"
-#include "shs_lib_Color_RgbFadeFilter.h"
+#include "shs_lib_Color_FadeRgbFilter.h"
 #include "shs_lib_Color_RgbvFilter.h"
 
 
@@ -42,6 +42,8 @@ public:
 
     void setBrightness(const uint8_t brightness) override;
     uint8_t getBrightness() const override { return m_color.value; }
+
+    RGBV8888 getValue() const override { return m_color; }
 
     [[nodiscard]] effect_id_t pushEffect(std::unique_ptr<RgbEffect> effect) { m_effects.push_back(std::move(effect)); return m_effects.size() - 1; }
     effect_id_t popEffect() { if (!m_effects.empty()) m_effects.pop_back();  return m_effects.size(); }

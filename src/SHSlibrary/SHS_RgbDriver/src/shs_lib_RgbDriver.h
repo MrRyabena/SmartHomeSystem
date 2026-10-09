@@ -42,8 +42,10 @@ public:
     void setColor(const RGB888 color) override;
     shs::lib::Color::RGB888 getColor() const override;
 
-    void setBrightness(const uint8_t brightness) override { m_brightness = brightness; }
+    void setBrightness(const uint8_t brightness) override;
     uint8_t getBrightness() const  override { return m_brightness; }
+
+    RGBV8888 getValue() const override;
 
 private:
     shs::LoadPWM m_red;

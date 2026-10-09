@@ -26,7 +26,7 @@ public:
      */
     bool apply(uint8_t& value) override;
 
-    void enable(const shs::t::shs_time_t step_timeout) { m_enabled = true; m_step_timer.reset(); }
+    void enable() { m_enabled = true; m_step_timer.reset(); }
     void disable() { m_enabled = false; }
     [[nodiscard]] bool isEnabled() const { return m_enabled; }
 

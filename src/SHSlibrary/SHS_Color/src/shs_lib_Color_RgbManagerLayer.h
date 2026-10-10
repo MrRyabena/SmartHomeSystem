@@ -61,7 +61,7 @@ public:
 protected:
     std::vector<std::unique_ptr<RgbEffect>> m_effects;
     RGBV8888 m_color;
-    FadeRgbFilter m_fade_filter;
-    BrightSmoothFilter m_brightness_filter;
+    std::shared_ptr<FadeRgbFilter> m_fade_filter;
+    std::shared_ptr<BrightSmoothFilter> m_brightness_filter;
     bool m_active;
 };

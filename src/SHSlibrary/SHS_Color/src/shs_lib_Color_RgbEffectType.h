@@ -4,9 +4,9 @@
 
 namespace shs::lib::Color
 {
-    enum class RfbEffectType : uint8_t
+    enum class RgbEffectType : uint8_t
     {
-        NONE = 0,
+        UNKNOWN = 0,
         WHEEL1530 = 1,
         FADE = 2,
         PULSE = 3,

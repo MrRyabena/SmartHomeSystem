@@ -8,6 +8,7 @@
 #include <shs_Process.h>
 
 #include "shs_lib_Color_RGB888.h"
+#include "shs_lib_Color_RgbEffectType.h"
 
 namespace shs::lib::Color
 {
@@ -18,8 +19,8 @@ namespace shs::lib::Color
 class shs::lib::Color::RgbEffect
 {
 public:
-    explicit RgbEffect(const shs::t::shs_time_t dt)
-        : m_timer(dt)
+    explicit RgbEffect(const shs::t::shs_time_t dt, const RgbEffectType type = RgbEffectType::UNKNOWN)
+        : m_timer(dt), m_type(type)
     {}
 
     virtual ~RgbEffect() = default;
@@ -38,6 +39,9 @@ public:
     virtual void setPeriod(const shs::t::shs_time_t period) noexcept = 0;
     virtual shs::t::shs_time_t getPeriod() const noexcept = 0;
 
+    [[nodiscard]] RgbEffectType getType() const noexcept { return m_type; }
+
 protected:
     shs::ProgramTimer m_timer;
+    RgbEffectType m_type;
 };

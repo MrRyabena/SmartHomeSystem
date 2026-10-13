@@ -8,6 +8,8 @@ namespace shs::lib::Color
     {
         NONE = 0,
         GAMMA = 1,
-        COLOR_CORRECTION = 2
+        COLOR_CORRECTION = 2,
+        BRIGHT_SMOOTH = 3,
+        FADE_RGB = 4,
     };
 }

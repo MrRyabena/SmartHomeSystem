@@ -89,6 +89,14 @@ public:
         return bytes;
     }
 
+    template <typename T>
+    T get(BCsize_t bytes = sizeof(T))
+    {
+        T var{};
+        get(var, bytes);
+        return var;
+    }
+
     BCbuf_t read() { return this->m_ptr < m_end ? *(this->m_ptr++) : *(this->m_ptr - 1); }
     const BCbuf_t& operator[](const BCsize_t index) const { return m_begin[index]; }
     BCbuf_t& back() { return const_cast<BCbuf_t&>(*(m_end - 1)); }

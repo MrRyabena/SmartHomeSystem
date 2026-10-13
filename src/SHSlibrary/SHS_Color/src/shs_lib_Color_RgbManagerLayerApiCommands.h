@@ -13,10 +13,10 @@ namespace shs::lib::Color
         ENABLE_FADE = 3,
         DISABLE_FADE = 4,
         PUSH_EFFECT = 5,
+        PUSHED_EFFECT_ID = 7,
         POP_EFFECT = 6,
-        EFFECT_PUSHED_ID = 7,
-        REMOVE_EFFECT = 8,
-        CLEAR_EFFECTS = 9,
-        
+        POPPED_EFFECT_ID = 8,
+        REMOVE_EFFECT = 9,
+        CLEAR_EFFECTS = 10,
     };
 }

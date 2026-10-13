@@ -6,7 +6,10 @@
 #include <shs_ByteCollectorIterator.h>
 #include <shs_DTPpacket.h>
 
+#include "shs_lib_Color_RgbManagerApiCommands.h"
 #include "shs_lib_Color_RgbManager.h"
+#include "shs_lib_Color_RgbManagerLayerApi.h"
+
 
 namespace shs::lib::Color
 {
@@ -17,8 +20,13 @@ namespace shs::lib::Color
 class shs::lib::Color::RgbManagerApi : public shs::API
 {
 public:
-    explicit RgbManagerApi(const shs::t::shs_ID_t id);
+    using Commands = RgbManagerApiCommands;
+
+    explicit RgbManagerApi(std::shared_ptr<RgbManager> manager, shs::t::shs_ID_t id);
 
 
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
+
+protected:
+    std::shared_ptr<RgbManager> m_manager;
 };

@@ -4,7 +4,7 @@
 
 namespace shs::lib::Color
 {
-    enum class RgbManagerApiCommand : uint8_t
+    enum class RgbManagerApiCommands : uint8_t
     {
         NOCOMMAND = 0,
         ADD_LAYER = 1,

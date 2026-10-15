@@ -8,7 +8,6 @@
 
 #include "shs_lib_Color_RgbManagerApiCommands.h"
 #include "shs_lib_Color_RgbManager.h"
-#include "shs_lib_Color_RgbManagerLayerApi.h"
 
 
 namespace shs::lib::Color

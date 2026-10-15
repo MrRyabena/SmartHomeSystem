@@ -22,6 +22,7 @@ public:
     static constexpr uint8_t DEFAULT_MAX_BRIGHTNESS = 255;
     static constexpr uint8_t DEFAULT_MIN_SATURATION = 255;
     static constexpr uint8_t DEFAULT_MAX_SATURATION = 255;
+    static constexpr shs::t::shs_time_t DEFAULT_DURATION = 20;
 
     /**
      * @brief Constructs a FireRgbEffect with the specified parameters.
@@ -48,7 +49,7 @@ public:
     [[nodiscard]] uint8_t getStartHue() const noexcept { return m_start_hue; }
     void setHueGap(uint8_t hue_gap) noexcept { m_hue_gap = hue_gap; }
     [[nodiscard]] uint8_t getHueGap() const noexcept { return m_hue_gap; }
-    void setSmoothK(shs::t::shs_float_t smooth_k) noexcept { m_smooth_k = std::clamp(smooth_k, 0.0f, 1.0f); }
+    void setSmoothK(shs::t::shs_float_t smooth_k) noexcept;
     [[nodiscard]] shs::t::shs_float_t getSmoothK() const noexcept { return m_smooth_k; }
     void setMinBrightness(uint8_t min_brightness) noexcept { m_min_brightness = min_brightness; }
     [[nodiscard]] uint8_t getMinBrightness() const noexcept { return m_min_brightness; }
@@ -73,12 +74,4 @@ protected:
     uint8_t m_max_brightness;
     uint8_t m_min_saturation;
     uint8_t m_max_saturation;
-
-
-    template<typename T>
-    constexpr T map(T x, T in_min, T in_max, T out_min, T out_max)
-    {
-        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-    }
-
 };

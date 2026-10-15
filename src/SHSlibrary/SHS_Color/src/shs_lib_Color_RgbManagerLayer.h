@@ -37,12 +37,15 @@ public:
      */
     [[nodiscard]] bool apply(RGBV8888& color) override;
 
+    void setup() override {}
+
     void setColor(const RGB888 color) override;
     RGB888 getColor() const override { return m_color.getRgb(); }
 
     void setBrightness(const uint8_t brightness) override;
     uint8_t getBrightness() const override { return m_color.value; }
 
+    void setValue(const RGBV8888 color) override { m_color = color; }
     RGBV8888 getValue() const override { return m_color; }
 
     [[nodiscard]] effect_id_t pushEffect(std::unique_ptr<RgbEffect> effect) { m_effects.push_back(std::move(effect)); return m_effects.size() - 1; }
@@ -61,7 +64,7 @@ public:
 protected:
     std::vector<std::unique_ptr<RgbEffect>> m_effects;
     RGBV8888 m_color;
-    std::shared_ptr<FadeRgbFilter> m_fade_filter;
-    std::shared_ptr<BrightSmoothFilter> m_brightness_filter;
+    FadeRgbFilter m_fade_filter;
+    BrightSmoothFilter m_brightness_filter;
     bool m_active;
 };

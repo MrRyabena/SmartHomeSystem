@@ -1,9 +1,10 @@
 #include "shs_lib_Color_FadeRgbFilterApi.h"
 
 #include <shs_lib_APIids.h>
+#include <shs_utils.h>
 
-shs::lib::Color::FadeRgbFilterApi::FadeRgbFilterApi(std::shared_ptr<FadeRgbFilter> filter, const shs::t::shs_ID_t id)
-    : shs::API(id.setComponentID(shs::APIids::COLOR_FADE_RGB_FILTER)), m_filter(std::move(filter))
+shs::lib::Color::FadeRgbFilterApi::FadeRgbFilterApi(std::shared_ptr<FadeRgbFilter> filter, shs::t::shs_ID_t id)
+    : shs::API(id.setComponentID(shs::etoi(shs::lib::APIids::COLOR_RGB_FADE_FILTER_API))), m_filter(std::move(filter))
 {}
 
 
@@ -11,7 +12,7 @@ shs::DTPpacket shs::lib::Color::FadeRgbFilterApi::handle(shs::ByteCollectorReadI
 {
     it.set_position(shs::DTPpacket::get_dataBeg(it));
 
-    switch (it.read())
+    switch (static_cast<Commands>(it.read()))
     {
         case Commands::ENABLE: m_filter->enable(); break;
         case Commands::DISABLE: m_filter->disable(); break;

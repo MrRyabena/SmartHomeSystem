@@ -12,7 +12,7 @@ shs::DTPpacket shs::lib::Color::BrightSmoothFilterApi::handle(shs::ByteCollector
 
     it.set_position(shs::DTPpacket::get_dataBeg(it));
 
-    switch (it.read())
+    switch (static_cast<Commands>(it.read()))
     {
         case Commands::IS_ENABLED:
             {
@@ -61,7 +61,7 @@ void shs::lib::Color::BrightSmoothFilterApi::handle(shs::ByteCollectorReadIterat
 {
     using Commands = BrightSmoothFilterApiCommands;
 
-    switch (it.read())
+    switch (static_cast<Commands>(it.read()))
     {
         case Commands::ENABLE: filter->enable(); break;
         case Commands::DISABLE: filter->disable(); break;

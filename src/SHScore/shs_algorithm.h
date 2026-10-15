@@ -32,6 +32,13 @@ namespace shs
         return value < low ? low : (high < value ? high : value);
     }
 
+    template <typename ValueT, typename InMinT, typename InMaxT, typename OutMinT, typename OutMaxT>
+    [[nodiscard]] constexpr ValueT map(const ValueT& in_value, const InMinT& in_min, const InMaxT& in_max, const OutMinT& out_min, const OutMaxT& out_max)
+    {
+        if (in_max == in_min) return static_cast<ValueT>(out_min);  // Prevent division by zero
+        return static_cast<ValueT>((in_value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
+    }
+
     template <class Class>
     inline void quick_remove_at(Class& obj, const size_t ind)
     {

@@ -12,5 +12,6 @@ namespace shs::lib::Color
         REMOVE_LAYER = 3,
         POP_LAYER = 4,
         LAYER_POPPED_ID = 5,
+        MANAGE_LAYER = 6,
     };
 }

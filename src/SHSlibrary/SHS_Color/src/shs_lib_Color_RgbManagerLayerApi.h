@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include <shs_API.h>
 #include <shs_ByteCollectorIterator.h>
@@ -22,9 +23,12 @@ class shs::lib::Color::RgbManagerLayerApi : public shs::API
 public:
     using Commands = RgbManagerLayerApiCommand;
 
-    RgbManagerLayerApi(std::shared_ptr<RgbManagerLayer> layer, const shs::t::shs_ID_t id);
+    RgbManagerLayerApi(std::shared_ptr<RgbManagerLayer> layer, shs::t::shs_ID_t id);
 
     [[nodiscard]] shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
+
+    [[nodiscard]] static std::optional<RgbManagerLayer::effect_id_t> handle(shs::ByteCollectorReadIterator<>& it,
+        std::shared_ptr<RgbManagerLayer> layer);
 
 protected:
     std::shared_ptr<RgbManagerLayer> m_layer;

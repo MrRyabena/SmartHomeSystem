@@ -21,7 +21,7 @@ namespace shs
 class shs::argb::Effect : public shs::Process
 {
 public:
-    enum class Effects : uint16_t { NO_EFFECT, RING_LOAD};
+    using Effects = shs::argb::Effects;
 
     explicit Effect(CRGB* leds, uint16_t num_leds, std::function<void()> on_change_callback, Effects effect = Effects::NO_EFFECT);
 

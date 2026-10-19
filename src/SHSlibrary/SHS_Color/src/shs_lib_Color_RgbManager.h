@@ -7,7 +7,7 @@
 
 #include "shs_lib_Color_RGBV8888.h"
 #include "shs_lib_Color_RgbController.h"
-#include "shs_lib_Color_RgbManagerLayer.h"
+#include "shs_lib_Color_RgbManagerLayerInterface.h"
 #include "shs_lib_Color_BrightSmoothFilter.h"
 
 
@@ -35,15 +35,15 @@ public:
     void tick() override;
     void stop() override { m_active = false; }
 
-    [[nodiscard]] layer_id_t addLayer(std::shared_ptr<RgbManagerLayer> layer) { m_layers.push_back(std::move(layer)); return m_layers.size() - 1; }
-    [[nodiscard]] std::shared_ptr<RgbManagerLayer> getLayer(const layer_id_t id) { if (id < m_layers.size()) return m_layers[id]; return nullptr; }
-    layer_id_t popLayer() { if (!m_layers.empty()) m_layers.pop_back();  return m_layers.size(); }
-    void removeLayer(const layer_id_t id) { if (id < m_layers.size()) m_layers.erase(m_layers.begin() + id); }
-    void clearLayers() { m_layers.clear(); }
+    [[nodiscard]] virtual layer_id_t addLayer(std::shared_ptr<RgbManagerLayerInterface> layer) { m_layers.push_back(std::move(layer)); return m_layers.size() - 1; }
+    [[nodiscard]] virtual std::shared_ptr<RgbManagerLayerInterface> getLayer(const layer_id_t id) { if (id < m_layers.size()) return m_layers[id]; return nullptr; }
+    virtual layer_id_t popLayer() { if (!m_layers.empty()) m_layers.pop_back();  return m_layers.size(); }
+    virtual void removeLayer(const layer_id_t id) { if (id < m_layers.size()) m_layers.erase(m_layers.begin() + id); }
+    virtual void clearLayers() { m_layers.clear(); }
 
 
 protected:
-    std::vector<std::shared_ptr<RgbManagerLayer>> m_layers;
+    std::vector<std::shared_ptr<RgbManagerLayerInterface>> m_layers;
 
     std::shared_ptr<RgbController> m_controller;
     bool m_active;

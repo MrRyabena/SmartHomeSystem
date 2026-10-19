@@ -7,13 +7,14 @@ shs::lib::Color::RgbManager::RgbManager(std::shared_ptr<RgbController> controlle
 
 void shs::lib::Color::RgbManager::setup()
 {
+    if (!m_controller) return;
     m_controller->setup();
 }
 
 
 void shs::lib::Color::RgbManager::tick()
 {
-    if (!m_active) return;
+    if (!m_active || !m_controller) return;
     if (m_layers.empty()) return;
 
     RGBV8888 color(m_controller->getColor(), m_controller->getBrightness());
@@ -25,6 +26,7 @@ void shs::lib::Color::RgbManager::setColor(const RGB888 color)
 {
     if (m_layers.empty())
     {
+        if (!m_controller) return;
         m_controller->setColor(color);
     }
     else
@@ -35,6 +37,8 @@ void shs::lib::Color::RgbManager::setColor(const RGB888 color)
 
 shs::lib::Color::RGB888 shs::lib::Color::RgbManager::getColor() const
 {
+    if (!m_controller) return RGB888(0, 0, 0);
+
     return m_controller->getColor();
 }
 
@@ -42,6 +46,7 @@ void shs::lib::Color::RgbManager::setBrightness(const uint8_t brightness)
 {
     if (m_layers.empty())
     {
+        if (!m_controller) return;
         m_controller->setBrightness(brightness);
     }
     else

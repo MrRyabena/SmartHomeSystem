@@ -12,16 +12,8 @@ shs::DTPpacket shs::lib::Color::RgbControllerApi::handle(shs::ByteCollectorReadI
 {
     it.set_position(shs::DTPpacket::get_dataBeg(it));
 
-    using Commands = shs::lib::Color::RgbControllerApiCommands;
-
     switch (static_cast<Commands>(it.read()))
     {
-        case Commands::SET_COLOR:
-            {
-                m_controller->setColor(RGB888(it.read(), it.read(), it.read()));
-            }
-            break;
-
         case Commands::GET_COLOR:
             {
                 RGB888 color = m_controller->getColor();
@@ -35,11 +27,6 @@ shs::DTPpacket shs::lib::Color::RgbControllerApi::handle(shs::ByteCollectorReadI
                 return shs::DTPpacket(API_ID, shs::DTPpacket::get_senderID(it), std::move(bc));
             }
             break;
-
-        case Commands::SET_BRIGHTNESS:
-            m_controller->setBrightness(it.read());
-            break;
-
         case Commands::GET_BRIGHTNESS:
             {
                 uint8_t brightness = m_controller->getBrightness();
@@ -55,6 +42,17 @@ shs::DTPpacket shs::lib::Color::RgbControllerApi::handle(shs::ByteCollectorReadI
             return shs::DTPpacket{};
             break;
     }
-
     return shs::DTPpacket{};
+}
+
+void shs::lib::Color::RgbControllerApi::handle(shs::ByteCollectorReadIterator<>& it, RgbController& controller)
+{
+    using Commands = shs::lib::Color::RgbControllerApiCommands;
+
+    switch (static_cast<Commands>(it.read()))
+    {
+        case Commands::SET_COLOR: controller.setColor(it.get<RGB888>()); break;
+        case Commands::SET_BRIGHTNESS: controller.setBrightness(it.read()); break;
+        default: break;
+    }
 }

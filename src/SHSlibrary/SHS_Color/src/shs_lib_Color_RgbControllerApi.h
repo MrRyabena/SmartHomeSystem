@@ -20,10 +20,13 @@ namespace shs::lib::Color
 class shs::lib::Color::RgbControllerApi : public shs::API
 {
 public:
+    using Commands = RgbControllerApiCommands;
 
     RgbControllerApi(shs::t::shs_ID_t id, std::shared_ptr<RgbController> controller);
 
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
+
+    static void handle(shs::ByteCollectorReadIterator<>& it, RgbController& controller);
 
 protected:
     std::shared_ptr<RgbController> m_controller;

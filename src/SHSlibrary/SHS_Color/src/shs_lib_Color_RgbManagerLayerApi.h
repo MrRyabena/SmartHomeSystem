@@ -8,7 +8,7 @@
 #include <shs_DTPpacket.h>
 #include <shs_types.h>
 
-#include "shs_lib_Color_RgbManagerLayer.h"
+#include "shs_lib_Color_RgbManagerLayerInterface.h"
 #include "shs_lib_Color_RgbManagerLayerApiCommands.h"
 
 
@@ -21,17 +21,17 @@ namespace shs::lib::Color
 class shs::lib::Color::RgbManagerLayerApi : public shs::API
 {
 public:
-    using Commands = RgbManagerLayerApiCommand;
+    using Commands = RgbManagerLayerApiCommands;
 
-    RgbManagerLayerApi(std::shared_ptr<RgbManagerLayer> layer, shs::t::shs_ID_t id);
+    RgbManagerLayerApi(std::shared_ptr<RgbManagerLayerInterface> layer, shs::t::shs_ID_t id);
 
     [[nodiscard]] shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
 
-    [[nodiscard]] static std::optional<RgbManagerLayer::effect_id_t> handle(shs::ByteCollectorReadIterator<>& it,
-        std::shared_ptr<RgbManagerLayer> layer);
+    [[nodiscard]] static std::optional<RgbManagerLayerInterface::effect_id_t> handle(shs::ByteCollectorReadIterator<>& it,
+        std::shared_ptr<RgbManagerLayerInterface> layer);
 
 protected:
-    std::shared_ptr<RgbManagerLayer> m_layer;
+    std::shared_ptr<RgbManagerLayerInterface> m_layer;
 
-    [[nodiscard]] shs::DTPpacket m_createAnswerId(Commands command, RgbManagerLayer::effect_id_t id, shs::ByteCollectorReadIterator<>& it) const;
+    [[nodiscard]] shs::DTPpacket m_createAnswerId(Commands command, RgbManagerLayerInterface::effect_id_t id, shs::ByteCollectorReadIterator<>& it) const;
 };

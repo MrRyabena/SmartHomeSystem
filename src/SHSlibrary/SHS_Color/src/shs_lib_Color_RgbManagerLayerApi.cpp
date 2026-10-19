@@ -9,7 +9,7 @@
 #include "shs_lib_Color_Wheel1530.h"
 #include "shs_lib_Color_FireRgbEffect.h"
 
-shs::lib::Color::RgbManagerLayerApi::RgbManagerLayerApi(std::shared_ptr<RgbManagerLayer> layer, shs::t::shs_ID_t id)
+shs::lib::Color::RgbManagerLayerApi::RgbManagerLayerApi(std::shared_ptr<RgbManagerLayerInterface> layer, shs::t::shs_ID_t id)
     : shs::API(id.setComponentID(shs::etoi(shs::lib::APIids::COLOR_RGB_MANAGER_LAYER_API))), m_layer(layer)
 {}
 
@@ -34,19 +34,22 @@ shs::DTPpacket shs::lib::Color::RgbManagerLayerApi::handle(shs::ByteCollectorRea
     return shs::DTPpacket();
 }
 
-std::optional<shs::lib::Color::RgbManagerLayer::effect_id_t> shs::lib::Color::RgbManagerLayerApi::handle(shs::ByteCollectorReadIterator<>& it, std::shared_ptr<RgbManagerLayer> layer)
+std::optional<shs::lib::Color::RgbManagerLayerInterface::effect_id_t> shs::lib::Color::RgbManagerLayerApi::handle(shs::ByteCollectorReadIterator<>& it, std::shared_ptr<RgbManagerLayerInterface> layer)
 {
     switch (static_cast<Commands>(it.read()))
     {
         case Commands::ENABLE_BRIGHT_SMOOTH: layer->enableBrightSmooth(); break;
         case Commands::DISABLE_BRIGHT_SMOOTH: layer->disableBrightSmooth(); break;
+        case Commands::SET_BRIGHT_SMOOTH_STEP_TIMEOUT: layer->setBrightSmoothStepTimeout(it.get<shs::t::shs_time_t>()); break;
+        case Commands::SET_BRIGHT_SMOOTH_STEP: layer->setBrightSmoothStep(it.get<uint8_t>()); break;
         case Commands::ENABLE_FADE: layer->enableFade(); break;
         case Commands::DISABLE_FADE: layer->disableFade(); break;
-        case Commands::REMOVE_EFFECT: layer->removeEffect(it.get<RgbManagerLayer::effect_id_t>()); break;
+        case Commands::SET_FADE_PERIOD: layer->setFadePeriod(it.get<shs::t::shs_time_t>()); break;
+        case Commands::REMOVE_EFFECT: layer->removeEffect(it.get<RgbManagerLayerInterface::effect_id_t>()); break;
         case Commands::CLEAR_EFFECTS: layer->clearEffects(); break;
         case Commands::PUSH_EFFECT:
             {
-                RgbManagerLayer::effect_id_t pushed_effect_id{};
+                RgbManagerLayerInterface::effect_id_t pushed_effect_id{};
 
                 switch (static_cast<RgbEffectType>(it.read()))
                 {
@@ -77,15 +80,14 @@ std::optional<shs::lib::Color::RgbManagerLayer::effect_id_t> shs::lib::Color::Rg
             {
                 auto id = layer->popEffect();
 
-                return std::make_optional(id);
+                return id;
             }
             break;
         default: break;
     }
     return std::nullopt;
 }
-
-shs::DTPpacket shs::lib::Color::RgbManagerLayerApi::m_createAnswerId(Commands command, RgbManagerLayer::effect_id_t id, shs::ByteCollectorReadIterator<>& it) const
+shs::DTPpacket shs::lib::Color::RgbManagerLayerApi::m_createAnswerId(Commands command, RgbManagerLayerInterface::effect_id_t id, shs::ByteCollectorReadIterator<>& it) const
 {
     shs::ByteCollector<> bc(1 + sizeof(id));
     bc.push_back(command, 1);

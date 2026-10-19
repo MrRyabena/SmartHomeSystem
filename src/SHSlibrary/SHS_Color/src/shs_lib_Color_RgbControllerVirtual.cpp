@@ -19,22 +19,32 @@ void shs::lib::Color::RgbControllerVirtual::setColor(const RGB888 color)
 {
     RgbController::setColor(color);
 
-    shs::ByteCollector<> bc(4);
-    bc.push_back(RgbControllerApiCommands::SET_COLOR, 1);
-    bc.push_back(color, 3);
-
-    m_dtp.sendPacket(shs::DTPpacket(API_ID, m_remote_id, std::move(bc)));
+    m_dtp.sendPacket(setColor(color, API_ID, m_remote_id));
 }
 
 void shs::lib::Color::RgbControllerVirtual::setBrightness(const uint8_t brightness) noexcept
 {
     RgbController::setBrightness(brightness);
 
+    m_dtp.sendPacket(setBrightness(brightness, API_ID, m_remote_id));
+}
+
+shs::DTPpacket shs::lib::Color::RgbControllerVirtual::setColor(const RGB888 color, const shs::t::shs_ID_t id, const shs::t::shs_ID_t remote_id)
+{
+    shs::ByteCollector<> bc(4);
+    bc.push_back(RgbControllerApiCommands::SET_COLOR, 1);
+    bc.push_back(color);
+
+    return shs::DTPpacket(id, remote_id, std::move(bc));
+}
+
+shs::DTPpacket shs::lib::Color::RgbControllerVirtual::setBrightness(const uint8_t brightness, const shs::t::shs_ID_t id, const shs::t::shs_ID_t remote_id)
+{
     shs::ByteCollector<> bc(2);
     bc.push_back(RgbControllerApiCommands::SET_BRIGHTNESS, 1);
     bc.push_back(brightness, 1);
 
-    m_dtp.sendPacket(shs::DTPpacket(API_ID, m_remote_id, std::move(bc)));
+    return shs::DTPpacket(id, remote_id, std::move(bc));
 }
 
 shs::DTPpacket shs::lib::Color::RgbControllerVirtual::handle(shs::ByteCollectorReadIterator<>& it)

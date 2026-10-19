@@ -21,6 +21,9 @@ public:
     void setColor(const RGB888 color) override;
     void setBrightness(const uint8_t brightness) noexcept override;
 
+    [[nodiscard]] static shs::DTPpacket setColor(const RGB888 color, const shs::t::shs_ID_t id, const shs::t::shs_ID_t remote_id);
+    [[nodiscard]] static shs::DTPpacket setBrightness(const uint8_t brightness, const shs::t::shs_ID_t api_id, const shs::t::shs_ID_t remote_id);
+
     shs::DTPpacket handle(shs::ByteCollectorReadIterator<>& it) override;
 
 protected:

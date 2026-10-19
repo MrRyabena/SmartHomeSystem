@@ -5,8 +5,7 @@
 #include <utility>
 #include <vector>
 
-#include <shs_Process.h>
-
+#include "shs_lib_Color_RgbManagerLayerInterface.h"
 #include "shs_lib_Color_RGBV8888.h"
 #include "shs_lib_Color_RgbController.h"
 #include "shs_lib_Color_RgbEffect.h"
@@ -21,7 +20,7 @@ namespace shs::lib::Color
 }
 
 
-class shs::lib::Color::RgbManagerLayer : public shs::lib::Color::RgbController, public RgbvFilter
+class shs::lib::Color::RgbManagerLayer : public RgbManagerLayerInterface
 {
 public:
     using effect_id_t = uint16_t;
@@ -53,13 +52,17 @@ public:
     void removeEffect(const effect_id_t id) { if (id < m_effects.size()) m_effects.erase(m_effects.begin() + id); }
     void clearEffects() { m_effects.clear(); }
 
-    void enableBrightSmooth() { m_brightness_filter.enable(); }
-    [[nodiscard]] BrightSmoothFilter& getBrightSmoothFilter() { return m_brightness_filter; }
-    void disableBrightSmooth() { m_brightness_filter.disable(); }
+    void enableBrightSmooth() override { m_brightness_filter.enable(); }
+    void disableBrightSmooth() override { m_brightness_filter.disable(); }
+    void setBrightSmoothStepTimeout(const shs::t::shs_time_t step_timeout) override { m_brightness_filter.setStepTimeout(step_timeout); }
+    void setBrightSmoothStep(const uint8_t step) override { m_brightness_filter.setStep(step); }
+    [[nodiscard]] shs::t::shs_time_t getBrightSmoothStepTimeout() const override { return m_brightness_filter.getStepTimeout(); }
+    [[nodiscard]] uint8_t getBrightSmoothStep() const override { return m_brightness_filter.getStep(); }
 
-    void enableFade() { m_fade_filter.enable(); }
-    [[nodiscard]] FadeRgbFilter& getFadeFilter() { return m_fade_filter; }
-    void disableFade() { m_fade_filter.disable(); }
+    void enableFade() override { m_fade_filter.enable(); }
+    void disableFade() override { m_fade_filter.disable(); }
+    void setFadePeriod(const shs::t::shs_time_t period) override { m_fade_filter.setPeriod(period); }
+    [[nodiscard]] shs::t::shs_time_t getFadePeriod() const override { return m_fade_filter.getPeriod(); }
 
 protected:
     std::vector<std::unique_ptr<RgbEffect>> m_effects;

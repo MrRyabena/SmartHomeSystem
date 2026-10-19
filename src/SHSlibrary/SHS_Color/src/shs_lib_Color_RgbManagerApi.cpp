@@ -9,6 +9,8 @@
 #include "shs_lib_Color_FadeRgbFilter.h"
 #include "shs_lib_Color_RgbManagerLayer.h"
 #include "shs_lib_Color_RgbManagerLayerApi.h"
+#include "shs_lib_Color_RgbControllerApi.h"
+#include "shs_lib_Color_RgbController.h"
 
 shs::lib::Color::RgbManagerApi::RgbManagerApi(std::shared_ptr<RgbManager> manager, shs::t::shs_ID_t id)
     : shs::API(id.setComponentID(shs::etoi(shs::lib::APIids::COLOR_RGB_MANAGER_API))), m_manager(manager)
@@ -56,6 +58,12 @@ shs::DTPpacket shs::lib::Color::RgbManagerApi::handle(shs::ByteCollectorReadIter
                 {
                     [[maybe_unused]] auto id = RgbManagerLayerApi::handle(it, layer);
                 }
+            }
+            break;
+        case Commands::CLEAR_LAYERS: m_manager->clearLayers(); break;
+        case Commands::MANAGE_CONTROLLER:
+            {
+                RgbControllerApi::handle(it, *reinterpret_cast<RgbController*>(this));
             }
             break;
         default: break;

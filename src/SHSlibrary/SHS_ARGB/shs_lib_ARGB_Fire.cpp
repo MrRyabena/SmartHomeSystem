@@ -1,5 +1,7 @@
 #include "shs_lib_ARGB_Fire.h"
 
+#ifndef SHS_LIB_ARGB_NO_FASTLED
+
 #include <shs_algorithm.h>
 
 #include "shs_lib_ARGB_Effects.h"
@@ -35,3 +37,5 @@ CHSV shs::argb::Fire::getFireColor(const uint16_t val)
         shs::clamp(shs::map(val, 0, 255, m_min_brightness, m_max_brightness), 0, 255)   // V
     );
 }
+
+#endif  // #ifndef SHS_LIB_ARGB_NO_FASTLED

@@ -1,5 +1,8 @@
 #pragma once
 
+#include <shs_settings_private.h>
+
+#ifndef SHS_LIB_ARGB_NO_FASTLED
 
 #include <stdint.h>
 
@@ -67,3 +70,5 @@ protected:
     uint8_t m_min_saturation;
     uint8_t m_max_saturation;
 };
+
+#endif  // #ifndef SHS_LIB_ARGB_NO_FASTLED

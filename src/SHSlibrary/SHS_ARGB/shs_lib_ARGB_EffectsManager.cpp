@@ -15,6 +15,16 @@ void shs::argb::EffectsManager::setRandomMatrix(uint8_t min_color, uint8_t max_c
         dt, min_color, max_color, direction, min_line_length_ratio, max_line_length_ratio);
 }
 
+void shs::argb::EffectsManager::setFire(uint8_t start_hue,
+    uint8_t hue_gap, uint8_t fire_step,
+    uint8_t min_bright, uint8_t max_bright,
+    uint8_t min_sat, uint8_t max_sat)
+{
+    m_current_effect = std::make_unique<shs::argb::Fire>(m_leds, m_num_leds,
+        []() { FastLED.show(); },
+        start_hue, hue_gap, fire_step, min_bright, max_bright, min_sat, max_sat);
+}
+
 void shs::argb::EffectsManager::tick()
 {
     if (m_current_effect)
@@ -23,4 +33,4 @@ void shs::argb::EffectsManager::tick()
     }
 }
 
-#endif
+#endif  // #ifndef SHS_LIB_ARGB_NO_FASTLED

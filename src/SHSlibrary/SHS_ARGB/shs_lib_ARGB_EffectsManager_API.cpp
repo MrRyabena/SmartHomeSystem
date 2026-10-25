@@ -38,6 +38,19 @@ shs::DTPpacket shs::argb::EffectsManager_API::handle(shs::ByteCollectorReadItera
                 m_effects_manager.setRandomMatrix(min_color, max_color, direction, dt, min_line_length_ratio, max_line_length_ratio);
             }
             break;
+        case Commands::SET_FIRE:
+            {
+                m_effects_manager.setFire(
+                    it.read(), // start_hue
+                    it.read(), // hue_gap
+                    it.read(), // fire_step
+                    it.read(), // min_bright
+                    it.read(), // max_bright    
+                    it.read(), // min_sat
+                    it.read()  // max_sat
+                );
+            }
+            break;
         default:
             break;
     }

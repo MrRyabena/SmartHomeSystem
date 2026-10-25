@@ -26,6 +26,23 @@ void shs::argb::EffectsManagerVirtual::setRandomMatrix(uint8_t min_color, uint8_
     m_dtp.sendPacket(shs::DTPpacket(m_this_id, m_remote_id, std::move(bc)));
 }
 
+void shs::argb::EffectsManagerVirtual::setFire(const uint8_t start_hue, const uint8_t hue_gap,
+    const uint8_t fire_step, const uint8_t min_bright, const uint8_t max_bright,
+    const uint8_t min_sat, const uint8_t max_sat)
+{
+    shs::ByteCollector<> bc(8);
+    bc.push_back(Commands::SET_FIRE, 1);
+    bc.push_back(start_hue, 1);
+    bc.push_back(hue_gap, 1);
+    bc.push_back(fire_step, 1);
+    bc.push_back(min_bright, 1);
+    bc.push_back(max_bright, 1);
+    bc.push_back(min_sat, 1);
+    bc.push_back(max_sat, 1);
+
+    m_dtp.sendPacket(shs::DTPpacket(m_this_id, m_remote_id, std::move(bc)));
+}
+
 void shs::argb::EffectsManagerVirtual::resetEffects()
 {
     shs::ByteCollector<> bc(1);

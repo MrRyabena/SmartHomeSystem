@@ -11,6 +11,7 @@ namespace shs
             NO_COMMAND = 0,
             RESET_EFFECTS = 1,
             SET_RANDOM_MATRIX = 2,
+            SET_FIRE = 3,
         };
     }
 }

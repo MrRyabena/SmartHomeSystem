@@ -18,11 +18,11 @@ bool shs::lib::Color::BrightSmoothFilter::apply(uint8_t& value)
     {
         if (value < m_target_brightness)
         {
-            value += (value + m_step > m_target_brightness) ? (m_target_brightness - value) : m_step;
+            value += (static_cast<int>(value) + m_step > static_cast<int>(m_target_brightness)) ? (m_target_brightness - value) : m_step;
         }
         else
         {
-            value -= (value - m_step < m_target_brightness) ? (value - m_target_brightness) : m_step;
+            value -= (static_cast<int>(value) - m_step < static_cast<int>(m_target_brightness)) ? (value - m_target_brightness) : m_step;
         }
         return true;
     }

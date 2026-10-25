@@ -43,16 +43,19 @@ public:
     shs::lib::Color::RGB888 getColor() const override;
 
     void setBrightness(const uint8_t brightness) override;
-    uint8_t getBrightness() const  override { return m_brightness; }
+    uint8_t getBrightness() const  override { return m_color.value; }
 
-    RGBV8888 getValue() const override;
+    void setValue(const RGBV8888 color) override;
+    RGBV8888 getValue() const override { return m_color; }
 
 private:
     shs::LoadPWM m_red;
     shs::LoadPWM m_green;
     shs::LoadPWM m_blue;
     const LedType m_led_type;
-    uint8_t m_brightness;
+    RGBV8888 m_color;
+
+    void m_show();
 };
 
 #endif    // #if defined(SHS_SF_AVR) || defined(SHS_SF_ESP)

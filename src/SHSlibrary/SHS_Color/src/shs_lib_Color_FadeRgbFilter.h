@@ -30,7 +30,7 @@ public:
     [[nodiscard]] shs::t::shs_time_t getPeriod() const noexcept { return m_period; }
 
 
-    void enable() noexcept { m_timer.setTimeout(0); }
+    void enable() noexcept { m_timer.reset(); m_timer.setTimeout(0); m_resetRunning(); }
     void disable() noexcept { m_timer.setTimeout(shs::ProgramTimer::MAX_TIMEOUT); }
     bool isActive() const noexcept { return m_timer.getTimeout() != shs::ProgramTimer::MAX_TIMEOUT; }
 
@@ -39,10 +39,10 @@ protected:
     shs::t::shs_time_t m_period;
     RGB888 m_target_color;
     RGB888 m_start_color;
-    uint8_t m_step;
-    uint8_t m_n;
+    shs::t::shs_time_t m_step;
+    shs::t::shs_time_t m_steps;
 
-    void m_prepare();
-    bool m_isRunning() const noexcept { return m_step != 0xff; }
-    void m_resetRunning() noexcept { m_step = 0xff; }
+    bool m_prepare();
+    bool m_isRunning() const noexcept { return m_step != shs::ProgramTimer::MAX_TIMEOUT; }
+    void m_resetRunning() noexcept { m_step = shs::ProgramTimer::MAX_TIMEOUT; }
 };

@@ -4,7 +4,7 @@
 
 #include <shs_lib_APIids.h>
 
-#include "shs_lib_Color_RgbControllerVirtual.h"
+#include "shs_lib_Color_RgbControllerApiCommands.h"
 #include "shs_lib_Color_RgbManagerApiLayerWrapper.h"
 
 
@@ -28,9 +28,11 @@ void shs::lib::Color::RgbManagerVirtual::manageLayer(RgbManagerLayerApiCommands 
 {
     if (!m_dtp) return;
     shs::ByteCollector<> buffer(2 + 2);
-    buffer.push_back(layer_id);
     buffer.push_back(Commands::MANAGE_LAYER, 1);
+    buffer.push_back(layer_id);
     buffer.push_back(command, 1);
+
+
     m_dtp->sendPacket(shs::DTPpacket(API_ID, m_remote_id, std::move(buffer)));
 }
 
@@ -38,14 +40,23 @@ void shs::lib::Color::RgbManagerVirtual::setColor(const RGB888 color)
 {
     if (!m_dtp) return;
 
-    m_dtp->sendPacket(RgbControllerVirtual::setColor(color, API_ID, m_remote_id));
+    shs::ByteCollector<> bc(1 + sizeof(color));
+    bc.push_back(Commands::MANAGE_CONTROLLER, 1);
+    bc.push_back(RgbControllerApiCommands::SET_COLOR, 1);
+    bc.push_back(color);
+    m_dtp->sendPacket(shs::DTPpacket(API_ID, m_remote_id, std::move(bc)));
 }
 
 void shs::lib::Color::RgbManagerVirtual::setBrightness(const uint8_t brightness)
 {
     if (!m_dtp) return;
 
-    m_dtp->sendPacket(RgbControllerVirtual::setBrightness(brightness, API_ID, m_remote_id));
+    shs::ByteCollector<> bc(1 + sizeof(brightness));
+    bc.push_back(Commands::MANAGE_CONTROLLER, 1);
+    bc.push_back(RgbControllerApiCommands::SET_BRIGHTNESS, 1);
+    bc.push_back(brightness);
+
+    m_dtp->sendPacket(shs::DTPpacket(API_ID, m_remote_id, std::move(bc)));
 }
 
 shs::lib::Color::RgbManager::layer_id_t shs::lib::Color::RgbManagerVirtual::addLayer(std::shared_ptr<RgbManagerLayerInterface> layer)

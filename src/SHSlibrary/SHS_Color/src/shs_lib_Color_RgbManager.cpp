@@ -59,6 +59,8 @@ void shs::lib::Color::RgbManager::setBrightness(const uint8_t brightness)
 
 uint8_t shs::lib::Color::RgbManager::getBrightness() const
 {
+    if (!m_controller) return 0;
+
     return m_controller->getBrightness();
 }
 

@@ -24,7 +24,7 @@ shs::DTPpacket shs::lib::Color::RgbManagerApi::handle(shs::ByteCollectorReadIter
         case Commands::ADD_LAYER:
             {
                 // brightness filter
-                const BrightSmoothFilter bright_filter(it.get<shs::t::shs_time_t>(), it.read(), it.read());
+                const BrightSmoothFilter bright_filter(it.get<shs::t::shs_time_t>(), m_manager->getBrightness(), it.read());
 
                 // color fade filter
                 const FadeRgbFilter fade_filter(it.get<shs::t::shs_time_t>());
@@ -63,7 +63,7 @@ shs::DTPpacket shs::lib::Color::RgbManagerApi::handle(shs::ByteCollectorReadIter
         case Commands::CLEAR_LAYERS: m_manager->clearLayers(); break;
         case Commands::MANAGE_CONTROLLER:
             {
-                RgbControllerApi::handle(it, *reinterpret_cast<RgbController*>(this));
+                RgbControllerApi::handle(it, *m_manager);
             }
             break;
         default: break;

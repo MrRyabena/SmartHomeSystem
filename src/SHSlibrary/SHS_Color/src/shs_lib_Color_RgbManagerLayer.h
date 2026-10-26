@@ -25,7 +25,7 @@ class shs::lib::Color::RgbManagerLayer : public RgbManagerLayerInterface
 public:
     using effect_id_t = uint16_t;
 
-    RgbManagerLayer(RGBV8888 base_color = RGBV8888(0, 0, 0, 0), std::vector<std::unique_ptr<RgbEffect>> effects = {});
+    RgbManagerLayer(RGBV8888 base_color = RGBV8888(0, 0, 0, 255), std::vector<std::unique_ptr<RgbEffect>> effects = {});
     RgbManagerLayer(BrightSmoothFilter bright_filter, FadeRgbFilter fade_filter, RGBV8888 base_color, std::vector<std::unique_ptr<RgbEffect>> effects = {});
 
     /**

@@ -332,15 +332,12 @@ namespace shs::lib::Color
         {
             static RGB888 cast(const Wheel1530& color)
             {
-                uint16_t col = color.wheel;
-                col = (col * 1530ul) >> 16;
-
-                if (col <= 255) return RGB888(255, col, 0);
-                if (col <= 510) return RGB888(510 - col, 255, 0);
-                if (col <= 765) return RGB888(0, 255, col - 510);
-                if (col <= 1020) return RGB888(0, 1020 - col, 255);
-                if (col <= 1275) return RGB888(col - 1020, 0, 255);
-                if (col <= 1530) return RGB888(255, 0, 1530 - col);
+                if (color.wheel <= 255) return RGB888(255, color.wheel, 0);
+                if (color.wheel <= 510) return RGB888(510 - color.wheel, 255, 0);
+                if (color.wheel <= 765) return RGB888(0, 255, color.wheel - 510);
+                if (color.wheel <= 1020) return RGB888(0, 1020 - color.wheel, 255);
+                if (color.wheel <= 1275) return RGB888(color.wheel - 1020, 0, 255);
+                if (color.wheel <= 1530) return RGB888(255, 0, 1530 - color.wheel);
 
                 return RGB888{};
             }

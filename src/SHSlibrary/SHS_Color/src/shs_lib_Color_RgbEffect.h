@@ -19,7 +19,7 @@ namespace shs::lib::Color
 class shs::lib::Color::RgbEffect
 {
 public:
-    explicit RgbEffect(const shs::t::shs_time_t dt, const RgbEffectType type = RgbEffectType::UNKNOWN)
+    explicit RgbEffect(const shs::t::shs_time_t dt, const RgbEffectType type)
         : m_timer(dt), m_type(type)
     {}
 

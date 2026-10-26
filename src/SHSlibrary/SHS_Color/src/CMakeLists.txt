@@ -13,50 +13,59 @@ add_compile_definitions(
 )
 
 set(SOURCES
-    shs_lib_Color_BrightSmoothFilterApiCommands.h
-    shs_lib_Color_BrightSmoothFilterApi.cpp
-    shs_lib_Color_BrightSmoothFilterApi.h
     shs_lib_Color_BrightSmoothFilter.cpp
     shs_lib_Color_BrightSmoothFilter.h
+    shs_lib_Color_BrightSmoothFilterApi.cpp
+    shs_lib_Color_BrightSmoothFilterApi.h
+    shs_lib_Color_BrightSmoothFilterApiCommands.h
     shs_lib_Color_cast.h
-    shs_lib_Color_FadeRgbFilterApiCommands.h
-    shs_lib_Color_FadeRgbFilterApi.cpp
-    shs_lib_Color_FadeRgbFilterApi.h
     shs_lib_Color_FadeRgbFilter.cpp
     shs_lib_Color_FadeRgbFilter.h
+    shs_lib_Color_FadeRgbFilterApi.cpp
+    shs_lib_Color_FadeRgbFilterApi.h
+    shs_lib_Color_FadeRgbFilterApiCommands.h
     shs_lib_Color_FireRgbEffect.cpp
     shs_lib_Color_FireRgbEffect.h
     shs_lib_Color_GammaRgbFilter.h
     shs_lib_Color_HSB888.h
     shs_lib_Color_HSBV8888.h
     shs_lib_Color_Kelvin.h
+    shs_lib_Color_RandomSplashEffect.cpp
+    shs_lib_Color_RandomSplashEffect.h
     shs_lib_Color_RGB888.h
-    shs_lib_Color_RgbControllerApiCommands.h
+    shs_lib_Color_RgbController.h
     shs_lib_Color_RgbControllerApi.cpp
     shs_lib_Color_RgbControllerApi.h
-    shs_lib_Color_RgbController.h
+    shs_lib_Color_RgbControllerApiCommands.h
     shs_lib_Color_RgbControllerVirtual.cpp
     shs_lib_Color_RgbControllerVirtual.h
     shs_lib_Color_RgbEffect.h
     shs_lib_Color_RgbEffectType.h
     shs_lib_Color_RgbFilter.h
     shs_lib_Color_RgbFilterType.h
-    shs_lib_Color_RgbManagerApiCommands.h
-    shs_lib_Color_RgbManagerApi.cpp
-    shs_lib_Color_RgbManagerApi.h
     shs_lib_Color_RgbManager.cpp
     shs_lib_Color_RgbManager.h
-    shs_lib_Color_RgbManagerLayerApiCommands.h
-    shs_lib_Color_RgbManagerLayerApi.cpp
-    shs_lib_Color_RgbManagerLayerApi.h
+    shs_lib_Color_RgbManagerApi.cpp
+    shs_lib_Color_RgbManagerApi.h
+    shs_lib_Color_RgbManagerApiCommands.h
+    shs_lib_Color_RgbManagerApiLayerWrapper.cpp
+    shs_lib_Color_RgbManagerApiLayerWrapper.h
     shs_lib_Color_RgbManagerLayer.cpp
     shs_lib_Color_RgbManagerLayer.h
+    shs_lib_Color_RgbManagerLayerApi.cpp
+    shs_lib_Color_RgbManagerLayerApi.h
+    shs_lib_Color_RgbManagerLayerApiCommands.h
+    shs_lib_Color_RgbManagerLayerInterface.h
+    shs_lib_Color_RgbManagerVirtual.cpp
+    shs_lib_Color_RgbManagerVirtual.h
     shs_lib_Color_RGBV8888.h
     shs_lib_Color_RgbvFilter.h
+    shs_lib_Color_SplashEffect.cpp
+    shs_lib_Color_SplashEffect.h
     shs_lib_Color_VFilter.h
+    shs_lib_Color_Wheel1530.h
     shs_lib_Color_Wheel1530Effect.cpp
     shs_lib_Color_Wheel1530Effect.h
-    shs_lib_Color_Wheel1530.h
     shs_lib_Color_Wheel256.h
 )
 

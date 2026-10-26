@@ -12,5 +12,7 @@ namespace shs::lib::Color
         PULSE = 3,
         STROBE = 4,
         FIRE = 5,
+        SPLASH = 6,
+        RANDOM_SPLASH = 7,
     };
 }

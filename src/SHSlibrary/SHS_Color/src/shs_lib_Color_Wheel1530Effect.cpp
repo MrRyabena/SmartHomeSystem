@@ -1,11 +1,11 @@
 #include "shs_lib_Color_Wheel1530Effect.h"
-
+#include "shs_lib_Color_RgbEffectType.h"
 #include "shs_lib_Color_cast.h"
 
 #include <utility>
 
 shs::lib::Color::Wheel1530Effect::Wheel1530Effect(const shs::t::shs_time_t period, const Wheel1530 start_value)
-    : shs::lib::Color::RgbEffect(period / 1530), m_value(start_value)
+    : shs::lib::Color::RgbEffect(period / 1530, RgbEffectType::WHEEL1530), m_value(start_value)
 {}
 
 void shs::lib::Color::Wheel1530Effect::setPeriod(shs::t::shs_time_t period) noexcept

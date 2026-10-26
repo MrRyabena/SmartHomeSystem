@@ -3,6 +3,7 @@
 #include <shs_algorithm.h>
 
 #include "shs_lib_Color_HSB888.h"
+#include "shs_lib_Color_RgbEffectType.h"
 #include "shs_lib_Color_cast.h"
 
 
@@ -10,7 +11,7 @@ shs::lib::Color::FireRgbEffect::FireRgbEffect(uint8_t start_hue, uint8_t hue_gap
     shs::t::shs_float_t smooth_k, shs::t::shs_time_t duration,
     uint8_t min_brightness, uint8_t max_brightness,
     uint8_t min_saturation, uint8_t max_saturation)
-    : RgbEffect(duration), m_random(2, 10), m_smooth_k(smooth_k),
+    : RgbEffect(duration, RgbEffectType::FIRE), m_random(2, 10), m_smooth_k(smooth_k),
     m_fire_value(0.0f), m_fire_rnd(0), m_timeout_counter(0),
     m_start_hue(start_hue), m_hue_gap(hue_gap),
     m_min_brightness(min_brightness), m_max_brightness(max_brightness),

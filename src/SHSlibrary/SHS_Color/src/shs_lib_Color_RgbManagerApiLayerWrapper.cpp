@@ -1,5 +1,6 @@
 #include "shs_lib_Color_RgbManagerApiLayerWrapper.h"
 
+#include <shs_types.h>
 
 #include "shs_lib_Color_Wheel1530Effect.h"
 #include "shs_lib_Color_FireRgbEffect.h"
@@ -33,19 +34,18 @@ shs::lib::Color::RgbManagerApiLayerWrapper::effect_id_t shs::lib::Color::RgbMana
                 auto fire_effect = static_cast<FireRgbEffect*>(effect.get());
                 if (fire_effect)
                 {
-                    bc.push_back(fire_effect->getStartHue());
-                    bc.push_back(fire_effect->getHueGap());
-                    bc.push_back(0, 1);
-                    bc.push_back(fire_effect->getSmoothK());
+                    bc.push_back(fire_effect->getStartHue(), 1);
+                    bc.push_back(fire_effect->getHueGap(), 1);
+                    bc.push_back(static_cast<shs::t::shs_fixed_t>(fire_effect->getSmoothK()));
                     bc.push_back(fire_effect->getPeriod());
-                    bc.push_back(fire_effect->getMinBrightness());
-                    bc.push_back(fire_effect->getMaxBrightness());
-                    bc.push_back(fire_effect->getMinSaturation());
-                    bc.push_back(fire_effect->getMaxSaturation());
+                    bc.push_back(fire_effect->getMinBrightness(), 1);
+                    bc.push_back(fire_effect->getMaxBrightness(), 1);
+                    bc.push_back(fire_effect->getMinSaturation(), 1);
+                    bc.push_back(fire_effect->getMaxSaturation(), 1);
                 }
             }
             break;
-        default: break;
+        default: doutln("Unknown effect type"); break;
     }
 
     m_parent.manageLayer(std::move(bc), m_layer_id);

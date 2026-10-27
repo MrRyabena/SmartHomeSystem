@@ -30,10 +30,10 @@ public:
         shs::t::shs_float_t min_line_length_ratio = 0.05,
         shs::t::shs_float_t max_line_length_ratio = 0.5);
 
-    void setFire(uint8_t start_hue = Fire::DEFAULT_HUE_START, uint8_t hue_gap = Fire::DEFAULT_HUE_GAP,
-        uint8_t fire_step = Fire::DEFAULT_FIRE_STEP,
-        uint8_t min_bright = Fire::DEFAULT_MIN_BRIGHT, uint8_t max_bright = Fire::DEFAULT_MAX_BRIGHT,
-        uint8_t min_sat = Fire::DEFAULT_MIN_SAT, uint8_t max_sat = Fire::DEFAULT_MAX_SAT);
+    void setFire(uint8_t start_hue = FireDefaults::HUE_START, uint8_t hue_gap = FireDefaults::HUE_GAP,
+        uint8_t fire_step = FireDefaults::FIRE_STEP,
+        uint8_t min_bright = FireDefaults::MIN_BRIGHT, uint8_t max_bright = FireDefaults::MAX_BRIGHT,
+        uint8_t min_sat = FireDefaults::MIN_SAT, uint8_t max_sat = FireDefaults::MAX_SAT);
 
     void resetEffects();
 

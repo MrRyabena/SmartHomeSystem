@@ -1,5 +1,6 @@
 #include "shs_lib_Color_RgbManager.h"
 
+#include "shs_lib_Color_RgbManagerLayer.h"
 
 shs::lib::Color::RgbManager::RgbManager(std::shared_ptr<RgbController> controller)
     : m_controller(controller), m_active(true)

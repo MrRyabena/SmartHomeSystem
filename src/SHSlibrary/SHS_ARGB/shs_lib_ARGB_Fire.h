@@ -1,10 +1,10 @@
 #pragma once
 
+#include <stdint.h>
+
 #include <shs_settings_private.h>
 
 #ifndef SHS_LIB_ARGB_NO_FASTLED
-
-#include <stdint.h>
 
 #include <FastLED.h>
 
@@ -13,28 +13,31 @@
 
 #include "shs_lib_ARGB_Effect.h"
 
+#endif  // #ifndef SHS_LIB_ARGB_NO_FASTLED
 namespace shs::argb
 {
     class Fire;
+
+    namespace FireDefaults
+    {
+        static constexpr uint8_t HUE_START = 0;
+        static constexpr uint8_t HUE_GAP = 10;
+        static constexpr uint8_t FIRE_STEP = 5;
+        static constexpr uint8_t MIN_BRIGHT = 100;
+        static constexpr uint8_t MAX_BRIGHT = 255;
+        static constexpr uint8_t MIN_SAT = 255;
+        static constexpr uint8_t MAX_SAT = 255;
+    }
 }
 
-
+#ifndef SHS_LIB_ARGB_NO_FASTLED
 class shs::argb::Fire : public shs::argb::Effect
 {
 public:
-    static constexpr uint8_t DEFAULT_HUE_START = 0;
-    static constexpr uint8_t DEFAULT_HUE_GAP = 21;
-    static constexpr uint8_t DEFAULT_FIRE_STEP = 15;
-    static constexpr uint8_t DEFAULT_MIN_BRIGHT = 70;
-    static constexpr uint8_t DEFAULT_MAX_BRIGHT = 255;
-    static constexpr uint8_t DEFAULT_MIN_SAT = 245;
-    static constexpr uint8_t DEFAULT_MAX_SAT = 255;
-    static constexpr auto DEFAULT_PERIOD = 20;
-
     Fire(CRGB* leds, uint16_t num_leds, std::function<void()> on_change_callback = nullptr,
-        uint8_t start_hue = DEFAULT_HUE_START, uint8_t hue_gap = DEFAULT_HUE_GAP, uint8_t fire_step = DEFAULT_FIRE_STEP,
-        uint8_t min_bright = DEFAULT_MIN_BRIGHT, uint8_t max_bright = DEFAULT_MAX_BRIGHT,
-        uint8_t min_sat = DEFAULT_MIN_SAT, uint8_t max_sat = DEFAULT_MAX_SAT);
+        uint8_t start_hue = FireDefaults::HUE_START, uint8_t hue_gap = FireDefaults::HUE_GAP, uint8_t fire_step = FireDefaults::FIRE_STEP,
+        uint8_t min_bright = FireDefaults::MIN_BRIGHT, uint8_t max_bright = FireDefaults::MAX_BRIGHT,
+        uint8_t min_sat = FireDefaults::MIN_SAT, uint8_t max_sat = FireDefaults::MAX_SAT);
 
     void start() override { m_timer.reset(); }
     void tick() override;

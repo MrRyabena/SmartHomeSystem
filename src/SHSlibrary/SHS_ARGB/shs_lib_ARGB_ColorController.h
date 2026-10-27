@@ -21,12 +21,14 @@ class shs::argb::ColorController : public shs::lib::Color::RgbController
 public:
     ColorController(CLEDController* controller) noexcept : m_controller(controller) {}
 
-    void setColor(const RGB888 color) override
+    void setup() override {}
+
+    void setColor(const shs::lib::Color::RGB888 color) override
     {
         m_color.setRgb(color);
         show();
     }
-    [[nodiscard]] RGB888 getColor() const noexcept override { return m_color.getRgb(); }
+    [[nodiscard]] shs::lib::Color::RGB888 getColor() const noexcept override { return m_color.getRgb(); }
 
     void setBrightness(const uint8_t brightness) override
     {
@@ -35,16 +37,16 @@ public:
     }
     [[nodiscard]] uint8_t getBrightness() const noexcept override { return m_color.value; }
 
-    void setValue(const RGBV8888 color) override
+    void setValue(const shs::lib::Color::RGBV8888 color) override
     {
         m_color = color;
         show();
     }
-    [[nodiscard]] RGBV8888 getValue() const noexcept override { return m_color; }
+    [[nodiscard]] shs::lib::Color::RGBV8888 getValue() const noexcept override { return m_color; }
 
 protected:
     CLEDController* m_controller;
-    RGBV8888 m_color;
+    shs::lib::Color::RGBV8888 m_color;
 
     void show() noexcept
     {

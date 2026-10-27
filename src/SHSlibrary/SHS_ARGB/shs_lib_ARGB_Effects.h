@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 namespace shs::argb
 {
     enum class Effects : uint16_t

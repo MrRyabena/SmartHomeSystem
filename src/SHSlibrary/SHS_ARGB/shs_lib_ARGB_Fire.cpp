@@ -20,7 +20,7 @@ void shs::argb::Fire::tick()
         uint16_t this_pos{}, last_pos{};
         for (auto i = 0u; i < m_num_leds; i++)
         {
-            m_leds[i] = getFireColor((inoise8(i * FIRE_STEP, m_counter)));
+            m_leds[i] = getFireColor((inoise8(i * m_fire_step, m_counter)));
         }
         m_counter += 20;
 
@@ -32,9 +32,9 @@ CHSV shs::argb::Fire::getFireColor(const uint16_t val)
 {
     // the bigger val, the stronger the color shift, the lower the saturation and the higher the brightness
     return CHSV(
-        m_start_hue + shs::map(val, 0, 255, 0, m_hue_gap),                              // H
-        shs::clamp(shs::map(val, 0, 255, m_max_saturation, m_min_saturation), 0, 255),  // S
-        shs::clamp(shs::map(val, 0, 255, m_min_brightness, m_max_brightness), 0, 255)   // V
+        m_start_hue + shs::map(static_cast<int>(val), 0, 255, 0, m_hue_gap),                              // H
+        shs::clamp(shs::map(static_cast<int>(val), 0, 255, m_max_saturation, m_min_saturation), 0, 255),  // S
+        shs::clamp(shs::map(static_cast<int>(val), 0, 255, m_min_brightness, m_max_brightness), 0, 255)   // V
     );
 }
 

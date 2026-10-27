@@ -7,6 +7,8 @@
 
 #include <shs_Process.h>
 
+#include <shs_lib_ARGB_Effects.h>
+
 class CRGB;
 
 namespace shs

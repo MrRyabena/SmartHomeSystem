@@ -37,6 +37,7 @@ public:
 
     [[nodiscard]] virtual layer_id_t addLayer(std::shared_ptr<RgbManagerLayerInterface> layer) { m_layers.push_back(std::move(layer)); return m_layers.size() - 1; }
     [[nodiscard]] virtual std::shared_ptr<RgbManagerLayerInterface> getLayer(const layer_id_t id) { if (id < m_layers.size()) return m_layers[id]; return nullptr; }
+    [[nodiscard]] virtual std::shared_ptr<RgbManagerLayerInterface> getTopLayer(bool create = true);
     virtual layer_id_t popLayer() { if (!m_layers.empty()) m_layers.pop_back();  return m_layers.size(); }
     virtual void removeLayer(const layer_id_t id) { if (id < m_layers.size()) m_layers.erase(m_layers.begin() + id); }
     virtual void clearLayers() { m_layers.clear(); }

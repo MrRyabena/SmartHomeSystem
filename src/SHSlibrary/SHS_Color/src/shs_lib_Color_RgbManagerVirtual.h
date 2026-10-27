@@ -32,6 +32,7 @@ public:
 
     layer_id_t addLayer(std::shared_ptr<RgbManagerLayerInterface> layer) override;
     layer_id_t popLayer() override;
+    std::shared_ptr<RgbManagerLayerInterface> getTopLayer(bool create = true) override;
     void removeLayer(const layer_id_t id) override;
     void clearLayers() override;
 

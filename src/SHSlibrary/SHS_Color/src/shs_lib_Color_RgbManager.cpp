@@ -64,3 +64,19 @@ uint8_t shs::lib::Color::RgbManager::getBrightness() const
     return m_controller->getBrightness();
 }
 
+auto shs::lib::Color::RgbManager::getTopLayer(bool create) -> std::shared_ptr<RgbManagerLayerInterface>
+{
+    if (!m_layers.empty())
+    {
+        return m_layers.back();
+    }
+    else if (create)
+    {
+        auto layer = std::make_shared<RgbManagerLayer>();
+        layer->setup();
+        m_layers.push_back(layer);
+        return layer;
+    }
+    return nullptr;
+}
+

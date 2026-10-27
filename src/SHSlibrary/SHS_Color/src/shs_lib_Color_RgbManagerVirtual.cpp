@@ -6,6 +6,7 @@
 
 #include "shs_lib_Color_RgbControllerApiCommands.h"
 #include "shs_lib_Color_RgbManagerApiLayerWrapper.h"
+#include "shs_lib_Color_RgbManagerLayer.h"
 
 
 shs::lib::Color::RgbManagerVirtual::RgbManagerVirtual(std::shared_ptr<shs::DTP> dtp, shs::t::shs_ID_t id, shs::t::shs_ID_t remote_id, std::shared_ptr<RgbController> controller)
@@ -105,4 +106,19 @@ void shs::lib::Color::RgbManagerVirtual::m_sendCommand(const RgbManagerApiComman
     shs::ByteCollector<> bc(1);
     bc.push_back(command, 1);
     m_dtp->sendPacket(shs::DTPpacket(API_ID, m_remote_id, std::move(bc)));
+}
+
+auto shs::lib::Color::RgbManagerVirtual::getTopLayer(bool create) -> std::shared_ptr<RgbManagerLayerInterface>
+{
+    if (!m_layers.empty())
+    {
+        return m_layers.back();
+    }
+    else if (create)
+    {
+        addLayer(std::make_shared<RgbManagerLayer>());
+        return m_layers.back();
+    }
+    return nullptr;
+
 }

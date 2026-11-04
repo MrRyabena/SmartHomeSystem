@@ -52,7 +52,7 @@ protected:
     {
         if (!m_controller) return;
         auto color = m_color.getNormalized();
-        m_controller->showColor(color.red, color.green, m_color.blue);
+        m_controller->showColor(CRGB(color.red, color.green, m_color.blue));
     }
 };
 

@@ -24,7 +24,7 @@ uint8_t shs::DTP::sendPacket(const shs::DTPpacket& packet)
     else
     {
         dout("bus not found for module id: ");
-        doutln(packet.get_recipientID().getModuleID());
+        doutln(static_cast<int>(packet.get_recipientID().getModuleID()));
     }
 
     // store a copy for later delivery, but ensure proper copy semantics

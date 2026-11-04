@@ -31,8 +31,8 @@ void shs::qt::TcpSocket::onDisconnected()
     doutln("QTcpSocket disconnected");
 
     m_connected = false;
-    dout("connected: "); doutln(connected())
-        emit disconnected();
+    dout("connected: "); doutln(connected());
+    emit disconnected();
 }
 
 

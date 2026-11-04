@@ -14,7 +14,9 @@ shs::lib::Color::RgbManagerVirtual::RgbManagerVirtual(std::shared_ptr<shs::DTP> 
     shs::API(id.setComponentID(shs::etoi(shs::lib::APIids::COLOR_RGB_MANAGER_API))),
     m_remote_id(remote_id.setComponentID(shs::etoi(shs::lib::APIids::COLOR_RGB_MANAGER_API))),
     m_dtp(dtp)
-{}
+{
+    m_layers.push_back(std::make_shared<RgbManagerApiLayerWrapper>(*this, 0));
+}
 
 void shs::lib::Color::RgbManagerVirtual::manageLayer(shs::ByteCollector<> buffer, layer_id_t layer_id)
 {

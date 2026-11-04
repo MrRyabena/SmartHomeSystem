@@ -48,7 +48,7 @@ public:
     void setValue(const RGBV8888 color) override;
     RGBV8888 getValue() const override { return m_color; }
 
-private:
+protected:
     shs::LoadPWM m_red;
     shs::LoadPWM m_green;
     shs::LoadPWM m_blue;

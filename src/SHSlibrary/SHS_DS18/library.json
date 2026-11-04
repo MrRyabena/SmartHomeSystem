@@ -1,0 +1,7 @@
+{
+    "name": "SHS_DS18",
+    "version": "2.5.0",
+    "dependencies": {
+        "GyverDS18": "https://github.com/GyverLibs/GyverDS18.git"
+    }
+}

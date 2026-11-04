@@ -62,6 +62,7 @@ public:
     [[nodiscard]] uint8_t getMaxSaturation() const noexcept { return m_max_saturation; }
 
 protected:
+    static constexpr auto DEFAULT_PERIOD = 20;
     shs::ProgramTimer m_timer;
     int m_counter{};
 

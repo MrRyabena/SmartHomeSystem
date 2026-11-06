@@ -348,7 +348,7 @@ Changes ([see also here](./schemes/SHScore-changes/SHScore-changes-v1_2_0.png))
 
 <!---------------------------------- v2.4.0 ----------------------------------->
 <details>
-<summary>v2.4.X — <code><b>[current]</b></code> Fix bugs with TCP disconnects, upgrade DTPbus, add tests </summary>
+<summary>v2.4.X — Fix bugs with TCP disconnects, upgrade DTPbus, add tests </summary>
 
 ### Patches
 
@@ -417,6 +417,77 @@ Need to update documentation and examples.
 ### Known bugs / issues
 
 - `shs::DTP` sends the packet without waiting for new bus is connected. The first packet usually lost.
+
+</details>
+<!----------------------------------------------------------------------------->
+
+<!---------------------------------- v2.5.0 ----------------------------------->
+<details>
+<summary>v2.5.X — <code><b>[current]</b></code> New SHS_Color library and layered RGB effect management </summary>
+
+### Patches
+
+- **v2.5.0** — initial release of the new color-management subsystem.
+
+### Main Features
+
+- Added the `SHS_Color` library for RGB color management.
+- Added layered color composition with virtual managers, controllers, filters, and API wrappers.
+- Added fade, brightness smoothing filters and fire, splash, random splash, and wheel effects.
+- Added the `SHS_ARGB` integration with color controllers.
+- Separated the RGB driver into the `SHS_RgbDriver` library.
+- Added the API identifiers for color components to the `SHS_APIids` library.
+
+### SHScore
+
+- **New functionality:**
+  - `shs_algorithm.h`: Added type-generic `map()` and `clamp()` overloads.
+  - `shs::ByteCollector`, `shs::ByteCollectorReadIterator`: Added the templated `get<>` helper.
+- **Changes:**
+  - Corrected `shs::ProgramTimer::MAX_TIMEOUT` handling and made time types compatible with AVR.
+  - Improved DTP debug output.
+  - Fixed Qt TCP socket connection-state handling.
+  - Updated version and package metadata.
+
+### SHSlibrary
+
+- **SHS_Color:**
+  - Added RGB color types and conversions, including RGB-with-brightness and HSB/Kelvin helpers.
+  - Added `RgbDriver`, `RgbController`, `RgbManager`, and layered manager APIs.
+  - Added fade and brightness-smoothing filters with API support.
+  - Added fire, splash, random splash, and wheel effects.
+- **SHS_ARGB:**
+  - Added `ARGB_ColorController`, virtual effects managers, and fire-effect support.
+  - Added package metadata and dependencies on `SHS_Color` and `SHS_APIids`.
+- **SHS_RgbDriver:**
+  - Added the standalone RGB driver library and package metadata.
+- Added package metadata for `SHS_MQTT` and `SHS_DS18`.
+
+### Examples
+
+No changes.
+
+### Tests
+
+- **Changes:**
+  - Added a PlatformIO hardware test for `SHS_Color` and `RgbManager`.
+  - Added a CMake build test for the SHS libraries.
+
+### Build / docs / misc
+
+- Added CMake build configuration for `SHS_Color` and `SHS_APIids`.
+- Added a GitHub Actions workflow for building SHS libraries.
+- Added documentation for SHScore compile definitions.
+- Enabled compiler warnings for `SHS_Color` and added the `SHS_SF_UNUSE_SHS_SETTINGS` build option.
+
+### Developer notes
+
+`SHS_Color` and its ARGB integration are still under active development. The hardware test currently covers basic color control, manager, and effect scenarios.
+
+### Known bugs / issues
+
+- `shs::DTP` sends a packet without waiting for a new bus to connect. The first packet is usually lost.
+- Unstable work between `RgbManagerApi` and `RgbManagerVirtual`.
 
 </details>
 <!----------------------------------------------------------------------------->
